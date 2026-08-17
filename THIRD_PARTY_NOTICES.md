@@ -1,9 +1,10 @@
 # Third-Party Notices
 
-No runtime third-party dependencies are included in the Phase 0 scaffold.
+No runtime third-party dependencies are included. Contract tests use the development dependency listed below.
 
 As dependencies are introduced, record each material package, version, source, license, and required notice here. Automated dependency and SBOM reports will supplement—but not replace—this human-readable record.
 
 | Component | Version | Source | License | Notes |
 | --- | --- | --- | --- | --- |
-| None yet | - | - | - | Phase 0 uses the Python standard library only |
+| jsonschema | 4.26.0 | https://pypi.org/project/jsonschema/ | MIT | Test-only JSON Schema validation |
+| rfc3339-validator | 0.1.4 | https://pypi.org/project/rfc3339-validator/ | MIT | Test-only RFC 3339 date-time format validation |

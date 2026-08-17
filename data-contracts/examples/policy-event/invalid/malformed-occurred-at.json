@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_000000000002",
+  "policy_id": "pol_000000000001",
+  "event_type": "policy.updated",
+  "occurred_at": "January 16, 2025",
+  "effective_at": "2025-01-16T00:00:00Z",
+  "ingested_at": "2025-01-16T10:05:00Z",
+  "payload": {}
+}

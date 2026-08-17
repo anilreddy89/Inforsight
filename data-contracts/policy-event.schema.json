@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/policy-event/1.0.0",
+  "title": "Inforsight policy event",
+  "description": "Shared envelope for an immutable event in a fictional policy history.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "policy_id",
+    "event_type",
+    "occurred_at",
+    "effective_at",
+    "ingested_at",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Version of this policy-event envelope contract.",
+      "const": "1.0.0"
+    },
+    "event_id": {
+      "description": "Synthetic identifier for this immutable event.",
+      "type": "string",
+      "pattern": "^evt_[a-z0-9]{12,64}$"
+    },
+    "policy_id": {
+      "description": "Synthetic identifier for the fictional policy.",
+      "type": "string",
+      "pattern": "^pol_[a-z0-9]{12,64}$"
+    },
+    "event_type": {
+      "description": "Stable, namespaced name used to select an event-specific payload contract.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$"
+    },
+    "occurred_at": {
+      "description": "UTC instant when the fictional event occurred.",
+      "$ref": "#/$defs/utc_timestamp"
+    },
+    "effective_at": {
+      "description": "UTC instant from which the event affects reconstructed policy state.",
+      "$ref": "#/$defs/utc_timestamp"
+    },
+    "ingested_at": {
+      "description": "UTC instant when Inforsight learned about the event.",
+      "$ref": "#/$defs/utc_timestamp"
+    },
+    "payload": {
+      "description": "Event-specific fictional facts. Later contracts define its fields by event type.",
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "utc_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    }
+  }
+}

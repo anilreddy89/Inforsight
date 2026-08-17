@@ -1,0 +1,9 @@
+{
+  "event_id": "evt_000000000003",
+  "policy_id": "pol_000000000001",
+  "event_type": "policy.updated",
+  "occurred_at": "2025-01-17T10:00:00Z",
+  "effective_at": "2025-01-17T00:00:00Z",
+  "ingested_at": "2025-01-17T10:01:00Z",
+  "payload": {}
+}
