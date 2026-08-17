@@ -109,4 +109,5 @@ Documents/
 
 
 # Git commit script for local only
+git_first_commit_script.sh
 git_commit_script.sh

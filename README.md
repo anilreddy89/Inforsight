@@ -1,6 +1,10 @@
-# Inforsight
+<p align="center">
+  <img src="docs/assets/inforsight-readme-banner.png" alt="Inforsight — See Risk. Shape Action." width="900">
+</p>
 
-**See Risk. Shape Action.**
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="Apache 2.0 license"></a>
+</p>
 
 Inforsight is a clean-room project for conservation case intelligence on in-force life-insurance policies. It reconstructs fictional policy timelines, estimates near-term lapse or surrender risk, applies deterministic eligibility rules, assembles cited evidence, and keeps a human reviewer in control of every intervention.
 
@@ -35,6 +39,12 @@ The first milestone is deliberately smaller than the complete architecture: gene
 | Human reviewer | Approve, reject, or request more information | All interventions require an accountable decision |
 | Audit trail | Preserve inputs, versions, recommendations, and decisions | Must support point-in-time replay |
 
+## Target architecture
+
+![Inforsight target architecture](docs/assets/inforsight-target-architecture.png)
+
+This diagram shows the intended long-term system boundary and technology direction. It is not a representation of the current Phase 0 implementation; components will be introduced incrementally only after their assumptions and interfaces are validated.
+
 ## Repository map
 
 ```text
@@ -44,8 +54,7 @@ ml/               Leakage-safe features, experiments, evaluation, and model card
 services/         Java control-plane services and deterministic rules
 agents/           Bounded evidence, procedure, and planning assistants
 infra/            Local and cloud infrastructure added only when justified
-docs/             Assumptions, vocabulary, ADRs, experiments, and backlog
-Documents/        Planning briefs, trackers, architecture diagrams, and brand assets
+docs/             Assumptions, ADRs, experiments, and published documentation assets
 scripts/          Repository validation and developer utilities
 ```
 
@@ -55,13 +64,21 @@ Phase 0 - Foundation. The planning package is complete and the repository scaffo
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
-## Local checks
+## Getting started
+
+The Phase 0 scaffold requires Python 3.11 or newer, GNU Make, and Git. It has no runtime third-party dependencies.
 
 ```bash
+git clone https://github.com/anilreddy89/Inforsight.git
+cd Inforsight
 make check
 ```
 
-The initial check runs repository boundary validation and the simulator smoke tests. Additional language-specific checks will be added when those components become real.
+The check runs repository boundary validation and the simulator smoke tests. Additional language-specific checks will be added when those components become real.
+
+[GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes. All contributions must follow the fictional-data and clean-room boundaries.
 
 ## License
 
