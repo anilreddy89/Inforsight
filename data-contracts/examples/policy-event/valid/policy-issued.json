@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_000000000001",
+  "policy_id": "pol_000000000001",
+  "event_type": "policy.issued",
+  "occurred_at": "2025-01-15T14:30:00Z",
+  "effective_at": "2025-01-15T00:00:00Z",
+  "ingested_at": "2025-01-15T14:31:12Z",
+  "payload": {
+    "product_variant": "fictional_term_life"
+  }
+}

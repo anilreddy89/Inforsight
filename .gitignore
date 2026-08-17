@@ -106,6 +106,7 @@ temp/
 # Local planning and design artifacts
 # Keep these out of version control until they are reviewed for publication.
 Documents/
+PROJECT_PROGRESS.md
 
 
 # Git commit script for local only
