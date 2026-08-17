@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_000000000002",
+  "policy_id": "pol_000000000001",
+  "event_type": "policy.status_changed",
+  "occurred_at": "2025-02-16T09:00:00Z",
+  "effective_at": "2025-02-16T00:00:00Z",
+  "ingested_at": "2025-02-16T09:00:30Z",
+  "payload": {
+    "previous_status": "active",
+    "new_status": "grace_period",
+    "reason": "payment_overdue"
+  }
+}

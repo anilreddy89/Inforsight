@@ -5,14 +5,18 @@ These assumptions define the first simulator boundary. They are deliberately sim
 ## Portfolio
 
 - All policies, products, people, identifiers, amounts, and dates are fictional.
-- The first release models a small set of simplified in-force life products.
+- The first release models fictional term-life and whole-life product variants.
 - Currency is USD and dates use ISO 8601 in UTC unless a contract states otherwise.
+- Monetary amounts are represented as integer cents.
 - Policy identifiers are synthetic and cannot be joined to external records.
 
 ## Policy lifecycle
 
 - A policy has a versioned status and an effective date.
+- Supported lifecycle statuses are active, grace period, lapsed, and surrendered.
+- New policies begin active and use monthly, quarterly, semiannual, or annual billing.
 - Billing, payment, notice, service, and policy-change events are immutable facts.
+- Notices and service contacts contain structured categories only, without message text or personal content.
 - Corrections are represented by new events rather than rewriting history.
 - State reconstruction uses events whose occurrence time is on or before the requested as-of time.
 
@@ -32,6 +36,5 @@ These assumptions define the first simulator boundary. They are deliberately sim
 
 ## Open questions
 
-- Which minimal product variants are needed to exercise meaningful lifecycle differences?
 - Which grace-period and notice assumptions should be configurable rather than fixed?
 - Should the baseline label combine lapse and surrender or report competing outcomes separately?

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/payloads/policy/1.0.0",
+  "title": "Inforsight policy event payloads",
+  "description": "Payload contracts for fictional policy lifecycle events.",
+  "$defs": {
+    "issued": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "product_variant",
+        "initial_status",
+        "billing_frequency",
+        "premium_amount_cents",
+        "currency"
+      ],
+      "properties": {
+        "product_variant": {
+          "type": "string",
+          "enum": [
+            "fictional_term_life",
+            "fictional_whole_life"
+          ]
+        },
+        "initial_status": {
+          "const": "active"
+        },
+        "billing_frequency": {
+          "type": "string",
+          "enum": [
+            "monthly",
+            "quarterly",
+            "semiannual",
+            "annual"
+          ]
+        },
+        "premium_amount_cents": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "const": "USD"
+        }
+      }
+    },
+    "status_changed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "previous_status",
+        "new_status",
+        "reason"
+      ],
+      "properties": {
+        "previous_status": {
+          "$ref": "#/$defs/policy_status"
+        },
+        "new_status": {
+          "$ref": "#/$defs/policy_status"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "payment_current",
+            "payment_overdue",
+            "outcome_recorded",
+            "correction"
+          ]
+        }
+      }
+    },
+    "policy_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "grace_period",
+        "lapsed",
+        "surrendered"
+      ]
+    }
+  }
+}

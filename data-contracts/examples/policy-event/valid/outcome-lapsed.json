@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_000000000008",
+  "policy_id": "pol_000000000001",
+  "event_type": "outcome.lapsed",
+  "occurred_at": "2025-03-17T00:05:00Z",
+  "effective_at": "2025-03-17T00:00:00Z",
+  "ingested_at": "2025-03-17T00:05:30Z",
+  "payload": {
+    "reason": "nonpayment",
+    "outstanding_amount_cents": 12500,
+    "currency": "USD"
+  }
+}

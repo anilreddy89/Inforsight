@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/payloads/billing/1.0.0",
+  "title": "Inforsight billing event payloads",
+  "description": "Payload contracts for fictional billing events.",
+  "$defs": {
+    "premium_due": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "billing_id",
+        "due_date",
+        "amount_cents",
+        "currency"
+      ],
+      "properties": {
+        "billing_id": {
+          "type": "string",
+          "pattern": "^bil_[a-z0-9]{12,64}$"
+        },
+        "due_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "amount_cents": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "const": "USD"
+        }
+      }
+    }
+  }
+}

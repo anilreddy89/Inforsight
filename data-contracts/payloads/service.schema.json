@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/payloads/service/1.0.0",
+  "title": "Inforsight service event payloads",
+  "description": "Payload contracts for structured fictional service interactions without free-form personal content.",
+  "$defs": {
+    "contact_recorded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contact_id",
+        "direction",
+        "channel",
+        "reason",
+        "resolution"
+      ],
+      "properties": {
+        "contact_id": {
+          "type": "string",
+          "pattern": "^con_[a-z0-9]{12,64}$"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "inbound",
+            "outbound"
+          ]
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "phone",
+            "email",
+            "postal_mail"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "billing_question",
+            "payment_assistance",
+            "policy_review",
+            "surrender_inquiry",
+            "other"
+          ]
+        },
+        "resolution": {
+          "type": "string",
+          "enum": [
+            "resolved",
+            "follow_up_required",
+            "no_action"
+          ]
+        }
+      }
+    }
+  }
+}

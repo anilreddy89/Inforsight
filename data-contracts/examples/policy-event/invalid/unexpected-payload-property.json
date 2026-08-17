@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_100000000003",
+  "policy_id": "pol_100000000001",
+  "event_type": "notice.sent",
+  "occurred_at": "2025-02-16T12:00:00Z",
+  "effective_at": "2025-02-16T12:00:00Z",
+  "ingested_at": "2025-02-16T12:00:10Z",
+  "payload": {
+    "notice_id": "ntc_100000000001",
+    "notice_type": "grace_period",
+    "delivery_channel": "postal_mail",
+    "message": "This free-form field is not permitted."
+  }
+}
