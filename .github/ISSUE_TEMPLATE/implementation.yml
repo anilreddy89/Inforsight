@@ -1,68 +1,76 @@
-name: Policy-event contract implementation
-description: Define the versioned JSON Schema envelope for fictional policy events
-title: "Define versioned policy-event JSON Schema"
-labels: [ "implementation" ]
+name: Implementation task
+description: Propose a scoped, testable engineering change
+title: ""
+labels: ["implementation"]
 body:
-- type: textarea
-  id: outcome
-  attributes:
-    label: Outcome
-    description: What observable result should exist when this issue is complete?
-    value: |
-      Add a versioned JSON Schema defining the shared envelope for fictional policy lifecycle events, with explicit occurrence, effective, and ingestion timestamps. Include automated validation tests and representative valid and invalid examples.
-  validations:
-    required: true
-- type: textarea
-  id: acceptance
-  attributes:
-    label: Acceptance checks
-    description: List objective checks, including point-in-time or clean-room constraints where relevant.
-    value: |
-      - [ ] `data-contracts/policy-event.schema.json` exists.
-      - [ ] The schema declares a stable schema identifier and JSON Schema dialect.
-      - [ ] Every event requires a supported schema version.
-      - [ ] Every event requires synthetic event and policy identifiers.
-      - [ ] Every event requires an event type and payload object, without prematurely defining every event-specific payload.
-      - [ ] Occurrence, effective, and ingestion timestamps are explicit, distinct fields using ISO 8601 date-time values in UTC.
-      - [ ] Unknown top-level fields are rejected.
-      - [ ] At least one valid fictional example is included.
-      - [ ] Invalid examples cover missing required fields, malformed timestamps, unsupported schema versions, and unexpected fields.
-      - [ ] Automated tests prove that valid examples pass and invalid examples fail.
-      - [ ] `data-contracts/README.md` documents field semantics and validation instructions.
-      - [ ] Contract validation runs as part of `make check`.
-      - [ ] `make check` passes.
-  validations:
-    required: true
-- type: textarea
-  id: evidence
-  attributes:
-    label: Evidence
-    description: Tests, docs, examples, screenshots, or reports that will demonstrate completion.
-    value: |
-      - Successful `make check` output.
-      - Committed valid and invalid contract examples.
-      - Automated test coverage for schema validation.
-      - Documentation explaining the occurrence, effective, and ingestion timestamp semantics.
-  validations:
-    required: true
-- type: textarea
-  id: out_of_scope
-  attributes:
-    label: Out of scope
-    description: Work intentionally deferred to later issues.
-    value: |
-      - Event-specific billing, payment, notice, service, and outcome payload schemas.
-      - The seeded 100-policy generator.
-      - Point-in-time state reconstruction.
-      - ML features, labels, services, Kafka, and cloud infrastructure.
-  validations:
-    required: true
-- type: checkboxes
-  id: boundaries
-  attributes:
-    label: Boundaries
-    options:
-    - label: Uses fictional/public inputs only
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for a focused implementation task. Describe the observable outcome and objective completion checks without including confidential or proprietary information.
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What observable result should exist when this issue is complete?
+      placeholder: Describe the capability, behavior, or artifact that should be delivered.
+    validations:
       required: true
-    - label: Does not broaden authority or bypass human review
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this change needed, and what existing behavior or backlog item does it address?
+      placeholder: Include relevant background, constraints, and links to related issues or documentation.
+    validations:
       required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance checks
+      description: List objective, testable conditions that must be satisfied.
+      placeholder: |
+        - [ ] The expected behavior or artifact is implemented.
+        - [ ] Automated tests cover the changed behavior.
+        - [ ] Relevant documentation is updated.
+        - [ ] `make check` passes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: What evidence will demonstrate that the issue is complete?
+      placeholder: List test output, examples, documentation, screenshots, or reports expected during review.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: Identify adjacent work intentionally deferred to separate issues.
+      placeholder: List anything that should not be implemented as part of this issue.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List prerequisites, blocked issues, or follow-up work, if any.
+      placeholder: Enter issue links or write "None."
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundaries
+      description: Confirm that the proposed work respects the repository's contribution requirements.
+      options:
+        - label: This issue uses only fictional data, public sources, and original implementation.
+          required: true
+        - label: This issue does not include credentials, customer information, or proprietary material.
+          required: true
+        - label: This issue preserves point-in-time, authority, and human-review boundaries where applicable.
+          required: true
