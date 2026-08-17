@@ -1,35 +1,68 @@
-name: Implementation task
-description: A scoped, testable engineering increment
-title: ""
-labels: ["implementation"]
+name: Policy-event contract implementation
+description: Define the versioned JSON Schema envelope for fictional policy events
+title: "Define versioned policy-event JSON Schema"
+labels: [ "implementation" ]
 body:
-  - type: textarea
-    id: outcome
-    attributes:
-      label: Outcome
-      description: What observable result should exist when this issue is complete?
-    validations:
+- type: textarea
+  id: outcome
+  attributes:
+    label: Outcome
+    description: What observable result should exist when this issue is complete?
+    value: |
+      Add a versioned JSON Schema defining the shared envelope for fictional policy lifecycle events, with explicit occurrence, effective, and ingestion timestamps. Include automated validation tests and representative valid and invalid examples.
+  validations:
+    required: true
+- type: textarea
+  id: acceptance
+  attributes:
+    label: Acceptance checks
+    description: List objective checks, including point-in-time or clean-room constraints where relevant.
+    value: |
+      - [ ] `data-contracts/policy-event.schema.json` exists.
+      - [ ] The schema declares a stable schema identifier and JSON Schema dialect.
+      - [ ] Every event requires a supported schema version.
+      - [ ] Every event requires synthetic event and policy identifiers.
+      - [ ] Every event requires an event type and payload object, without prematurely defining every event-specific payload.
+      - [ ] Occurrence, effective, and ingestion timestamps are explicit, distinct fields using ISO 8601 date-time values in UTC.
+      - [ ] Unknown top-level fields are rejected.
+      - [ ] At least one valid fictional example is included.
+      - [ ] Invalid examples cover missing required fields, malformed timestamps, unsupported schema versions, and unexpected fields.
+      - [ ] Automated tests prove that valid examples pass and invalid examples fail.
+      - [ ] `data-contracts/README.md` documents field semantics and validation instructions.
+      - [ ] Contract validation runs as part of `make check`.
+      - [ ] `make check` passes.
+  validations:
+    required: true
+- type: textarea
+  id: evidence
+  attributes:
+    label: Evidence
+    description: Tests, docs, examples, screenshots, or reports that will demonstrate completion.
+    value: |
+      - Successful `make check` output.
+      - Committed valid and invalid contract examples.
+      - Automated test coverage for schema validation.
+      - Documentation explaining the occurrence, effective, and ingestion timestamp semantics.
+  validations:
+    required: true
+- type: textarea
+  id: out_of_scope
+  attributes:
+    label: Out of scope
+    description: Work intentionally deferred to later issues.
+    value: |
+      - Event-specific billing, payment, notice, service, and outcome payload schemas.
+      - The seeded 100-policy generator.
+      - Point-in-time state reconstruction.
+      - ML features, labels, services, Kafka, and cloud infrastructure.
+  validations:
+    required: true
+- type: checkboxes
+  id: boundaries
+  attributes:
+    label: Boundaries
+    options:
+    - label: Uses fictional/public inputs only
       required: true
-  - type: textarea
-    id: acceptance
-    attributes:
-      label: Acceptance checks
-      description: List objective checks, including point-in-time or clean-room constraints where relevant.
-    validations:
+    - label: Does not broaden authority or bypass human review
       required: true
-  - type: textarea
-    id: evidence
-    attributes:
-      label: Evidence
-      description: Tests, docs, examples, screenshots, or reports that will demonstrate completion.
-    validations:
-      required: true
-  - type: checkboxes
-    id: boundaries
-    attributes:
-      label: Boundaries
-      options:
-        - label: Uses fictional/public inputs only
-          required: true
-        - label: Does not broaden authority or bypass human review
-          required: true
