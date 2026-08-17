@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_000000000007",
+  "policy_id": "pol_000000000001",
+  "event_type": "service.contact_recorded",
+  "occurred_at": "2025-02-18T15:20:00Z",
+  "effective_at": "2025-02-18T15:20:00Z",
+  "ingested_at": "2025-02-18T15:20:45Z",
+  "payload": {
+    "contact_id": "con_000000000001",
+    "direction": "inbound",
+    "channel": "phone",
+    "reason": "payment_assistance",
+    "resolution": "follow_up_required"
+  }
+}

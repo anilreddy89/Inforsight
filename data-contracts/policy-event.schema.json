@@ -5,6 +5,35 @@
   "description": "Shared envelope for an immutable event in a fictional policy history.",
   "type": "object",
   "additionalProperties": false,
+  "oneOf": [
+    {
+      "$ref": "#/$defs/policy_issued_event"
+    },
+    {
+      "$ref": "#/$defs/policy_status_changed_event"
+    },
+    {
+      "$ref": "#/$defs/billing_premium_due_event"
+    },
+    {
+      "$ref": "#/$defs/payment_received_event"
+    },
+    {
+      "$ref": "#/$defs/payment_failed_event"
+    },
+    {
+      "$ref": "#/$defs/notice_sent_event"
+    },
+    {
+      "$ref": "#/$defs/service_contact_recorded_event"
+    },
+    {
+      "$ref": "#/$defs/outcome_lapsed_event"
+    },
+    {
+      "$ref": "#/$defs/outcome_surrendered_event"
+    }
+  ],
   "required": [
     "schema_version",
     "event_id",
@@ -33,7 +62,17 @@
     "event_type": {
       "description": "Stable, namespaced name used to select an event-specific payload contract.",
       "type": "string",
-      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$"
+      "enum": [
+        "policy.issued",
+        "policy.status_changed",
+        "billing.premium_due",
+        "payment.received",
+        "payment.failed",
+        "notice.sent",
+        "service.contact_recorded",
+        "outcome.lapsed",
+        "outcome.surrendered"
+      ]
     },
     "occurred_at": {
       "description": "UTC instant when the fictional event occurred.",
@@ -48,7 +87,7 @@
       "$ref": "#/$defs/utc_timestamp"
     },
     "payload": {
-      "description": "Event-specific fictional facts. Later contracts define its fields by event type.",
+      "description": "Event-specific fictional facts selected by event_type.",
       "type": "object"
     }
   },
@@ -57,6 +96,96 @@
       "type": "string",
       "format": "date-time",
       "pattern": "Z$"
+    },
+    "policy_issued_event": {
+      "properties": {
+        "event_type": {
+          "const": "policy.issued"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/policy/1.0.0#/$defs/issued"
+        }
+      }
+    },
+    "policy_status_changed_event": {
+      "properties": {
+        "event_type": {
+          "const": "policy.status_changed"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/policy/1.0.0#/$defs/status_changed"
+        }
+      }
+    },
+    "billing_premium_due_event": {
+      "properties": {
+        "event_type": {
+          "const": "billing.premium_due"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/billing/1.0.0#/$defs/premium_due"
+        }
+      }
+    },
+    "payment_received_event": {
+      "properties": {
+        "event_type": {
+          "const": "payment.received"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/payment/1.0.0#/$defs/received"
+        }
+      }
+    },
+    "payment_failed_event": {
+      "properties": {
+        "event_type": {
+          "const": "payment.failed"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/payment/1.0.0#/$defs/failed"
+        }
+      }
+    },
+    "notice_sent_event": {
+      "properties": {
+        "event_type": {
+          "const": "notice.sent"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/notice/1.0.0#/$defs/sent"
+        }
+      }
+    },
+    "service_contact_recorded_event": {
+      "properties": {
+        "event_type": {
+          "const": "service.contact_recorded"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/service/1.0.0#/$defs/contact_recorded"
+        }
+      }
+    },
+    "outcome_lapsed_event": {
+      "properties": {
+        "event_type": {
+          "const": "outcome.lapsed"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/outcome/1.0.0#/$defs/lapsed"
+        }
+      }
+    },
+    "outcome_surrendered_event": {
+      "properties": {
+        "event_type": {
+          "const": "outcome.surrendered"
+        },
+        "payload": {
+          "$ref": "https://github.com/anilreddy89/Inforsight/schemas/payloads/outcome/1.0.0#/$defs/surrendered"
+        }
+      }
     }
   }
 }

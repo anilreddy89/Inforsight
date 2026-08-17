@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/payloads/notice/1.0.0",
+  "title": "Inforsight notice event payloads",
+  "description": "Payload contracts for fictional notices without message content.",
+  "$defs": {
+    "sent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notice_id",
+        "notice_type",
+        "delivery_channel"
+      ],
+      "properties": {
+        "notice_id": {
+          "type": "string",
+          "pattern": "^ntc_[a-z0-9]{12,64}$"
+        },
+        "notice_type": {
+          "type": "string",
+          "enum": [
+            "premium_due",
+            "payment_reminder",
+            "grace_period",
+            "lapse_warning"
+          ]
+        },
+        "delivery_channel": {
+          "type": "string",
+          "enum": [
+            "postal_mail",
+            "email",
+            "phone"
+          ]
+        }
+      }
+    }
+  }
+}

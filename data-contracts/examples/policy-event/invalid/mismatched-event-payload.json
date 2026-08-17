@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_100000000006",
+  "policy_id": "pol_100000000001",
+  "event_type": "payment.received",
+  "occurred_at": "2025-02-14T10:15:00Z",
+  "effective_at": "2025-02-14T10:15:00Z",
+  "ingested_at": "2025-02-14T10:15:25Z",
+  "payload": {
+    "payment_id": "pay_100000000002",
+    "billing_id": "bil_100000000001",
+    "amount_cents": 12500,
+    "currency": "USD",
+    "method": "electronic_transfer",
+    "failure_reason": "insufficient_funds"
+  }
+}

@@ -12,7 +12,7 @@ This backlog is ordered for a natural repository history. Each item should becom
 ## Phase 1 - Policy Digital Twin
 
 - [x] Define `policy-event.schema.json` with explicit version and timestamps.
-- [ ] Define policy, billing, payment, notice, service, and outcome event payloads.
+- [x] Define policy, billing, payment, notice, service, and outcome event payloads.
 - [x] Add valid and invalid contract examples.
 - [ ] Implement a deterministic seeded generator for 100 policies.
 - [ ] Implement point-in-time state reconstruction.

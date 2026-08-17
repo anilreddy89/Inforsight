@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_000000000009",
+  "policy_id": "pol_000000000002",
+  "event_type": "outcome.surrendered",
+  "occurred_at": "2025-04-10T11:30:00Z",
+  "effective_at": "2025-04-10T00:00:00Z",
+  "ingested_at": "2025-04-10T11:30:20Z",
+  "payload": {
+    "reason": "policyholder_request",
+    "surrender_value_cents": 250000,
+    "currency": "USD"
+  }
+}

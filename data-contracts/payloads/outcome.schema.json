@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/payloads/outcome/1.0.0",
+  "title": "Inforsight outcome event payloads",
+  "description": "Payload contracts for fictional policy outcomes; later observation contracts derive labels from these facts.",
+  "$defs": {
+    "lapsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "outstanding_amount_cents",
+        "currency"
+      ],
+      "properties": {
+        "reason": {
+          "const": "nonpayment"
+        },
+        "outstanding_amount_cents": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "const": "USD"
+        }
+      }
+    },
+    "surrendered": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "surrender_value_cents",
+        "currency"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "enum": [
+            "policyholder_request",
+            "financial_need",
+            "product_change",
+            "unknown"
+          ]
+        },
+        "surrender_value_cents": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "currency": {
+          "const": "USD"
+        }
+      }
+    }
+  }
+}

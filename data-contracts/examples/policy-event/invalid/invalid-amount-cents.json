@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "evt_100000000005",
+  "policy_id": "pol_100000000001",
+  "event_type": "billing.premium_due",
+  "occurred_at": "2025-02-01T08:00:00Z",
+  "effective_at": "2025-02-15T00:00:00Z",
+  "ingested_at": "2025-02-01T08:00:15Z",
+  "payload": {
+    "billing_id": "bil_100000000001",
+    "due_date": "2025-02-15",
+    "amount_cents": 0,
+    "currency": "USD"
+  }
+}

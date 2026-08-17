@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/payloads/payment/1.0.0",
+  "title": "Inforsight payment event payloads",
+  "description": "Payload contracts for fictional payment events.",
+  "$defs": {
+    "received": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payment_id",
+        "billing_id",
+        "amount_cents",
+        "currency",
+        "method"
+      ],
+      "properties": {
+        "payment_id": {
+          "$ref": "#/$defs/payment_id"
+        },
+        "billing_id": {
+          "$ref": "#/$defs/billing_id"
+        },
+        "amount_cents": {
+          "$ref": "#/$defs/positive_amount_cents"
+        },
+        "currency": {
+          "const": "USD"
+        },
+        "method": {
+          "$ref": "#/$defs/payment_method"
+        }
+      }
+    },
+    "failed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payment_id",
+        "billing_id",
+        "amount_cents",
+        "currency",
+        "method",
+        "failure_reason"
+      ],
+      "properties": {
+        "payment_id": {
+          "$ref": "#/$defs/payment_id"
+        },
+        "billing_id": {
+          "$ref": "#/$defs/billing_id"
+        },
+        "amount_cents": {
+          "$ref": "#/$defs/positive_amount_cents"
+        },
+        "currency": {
+          "const": "USD"
+        },
+        "method": {
+          "$ref": "#/$defs/payment_method"
+        },
+        "failure_reason": {
+          "type": "string",
+          "enum": [
+            "insufficient_funds",
+            "method_declined",
+            "method_expired",
+            "processing_error"
+          ]
+        }
+      }
+    },
+    "payment_id": {
+      "type": "string",
+      "pattern": "^pay_[a-z0-9]{12,64}$"
+    },
+    "billing_id": {
+      "type": "string",
+      "pattern": "^bil_[a-z0-9]{12,64}$"
+    },
+    "positive_amount_cents": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "electronic_transfer",
+        "card",
+        "check"
+      ]
+    }
+  }
+}
