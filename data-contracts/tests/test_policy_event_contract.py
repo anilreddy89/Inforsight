@@ -1,7 +1,7 @@
 # Automated Test suite for the data-contratcs/policy-event.schema.json data contract.
-# Purpose:  Provide confidence that the schema is both correctly written and 
+# Purpose:  Provide confidence that the schema is both correctly written and
 #           strictly enfoce the rules of the data contract.
-#           Rigorous contract test that enforces the integrity of the 
+#           Rigorous contract test that enforces the integrity of the
 #           project's foundational data structure.
 # Contains two main test methods that cover the "happy path" and "unhappy path".
 
@@ -33,7 +33,7 @@ def load_json(path: Path) -> dict:
 class PolicyEventContractTest(unittest.TestCase):
     # Hook method for setting up class fixture before running tests in the class.
     # 1) Loads the policy-event.schema.json file
-    # 2) Performs "meta-check" to valdiate that the schema file itself is valid, 
+    # 2) Performs "meta-check" to valdiate that the schema file itself is valid,
     #    well-frmatted JSON schema according to Draft 2020-12 standard.
     #    Makes sure there are no Syntax errors in the schema.
     # 3) Creates a 'validator' that will be used by all the tests in the class
@@ -64,19 +64,19 @@ class PolicyEventContractTest(unittest.TestCase):
 
 
     # *** Unhappy Path test ***
-    # This is the more sophisticated test. It verifies that data you expect to be incorrect is rejected, 
+    # This is the more sophisticated test. It verifies that data you expect to be incorrect is rejected,
     # and more importantly, that it's rejected for the correct reason.
-    # 
+    #
     # 1) It finds all .json files inside the data-contracts/examples/policy-event/invalid/ directory.
-    # 2) It first asserts that the set of invalid example files found on disk exactly matches 
-    #    the files defined in the EXPECTED_INVALID_RESULTS dictionary. 
+    # 2) It first asserts that the set of invalid example files found on disk exactly matches
+    #    the files defined in the EXPECTED_INVALID_RESULTS dictionary.
     #    This ensures no invalid examples are missing their expected failure definition.
     # 3) It then iterates through each "invalid" example.
     # 4) It runs the validator and collects the errors.
-    # 5) It looks up the expected failure reason (e.g., const, required) and the field path from the 
+    # 5) It looks up the expected failure reason (e.g., const, required) and the field path from the
     #    EXPECTED_INVALID_RESULTS dictionary.
-    # 6) Finally, it asserts that the list of actual errors contains the specific, expected error. 
-    #    This confirms not only that the data failed validation, but that it failed precisely where 
+    # 6) Finally, it asserts that the list of actual errors contains the specific, expected error.
+    #    This confirms not only that the data failed validation, but that it failed precisely where
     #    and how it was designed to fail.
     def test_invalid_examples_are_rejected(self) -> None:
         examples = sorted(INVALID_EXAMPLES.glob("*.json"))
