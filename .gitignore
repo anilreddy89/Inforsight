@@ -1,0 +1,112 @@
+# ==============================================================================
+# Secrets and Local Configuration
+# ==============================================================================
+# Never commit secrets. The 'check_repository_boundaries.sh' script provides
+# an additional layer of protection against these patterns.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+
+# ==============================================================================
+# OS, Editor, and Tooling
+# ==============================================================================
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.idea/
+.vscode/
+*.swp
+*~
+
+# ==============================================================================
+# Language & Framework Specific
+# ==============================================================================
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Java / Gradle / Maven
+.gradle/
+target/
+out/
+*.class
+*.jar
+*.war
+
+# JavaScript
+node_modules/
+.next/
+coverage/
+
+# ==============================================================================
+# Build, Distribution, and Data Artifacts
+# ==============================================================================
+# General build/distribution artifacts
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data and model artifacts
+data/raw/
+data/interim/
+data/processed/
+artifacts/
+models/
+*.parquet
+*.pkl
+*.joblib
+*.onnx
+*.bin
+
+# ==============================================================================
+# Infrastructure and Logs
+# ==============================================================================
+# Terraform state
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Local planning and design artifacts
+# Keep these out of version control until they are reviewed for publication.
+Documents/
+
+
+# Git commit script for local only
+git_commit_script.sh
