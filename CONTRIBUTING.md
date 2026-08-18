@@ -9,6 +9,8 @@
 5. Document experiments, including failed or rejected approaches, in `docs/experiments/`.
 6. Run `make check` before opening a pull request.
 
+Improvements discovered during implementation, review, or maintenance should follow the [engineering improvement workflow](docs/engineering-improvement-workflow.md). Use a focused follow-up issue when an observation is outside the active issue or is discovered after merge.
+
 ## Clean-room requirement
 
 Contributions must use fictional data, fictional procedures, public references, and original implementation. Do not contribute confidential or proprietary insurer data, code, schemas, screenshots, rules, internal terminology, credentials, or customer information. See [the clean-room policy](docs/clean-room-policy.md).
