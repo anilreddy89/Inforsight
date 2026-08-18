@@ -1,0 +1,45 @@
+{
+  "artifact": {
+    "file": "sample-policy-events.jsonl",
+    "format": "jsonl",
+    "sha256": "72f1d284dd106fea27da905079ab771a39d65c3da4b289a84f1bfb52e359d75b"
+  },
+  "composition": {
+    "event_count": 49,
+    "event_type_counts": {
+      "billing.premium_due": 8,
+      "notice.sent": 6,
+      "outcome.lapsed": 2,
+      "outcome.surrendered": 2,
+      "payment.failed": 4,
+      "payment.received": 6,
+      "policy.issued": 8,
+      "policy.status_changed": 10,
+      "service.contact_recorded": 3
+    },
+    "policy_count": 8,
+    "product_variant_counts": {
+      "fictional_term_life": 1,
+      "fictional_whole_life": 7
+    },
+    "scenario_counts": {
+      "active": 2,
+      "lapsed": 2,
+      "recovered": 2,
+      "surrendered": 2
+    }
+  },
+  "dataset_id": "inforsight-fictional-policy-events-sample",
+  "dataset_version": "0.1.0",
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "selection": {
+    "histories_per_scenario": 2,
+    "rule": "first-two-complete-histories-per-scenario-in-generator-order"
+  }
+}

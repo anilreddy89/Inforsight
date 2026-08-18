@@ -60,7 +60,7 @@ scripts/          Repository validation and developer utilities
 
 ## Current status
 
-Phase 1 - Policy Digital Twin. The versioned policy-event envelope, strict event payload contracts, deterministic seeded generator for 100 fictional policy histories, point-in-time state reconstruction, and cross-event ordering, lifecycle, date, and replay validation are implemented on `main`. The next implementation increment will publish a small fictional sample dataset with `DATA_CARD.md`.
+Phase 1 - Policy Digital Twin. The versioned event contracts, deterministic 100-policy generator, point-in-time reconstruction, and cross-event history validation are implemented. A reproducible eight-policy fictional [sample dataset](datasets/sample-policy-events.jsonl) is published with its [data card](datasets/DATA_CARD.md) and integrity [manifest](datasets/sample-manifest.json). The next increment will assess aggregate synthetic rates against cited public references without treating synthetic output as representative of a real insurer.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 

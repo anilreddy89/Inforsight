@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, and serialization.
+This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, serialization, and sample publication.
 
 Update this document whenever a simulator feature adds or changes:
 
@@ -12,6 +12,7 @@ Update this document whenever a simulator feature adds or changes:
 - An ordering, lifecycle, date, or reference invariant.
 - A state field or cutoff rule.
 - Serialization, provenance, or CLI behavior.
+- Published sample selection, composition, or integrity behavior.
 
 The event JSON Schemas remain the source of truth for individual event structure. This document explains how the Python simulator composes and processes those events.
 
@@ -44,13 +45,21 @@ Caller or CLI
     |       +-- returns PolicyState or None
     |
     +-- histories_to_jsonl(histories)
+    |       |
+    |       +-- stable event flattening
+    |       +-- sorted JSON keys and compact separators
+    |       +-- returns byte-stable JSON Lines text
+    |
+    +-- scripts/build_sample_dataset.py
             |
-            +-- stable event flattening
-            +-- sorted JSON keys and compact separators
-            +-- returns byte-stable JSON Lines text
+            +-- generate canonical seed-20260817 100-policy corpus
+            +-- select first two complete histories per scenario
+            +-- serialize eight histories to stable JSON Lines
+            +-- build deterministic counts, provenance, and SHA-256 manifest
+            +-- write artifacts explicitly or verify committed bytes
 ```
 
-Generation, validation, reconstruction, and serialization are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source.
+Generation, validation, reconstruction, serialization, and publication are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication is a repository-maintenance path rather than part of the simulator's public Python API.
 
 ## Main data shapes
 
@@ -390,6 +399,38 @@ Current provenance contains:
 - Policy count.
 - Simulation start.
 
+## Journey 6: Published sample dataset
+
+Repository-maintenance commands:
+
+```bash
+python3 scripts/build_sample_dataset.py --check
+python3 scripts/build_sample_dataset.py --write
+```
+
+Call chain:
+
+```text
+build_sample_dataset.py
+    |
+    +-- GeneratorConfig(seed=20260817, policy_count=100)
+    +-- generate_policy_histories(...)
+    +-- select_sample_histories(...)
+    |       +-- classify structured event sequence
+    |       +-- retain first two complete histories per scenario
+    |       +-- fail unless all four scenarios are satisfied
+    +-- histories_to_jsonl(selected)
+    +-- compute scenario, event-type, and product counts
+    +-- compute SHA-256 over exact JSONL bytes
+    +-- serialize deterministic sample-manifest.json
+    +-- --check compares both committed artifacts byte for byte
+    +-- --write intentionally replaces both committed artifacts
+```
+
+The published sample contains eight complete histories and 49 events. It covers every current scenario and event type plus both fictional product variants. The manifest records dataset, generator, and schema versions; source inputs; selection rules; composition; and integrity metadata. The colocated `datasets/DATA_CARD.md` defines intended uses and limitations.
+
+Publication does not alter generator behavior or expose a new simulator API. Exact regeneration protects the artifact from manual edits, stale provenance, newline changes, and other drift.
+
 ## Failure journey
 
 Failures are intentionally raised near the boundary that owns them:
@@ -403,6 +444,8 @@ Failures are intentionally raised near the boundary that owns them:
 | Lifecycle validation | Mismatched or unsupported transition, inconsistent terminal outcome | `ValueError` |
 | Reconstruction cutoff | Naive, non-UTC, or malformed cutoff | `ValueError` |
 | CLI output | Existing or unwritable output path | Argument-parser error and nonzero exit |
+| Sample selection | Source corpus cannot supply two histories per scenario | `ValueError` |
+| Sample verification | Missing or stale dataset or manifest bytes | Diagnostic and nonzero exit |
 
 The simulator does not silently repair, reorder in place, or infer missing lifecycle facts.
 
@@ -428,6 +471,7 @@ The package exports these current simulator-facing functions and values:
 | `test_history_validation.py` | Lifecycle transitions, dates, references, terminal rules, shuffled and repeated replay |
 | `test_reconstruction.py` | Cutoff semantics, returned state, invalid history inputs, non-mutation |
 | `test_serialization.py` | JSON Lines stability and CLI stream/file behavior |
+| `test_published_dataset.py` | Published schema/history validity, coverage, manifest integrity, and exact regeneration |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
@@ -463,7 +507,7 @@ The flow does not yet include:
 - Corrections, supersession, retractions, or event authority resolution.
 - Reinstatement or transitions out of terminal states.
 - Configurable grace-period or notice calculations.
-- Published dataset selection and `DATA_CARD.md` creation.
+- Aggregate synthetic-rate assessment against cited public references.
 - Observation records, 90-day labels, features, or model inputs.
 - Storage, services, messaging, or cloud execution.
 
