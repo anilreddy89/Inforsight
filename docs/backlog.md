@@ -17,7 +17,7 @@ This backlog is ordered for a natural repository history. Each item should becom
 - [x] Implement a deterministic seeded generator for 100 policies.
 - [x] Implement point-in-time state reconstruction.
 - [x] Test event ordering, valid transitions, impossible dates, and deterministic replay ([issue #10](https://github.com/anilreddy89/Inforsight/issues/10)).
-- [ ] Publish a small sample dataset and `DATA_CARD.md`.
+- [x] Publish a small sample dataset and `DATA_CARD.md` ([issue #12](https://github.com/anilreddy89/Inforsight/issues/12)).
 - [ ] Assess aggregate synthetic rates against cited public references and document calibration assumptions.
 
 ## Phase 2 - Baseline ML

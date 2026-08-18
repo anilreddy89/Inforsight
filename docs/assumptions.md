@@ -36,7 +36,8 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - Billing intervals use simplified 30-day monthly, 90-day quarterly, 182-day semiannual, and 365-day annual schedules.
 - An event is ingested one hour after it occurs in the initial generator. Complex late-arriving events and corrections remain deferred.
 - The current nine-event contract is an intentional MVP subset; richer lifecycle concepts require separate contract changes before generation.
-- The 100-policy corpus is generated during tests and development but is not committed as a dataset. A later issue will publish a smaller inspectable sample with a data card.
+- The 100-policy corpus is generated during tests and development but is not committed as a dataset.
+- The published sample selects the first two complete histories per scenario from the canonical seed-`20260817` 100-policy corpus. Its balanced eight-policy composition exists for inspection and coverage, not as an estimate of real-world prevalence.
 
 ## Risk outcome
 

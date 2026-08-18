@@ -260,7 +260,15 @@ These equal weights are transparent test inputs. They are not estimates of insur
 
 ## Dataset boundary
 
-The 100-policy run is the deterministic development and acceptance corpus. This package can generate temporary larger runs, but large generated datasets should not be committed. A later issue will select a small, manually inspectable sample and publish its assumptions and limitations in `DATA_CARD.md`.
+The 100-policy run is the deterministic development and acceptance corpus. This package can generate temporary larger runs, but large generated datasets should not be committed.
+
+The repository publishes an eight-policy, 49-event [fictional sample](../datasets/sample-policy-events.jsonl), its machine-readable [manifest](../datasets/sample-manifest.json), and a detailed [data card](../datasets/DATA_CARD.md). The publication script generates the canonical 100-policy corpus with seed `20260817` and selects the first two complete histories from each scenario in generator order. This balanced sample is intended for inspection, contract validation, and replay demonstrations—not statistical inference or model evaluation.
+
+Verify that the committed artifacts reproduce exactly:
+
+```bash
+python3 scripts/build_sample_dataset.py --check
+```
 
 Aggregate-rate calibration, observation construction, and outcome-label derivation remain separate work.
 
@@ -273,6 +281,6 @@ python3 -m unittest discover -s simulator/tests -v
 make check
 ```
 
-The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, and fictional-data boundaries.
+The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, fictional-data boundaries, and exact regeneration of the published sample and manifest.
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).
