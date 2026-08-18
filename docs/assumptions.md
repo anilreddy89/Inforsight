@@ -21,6 +21,11 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - State reconstruction uses events whose `effective_at` time is on or before the requested as-of time; an event exactly at the cutoff is included.
 - A valid reconstruction cutoff before issuance has no policy state and returns no result.
 - Effective-time reconstruction does not represent what was known by an ingestion-time cutoff; bitemporal known-at queries remain deferred.
+- The current supported transitions are `active` to `grace_period`, `grace_period` to `active`, `grace_period` to `lapsed`, and `active` to `surrendered`.
+- Lapsed and surrendered are terminal in the current MVP. Each terminal status change is paired with its matching outcome at the same effective instant.
+- A lapse follows a failed payment and lapse warning; a surrender follows a structured surrender inquiry. These are fictional scenario-coherence rules, not representations of insurer procedures.
+- History replay uses `(effective_at, occurred_at, event_id)` as its total order and does not rely on caller-provided list order.
+- Ingestion cannot precede occurrence. A retroactively effective event may have `effective_at` before `occurred_at`; correction and supersession semantics remain deferred.
 
 ## Initial generator
 
