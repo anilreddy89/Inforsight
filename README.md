@@ -60,7 +60,7 @@ scripts/          Repository validation and developer utilities
 
 ## Current status
 
-Phase 1 - Policy Digital Twin. The versioned policy-event envelope, strict event payload contracts, deterministic seeded generator for 100 fictional policy histories, and point-in-time state reconstruction are present on `main`. Issue #10's event-ordering, lifecycle-transition, impossible-date, and deterministic-replay validation is implemented on its working branch and awaits pull-request review and merge.
+Phase 1 - Policy Digital Twin. The versioned policy-event envelope, strict event payload contracts, deterministic seeded generator for 100 fictional policy histories, point-in-time state reconstruction, and cross-event ordering, lifecycle, date, and replay validation are implemented on `main`. The next implementation increment will publish a small fictional sample dataset with `DATA_CARD.md`.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
