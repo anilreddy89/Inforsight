@@ -27,6 +27,42 @@ assert len(histories) == 100
 
 `policy_count` defaults to 100 and accepts any positive integer. Each inner list is one ordered policy history, and every history begins with one `policy.issued` event.
 
+## Policy-history validation
+
+JSON Schema validates one event at a time. The simulator also provides a history-level validator for relationships that can only be checked across events:
+
+```python
+from inforsight_simulator import generate_policy_histories, validate_policy_history
+
+history = generate_policy_histories(seed=20260817, policy_count=1)[0]
+validate_policy_history(history)  # Returns None; raises ValueError when invalid.
+```
+
+Validation sorts a private representation by `(effective_at, occurred_at, event_id)`. Caller-provided order is not authoritative, and the supplied list and event dictionaries are not mutated.
+
+The current fictional MVP transition graph is:
+
+```text
+policy.issued(initial_status=active)
+    active -> grace_period
+    grace_period -> active
+    grace_period -> lapsed
+    active -> surrendered
+```
+
+Each status change must declare the state produced by the preceding transition as its `previous_status`. No-op and other transition edges are rejected. `lapsed` and `surrendered` are terminal in this MVP, and their status changes must pair with the matching outcome at the same effective instant. Lapse also requires an earlier failed payment and lapse warning; surrender requires an earlier structured surrender inquiry.
+
+The validator also enforces these temporal and reference invariants:
+
+- All replay timestamps are valid UTC instants, and ingestion cannot precede occurrence.
+- Activity cannot occur or become effective before issuance.
+- A billing due date matches the UTC date on which that billing event becomes effective.
+- A payment references an established billing item and cannot occur or become effective before it.
+- Payment-reminder and lapse-warning notices cannot precede a failed payment.
+- No event can become effective after a terminal state.
+
+`effective_at` may precede `occurred_at`; that can represent a retroactively effective fact. Correction, supersession, and bitemporal known-at semantics remain deferred. The validator checks the complete supplied history, so an invalid future suffix is rejected even when reconstruction uses an earlier cutoff.
+
 ## Point-in-time state reconstruction
 
 Reconstruction answers one question: given a policy's complete event history, what was its lifecycle state at a particular UTC time?
@@ -77,7 +113,7 @@ Naive or non-UTC datetimes are rejected because their temporal meaning would be 
 Reconstruction follows a small deterministic pipeline:
 
 ```text
-Validate cutoff and history
+Validate cutoff and complete history
         ↓
 Parse event timestamps
         ↓
@@ -112,7 +148,7 @@ Selected events are sorted by:
 - Premium amount and currency.
 - Effective issuance time.
 
-Each selected `policy.status_changed` event then replaces the lifecycle status with its `new_status`. For example:
+Each selected `policy.status_changed` event then replaces the lifecycle status with its validated `new_status`. For example:
 
 ```text
 policy.issued          → active
@@ -122,7 +158,7 @@ policy.status_changed  → active
 
 A cutoff before the first status change returns `active`, a cutoff at the grace-period change returns `grace_period`, and a cutoff at recovery returns `active` again.
 
-Billing, payment, notice, service-contact, and outcome events count as applied facts for audit metadata but do not directly change this narrow lifecycle state. The reconstructor does not infer a status from an outcome event or repair missing facts. Comprehensive transition and outcome-pair validation belongs to the separate lifecycle-validation work.
+Billing, payment, notice, service-contact, and outcome events count as applied facts for audit metadata but do not directly change this narrow lifecycle state. The reconstructor does not infer a status from an outcome event or repair missing facts. It validates transition and outcome consistency before replay.
 
 ### Returned state
 
@@ -148,7 +184,7 @@ This differs from an invalid or ambiguous history, which raises `ValueError`.
 
 ### Validation boundary
 
-The reconstructor rejects inputs that cannot produce an unambiguous replay, including:
+The reconstructor validates the complete supplied history before selecting the cutoff prefix. It rejects inputs that cannot produce an unambiguous replay, including:
 
 - Empty histories or non-event entries.
 - Missing reconstruction fields.
@@ -157,9 +193,12 @@ The reconstructor rejects inputs that cannot produce an unambiguous replay, incl
 - Unsupported event types.
 - Invalid UTC timestamps or cutoffs.
 - Missing or multiple issuance events.
-- An event effective before issuance.
+- Activity before issuance or after a terminal state.
+- Invalid lifecycle transitions or mismatched previous status.
+- Missing or inconsistent terminal outcome/status pairs.
+- Impossible billing, payment, notice, ingestion, or outcome timing.
 
-Complete payload validation remains the responsibility of the versioned JSON contracts. Reconstruction enforces only the invariants it depends on; it does not duplicate the JSON Schema validator or exhaustively validate every lifecycle transition and impossible date.
+Complete single-event payload validation remains the responsibility of the versioned JSON contracts. Runtime validation enforces the cross-event invariants needed by the current fictional histories without duplicating the JSON Schema validator.
 
 ### Effective time versus ingestion time
 
@@ -223,7 +262,7 @@ These equal weights are transparent test inputs. They are not estimates of insur
 
 The 100-policy run is the deterministic development and acceptance corpus. This package can generate temporary larger runs, but large generated datasets should not be committed. A later issue will select a small, manually inspectable sample and publish its assumptions and limitations in `DATA_CARD.md`.
 
-Exhaustive transition and impossible-date validation, aggregate-rate calibration, observation construction, and outcome-label derivation remain separate work.
+Aggregate-rate calibration, observation construction, and outcome-label derivation remain separate work.
 
 ## Tests
 
@@ -234,4 +273,6 @@ python3 -m unittest discover -s simulator/tests -v
 make check
 ```
 
-The tests validate the complete default corpus against the event contracts and check count, scenario coverage, identifier uniqueness, payment-to-billing integrity, deterministic serialization, CLI behavior, point-in-time reconstruction, cutoff boundaries, invalid reconstruction inputs, and fictional-data boundaries.
+The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, and fictional-data boundaries.
+
+For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).

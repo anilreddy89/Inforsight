@@ -4,6 +4,7 @@ from .config import GeneratorConfig
 from .generator import generate_policy_histories, generation_provenance
 from .reconstruction import PolicyState, reconstruct_policy_state
 from .serialization import histories_to_jsonl
+from .validation import validate_policy_history
 
 
 __version__ = "0.1.0"
@@ -16,6 +17,7 @@ __all__ = [
     "PolicyState",
     "project_identity",
     "reconstruct_policy_state",
+    "validate_policy_history",
 ]
 
 

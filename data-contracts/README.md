@@ -32,7 +32,7 @@ Corrections must be represented as new immutable events rather than edits to an 
 
 Amounts are integer cents and the initial currency is fixed to `USD`. Payload dates are ISO 8601 calendar dates; event times remain UTC timestamps in the envelope. Identifiers use synthetic, type-specific prefixes. Enum values are project-local fictional terms rather than representations of insurer procedures.
 
-These schemas validate individual event structure only. Chronological ordering, lifecycle transitions, grace-period calculations, corrections across events, and label derivation remain separate work. Outcome events are facts; the later ML contract will derive prediction labels from eligible future outcome events.
+These schemas validate individual event structure only. The simulator's `validate_policy_history` API separately enforces the current cross-event ordering, lifecycle-transition, terminal-pair, reference, and date invariants. Correction semantics, configurable grace-period calculations, and label derivation remain separate work. Outcome events are facts; the later ML contract will derive prediction labels from eligible future outcome events.
 
 ## Validate the contract
 
