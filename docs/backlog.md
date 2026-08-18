@@ -18,6 +18,7 @@ This backlog is ordered for a natural repository history. Each item should becom
 - [ ] Implement point-in-time state reconstruction.
 - [ ] Test event ordering, valid transitions, impossible dates, and deterministic replay.
 - [ ] Publish a small sample dataset and `DATA_CARD.md`.
+- [ ] Assess aggregate synthetic rates against cited public references and document calibration assumptions.
 
 ## Phase 2 - Baseline ML
 
@@ -30,4 +31,6 @@ This backlog is ordered for a natural repository history. Each item should becom
 
 ## Deferred intentionally
 
-Java services, Kafka, cloud deployment, bounded agents, and RAG remain deferred until the data and baseline-model gates pass.
+- Evaluate richer lifecycle contracts only when the MVP requires them: issue age, face amount, acquisition channel, payment retries, reinstatement, maturity, loans, cash value, address and payment-method changes, and prior conservation attempts.
+- Add SQL persistence schemas only when a storage consumer requires them.
+- Java services, Kafka, cloud deployment, bounded agents, and RAG remain deferred until the data and baseline-model gates pass.

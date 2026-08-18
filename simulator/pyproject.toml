@@ -4,12 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "inforsight-simulator"
-version = "0.0.0"
+version = "0.1.0"
 description = "Seeded fictional policy-event simulator for Inforsight"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Anil Kumar Reddy Jonnala" }]
 dependencies = []
+
+[project.scripts]
+inforsight-simulate = "inforsight_simulator.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
