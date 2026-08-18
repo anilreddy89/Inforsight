@@ -60,7 +60,7 @@ scripts/          Repository validation and developer utilities
 
 ## Current status
 
-Phase 1 - Policy Digital Twin. The versioned policy-event envelope, strict event payload contracts, and deterministic seeded generator for 100 fictional policy histories are complete. Point-in-time state reconstruction is the next implementation increment.
+Phase 1 - Policy Digital Twin. The versioned policy-event envelope, strict event payload contracts, deterministic seeded generator for 100 fictional policy histories, and point-in-time state reconstruction are implemented. Exhaustive event-ordering, lifecycle-transition, impossible-date, and replay validation is the next implementation increment.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 

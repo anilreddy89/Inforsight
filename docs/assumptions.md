@@ -18,7 +18,9 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - Billing, payment, notice, service, and policy-change events are immutable facts.
 - Notices and service contacts contain structured categories only, without message text or personal content.
 - Corrections are represented by new events rather than rewriting history.
-- State reconstruction uses events whose occurrence time is on or before the requested as-of time.
+- State reconstruction uses events whose `effective_at` time is on or before the requested as-of time; an event exactly at the cutoff is included.
+- A valid reconstruction cutoff before issuance has no policy state and returns no result.
+- Effective-time reconstruction does not represent what was known by an ingestion-time cutoff; bitemporal known-at queries remain deferred.
 
 ## Initial generator
 
