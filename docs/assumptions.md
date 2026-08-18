@@ -20,6 +20,17 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - Corrections are represented by new events rather than rewriting history.
 - State reconstruction uses events whose occurrence time is on or before the requested as-of time.
 
+## Initial generator
+
+- The deterministic development corpus contains 100 policies by default.
+- The fixed simulation start is `2024-01-01T00:00:00Z`; generated issue times and later events are derived from it rather than the wall clock.
+- The default corpus uses equal fictional weights for active, recovered-from-grace, lapsed, and surrendered scenarios so every MVP path is exercised predictably.
+- Premium amounts, scenario weights, payment methods, notice channels, service contacts, and outcome reasons are invented engineering inputs rather than calibrated real-world distributions.
+- Billing intervals use simplified 30-day monthly, 90-day quarterly, 182-day semiannual, and 365-day annual schedules.
+- An event is ingested one hour after it occurs in the initial generator. Complex late-arriving events and corrections remain deferred.
+- The current nine-event contract is an intentional MVP subset; richer lifecycle concepts require separate contract changes before generation.
+- The 100-policy corpus is generated during tests and development but is not committed as a dataset. A later issue will publish a smaller inspectable sample with a data card.
+
 ## Risk outcome
 
 - The initial prediction horizon is 90 days.
