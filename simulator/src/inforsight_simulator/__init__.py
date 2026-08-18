@@ -2,6 +2,7 @@
 
 from .config import GeneratorConfig
 from .generator import generate_policy_histories, generation_provenance
+from .reconstruction import PolicyState, reconstruct_policy_state
 from .serialization import histories_to_jsonl
 
 
@@ -12,7 +13,9 @@ __all__ = [
     "generate_policy_histories",
     "generation_provenance",
     "histories_to_jsonl",
+    "PolicyState",
     "project_identity",
+    "reconstruct_policy_state",
 ]
 
 

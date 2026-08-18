@@ -15,7 +15,7 @@ This backlog is ordered for a natural repository history. Each item should becom
 - [x] Define policy, billing, payment, notice, service, and outcome event payloads.
 - [x] Add valid and invalid contract examples.
 - [x] Implement a deterministic seeded generator for 100 policies.
-- [ ] Implement point-in-time state reconstruction.
+- [x] Implement point-in-time state reconstruction.
 - [ ] Test event ordering, valid transitions, impossible dates, and deterministic replay.
 - [ ] Publish a small sample dataset and `DATA_CARD.md`.
 - [ ] Assess aggregate synthetic rates against cited public references and document calibration assumptions.
