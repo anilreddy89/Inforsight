@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, serialization, and sample publication.
+This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, serialization, sample publication, and aggregate assessment.
 
 Update this document whenever a simulator feature adds or changes:
 
@@ -13,6 +13,7 @@ Update this document whenever a simulator feature adds or changes:
 - A state field or cutoff rule.
 - Serialization, provenance, or CLI behavior.
 - Published sample selection, composition, or integrity behavior.
+- Aggregate metric definitions, provenance, or assessment-artifact behavior.
 
 The event JSON Schemas remain the source of truth for individual event structure. This document explains how the Python simulator composes and processes those events.
 
@@ -51,15 +52,22 @@ Caller or CLI
     |       +-- returns byte-stable JSON Lines text
     |
     +-- scripts/build_sample_dataset.py
+    |       |
+    |       +-- generate canonical seed-20260817 100-policy corpus
+    |       +-- select first two complete histories per scenario
+    |       +-- serialize eight histories to stable JSON Lines
+    |       +-- build deterministic counts, provenance, and SHA-256 manifest
+    |       +-- write artifacts explicitly or verify committed bytes
+    |
+    +-- scripts/assess_synthetic_rates.py
             |
-            +-- generate canonical seed-20260817 100-policy corpus
-            +-- select first two complete histories per scenario
-            +-- serialize eight histories to stable JSON Lines
-            +-- build deterministic counts, provenance, and SHA-256 manifest
-            +-- write artifacts explicitly or verify committed bytes
+            +-- generate and validate canonical 100-policy corpus
+            +-- calculate explicit count, ratio, amount, and timing metrics
+            +-- attach source, comparability, and calibration decisions
+            +-- write or verify deterministic assessment JSON
 ```
 
-Generation, validation, reconstruction, serialization, and publication are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication is a repository-maintenance path rather than part of the simulator's public Python API.
+Generation, validation, reconstruction, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
 
 ## Main data shapes
 
@@ -431,6 +439,37 @@ The published sample contains eight complete histories and 49 events. It covers 
 
 Publication does not alter generator behavior or expose a new simulator API. Exact regeneration protects the artifact from manual edits, stale provenance, newline changes, and other drift.
 
+## Journey 7: Aggregate synthetic-rate assessment
+
+Repository-maintenance commands:
+
+```bash
+python3 scripts/assess_synthetic_rates.py --check
+python3 scripts/assess_synthetic_rates.py --write
+```
+
+Call chain:
+
+```text
+assess_synthetic_rates.py
+    |
+    +-- GeneratorConfig(seed=20260817, policy_count=100)
+    +-- generate_policy_histories(...)
+    +-- validate_policy_history(...) for every complete history
+    +-- classify_scenario(...) from structured lifecycle events
+    +-- assess_histories(...)
+    |       +-- calculate policy and event counts
+    |       +-- retain numerator and denominator for every proportion
+    |       +-- summarize premium cents and effective-time intervals
+    +-- attach fixed public-source metadata and precise locators
+    +-- record comparable, directional_only, or not_comparable judgments
+    +-- record retain, parameterize, defer, or no-change decisions
+    +-- --check compares committed JSON byte for byte
+    +-- --write intentionally replaces the derived JSON artifact
+```
+
+The assessment consumes the canonical 100-policy development corpus, not the balanced eight-policy published sample. It reports one-path synthetic proportions and does not annualize them. Public source values remain metadata and comparison context; they are not generator inputs. The maintained report at `docs/experiments/phase-01-07-synthetic-rate-assessment.md` explains why no reviewed measure is directly comparable and why generator and dataset versions remain unchanged.
+
 ## Failure journey
 
 Failures are intentionally raised near the boundary that owns them:
@@ -446,6 +485,9 @@ Failures are intentionally raised near the boundary that owns them:
 | CLI output | Existing or unwritable output path | Argument-parser error and nonzero exit |
 | Sample selection | Source corpus cannot supply two histories per scenario | `ValueError` |
 | Sample verification | Missing or stale dataset or manifest bytes | Diagnostic and nonzero exit |
+| Assessment input | Empty histories, invalid history, or unsupported scenario | `ValueError` |
+| Assessment calculation | Zero denominator or non-whole-day timing assumption | `ValueError` |
+| Assessment verification | Missing or stale committed result | Diagnostic and nonzero exit |
 
 The simulator does not silently repair, reorder in place, or infer missing lifecycle facts.
 
@@ -472,6 +514,7 @@ The package exports these current simulator-facing functions and values:
 | `test_reconstruction.py` | Cutoff semantics, returned state, invalid history inputs, non-mutation |
 | `test_serialization.py` | JSON Lines stability and CLI stream/file behavior |
 | `test_published_dataset.py` | Published schema/history validity, coverage, manifest integrity, and exact regeneration |
+| `test_synthetic_rate_assessment.py` | Metric math, denominators, provenance, sources, decisions, and exact assessment regeneration |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
@@ -507,7 +550,6 @@ The flow does not yet include:
 - Corrections, supersession, retractions, or event authority resolution.
 - Reinstatement or transitions out of terminal states.
 - Configurable grace-period or notice calculations.
-- Aggregate synthetic-rate assessment against cited public references.
 - Observation records, 90-day labels, features, or model inputs.
 - Storage, services, messaging, or cloud execution.
 

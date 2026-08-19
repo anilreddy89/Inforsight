@@ -187,4 +187,4 @@ The dataset version is independent of the event-schema and generator versions.
 - Never hand-edit the JSONL artifact or manifest to make verification pass.
 - Preserve old versions through Git history rather than committing multiple large generated corpora without a demonstrated consumer.
 
-Aggregate-rate assessment is a separate Phase 1 activity. It may use temporary generated corpora and cited public references, but it must not retroactively describe this sample as calibrated or representative.
+The Phase 1 [synthetic-rate assessment](../docs/experiments/phase-01-07-synthetic-rate-assessment.md) excludes this balanced sample from estimation and retains the canonical equal scenario mix as a coverage fixture. It found no directly comparable public measure that justified changing the generator or published artifacts. The sample remains uncalibrated and non-representative.

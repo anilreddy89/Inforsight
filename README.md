@@ -60,7 +60,7 @@ scripts/          Repository validation and developer utilities
 
 ## Current status
 
-Phase 1 - Policy Digital Twin. The versioned event contracts, deterministic 100-policy generator, point-in-time reconstruction, and cross-event history validation are implemented. A reproducible eight-policy fictional [sample dataset](datasets/sample-policy-events.jsonl) is published with its [data card](datasets/DATA_CARD.md) and integrity [manifest](datasets/sample-manifest.json). The next increment will assess aggregate synthetic rates against cited public references without treating synthetic output as representative of a real insurer.
+Phase 1 - Policy Digital Twin is complete. The versioned event contracts, deterministic 100-policy generator, point-in-time reconstruction, cross-event history validation, and reproducible eight-policy fictional [sample dataset](datasets/sample-policy-events.jsonl) are implemented. The aggregate [synthetic-rate assessment](docs/experiments/phase-01-07-synthetic-rate-assessment.md) compares the generator boundary with cited public references and retains the equal scenario mix as a coverage fixture rather than a prevalence estimate. Phase 2 begins with leakage-safe observation records and a 90-day outcome-label contract.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
@@ -74,7 +74,7 @@ cd Inforsight
 make check
 ```
 
-The check runs repository boundary validation and the simulator smoke tests. Additional language-specific checks will be added when those components become real.
+The check runs repository boundary validation, published-dataset and synthetic-rate reproducibility checks, data-contract tests, and simulator tests. Additional language-specific checks will be added when those components become real.
 
 [GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request.
 

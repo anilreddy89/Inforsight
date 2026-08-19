@@ -38,6 +38,9 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - The current nine-event contract is an intentional MVP subset; richer lifecycle concepts require separate contract changes before generation.
 - The 100-policy corpus is generated during tests and development but is not committed as a dataset.
 - The published sample selects the first two complete histories per scenario from the canonical seed-`20260817` 100-policy corpus. Its balanced eight-policy composition exists for inspection and coverage, not as an estimate of real-world prevalence.
+- The Phase 1 synthetic-rate assessment retains the equal four-scenario allocation as a deterministic coverage fixture. It is not calibrated to an annual lapse, surrender, recovery, or retention rate.
+- Current policy proportions cover one generated scenario path and have no policy-year exposure denominator. They must not be annualized or compared numerically with exposure-based public experience rates.
+- Annual lapse or surrender calibration remains deferred until multi-period exposure, policy duration, and compatible product definitions exist. Scenario weights may be parameterized separately later without changing the canonical coverage corpus.
 
 ## Risk outcome
 
