@@ -18,7 +18,7 @@ This backlog is ordered for a natural repository history. Each item should becom
 - [x] Implement point-in-time state reconstruction.
 - [x] Test event ordering, valid transitions, impossible dates, and deterministic replay ([issue #10](https://github.com/anilreddy89/Inforsight/issues/10)).
 - [x] Publish a small sample dataset and `DATA_CARD.md` ([issue #12](https://github.com/anilreddy89/Inforsight/issues/12)).
-- [ ] Assess aggregate synthetic rates against cited public references and document calibration assumptions.
+- [x] Assess aggregate synthetic rates against cited public references and document calibration assumptions ([issue #14](https://github.com/anilreddy89/Inforsight/issues/14)).
 
 ## Phase 2 - Baseline ML
 

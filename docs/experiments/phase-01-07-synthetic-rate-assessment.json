@@ -1,0 +1,324 @@
+{
+  "assessment_id": "inforsight-phase-01-07-synthetic-rate-assessment",
+  "assessment_version": "0.1.0",
+  "calibration_decisions": [
+    {
+      "assumption": "equal four-scenario allocation",
+      "disposition": "retain_as_fixture",
+      "reason": "Guarantees deterministic lifecycle coverage; it is not an estimated prevalence distribution."
+    },
+    {
+      "assumption": "scenario weights configurable independently of coverage",
+      "disposition": "parameterize_later",
+      "reason": "A future observation or robustness consumer may require a separate configuration while the canonical acceptance fixture stays stable."
+    },
+    {
+      "assumption": "annual lapse or surrender calibration",
+      "disposition": "defer_pending_contract_support",
+      "reason": "Requires multi-period exposure, policy duration, and clearer product definitions before a public experience rate is comparable."
+    },
+    {
+      "assumption": "premium, billing, payment, contact, and timing distributions",
+      "disposition": "retain_as_fixture",
+      "reason": "Current values exercise contracts and timelines; no compatible public evidence in this assessment justifies calibration."
+    },
+    {
+      "assumption": "generator or published sample change in Phase 1.07",
+      "disposition": "no_change",
+      "reason": "Assessment found no comparable target that warrants a versioned generator or dataset change."
+    }
+  ],
+  "claim_boundaries": [
+    "Synthetic results do not represent an insurer or market prevalence.",
+    "Aggregate similarity would not establish record-level realism.",
+    "This assessment does not establish actuarial credibility, causal validity, fairness, or predictive utility.",
+    "Phase 2 model calibration is separate from generator-assumption assessment."
+  ],
+  "comparisons": [
+    {
+      "classification": "not_comparable",
+      "comparison_id": "combined-terminal-outcomes-vs-soa-lapse-surrender",
+      "rationale": "The synthetic numerator is forced by one bounded scenario path per policy and has no policy-year exposure denominator. The SOA/LIMRA value is derived from rounded totals across complete study years, uses exposure methodology, combines surrender and forfeiture, and reflects duration and product effects absent here.",
+      "reference_source_id": "soa-limra-2015-2022-term-whole-life",
+      "reference_value": {
+        "decimal": "0.039735",
+        "status": "derived from approximate rounded headline totals"
+      },
+      "synthetic_metric": "terminal_outcomes.combined",
+      "synthetic_value": {
+        "decimal": "0.500000",
+        "denominator": 100,
+        "exact_fraction": "1/2",
+        "numerator": 50
+      }
+    },
+    {
+      "classification": "not_comparable",
+      "comparison_id": "fictional-product-mix-vs-soa-exposure-mix",
+      "rationale": "The generator chooses two fictional labels randomly at issuance; they do not encode the source study's plan definitions. The source measure is multi-year exposure, while the synthetic measure is an issuance count in a 100-policy engineering fixture.",
+      "reference_source_id": "soa-limra-2015-2022-term-whole-life",
+      "reference_value": {
+        "whole_life_exposure_by_count": "more than 60%"
+      },
+      "synthetic_metric": "product_variant.counts",
+      "synthetic_value": {
+        "fictional_term_life": 51,
+        "fictional_whole_life": 49
+      }
+    },
+    {
+      "classification": "directional_only",
+      "comparison_id": "one-cycle-proportions-vs-experience-rates",
+      "rationale": "The methodological reference supports exposure-aware rate design and warns about partial-year errors. It supports the decision not to annualize current simulator proportions but supplies no target.",
+      "reference_source_id": "soa-experience-study-calculations",
+      "reference_value": "experience-rate calculation guidance",
+      "synthetic_metric": "all policy proportions",
+      "synthetic_value": "one generated path per policy"
+    }
+  ],
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "metric_definition_version": "0.1.0",
+  "metrics": {
+    "billing_frequency": {
+      "counts": {
+        "annual": 25,
+        "monthly": 26,
+        "quarterly": 22,
+        "semiannual": 27
+      },
+      "definition": "Issued policies grouped by fictional billing frequency.",
+      "unit": "policies"
+    },
+    "grace_entry": {
+      "definition": "Policies with a transition to grace_period / generated policies.",
+      "unit": "policy proportion over one generated scenario path",
+      "value": {
+        "decimal": "0.500000",
+        "denominator": 100,
+        "exact_fraction": "1/2",
+        "numerator": 50
+      }
+    },
+    "grace_recovery": {
+      "definition": "Policies returning to active / policies entering grace_period.",
+      "unit": "conditional policy proportion over one generated scenario path",
+      "value": {
+        "decimal": "0.500000",
+        "denominator": 50,
+        "exact_fraction": "1/2",
+        "numerator": 25
+      }
+    },
+    "payment_events": {
+      "attempt_count": 125,
+      "definition": "Structured payment events; a recovery can create a second attempt.",
+      "failed_count": 50,
+      "failure_proportion": {
+        "decimal": "0.400000",
+        "denominator": 125,
+        "exact_fraction": "2/5",
+        "numerator": 50
+      },
+      "received_count": 75,
+      "received_proportion": {
+        "decimal": "0.600000",
+        "denominator": 125,
+        "exact_fraction": "3/5",
+        "numerator": 75
+      },
+      "unit": "events"
+    },
+    "policy_count": 100,
+    "premium_amount_cents": {
+      "definition": "Premium amount recorded on policy.issued.",
+      "summary": {
+        "count": 100,
+        "maximum": 30000,
+        "mean_decimal": "17110.00",
+        "mean_exact": "17110/1",
+        "median": "16500.0",
+        "minimum": 5500
+      },
+      "unit": "integer USD cents; premium mode is not annualized"
+    },
+    "product_variant": {
+      "counts": {
+        "fictional_term_life": 51,
+        "fictional_whole_life": 49
+      },
+      "definition": "Issued policies grouped by fictional product variant.",
+      "unit": "policies"
+    },
+    "scenario_mix": {
+      "counts": {
+        "active": 25,
+        "lapsed": 25,
+        "recovered": 25,
+        "surrendered": 25
+      },
+      "definition": "Policies classified from complete structured histories / generated policies.",
+      "proportions": {
+        "active": {
+          "decimal": "0.250000",
+          "denominator": 100,
+          "exact_fraction": "1/4",
+          "numerator": 25
+        },
+        "lapsed": {
+          "decimal": "0.250000",
+          "denominator": 100,
+          "exact_fraction": "1/4",
+          "numerator": 25
+        },
+        "recovered": {
+          "decimal": "0.250000",
+          "denominator": 100,
+          "exact_fraction": "1/4",
+          "numerator": 25
+        },
+        "surrendered": {
+          "decimal": "0.250000",
+          "denominator": 100,
+          "exact_fraction": "1/4",
+          "numerator": 25
+        }
+      },
+      "unit": "policy proportion over one generated scenario path"
+    },
+    "service_contact": {
+      "definition": "Policies with at least one structured service contact / generated policies.",
+      "unit": "policy proportion over one generated scenario path",
+      "value": {
+        "decimal": "0.380000",
+        "denominator": 100,
+        "exact_fraction": "19/50",
+        "numerator": 38
+      }
+    },
+    "terminal_outcomes": {
+      "combined": {
+        "decimal": "0.500000",
+        "denominator": 100,
+        "exact_fraction": "1/2",
+        "numerator": 50
+      },
+      "definition": "Policies with a generated lapse or surrender outcome / generated policies.",
+      "lapsed": {
+        "decimal": "0.250000",
+        "denominator": 100,
+        "exact_fraction": "1/4",
+        "numerator": 25
+      },
+      "surrendered": {
+        "decimal": "0.250000",
+        "denominator": 100,
+        "exact_fraction": "1/4",
+        "numerator": 25
+      },
+      "unit": "policy proportion over one generated scenario path; not annualized"
+    },
+    "timing_days": {
+      "definition": "Whole-day effective-time intervals imposed by current scenario logic.",
+      "failure_to_grace": {
+        "count": 50,
+        "maximum": 4,
+        "mean_decimal": "4.00",
+        "mean_exact": "4/1",
+        "median": "4.0",
+        "minimum": 4
+      },
+      "failure_to_lapse": {
+        "count": 25,
+        "maximum": 34,
+        "mean_decimal": "34.00",
+        "mean_exact": "34/1",
+        "median": "34.0",
+        "minimum": 34
+      },
+      "failure_to_payment_reminder": {
+        "count": 50,
+        "maximum": 2,
+        "mean_decimal": "2.00",
+        "mean_exact": "2/1",
+        "median": "2.0",
+        "minimum": 2
+      },
+      "grace_to_recovery": {
+        "count": 25,
+        "maximum": 7,
+        "mean_decimal": "7.00",
+        "mean_exact": "7/1",
+        "median": "7.0",
+        "minimum": 7
+      },
+      "inquiry_to_surrender": {
+        "count": 25,
+        "maximum": 5,
+        "mean_decimal": "5.00",
+        "mean_exact": "5/1",
+        "median": "5.0",
+        "minimum": 5
+      },
+      "issue_to_first_due": {
+        "count": 100,
+        "maximum": 365,
+        "mean_decimal": "167.99",
+        "mean_exact": "16799/100",
+        "median": "182.0",
+        "minimum": 30
+      },
+      "unit": "days"
+    }
+  },
+  "sources": [
+    {
+      "access_date": "2026-08-18",
+      "definition_note": "The report uses lapse to include terminations with value (surrenders) and without value (forfeitures).",
+      "exposure_basis": "Policy exposure calculated with the Balducci approach; the report also discusses face-amount exposure.",
+      "limitations": "Detailed segmented results are outside the public report; source experience is exposure-based and duration-sensitive.",
+      "locators": {
+        "combined_lapse_definition": "page 2",
+        "methodology_and_limitations": "page 4",
+        "scope_and_population": "pages 1-2",
+        "study_totals": "page 1"
+      },
+      "organization": "Society of Actuaries Research Institute and LIMRA",
+      "population": "Fully underwritten single-life term and whole-life policies sold in the United States and its territories; 28 contributing companies.",
+      "publication_date": "2024-12",
+      "published_totals": {
+        "approximate_policy_exposures": 135900000,
+        "approximate_surrenders_and_lapses": 5400000,
+        "derived_termination_to_exposure_ratio": "0.039735",
+        "derived_value_warning": "Computed from rounded headline totals; not presented by the source as an official aggregate lapse rate."
+      },
+      "source_id": "soa-limra-2015-2022-term-whole-life",
+      "study_period": "Seven complete study years, 2016-2022, spanning policy anniversaries in 2015-2022.",
+      "title": "2015-2022 Term and Whole Life Insurance Policy Surrender/Lapse Experience Study Report",
+      "url": "https://www.soa.org/globalassets/assets/files/resources/experience-studies/2024/15-22-twlls.pdf"
+    },
+    {
+      "access_date": "2026-08-18",
+      "definition_note": "Used to support the decision not to annualize one-cycle simulator proportions, not as a numerical calibration target.",
+      "exposure_basis": "Explains experience-rate calculations and warns about errors from combining partial rate years.",
+      "limitations": "Methodological reference rather than an experience table.",
+      "locators": {
+        "partial_rate_year_warning": "web page introduction",
+        "purpose": "web page introduction"
+      },
+      "organization": "Society of Actuaries Research Institute",
+      "population": "Methodological educational material; no portfolio population.",
+      "publication_date": "2023-06; materials updated 2024-03",
+      "published_totals": {},
+      "source_id": "soa-experience-study-calculations",
+      "study_period": "Not applicable.",
+      "title": "Experience Study Calculations Educational Tool",
+      "url": "https://www.soa.org/resources/tables-calcs-tools/experience-study-tool/"
+    }
+  ]
+}

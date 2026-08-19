@@ -270,7 +270,19 @@ Verify that the committed artifacts reproduce exactly:
 python3 scripts/build_sample_dataset.py --check
 ```
 
-Aggregate-rate calibration, observation construction, and outcome-label derivation remain separate work.
+## Aggregate synthetic-rate assessment
+
+The repository publishes a deterministic [assessment report](../docs/experiments/phase-01-07-synthetic-rate-assessment.md) and [machine-readable result](../docs/experiments/phase-01-07-synthetic-rate-assessment.json) for the canonical seed-`20260817` 100-policy corpus. It measures the current scenario, outcome, grace, payment, contact, product, billing, premium, and timing behavior and documents comparison limits against cited public references.
+
+Verify the derived result without rewriting it:
+
+```bash
+python3 scripts/assess_synthetic_rates.py --check
+```
+
+The assessment retains equal scenario weights as deterministic coverage inputs. Current policy proportions cover one generated scenario path, not policy-year exposure, so they are not annualized rates. Annual lapse or surrender calibration remains deferred until the simulator supports compatible duration, exposure, and product definitions. The assessment does not change generator version `0.1.0`, schema version `1.0.0`, or published sample bytes.
+
+Observation construction and outcome-label derivation remain separate Phase 2 work.
 
 ## Tests
 
@@ -281,6 +293,6 @@ python3 -m unittest discover -s simulator/tests -v
 make check
 ```
 
-The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, fictional-data boundaries, and exact regeneration of the published sample and manifest.
+The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, fictional-data boundaries, exact regeneration of the published sample and manifest, and deterministic synthetic-rate calculations and source metadata.
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).
