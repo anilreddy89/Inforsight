@@ -8,6 +8,9 @@
 | Observation contract | `1.0.0` |
 | Canonical generator seed | `20260817` |
 | Issue | [#18](https://github.com/anilreddy89/Inforsight/issues/18) |
+| Pull request | [#19](https://github.com/anilreddy89/Inforsight/pull/19) |
+| Status | Completed on 2026-08-19 |
+| Merge commit | `5e2987b` |
 | Boundary | Validation only; no feature transformation, splitting, or model training |
 
 ## Purpose
