@@ -12,7 +12,9 @@
 | Label horizon | 90 elapsed days |
 | Issue | [#20](https://github.com/anilreddy89/Inforsight/issues/20) |
 | Branch | `feat/20-temporal-splits` |
-| Status | Implemented locally; awaiting pull request and merge |
+| Pull request | [#21](https://github.com/anilreddy89/Inforsight/pull/21) |
+| Status | Completed on 2026-08-19 |
+| Merge commit | `d8b516a` |
 | Decision | Proceed for split-pipeline engineering only, with a material temporal-confounding limitation |
 
 Phase 2.03 must create deterministic, policy-aware train, validation, and test assignments before any feature preprocessing or model fitting. The split is an experiment-control artifact, not evidence that the current synthetic corpus supports credible temporal generalization.
