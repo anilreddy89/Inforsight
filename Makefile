@@ -1,6 +1,6 @@
-.PHONY: check test assessment-check boundary-check contract-test dataset-check simulator-test
+.PHONY: check test assessment-check boundary-check contract-test dataset-check observation-check simulator-test
 
-check: boundary-check dataset-check assessment-check test
+check: boundary-check dataset-check assessment-check observation-check test
 
 boundary-check:
 	./scripts/check_repository_boundaries.sh
@@ -10,6 +10,9 @@ dataset-check:
 
 assessment-check:
 	python3 scripts/assess_synthetic_rates.py --check
+
+observation-check:
+	python3 scripts/build_observations.py --check
 
 test: contract-test simulator-test
 

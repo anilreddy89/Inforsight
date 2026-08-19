@@ -1,0 +1,78 @@
+{
+  "assessment_id": "inforsight-phase-02-01-observation-sufficiency",
+  "assessment_version": "1.0.0",
+  "decision": "proceed_with_limitations",
+  "decision_rationale": "The current contract supports one deterministic first-billing observation per policy with explicit follow-up, but its balanced scenarios, simplified single-cycle paths, and small corpus cannot support real-world performance claims.",
+  "evaluation": {
+    "counts": {
+      "eligible_observation_count": 100,
+      "ineligible_observation_count": 0,
+      "label_status_counts": {
+        "observed_negative": 50,
+        "observed_positive": 50
+      },
+      "observation_count": 100,
+      "outcome_type_counts": {
+        "outcome.lapsed": 25,
+        "outcome.surrendered": 25
+      },
+      "unique_policy_count": 100
+    },
+    "first_as_of": "2024-01-31T16:00:00Z",
+    "follow_up_through": "2025-04-30T17:00:00Z",
+    "last_as_of": "2025-01-30T17:00:00Z",
+    "last_horizon_end": "2025-04-30T17:00:00Z"
+  },
+  "field_inventory": {
+    "available": [
+      "active status at cutoff",
+      "product variant",
+      "billing frequency",
+      "premium amount and currency",
+      "policy age in days",
+      "visible event counts by supported family"
+    ],
+    "deferred_not_required_for_narrow_baseline": [
+      "issue age",
+      "face amount",
+      "acquisition channel",
+      "reinstatement and maturity",
+      "loans and cash value",
+      "account-change activity",
+      "prior conservation attempts"
+    ],
+    "prohibited": [
+      "future-effective events",
+      "future-ingested events",
+      "terminal outcomes and final status in features",
+      "scenario identifiers",
+      "policy or event identifiers in features"
+    ]
+  },
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "limitations": [
+    "The 50 percent positive fraction is engineered scenario coverage, not prevalence.",
+    "One observation per policy does not establish a production observation cadence.",
+    "The explicit evaluation watermark is an experiment boundary, not an event inferred from history end.",
+    "The corpus contains simplified one-cycle paths and only 100 fictional policies.",
+    "The gate supports engineering evaluation only, not actuarial, fairness, causal, or business claims."
+  ],
+  "observation_contract": {
+    "cadence": "one_observation_at_first_billing_due_ingestion",
+    "censoring_policy": "right-censor when follow-up ends before the horizon or a horizon outcome is not ingested by the evaluation watermark",
+    "eligibility": "policy status is active at as_of under dual-time visibility",
+    "feature_visibility": "effective_at <= as_of and ingested_at <= as_of",
+    "horizon_days": 90,
+    "horizon_interval": "(as_of, as_of_plus_90_days]",
+    "label_policy_version": "1.0.0",
+    "negative_policy": "no qualifying outcome and complete explicit follow-up",
+    "outcome_policy": "binary adverse termination: lapse or surrender",
+    "version": "1.0.0"
+  }
+}

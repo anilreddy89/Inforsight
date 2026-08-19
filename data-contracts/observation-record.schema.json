@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.example/contracts/observation-record.schema.json",
+  "title": "Inforsight fictional policy observation record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "observation_contract_version",
+    "label_policy_version",
+    "observation_id",
+    "policy_id",
+    "as_of",
+    "horizon_start",
+    "horizon_end",
+    "follow_up_through",
+    "eligible",
+    "eligibility_reason",
+    "features",
+    "label",
+    "visible_event_ids",
+    "generator_version",
+    "event_schema_version"
+  ],
+  "properties": {
+    "observation_contract_version": { "const": "1.0.0" },
+    "label_policy_version": { "const": "1.0.0" },
+    "observation_id": { "type": "string", "pattern": "^obs_[0-9a-f]{24}$" },
+    "policy_id": { "type": "string", "minLength": 1 },
+    "as_of": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "horizon_start": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "horizon_end": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "follow_up_through": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "eligible": { "type": "boolean" },
+    "eligibility_reason": { "type": "string", "minLength": 1 },
+    "features": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/features" }
+      ]
+    },
+    "label": { "$ref": "#/$defs/label" },
+    "visible_event_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "generator_version": { "type": "string", "minLength": 1 },
+    "event_schema_version": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_status",
+        "product_variant",
+        "billing_frequency",
+        "premium_amount_cents",
+        "currency",
+        "policy_age_days",
+        "visible_event_count",
+        "visible_billing_count",
+        "visible_failed_payment_count",
+        "visible_received_payment_count",
+        "visible_notice_count",
+        "visible_service_contact_count"
+      ],
+      "properties": {
+        "current_status": { "const": "active" },
+        "product_variant": { "type": "string", "minLength": 1 },
+        "billing_frequency": { "type": "string", "minLength": 1 },
+        "premium_amount_cents": { "type": "integer", "minimum": 0 },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "policy_age_days": { "type": "integer", "minimum": 0 },
+        "visible_event_count": { "type": "integer", "minimum": 1 },
+        "visible_billing_count": { "type": "integer", "minimum": 0 },
+        "visible_failed_payment_count": { "type": "integer", "minimum": 0 },
+        "visible_received_payment_count": { "type": "integer", "minimum": 0 },
+        "visible_notice_count": { "type": "integer", "minimum": 0 },
+        "visible_service_contact_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "value",
+        "outcome_type",
+        "source_event_id",
+        "source_effective_at",
+        "source_ingested_at",
+        "censoring_reason"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["observed_positive", "observed_negative", "right_censored", "not_applicable"]
+        },
+        "value": { "type": ["integer", "null"], "enum": [0, 1, null] },
+        "outcome_type": {
+          "type": ["string", "null"],
+          "enum": ["outcome.lapsed", "outcome.surrendered", null]
+        },
+        "source_event_id": { "type": ["string", "null"] },
+        "source_effective_at": { "type": ["string", "null"], "format": "date-time" },
+        "source_ingested_at": { "type": ["string", "null"], "format": "date-time" },
+        "censoring_reason": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
