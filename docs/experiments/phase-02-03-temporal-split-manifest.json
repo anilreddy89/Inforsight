@@ -1,0 +1,288 @@
+{
+  "assignments": {
+    "calendar_gap": [],
+    "embargoed": [
+      "obs_7dbe89b18ecaef293847d293",
+      "obs_d71e5ce5e5531d0a639e340a",
+      "obs_084dc729784edbf66c39f4e3",
+      "obs_4868a49c5157433d65d7943d",
+      "obs_83cd76da87695df53df51449",
+      "obs_a6f375639f7d1849a0a41c96",
+      "obs_3ab03b8c382c547026be48d2",
+      "obs_426e59e1b2305946852638d1",
+      "obs_5ea80f334f9b12849237e36e",
+      "obs_9235cdfe99b0883412eb2e77",
+      "obs_235bc7c06e338714cfbc2e76",
+      "obs_21217d27b04ea1717db6a1d4",
+      "obs_20c91cf981d46de73f13fa02",
+      "obs_41b72ce424a9fe2333ff7562",
+      "obs_97c5d4b9df57a45e6eb74e7d",
+      "obs_3368efedd9629a8573df6915",
+      "obs_30da4af9b4eb01abee6566d6",
+      "obs_41c30e6ff2a45432dc4253d2",
+      "obs_7cf80875092a9b35ce94be5f",
+      "obs_6176406bd4aac89f331576cb",
+      "obs_cf9bbd2e0b402e4664893c38",
+      "obs_8758cf9fa7b92a1489c631e4"
+    ],
+    "excluded": [],
+    "test": [
+      "obs_7db77727838061356ccc217f",
+      "obs_c72a1fca1ba652332cecd091",
+      "obs_0b5e19404eb10b1fdd05562f",
+      "obs_d91f6fde70048d627e9c05a2",
+      "obs_9d5535a5eddb0f53b01f56b8",
+      "obs_bd5e900541bc6cb56bef6e94",
+      "obs_f2bcfd9063b299256637f32f",
+      "obs_bb3383f94ca367148888cdfc",
+      "obs_c3ce00592ee65f80453781ee",
+      "obs_e144125347d9bffa0d963a46",
+      "obs_b1b9f4242c3a0b03c454d1d9",
+      "obs_22af309358f1129d7874d805",
+      "obs_b3b5d22e43c71788c8443613",
+      "obs_52e21458a7bfe377b841d9ff",
+      "obs_0f39ea2918fe520e371cfd68",
+      "obs_c3e161599d0fda8b85107426",
+      "obs_880d444c39485b5b31a16f0c",
+      "obs_7b172d3b090c235eb7d3f6a4",
+      "obs_4787d46c6232e7a1cf953c59",
+      "obs_e48c7159d56b02468853576f",
+      "obs_345753f743204be41f31c516",
+      "obs_3bc23e00c867709aa6125f61",
+      "obs_36aa4451018621a149e67dec",
+      "obs_ea0eeade8ab33a605ab154f5",
+      "obs_13de4ed89decba78463e89e2"
+    ],
+    "train": [
+      "obs_558eaf40a6e29da8b4e902f5",
+      "obs_e8dfebcb8cacd7e9a308cc75",
+      "obs_193b0fe8af5a46b4afc2bb48",
+      "obs_ae21f6226f7e65dc2225470d",
+      "obs_db715ed14c0d3d57a63e961a",
+      "obs_c5f3d66c945d52e912518bba",
+      "obs_4e76d670714089f751cae3d5",
+      "obs_1fc50a377cf4801041280f1b",
+      "obs_1298747fbe474ce2a644b63f",
+      "obs_ee12babbb34f8c9d5cf720ae",
+      "obs_ccf82823a431e04f935eb40f",
+      "obs_16582f34fc253223d49d054d",
+      "obs_58825ffe27f7034d780e3c88",
+      "obs_af8d525e610cd2694c4d05c9",
+      "obs_3a45981f90912fe29ac0c8e6",
+      "obs_817baf9c9d487e855767ce66",
+      "obs_1f1b3d8a5d3ce1fe51bdcfdf",
+      "obs_768553295ede093146c13142",
+      "obs_f4e322de703099377195dd9a",
+      "obs_c3459069f6c933b296bfd4fa",
+      "obs_c27eaf55bb10b3790dc8de87",
+      "obs_623c588a5b6e7d39bbd47a8f",
+      "obs_9032fd4bf51998ce98e02e44",
+      "obs_d8b387acc4b8f8eae781c0d2",
+      "obs_8019b886b228ffb0c903962c",
+      "obs_c0bc5bf6f15b1128dd239f61"
+    ],
+    "validation": [
+      "obs_4dee8b3eebcce3c22ade88ff",
+      "obs_81320aefca37f350178df9e7",
+      "obs_c49bfbfeb9c3aa9205f47731",
+      "obs_82ab0039f89be84cda40c67e",
+      "obs_02c35f6b766fe58ea83c060b",
+      "obs_604d31488d928b5b3eb1e412",
+      "obs_6a954de9120aacbc1fdb19ce",
+      "obs_46f472dd376c07c678254bdd",
+      "obs_c3801254012fead2416bbd98",
+      "obs_8fbe0f844169d7d14fc3deec",
+      "obs_5615870c6e0e027721aa0f6e",
+      "obs_972e18aa3c9f6870d7614c6f",
+      "obs_1c4ff0b6d74fb51bf829d9ef",
+      "obs_da7b51e78db3879b8bf83987",
+      "obs_f5c42c7f83ed61ceda8ebf9e",
+      "obs_a81e8dcc8b1a3bfbb9c15256",
+      "obs_531ff8b8fd1e9aed1302d90d",
+      "obs_5fb81614017ec385fa115fff",
+      "obs_9177ab99e507b1eb442ab5b4",
+      "obs_8e9e78a851899ebb48fb6e8a",
+      "obs_a0671bb74e8a712b2fe22a80",
+      "obs_9fb384985beb5a8c0cb72438",
+      "obs_7f5f93de122ccf9a9403ca16",
+      "obs_1c9e10926450d77cf363765f",
+      "obs_c932b493db708c83e6e19291",
+      "obs_8ec83145ff58f0d148255a65",
+      "obs_617a3eb90064ad9f2b7226a4"
+    ]
+  },
+  "boundaries": {
+    "calendar_gap": {
+      "as_of_at_or_after": "2024-10-01T00:00:00Z",
+      "as_of_before": "2024-12-01T00:00:00Z"
+    },
+    "embargoed": {
+      "as_of_at_or_after": "2024-04-01T00:00:00Z",
+      "as_of_before": "2024-07-01T00:00:00Z"
+    },
+    "interval_semantics": "half_open",
+    "test": {
+      "as_of_at_or_after": "2024-12-01T00:00:00Z"
+    },
+    "train": {
+      "as_of_before": "2024-04-01T00:00:00Z"
+    },
+    "validation": {
+      "as_of_at_or_after": "2024-07-01T00:00:00Z",
+      "as_of_before": "2024-10-01T00:00:00Z"
+    }
+  },
+  "contracts": {
+    "event_schema_version": "1.0.0",
+    "feature_guard_version": "1.0.0",
+    "generator_version": "0.1.0",
+    "label_policy_version": "1.0.0",
+    "observation_contract_version": "1.0.0",
+    "temporal_split_contract_version": "1.0.0"
+  },
+  "decision": "pipeline_engineering_only",
+  "decision_rationale": "The strict chronological split demonstrates reproducible partitioning and embargo mechanics, but first-billing timing separates billing-frequency categories across partitions and cannot support temporal-performance claims.",
+  "evaluation": {
+    "embargo_rule": "max(earlier.horizon_end) < min(later.as_of); equality is overlap",
+    "follow_up_through": "2025-04-30T17:00:00Z",
+    "label_horizon_days": 90
+  },
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "isolation": {
+    "cross_partition_outcome_episode_overlap_count": 0,
+    "cross_partition_policy_overlap_count": 0,
+    "duplicate_observation_assignment_count": 0,
+    "unaccounted_observation_count": 0
+  },
+  "limitations": [
+    "Observation time is strongly associated with billing frequency in the canonical generator.",
+    "Training contains monthly policies, validation contains semiannual policies, and test contains annual policies.",
+    "Quarterly observations are embargoed and cannot be reassigned to improve results.",
+    "The 100-policy balanced fictional corpus supports pipeline mechanics only, not real-world performance claims.",
+    "Test data must not influence preprocessing, model selection, calibration, or threshold choices."
+  ],
+  "manifest_id": "inforsight-phase-02-03-temporal-splits",
+  "manifest_version": "1.0.0",
+  "source": {
+    "canonical_identity_temporal_sha256": "e9cc70001141e9675e7f2cc09a9e5263742dcf8c7c896e4697e5e8ef57eddab5",
+    "observation_count": 100
+  },
+  "summary": {
+    "calendar_gap": {
+      "billing_frequency_counts": {},
+      "first_as_of": null,
+      "first_horizon_end": null,
+      "label_status_counts": {},
+      "label_value_counts": {},
+      "last_as_of": null,
+      "last_horizon_end": null,
+      "observation_count": 0,
+      "outcome_type_counts": {}
+    },
+    "embargoed": {
+      "billing_frequency_counts": {
+        "quarterly": 22
+      },
+      "first_as_of": "2024-04-03T13:00:00Z",
+      "first_horizon_end": "2024-07-02T13:00:00Z",
+      "label_status_counts": {
+        "observed_negative": 14,
+        "observed_positive": 8
+      },
+      "label_value_counts": {
+        "0": 14,
+        "1": 8
+      },
+      "last_as_of": "2024-04-29T12:00:00Z",
+      "last_horizon_end": "2024-07-28T12:00:00Z",
+      "observation_count": 22,
+      "outcome_type_counts": {
+        "outcome.lapsed": 3,
+        "outcome.surrendered": 5
+      }
+    },
+    "excluded": {
+      "billing_frequency_counts": {},
+      "first_as_of": null,
+      "first_horizon_end": null,
+      "label_status_counts": {},
+      "label_value_counts": {},
+      "last_as_of": null,
+      "last_horizon_end": null,
+      "observation_count": 0,
+      "outcome_type_counts": {}
+    },
+    "test": {
+      "billing_frequency_counts": {
+        "annual": 25
+      },
+      "first_as_of": "2024-12-31T17:00:00Z",
+      "first_horizon_end": "2025-03-31T17:00:00Z",
+      "label_status_counts": {
+        "observed_negative": 11,
+        "observed_positive": 14
+      },
+      "label_value_counts": {
+        "0": 11,
+        "1": 14
+      },
+      "last_as_of": "2025-01-30T17:00:00Z",
+      "last_horizon_end": "2025-04-30T17:00:00Z",
+      "observation_count": 25,
+      "outcome_type_counts": {
+        "outcome.lapsed": 7,
+        "outcome.surrendered": 7
+      }
+    },
+    "train": {
+      "billing_frequency_counts": {
+        "monthly": 26
+      },
+      "first_as_of": "2024-01-31T16:00:00Z",
+      "first_horizon_end": "2024-04-30T16:00:00Z",
+      "label_status_counts": {
+        "observed_negative": 13,
+        "observed_positive": 13
+      },
+      "label_value_counts": {
+        "0": 13,
+        "1": 13
+      },
+      "last_as_of": "2024-02-29T09:00:00Z",
+      "last_horizon_end": "2024-05-29T09:00:00Z",
+      "observation_count": 26,
+      "outcome_type_counts": {
+        "outcome.lapsed": 8,
+        "outcome.surrendered": 5
+      }
+    },
+    "validation": {
+      "billing_frequency_counts": {
+        "semiannual": 27
+      },
+      "first_as_of": "2024-07-03T17:00:00Z",
+      "first_horizon_end": "2024-10-01T17:00:00Z",
+      "label_status_counts": {
+        "observed_negative": 12,
+        "observed_positive": 15
+      },
+      "label_value_counts": {
+        "0": 12,
+        "1": 15
+      },
+      "last_as_of": "2024-07-30T16:00:00Z",
+      "last_horizon_end": "2024-10-28T16:00:00Z",
+      "observation_count": 27,
+      "outcome_type_counts": {
+        "outcome.lapsed": 7,
+        "outcome.surrendered": 8
+      }
+    }
+  }
+}
