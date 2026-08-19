@@ -1,0 +1,163 @@
+{
+  "contracts": {
+    "event_schema_version": "1.0.0",
+    "feature_dictionary_version": "1.0.0",
+    "feature_guard_version": "1.0.0",
+    "feature_pipeline_version": "1.0.0",
+    "generator_version": "0.1.0",
+    "label_policy_version": "1.0.0",
+    "observation_contract_version": "1.0.0",
+    "temporal_split_contract_version": "1.0.0"
+  },
+  "decision": "pipeline_engineering_only",
+  "fit": {
+    "categorical_fits": [
+      {
+        "categories": [
+          "fictional_term_life",
+          "fictional_whole_life",
+          "__unknown__"
+        ],
+        "source_name": "product_variant"
+      },
+      {
+        "categories": [
+          "monthly",
+          "__unknown__"
+        ],
+        "source_name": "billing_frequency"
+      }
+    ],
+    "fitted_state_sha256": "a1c59e4298691d250f1e6d68c999fdb750fc39155fc333116a7cd901dc4a437f",
+    "numeric_fits": [
+      {
+        "mean": 15192.307692307691,
+        "scale": 6406.24233294389,
+        "source_name": "premium_amount_cents"
+      },
+      {
+        "mean": 30.0,
+        "scale": 1.0,
+        "source_name": "policy_age_days"
+      },
+      {
+        "mean": 2.0,
+        "scale": 1.0,
+        "source_name": "visible_event_count"
+      },
+      {
+        "mean": 1.0,
+        "scale": 1.0,
+        "source_name": "visible_billing_count"
+      },
+      {
+        "mean": 0.0,
+        "scale": 1.0,
+        "source_name": "visible_failed_payment_count"
+      },
+      {
+        "mean": 0.0,
+        "scale": 1.0,
+        "source_name": "visible_received_payment_count"
+      },
+      {
+        "mean": 0.0,
+        "scale": 1.0,
+        "source_name": "visible_notice_count"
+      },
+      {
+        "mean": 0.0,
+        "scale": 1.0,
+        "source_name": "visible_service_contact_count"
+      }
+    ],
+    "partition": "train",
+    "training_observation_ids": [
+      "obs_558eaf40a6e29da8b4e902f5",
+      "obs_e8dfebcb8cacd7e9a308cc75",
+      "obs_193b0fe8af5a46b4afc2bb48",
+      "obs_ae21f6226f7e65dc2225470d",
+      "obs_db715ed14c0d3d57a63e961a",
+      "obs_c5f3d66c945d52e912518bba",
+      "obs_4e76d670714089f751cae3d5",
+      "obs_1fc50a377cf4801041280f1b",
+      "obs_1298747fbe474ce2a644b63f",
+      "obs_ee12babbb34f8c9d5cf720ae",
+      "obs_ccf82823a431e04f935eb40f",
+      "obs_16582f34fc253223d49d054d",
+      "obs_58825ffe27f7034d780e3c88",
+      "obs_af8d525e610cd2694c4d05c9",
+      "obs_3a45981f90912fe29ac0c8e6",
+      "obs_817baf9c9d487e855767ce66",
+      "obs_1f1b3d8a5d3ce1fe51bdcfdf",
+      "obs_768553295ede093146c13142",
+      "obs_f4e322de703099377195dd9a",
+      "obs_c3459069f6c933b296bfd4fa",
+      "obs_c27eaf55bb10b3790dc8de87",
+      "obs_623c588a5b6e7d39bbd47a8f",
+      "obs_9032fd4bf51998ce98e02e44",
+      "obs_d8b387acc4b8f8eae781c0d2",
+      "obs_8019b886b228ffb0c903962c",
+      "obs_c0bc5bf6f15b1128dd239f61"
+    ]
+  },
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "limitations": [
+    "LIM-002-001 remains claim-blocking and unresolved.",
+    "Training is monthly-only; validation is semiannual-only; test is annual-only.",
+    "Unknown-category handling demonstrates safe mechanics, not temporal generalization.",
+    "The balanced fictional corpus is not representative of real-world prevalence or performance.",
+    "No model fitting, resampling, calibration, or threshold selection occurs in this phase."
+  ],
+  "manifest_id": "inforsight-phase-02-04-feature-pipeline",
+  "manifest_version": "1.0.0",
+  "output": {
+    "feature_names": [
+      "premium_amount_cents",
+      "policy_age_days",
+      "visible_event_count",
+      "visible_billing_count",
+      "visible_failed_payment_count",
+      "visible_received_payment_count",
+      "visible_notice_count",
+      "visible_service_contact_count",
+      "product_variant=fictional_term_life",
+      "product_variant=fictional_whole_life",
+      "product_variant=__unknown__",
+      "billing_frequency=monthly",
+      "billing_frequency=__unknown__"
+    ],
+    "identity_policy": "observation IDs are audit sidecars, never model columns",
+    "missingness_policy": "reject_missing_required_values",
+    "partition_summaries": {
+      "test": {
+        "column_count": 13,
+        "matrix_sha256": "b1f0ce8e7b66583cd15a3949326bd77b5e62d1bb335c26aa6b46913b028b155a",
+        "row_count": 25
+      },
+      "train": {
+        "column_count": 13,
+        "matrix_sha256": "a943fba2c3c234acf5223cb91bdb8539c1dc03a45680f77b26a1d68570a0b897",
+        "row_count": 26
+      },
+      "validation": {
+        "column_count": 13,
+        "matrix_sha256": "04fe6bfc0fa44f9b9cb1e9e104f152a5eadc0936e5ef7f28bb5b1e4cbec58202",
+        "row_count": 27
+      }
+    },
+    "unknown_category_policy": "map_to_predeclared_unknown_output_column"
+  },
+  "source": {
+    "canonical_identity_temporal_sha256": "e9cc70001141e9675e7f2cc09a9e5263742dcf8c7c896e4697e5e8ef57eddab5",
+    "feature_dictionary_sha256": "20589e2f50c763817eaecdba0c969ce13a5b2970a94cae076a3d6a8f6c5f3648",
+    "observation_count": 100,
+    "temporal_split_manifest_sha256": "bfe52854839fbb1a9a24677664429380f5b73bab95b577b6b54a0c93ae8bafb7"
+  }
+}

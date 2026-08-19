@@ -341,6 +341,22 @@ python3 scripts/build_temporal_splits.py --check
 
 The canonical split contains 26 train, 22 embargoed, 27 validation, and 25 test observations. Observation timing is strongly associated with billing frequency: train is monthly-only, the embargo is quarterly-only, validation is semiannual-only, and test is annual-only. This is a pipeline-engineering fixture, not evidence of temporal generalization or real-world model performance.
 
+## Phase 2 feature pipeline
+
+Phase 2.04 converts the guarded, frozen modeling partitions into deterministic numeric matrices under the [feature-pipeline contract](../docs/modeling/phase-02-04-feature-pipeline-contract.md). The machine-readable [feature dictionary](../docs/modeling/phase-02-04-feature-dictionary.json) covers all 12 approved observation fields and records each type, provenance, missingness rule, transformation, and keep-or-exclude decision.
+
+Numeric z-score statistics and categorical vocabularies are fit from the 26 train observations only. Validation and test reuse the immutable fitted state. Every categorical block includes a predeclared `__unknown__` column, so semiannual validation and annual test billing frequencies do not expand or refit the monthly-only training schema. Missing required values fail closed. Constant `current_status` and `currency` fields are explicitly excluded.
+
+Identity and targets remain sidecars outside model values. The committed manifest contains fitted metadata, output names, shapes, and digests but not raw or transformed rows:
+
+```bash
+python3 scripts/build_feature_pipeline.py --write
+python3 scripts/build_feature_pipeline.py --check
+make feature-pipeline-check
+```
+
+This remains a pipeline-engineering fixture under `LIM-002-001`. Phase 2.04 performs no model fitting, resampling, calibration, threshold selection, or test-guided choice.
+
 ## Tests
 
 From the repository root, with the contract test requirements installed:
@@ -363,6 +379,12 @@ Run the Phase 2.03 split suite and manifest verification with:
 ```bash
 python3 -m unittest discover -s simulator/tests -p 'test_temporal_splits.py' -v
 make temporal-split-check
+```
+
+Run the Phase 2.04 feature-pipeline suite and artifact verification with:
+
+```bash
+make feature-pipeline-check
 ```
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).
