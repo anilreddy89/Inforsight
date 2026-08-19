@@ -60,7 +60,9 @@ scripts/          Repository validation and developer utilities
 
 ## Current status
 
-Phase 1 - Policy Digital Twin is complete. The versioned event contracts, deterministic 100-policy generator, point-in-time reconstruction, cross-event history validation, and reproducible eight-policy fictional [sample dataset](datasets/sample-policy-events.jsonl) are implemented. The aggregate [synthetic-rate assessment](docs/experiments/phase-01-07-synthetic-rate-assessment.md) compares the generator boundary with cited public references and retains the equal scenario mix as a coverage fixture rather than a prevalence estimate. Phase 2 begins with leakage-safe observation records and a 90-day outcome-label contract.
+Phase 1 - Policy Digital Twin is complete. The versioned event contracts, deterministic 100-policy generator, point-in-time reconstruction, cross-event history validation, and reproducible eight-policy fictional [sample dataset](datasets/sample-policy-events.jsonl) are implemented. The aggregate [synthetic-rate assessment](docs/experiments/phase-01-07-synthetic-rate-assessment.md) retains the equal scenario mix as a coverage fixture rather than a prevalence estimate.
+
+Phase 2.01 now defines the versioned [modeling and observation contract](docs/modeling/phase-02-01-modeling-contract.md), dual effective-and-ingestion-time feature visibility, active-policy eligibility, explicit 90-day lapse-or-surrender labels, and right-censoring. The deterministic [data-sufficiency gate](docs/experiments/phase-02-01-observation-sufficiency.json) permits a narrow baseline engineering experiment with prominent synthetic-data limitations; no model has been trained.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
@@ -74,7 +76,7 @@ cd Inforsight
 make check
 ```
 
-The check runs repository boundary validation, published-dataset and synthetic-rate reproducibility checks, data-contract tests, and simulator tests. Additional language-specific checks will be added when those components become real.
+The check runs repository boundary validation, published-dataset, synthetic-rate, and observation-sufficiency reproducibility checks, data-contract tests, and simulator tests. Additional language-specific checks will be added when those components become real.
 
 [GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request.
 

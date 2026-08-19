@@ -282,7 +282,40 @@ python3 scripts/assess_synthetic_rates.py --check
 
 The assessment retains equal scenario weights as deterministic coverage inputs. Current policy proportions cover one generated scenario path, not policy-year exposure, so they are not annualized rates. Annual lapse or surrender calibration remains deferred until the simulator supports compatible duration, exposure, and product definitions. The assessment does not change generator version `0.1.0`, schema version `1.0.0`, or published sample bytes.
 
-Observation construction and outcome-label derivation remain separate Phase 2 work.
+## Phase 2 observation construction
+
+The simulator now builds versioned observation records under the [Phase 2.01 modeling contract](../docs/modeling/phase-02-01-modeling-contract.md). Version `1.0.0` creates one record per policy at the ingestion time of its first billing-due event:
+
+```python
+from datetime import timedelta
+from inforsight_simulator import (
+    build_first_billing_observations,
+    first_billing_observation_time,
+    generate_policy_histories,
+)
+
+histories = generate_policy_histories(seed=20260817)
+watermark = max(
+    first_billing_observation_time(history) + timedelta(days=90)
+    for history in histories
+)
+records = build_first_billing_observations(
+    histories,
+    follow_up_through=watermark,
+)
+```
+
+Feature visibility requires both `effective_at <= as_of` and `ingested_at <= as_of`. Only active policies are eligible. The label horizon is `(as_of, as_of + 90 days]`; lapse and surrender map to a binary adverse-termination label while their distinct outcome types remain in audit provenance. Negative labels require complete follow-up through an explicit watermark. Incomplete follow-up is right-censored.
+
+Identity, features, labels, label provenance, and visible event identifiers are structurally separated. Scenario identifiers, terminal outcomes, final status, policy IDs, event IDs, and label fields are not part of the feature surface.
+
+Verify the canonical data-sufficiency evidence without writing files:
+
+```bash
+python3 scripts/build_observations.py --check
+```
+
+The canonical 100-policy corpus produces 100 eligible first-billing observations, 50 positive labels, and 50 negative labels. That balance exactly reflects the engineered scenario fixture and is not a prevalence or model-performance estimate. The gate is `proceed_with_limitations`; model training remains separate work.
 
 ## Tests
 
@@ -293,6 +326,6 @@ python3 -m unittest discover -s simulator/tests -v
 make check
 ```
 
-The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, fictional-data boundaries, exact regeneration of the published sample and manifest, and deterministic synthetic-rate calculations and source metadata.
+The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, fictional-data boundaries, exact regeneration of the published sample and manifest, deterministic synthetic-rate calculations, dual-time observation visibility, eligibility, horizon boundaries, censoring, feature/label separation, observation-schema validation, and sufficiency-artifact regeneration.
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).

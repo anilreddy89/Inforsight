@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, serialization, sample publication, and aggregate assessment.
+This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, observation construction, serialization, sample publication, and aggregate assessment.
 
 Update this document whenever a simulator feature adds or changes:
 
@@ -14,6 +14,7 @@ Update this document whenever a simulator feature adds or changes:
 - Serialization, provenance, or CLI behavior.
 - Published sample selection, composition, or integrity behavior.
 - Aggregate metric definitions, provenance, or assessment-artifact behavior.
+- Observation eligibility, dual-time visibility, label, censoring, or sufficiency behavior.
 
 The event JSON Schemas remain the source of truth for individual event structure. This document explains how the Python simulator composes and processes those events.
 
@@ -45,6 +46,20 @@ Caller or CLI
     |       +-- replays issuance and status changes
     |       +-- returns PolicyState or None
     |
+    +-- build_observation(history, as_of, follow_up_through)
+    |       |
+    |       +-- validate complete history and cutoff inputs
+    |       +-- require effective_at and ingested_at at or before as_of
+    |       +-- derive active-policy eligibility and feature-visible values
+    |       +-- derive the separate 90-day outcome label
+    |       +-- return immutable ObservationRecord
+    |
+    +-- build_first_billing_observations(histories, follow_up_through)
+    |       |
+    |       +-- anchor one cutoff at first billing-due ingestion per policy
+    |       +-- build observations and reject duplicate identifiers
+    |       +-- sort records by as_of and policy_id
+    |
     +-- histories_to_jsonl(histories)
     |       |
     |       +-- stable event flattening
@@ -60,14 +75,22 @@ Caller or CLI
     |       +-- write artifacts explicitly or verify committed bytes
     |
     +-- scripts/assess_synthetic_rates.py
+    |       |
+    |       +-- generate and validate canonical 100-policy corpus
+    |       +-- calculate explicit count, ratio, amount, and timing metrics
+    |       +-- attach source, comparability, and calibration decisions
+    |       +-- write or verify deterministic assessment JSON
+    |
+    +-- scripts/build_observations.py
             |
-            +-- generate and validate canonical 100-policy corpus
-            +-- calculate explicit count, ratio, amount, and timing metrics
-            +-- attach source, comparability, and calibration decisions
-            +-- write or verify deterministic assessment JSON
+            +-- generate canonical seed-20260817 100-policy corpus
+            +-- derive one first-billing cutoff per policy
+            +-- set an explicit shared 90-day follow-up watermark
+            +-- build records and deterministic sufficiency counts
+            +-- write or verify deterministic gate evidence
 ```
 
-Generation, validation, reconstruction, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
+Generation, validation, reconstruction, observation construction, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
 
 ## Main data shapes
 
@@ -124,6 +147,21 @@ Prepared events prevent repeated timestamp parsing and provide the shared repres
 - Last-applied event ID and effective timestamp.
 
 It represents effective-time state only. It is not an ingestion-time or bitemporal view.
+
+### Observation record
+
+`ObservationRecord` is an immutable nested dataclass containing:
+
+- Contract and label-policy versions.
+- Stable observation and policy identifiers.
+- UTC cutoff and 90-day horizon boundaries.
+- Eligibility and its reason.
+- A separate `ObservationFeatures` value for eligible records.
+- A separate `OutcomeLabel` with censoring and source-event provenance.
+- Dual-time-visible event identifiers for audit.
+- Generator and event-schema versions.
+
+The JSON representation follows `data-contracts/observation-record.schema.json`. Identity and audit fields are never placed in `features`.
 
 ## Journey 1: Python generation API
 

@@ -24,8 +24,8 @@ Phase 1 is complete for the repository's documented MVP boundary. The broader 14
 
 ## Phase 2 - Baseline ML
 
-- [ ] Define the Phase 2 modeling contract and data-sufficiency gate: active-policy eligibility, observation cadence, 90-day horizon, lapse-versus-surrender label policy, censoring, required observable fields, and any Phase 1 contract extensions that must be completed before training.
-- [ ] Build deterministic observation records with an `as_of` timestamp and explicit effective-time and ingestion-time visibility rules so every feature represents information available by the observation cutoff.
+- [ ] Define the Phase 2 modeling contract and data-sufficiency gate: active-policy eligibility, observation cadence, 90-day horizon, lapse-versus-surrender label policy, censoring, required observable fields, and any Phase 1 contract extensions that must be completed before training ([issue #16](https://github.com/anilreddy89/Inforsight/issues/16); implemented on its working branch, pending merge).
+- [ ] Build deterministic observation records with an `as_of` timestamp and explicit effective-time and ingestion-time visibility rules so every feature represents information available by the observation cutoff ([issue #16](https://github.com/anilreddy89/Inforsight/issues/16); implemented on its working branch, pending merge).
 - [ ] Add automated leakage and simulator-shortcut tests that reject post-cutoff events, labels or terminal outcomes in features, future ingestion, scenario identifiers, deterministic outcome proxies, and duplicate outcome episodes.
 - [ ] Create policy-aware temporal train, validation, and test splits with documented boundaries, grouping or embargo rules, class distributions, and assertions that prevent random policy-month or outcome-episode leakage.
 - [ ] Implement a versioned feature-building pipeline and feature dictionary covering types, missingness, provenance, allowed transformations, and deterministic regeneration.

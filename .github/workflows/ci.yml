@@ -26,5 +26,5 @@ jobs:
       - name: Install contract test dependencies
         run: python -m pip install -r data-contracts/requirements-test.txt
 
-      - name: Run repository tests
-        run: make test
+      - name: Run repository checks
+        run: make check

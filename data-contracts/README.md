@@ -32,7 +32,13 @@ Corrections must be represented as new immutable events rather than edits to an 
 
 Amounts are integer cents and the initial currency is fixed to `USD`. Payload dates are ISO 8601 calendar dates; event times remain UTC timestamps in the envelope. Identifiers use synthetic, type-specific prefixes. Enum values are project-local fictional terms rather than representations of insurer procedures.
 
-These schemas validate individual event structure only. The simulator's `validate_policy_history` API separately enforces the current cross-event ordering, lifecycle-transition, terminal-pair, reference, and date invariants. Correction semantics, configurable grace-period calculations, and label derivation remain separate work. Outcome events are facts; the later ML contract will derive prediction labels from eligible future outcome events.
+These schemas validate individual event structure only. The simulator's `validate_policy_history` API separately enforces the current cross-event ordering, lifecycle-transition, terminal-pair, reference, and date invariants. Correction semantics and configurable grace-period calculations remain separate work. Outcome events are facts; the Phase 2.01 modeling contract derives labels from eligible future outcomes without exposing them as features.
+
+## Observation-record contract
+
+[`observation-record.schema.json`](observation-record.schema.json) defines version `1.0.0` of the strict nested observation shape. Identity and cutoff metadata, feature-visible values, labels, audit provenance, and visible-event identifiers occupy separate fields. Eligible feature visibility requires both `effective_at <= as_of` and `ingested_at <= as_of`.
+
+The schema constrains serialization shape. The simulator observation builder enforces temporal visibility, eligibility, 90-day outcome boundaries, censoring, deterministic identifiers, and feature/label separation. See the [modeling contract](../docs/modeling/phase-02-01-modeling-contract.md) for the complete semantics.
 
 ## Validate the contract
 
