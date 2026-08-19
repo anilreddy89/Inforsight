@@ -54,6 +54,7 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - The canonical Phase 2.01 sufficiency gate proceeds with limitations: 100 policies produce 50 positive and 50 negative labels because of engineered scenario coverage, not observed prevalence.
 - Phase 2.03 uses fixed half-open UTC windows with a strict 90-day horizon embargo. The canonical split contains 26 train, 22 embargoed, 27 validation, and 25 test observations.
 - First-billing timing separates billing-frequency categories across the canonical temporal partitions. Split evidence therefore demonstrates pipeline mechanics only, not temporal generalization.
+- This temporal confounding is tracked as `LIM-002-001` in `docs/limitations.md` and must be resolved or explicitly dispositioned before temporal-performance or model-release claims.
 - Test observations must not influence feature preprocessing, resampling, model selection, calibration, or threshold selection.
 - Deferred lifecycle fields are not required for the narrow engineering baseline and must not be invented inside observation construction.
 - Synthetic-data results demonstrate engineering method, not real-world predictive performance.

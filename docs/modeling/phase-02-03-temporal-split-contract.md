@@ -16,6 +16,7 @@
 | Status | Completed on 2026-08-19 |
 | Merge commit | `d8b516a` |
 | Decision | Proceed for split-pipeline engineering only, with a material temporal-confounding limitation |
+| Limitation register | `LIM-002-001` in `docs/limitations.md` |
 
 Phase 2.03 must create deterministic, policy-aware train, validation, and test assignments before any feature preprocessing or model fitting. The split is an experiment-control artifact, not evidence that the current synthetic corpus supports credible temporal generalization.
 
@@ -171,3 +172,5 @@ git diff --check
 Phase 2.04 may fit learned preprocessing on the train observation IDs only, apply the frozen result to validation and test, and prove that held-out data cannot alter fitted parameters. Model selection may use validation results. Test data remains sealed until the preprocessing contract, candidate models, calibration method, evaluation metrics, and reporting rules are frozen.
 
 If the goal changes from demonstrating pipeline mechanics to making meaningful temporal-performance claims, Phase 2.03 must stop rather than weaken chronology. That goal requires a separately versioned generator and observation design with repeated calendar cohorts, adequate representation of feature categories in the training period, and enough later observations for validation and test.
+
+The trigger, allowed interim work, blocked claims, proposed resolution, and objective closure evidence are tracked under `LIM-002-001` in the repository limitation register.

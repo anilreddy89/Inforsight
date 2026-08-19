@@ -66,7 +66,7 @@ Phase 2.01 now defines the versioned [modeling and observation contract](docs/mo
 
 Phase 2.03 is complete with a versioned [policy-aware temporal split contract](docs/modeling/phase-02-03-temporal-split-contract.md) and deterministic [split manifest](docs/experiments/phase-02-03-temporal-split-manifest.json) ([issue #20](https://github.com/anilreddy89/Inforsight/issues/20), [PR #21](https://github.com/anilreddy89/Inforsight/pull/21)). The strict 90-day embargo and isolation checks support pipeline engineering only: first-billing timing separates billing-frequency categories across the canonical train, validation, and test partitions, so the synthetic split does not establish temporal generalization.
 
-See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
+See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), [limitation register](docs/limitations.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
 ## Getting started
 
