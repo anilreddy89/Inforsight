@@ -22,6 +22,16 @@ from .observations import (
 )
 from .reconstruction import PolicyState, reconstruct_policy_state
 from .serialization import histories_to_jsonl
+from .splitting import (
+    CANONICAL_TEMPORAL_SPLIT_SPECIFICATION,
+    TEMPORAL_SPLIT_CONTRACT_VERSION,
+    TemporalSplitResult,
+    TemporalSplitSpecification,
+    assign_temporal_splits,
+    source_observation_digest,
+    summarize_temporal_split,
+    validate_temporal_split,
+)
 from .validation import validate_policy_history
 
 
@@ -33,9 +43,14 @@ __all__ = [
     "LABEL_HORIZON_DAYS",
     "LABEL_POLICY_VERSION",
     "OBSERVATION_CONTRACT_VERSION",
+    "CANONICAL_TEMPORAL_SPLIT_SPECIFICATION",
+    "TEMPORAL_SPLIT_CONTRACT_VERSION",
     "ObservationFeatures",
     "ObservationRecord",
     "OutcomeLabel",
+    "TemporalSplitResult",
+    "TemporalSplitSpecification",
+    "assign_temporal_splits",
     "build_first_billing_observations",
     "build_observation",
     "first_billing_observation_time",
@@ -46,10 +61,13 @@ __all__ = [
     "PolicyState",
     "project_identity",
     "reconstruct_policy_state",
+    "source_observation_digest",
     "summarize_observations",
+    "summarize_temporal_split",
     "validate_feature_payload",
     "validate_observation_records",
     "validate_policy_history",
+    "validate_temporal_split",
 ]
 
 

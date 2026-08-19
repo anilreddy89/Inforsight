@@ -319,6 +319,28 @@ python3 scripts/build_observations.py --check
 
 The canonical 100-policy corpus produces 100 eligible first-billing observations, 50 positive labels, and 50 negative labels. That balance exactly reflects the engineered scenario fixture and is not a prevalence or model-performance estimate. The gate is `proceed_with_limitations`; model training remains separate work.
 
+## Phase 2 temporal splits
+
+Phase 2.03 assigns the guarded observations to deterministic policy-aware chronological partitions under the [temporal split contract](../docs/modeling/phase-02-03-temporal-split-contract.md). The canonical half-open UTC windows place observations before April 2024 in train, April through June in the embargo, July through September in validation, October through November in a calendar gap, and December 2024 onward in test.
+
+The split validator requires both modeling classes in every modeling partition, prevents policy or outcome-episode ownership across partitions, accounts for every source observation, and enforces strict horizon separation:
+
+```text
+max(train.horizon_end) < min(validation.as_of)
+max(validation.horizon_end) < min(test.as_of)
+```
+
+Equality is treated as overlap. No preprocessing, resampling, fitting, calibration, or threshold selection occurs during splitting.
+
+Regenerate or verify the versioned manifest with:
+
+```bash
+python3 scripts/build_temporal_splits.py --write
+python3 scripts/build_temporal_splits.py --check
+```
+
+The canonical split contains 26 train, 22 embargoed, 27 validation, and 25 test observations. Observation timing is strongly associated with billing frequency: train is monthly-only, the embargo is quarterly-only, validation is semiannual-only, and test is annual-only. This is a pipeline-engineering fixture, not evidence of temporal generalization or real-world model performance.
+
 ## Tests
 
 From the repository root, with the contract test requirements installed:
@@ -334,6 +356,13 @@ Run the Phase 2.02 guard suite alone with:
 
 ```bash
 make leakage-check
+```
+
+Run the Phase 2.03 split suite and manifest verification with:
+
+```bash
+python3 -m unittest discover -s simulator/tests -p 'test_temporal_splits.py' -v
+make temporal-split-check
 ```
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).

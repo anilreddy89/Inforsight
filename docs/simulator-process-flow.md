@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, observation construction, serialization, sample publication, and aggregate assessment.
+This is the living implementation map for the Inforsight simulator. It records how fictional policy histories move through configuration, deterministic generation, history validation, point-in-time reconstruction, observation construction, temporal splitting, serialization, sample publication, and aggregate assessment.
 
 Update this document whenever a simulator feature adds or changes:
 
@@ -15,6 +15,7 @@ Update this document whenever a simulator feature adds or changes:
 - Published sample selection, composition, or integrity behavior.
 - Aggregate metric definitions, provenance, or assessment-artifact behavior.
 - Observation eligibility, dual-time visibility, label, censoring, or sufficiency behavior.
+- Temporal partition boundaries, embargo, policy isolation, episode isolation, or split-manifest behavior.
 
 The event JSON Schemas remain the source of truth for individual event structure. This document explains how the Python simulator composes and processes those events.
 
@@ -60,6 +61,15 @@ Caller or CLI
     |       +-- build observations and reject duplicate identifiers
     |       +-- sort records by as_of and policy_id
     |
+    +-- assign_temporal_splits(records, specification)
+    |       |
+    |       +-- validate guarded observation records and contract versions
+    |       +-- sort by as_of, policy_id, and observation_id
+    |       +-- assign train, embargo, validation, gap, test, or exclusion
+    |       +-- reject cross-partition policy or outcome-episode ownership
+    |       +-- enforce strict 90-day horizon separation
+    |       +-- return immutable TemporalSplitResult
+    |
     +-- histories_to_jsonl(histories)
     |       |
     |       +-- stable event flattening
@@ -82,15 +92,23 @@ Caller or CLI
     |       +-- write or verify deterministic assessment JSON
     |
     +-- scripts/build_observations.py
+    |       |
+    |       +-- generate canonical seed-20260817 100-policy corpus
+    |       +-- derive one first-billing cutoff per policy
+    |       +-- set an explicit shared 90-day follow-up watermark
+    |       +-- build records and deterministic sufficiency counts
+    |       +-- write or verify deterministic gate evidence
+    |
+    +-- scripts/build_temporal_splits.py
             |
-            +-- generate canonical seed-20260817 100-policy corpus
-            +-- derive one first-billing cutoff per policy
-            +-- set an explicit shared 90-day follow-up watermark
-            +-- build records and deterministic sufficiency counts
-            +-- write or verify deterministic gate evidence
+            +-- regenerate the canonical guarded observations
+            +-- apply the frozen half-open UTC split specification
+            +-- summarize assignments, labels, ranges, and billing frequencies
+            +-- hash canonical source identity and temporal fields
+            +-- write or verify the deterministic split manifest
 ```
 
-Generation, validation, reconstruction, observation construction, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
+Generation, validation, reconstruction, observation construction, temporal splitting, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
 
 ## Main data shapes
 
@@ -162,6 +180,19 @@ It represents effective-time state only. It is not an ingestion-time or bitempor
 - Generator and event-schema versions.
 
 The JSON representation follows `data-contracts/observation-record.schema.json`. Identity and audit fields are never placed in `features`.
+
+### Temporal split result
+
+`TemporalSplitResult` is an immutable collection of observations assigned to:
+
+- Train.
+- Embargo.
+- Validation.
+- Calendar gap.
+- Test.
+- Explicit exclusion.
+
+`TemporalSplitSpecification` defines half-open UTC boundaries. Assignment is deterministic under reordered input. The validator requires complete accounting, both binary classes in each modeling partition, zero cross-partition policy and outcome-episode ownership, and strict separation between an earlier partition's latest label horizon and the next partition's earliest cutoff.
 
 ## Journey 1: Python generation API
 

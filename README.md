@@ -64,6 +64,8 @@ Phase 1 - Policy Digital Twin is complete. The versioned event contracts, determ
 
 Phase 2.01 now defines the versioned [modeling and observation contract](docs/modeling/phase-02-01-modeling-contract.md), dual effective-and-ingestion-time feature visibility, active-policy eligibility, explicit 90-day lapse-or-surrender labels, and right-censoring. The deterministic [data-sufficiency gate](docs/experiments/phase-02-01-observation-sufficiency.json) permits a narrow baseline engineering experiment with prominent synthetic-data limitations; no model has been trained.
 
+Phase 2.03 is implemented on its issue branch with a versioned [policy-aware temporal split contract](docs/modeling/phase-02-03-temporal-split-contract.md) and deterministic [split manifest](docs/experiments/phase-02-03-temporal-split-manifest.json). The strict 90-day embargo and isolation checks support pipeline engineering only: first-billing timing separates billing-frequency categories across the canonical train, validation, and test partitions, so the synthetic split does not establish temporal generalization. Issue [#20](https://github.com/anilreddy89/Inforsight/issues/20) remains open until the implementation pull request merges.
+
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
 ## Getting started
@@ -76,7 +78,7 @@ cd Inforsight
 make check
 ```
 
-The check runs repository boundary validation, published-dataset, synthetic-rate, and observation-sufficiency reproducibility checks, data-contract tests, and simulator tests. Additional language-specific checks will be added when those components become real.
+The check runs repository boundary validation, published-dataset, synthetic-rate, observation-sufficiency, and temporal-split reproducibility checks, data-contract tests, and simulator tests. Additional language-specific checks will be added when those components become real.
 
 [GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request.
 
