@@ -309,6 +309,8 @@ Feature visibility requires both `effective_at <= as_of` and `ingested_at <= as_
 
 Identity, features, labels, label provenance, and visible event identifiers are structurally separated. Scenario identifiers, terminal outcomes, final status, policy IDs, event IDs, and label fields are not part of the feature surface.
 
+Phase 2.02 adds a versioned, fail-closed [leakage and simulator-shortcut guard](../docs/modeling/phase-02-02-leakage-and-shortcut-guards.md). It recursively validates the explicit feature allowlist, normalizes key aliases, rejects direct simulator construction markers, and enforces observation and outcome-episode uniqueness. A separate review diagnostic reports exact deterministic feature-to-label mappings without automatically treating correlation as leakage. The canonical seed-`20260817` feature surface has no exact deterministic proxy under this diagnostic.
+
 Verify the canonical data-sufficiency evidence without writing files:
 
 ```bash
@@ -327,5 +329,11 @@ make check
 ```
 
 The tests validate the complete default corpus against the event contracts and history validator. They check count, scenario coverage, identifier uniqueness, lifecycle transitions, terminal pairs, impossible cross-event dates, payment-to-billing integrity, deterministic serialization and replay, CLI behavior, point-in-time cutoff boundaries, invalid inputs, non-mutation, fictional-data boundaries, exact regeneration of the published sample and manifest, deterministic synthetic-rate calculations, dual-time observation visibility, eligibility, horizon boundaries, censoring, feature/label separation, observation-schema validation, and sufficiency-artifact regeneration.
+
+Run the Phase 2.02 guard suite alone with:
+
+```bash
+make leakage-check
+```
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).

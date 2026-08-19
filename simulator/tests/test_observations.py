@@ -24,7 +24,7 @@ from inforsight_simulator import (  # noqa: E402
     generate_policy_histories,
     summarize_observations,
 )
-from inforsight_simulator.observations import PROHIBITED_FEATURE_KEYS  # noqa: E402
+from inforsight_simulator.leakage import PROHIBITED_FEATURE_CONCEPTS  # noqa: E402
 
 
 class ObservationTest(unittest.TestCase):
@@ -281,7 +281,7 @@ class ObservationTest(unittest.TestCase):
 
         assert record.features is not None
         feature_keys = set(asdict(record.features))
-        self.assertFalse(feature_keys.intersection(PROHIBITED_FEATURE_KEYS))
+        self.assertFalse(feature_keys.intersection(PROHIBITED_FEATURE_CONCEPTS))
         self.assertNotIn("outcome.lapsed", json.dumps(asdict(record.features)))
 
     def test_invalid_history_and_non_utc_cutoffs_fail_closed(self) -> None:
