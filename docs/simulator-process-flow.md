@@ -526,6 +526,8 @@ Failures are intentionally raised near the boundary that owns them:
 | Assessment input | Empty histories, invalid history, or unsupported scenario | `ValueError` |
 | Assessment calculation | Zero denominator or non-whole-day timing assumption | `ValueError` |
 | Assessment verification | Missing or stale committed result | Diagnostic and nonzero exit |
+| Feature guard | Unapproved, prohibited, nested, or simulator-only model-visible content | `ValueError` with offending path |
+| Observation collection guard | Duplicate observation, policy/cutoff, or outcome episode | `ValueError` with record context |
 
 The simulator does not silently repair, reorder in place, or infer missing lifecycle facts.
 
@@ -542,6 +544,11 @@ The package exports these current simulator-facing functions and values:
 | `reconstruct_policy_state` | Derive effective-time state at an inclusive cutoff |
 | `PolicyState` | Hold immutable reconstructed state and audit metadata |
 | `histories_to_jsonl` | Serialize events to stable JSON Lines |
+| `build_observation` | Construct one dual-time-visible observation and separate 90-day label |
+| `build_first_billing_observations` | Construct deterministic first-billing observations and validate collection integrity |
+| `validate_feature_payload` | Enforce the versioned recursive model-visible feature boundary |
+| `validate_observation_records` | Enforce feature separation and observation/episode uniqueness |
+| `find_exact_deterministic_proxies` | Report exact single-field target mappings for review |
 
 ## Test map
 
@@ -553,6 +560,8 @@ The package exports these current simulator-facing functions and values:
 | `test_serialization.py` | JSON Lines stability and CLI stream/file behavior |
 | `test_published_dataset.py` | Published schema/history validity, coverage, manifest integrity, and exact regeneration |
 | `test_synthetic_rate_assessment.py` | Metric math, denominators, provenance, sources, decisions, and exact assessment regeneration |
+| `test_observations.py` | Dual-time visibility, eligibility, labels, censoring, schema conformance, and deterministic observations |
+| `test_leakage_guards.py` | Adversarial future-data mutations, recursive feature separation, simulator proxies, and episode uniqueness |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
@@ -588,7 +597,7 @@ The flow does not yet include:
 - Corrections, supersession, retractions, or event authority resolution.
 - Reinstatement or transitions out of terminal states.
 - Configurable grace-period or notice calculations.
-- Observation records, 90-day labels, features, or model inputs.
+- Temporal splits, versioned feature transformations, or model inputs.
 - Storage, services, messaging, or cloud execution.
 
 Add these to the journey only when their contracts and implementation are introduced.

@@ -9,6 +9,7 @@ from hashlib import sha256
 from typing import Any, Iterable
 
 from .generator import GENERATOR_VERSION, SCHEMA_VERSION
+from .leakage import validate_feature_payload, validate_observation_records
 from .validation import PreparedEvent, parse_utc_timestamp, prepare_and_validate_history
 
 
@@ -17,20 +18,6 @@ LABEL_POLICY_VERSION = "1.0.0"
 LABEL_HORIZON_DAYS = 90
 ELIGIBLE_STATUSES = frozenset({"active"})
 OUTCOME_TYPES = frozenset({"outcome.lapsed", "outcome.surrendered"})
-PROHIBITED_FEATURE_KEYS = frozenset(
-    {
-        "event_id",
-        "policy_id",
-        "scenario",
-        "scenario_id",
-        "final_status",
-        "outcome",
-        "outcome_event_id",
-        "label",
-        "label_status",
-    }
-)
-
 PolicyEvent = dict[str, Any]
 
 
@@ -153,7 +140,7 @@ def build_observation(
     label = _build_label(prepared, cutoff, horizon_end, watermark, eligible)
     features = _build_features(visible, state, cutoff) if eligible else None
     if features is not None:
-        _validate_feature_keys(asdict(features))
+        validate_feature_payload(features)
 
     return ObservationRecord(
         observation_contract_version=OBSERVATION_CONTRACT_VERSION,
@@ -190,9 +177,7 @@ def build_first_billing_observations(
         for history in histories
     ]
     records.sort(key=lambda record: (record.as_of, record.policy_id))
-    observation_ids = [record.observation_id for record in records]
-    if len(observation_ids) != len(set(observation_ids)):
-        raise ValueError("observation generation produced duplicate observation_id values")
+    validate_observation_records(records)
     return records
 
 
@@ -309,12 +294,6 @@ def _build_label(
             censoring_reason="follow_up_ends_before_horizon",
         )
     return OutcomeLabel("observed_negative", 0, None, None, None, None, None)
-
-
-def _validate_feature_keys(features: dict[str, Any]) -> None:
-    prohibited = sorted(PROHIBITED_FEATURE_KEYS.intersection(features))
-    if prohibited:
-        raise ValueError("feature surface contains prohibited keys: " + ", ".join(prohibited))
 
 
 def _observation_id(policy_id: str, cutoff: datetime) -> str:

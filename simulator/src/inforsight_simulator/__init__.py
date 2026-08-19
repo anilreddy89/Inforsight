@@ -2,6 +2,12 @@
 
 from .config import GeneratorConfig
 from .generator import generate_policy_histories, generation_provenance
+from .leakage import (
+    FEATURE_GUARD_VERSION,
+    find_exact_deterministic_proxies,
+    validate_feature_payload,
+    validate_observation_records,
+)
 from .observations import (
     LABEL_HORIZON_DAYS,
     LABEL_POLICY_VERSION,
@@ -23,6 +29,7 @@ __version__ = "0.1.0"
 
 __all__ = [
     "GeneratorConfig",
+    "FEATURE_GUARD_VERSION",
     "LABEL_HORIZON_DAYS",
     "LABEL_POLICY_VERSION",
     "OBSERVATION_CONTRACT_VERSION",
@@ -32,6 +39,7 @@ __all__ = [
     "build_first_billing_observations",
     "build_observation",
     "first_billing_observation_time",
+    "find_exact_deterministic_proxies",
     "generate_policy_histories",
     "generation_provenance",
     "histories_to_jsonl",
@@ -39,6 +47,8 @@ __all__ = [
     "project_identity",
     "reconstruct_policy_state",
     "summarize_observations",
+    "validate_feature_payload",
+    "validate_observation_records",
     "validate_policy_history",
 ]
 
