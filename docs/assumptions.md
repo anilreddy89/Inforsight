@@ -56,6 +56,8 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - First-billing timing separates billing-frequency categories across the canonical temporal partitions. Split evidence therefore demonstrates pipeline mechanics only, not temporal generalization.
 - This temporal confounding is tracked as `LIM-002-001` in `docs/limitations.md` and must be resolved or explicitly dispositioned before temporal-performance or model-release claims.
 - Test observations must not influence feature preprocessing, resampling, model selection, calibration, or threshold selection.
+- Phase 2.04 rejects missing required feature values, fits numeric z-score statistics and categorical vocabularies on train only, and reserves an explicit unknown column for categories absent from train.
+- Current status and currency are explicitly excluded from the version `1.0.0` model matrix because they are constant across eligible canonical observations.
 - Deferred lifecycle fields are not required for the narrow engineering baseline and must not be invented inside observation construction.
 - Synthetic-data results demonstrate engineering method, not real-world predictive performance.
 
