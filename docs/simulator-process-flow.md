@@ -93,6 +93,19 @@ Caller or CLI
     |       +-- calculate predeclared metrics and prediction digest
     |       +-- preserve fitted model and preprocessing state unchanged
     |
+    +-- fit_boosted_model(train_matrix)
+    |       |
+    |       +-- validate the exact train partition and frozen issue-#26 specification
+    |       +-- fit one deterministic XGBoost candidate with no early stopping
+    |       +-- export native JSON model state with provenance and digests
+    |       +-- validate tree count, dependency version, and safe reconstruction
+    |
+    +-- compare_models(logistic, boosted, train_or_validation_matrix)
+    |       |
+    |       +-- enforce identical matrix membership and frozen metric definitions
+    |       +-- calculate both prediction digests from unrounded probabilities
+    |       +-- reject canonical test scoring at each model boundary
+    |
     +-- histories_to_jsonl(histories)
     |       |
     |       +-- stable event flattening
@@ -139,11 +152,18 @@ Caller or CLI
     |       +-- write or verify metadata, fitted-state, and matrix digests
     |
     +-- scripts/train_logistic_baseline.py
+    |       |
+    |       +-- rebuild the frozen Phase 2.04 matrices
+    |       +-- fit once on train and score train and validation only
+    |       +-- keep canonical test sealed and absent from metrics
+    |       +-- publish or verify explicit fitted state, diagnostics, and report
+    |
+    +-- scripts/train_boosted_comparison.py
             |
-            +-- rebuild the frozen Phase 2.04 matrices
-            +-- fit once on train and score train and validation only
-            +-- keep canonical test sealed and absent from metrics
-            +-- publish or verify explicit fitted state, diagnostics, and report
+            +-- rebuild the same frozen matrices and unchanged logistic baseline
+            +-- fit the single XGBoost candidate on train only
+            +-- compare both models on identical train and validation membership
+            +-- publish or verify safe fitted state, comparison evidence, and test seal
 ```
 
 Generation, validation, reconstruction, observation construction, temporal splitting, feature preprocessing, baseline fitting, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
@@ -630,6 +650,10 @@ The package exports these current simulator-facing functions and values:
 | `predict_positive_probabilities` | Reconstruct scores for permitted train or validation matrices and reject test |
 | `evaluate_logistic_baseline` | Calculate predeclared diagnostics and a prediction digest without mutation |
 | `coefficient_summary` | Bind coefficients and derived odds ratios to frozen feature names |
+| `fit_boosted_model` | Fit the single frozen XGBoost specification on the exact train matrix |
+| `predict_boosted_probabilities` | Reconstruct XGBoost from native JSON and score permitted matrices only |
+| `evaluate_boosted_model` | Calculate the frozen metrics and prediction digest without mutation |
+| `compare_models` | Compare logistic regression and XGBoost on identical train or validation membership |
 
 ## Test map
 
@@ -646,6 +670,7 @@ The package exports these current simulator-facing functions and values:
 | `test_temporal_splits.py` | Chronology, embargo, isolation, accounting, and split-manifest regeneration |
 | `test_feature_pipeline.py` | Dictionary drift, train-only fitting, held-out invariance, unknown categories, and artifact regeneration |
 | `test_logistic_baseline.py` | Train-only fitting, deterministic explicit state, sealed test, compatibility, coefficient alignment, and scoring invariants |
+| `test_boosted_comparison.py` | Frozen XGBoost fit, safe JSON reconstruction, identical comparison membership, determinism, artifact safety, and sealed test |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
