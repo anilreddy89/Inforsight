@@ -1,6 +1,6 @@
-.PHONY: check test assessment-check boundary-check contract-test dataset-check feature-pipeline-check leakage-check observation-check simulator-test temporal-split-check
+.PHONY: check test assessment-check boundary-check contract-test dataset-check feature-pipeline-check leakage-check logistic-baseline-check observation-check simulator-test temporal-split-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check leakage-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check leakage-check test
 
 boundary-check:
 	./scripts/check_repository_boundaries.sh
@@ -20,6 +20,10 @@ temporal-split-check:
 feature-pipeline-check:
 	python3 scripts/build_feature_pipeline.py --check
 	python3 -m unittest discover -s simulator/tests -p 'test_feature_pipeline.py' -v
+
+logistic-baseline-check:
+	python3 scripts/train_logistic_baseline.py --check
+	python3 -m unittest discover -s simulator/tests -p 'test_logistic_baseline.py' -v
 
 leakage-check:
 	python3 -m unittest discover -s simulator/tests -p 'test_leakage_guards.py' -v

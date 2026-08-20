@@ -78,6 +78,21 @@ Caller or CLI
     |       +-- apply immutable state to train, validation, and test
     |       +-- return fitted state and matrices with identity/target sidecars
     |
+    +-- fit_logistic_baseline(train_matrix)
+    |       |
+    |       +-- validate exact train partition, identities, targets, and finite values
+    |       +-- fit the single frozen seeded logistic specification
+    |       +-- reject convergence or class-order failures
+    |       +-- bind coefficients to frozen feature names and training digest
+    |       +-- return explicit immutable fitted state
+    |
+    +-- evaluate_logistic_baseline(fitted, train_or_validation_matrix)
+    |       |
+    |       +-- reconstruct positive-class probabilities from explicit state
+    |       +-- reject canonical test or unsupported partition scoring
+    |       +-- calculate predeclared metrics and prediction digest
+    |       +-- preserve fitted model and preprocessing state unchanged
+    |
     +-- histories_to_jsonl(histories)
     |       |
     |       +-- stable event flattening
@@ -116,15 +131,22 @@ Caller or CLI
     |       +-- write or verify the deterministic split manifest
     |
     +-- scripts/build_feature_pipeline.py
+    |       |
+    |       +-- regenerate canonical observations and frozen splits
+    |       +-- publish or verify the complete feature dictionary
+    |       +-- fit preprocessing from train observation IDs only
+    |       +-- transform held-out partitions without mutating fitted state
+    |       +-- write or verify metadata, fitted-state, and matrix digests
+    |
+    +-- scripts/train_logistic_baseline.py
             |
-            +-- regenerate canonical observations and frozen splits
-            +-- publish or verify the complete feature dictionary
-            +-- fit preprocessing from train observation IDs only
-            +-- transform held-out partitions without mutating fitted state
-            +-- write or verify metadata, fitted-state, and matrix digests
+            +-- rebuild the frozen Phase 2.04 matrices
+            +-- fit once on train and score train and validation only
+            +-- keep canonical test sealed and absent from metrics
+            +-- publish or verify explicit fitted state, diagnostics, and report
 ```
 
-Generation, validation, reconstruction, observation construction, temporal splitting, feature preprocessing, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
+Generation, validation, reconstruction, observation construction, temporal splitting, feature preprocessing, baseline fitting, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
 
 ## Main data shapes
 
@@ -604,6 +626,10 @@ The package exports these current simulator-facing functions and values:
 | `fit_preprocessor` | Fit immutable numeric and categorical state from the frozen train partition |
 | `transform_partition` | Apply frozen state to an exact modeling partition without mutation |
 | `build_feature_pipeline` | Fit train and construct frozen train, validation, and test matrices |
+| `fit_logistic_baseline` | Fit the single frozen logistic specification on the exact train matrix |
+| `predict_positive_probabilities` | Reconstruct scores for permitted train or validation matrices and reject test |
+| `evaluate_logistic_baseline` | Calculate predeclared diagnostics and a prediction digest without mutation |
+| `coefficient_summary` | Bind coefficients and derived odds ratios to frozen feature names |
 
 ## Test map
 
@@ -619,6 +645,7 @@ The package exports these current simulator-facing functions and values:
 | `test_leakage_guards.py` | Adversarial future-data mutations, recursive feature separation, simulator proxies, and episode uniqueness |
 | `test_temporal_splits.py` | Chronology, embargo, isolation, accounting, and split-manifest regeneration |
 | `test_feature_pipeline.py` | Dictionary drift, train-only fitting, held-out invariance, unknown categories, and artifact regeneration |
+| `test_logistic_baseline.py` | Train-only fitting, deterministic explicit state, sealed test, compatibility, coefficient alignment, and scoring invariants |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
@@ -654,7 +681,7 @@ The flow does not yet include:
 - Corrections, supersession, retractions, or event authority resolution.
 - Reinstatement or transitions out of terminal states.
 - Configurable grace-period or notice calculations.
-- Model fitting, probability calibration, threshold selection, or explanations.
+- Boosted-model comparison, probability calibration, threshold selection, or explanations.
 - Storage, services, messaging, or cloud execution.
 
 Add these to the journey only when their contracts and implementation are introduced.
