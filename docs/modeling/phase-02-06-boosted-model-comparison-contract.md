@@ -6,8 +6,8 @@
 | --- | --- |
 | Phase | Phase 2.06 |
 | Tracker ID | `P2-06` |
-| Status | Draft; dependency and estimator specification must be frozen before training |
-| Candidate library | TBD: choose exactly one of LightGBM or XGBoost |
+| Status | Frozen for implementation in issue #26 |
+| Candidate library | XGBoost `3.3.0` |
 | Fit partition | Exact frozen Phase 2.04 train matrix only |
 | Comparison partitions | Train and validation only |
 | Test partition | Sealed; scoring remains rejected |
@@ -30,6 +30,8 @@ Before any candidate is trained or its results are inspected, the Phase 2.06 iss
 - Artifact names, schemas, versions, and floating-point normalization rules.
 
 Changing the frozen candidate after inspecting its metrics requires a separately versioned experiment. Phase 2.06 does not conduct a hyperparameter search or compare multiple boosted configurations.
+
+The issue #26 start gate freezes `XGBClassifier` with seed `20260817`, `binary:logistic`, 25 estimators, learning rate `0.1`, depth `2`, minimum child weight `2.0`, no gamma or L1 penalty, L2 penalty `1.0`, unit row and column sampling, unit class weighting, base score `0.5`, the exact CPU tree method, one worker, log-loss evaluation, no early stopping, and verbosity `0`. XGBoost-native JSON model data is the safe fitted-state representation. Published numeric evidence uses the existing 10-decimal artifact boundary; runtime probabilities retain full precision.
 
 ## Frozen inputs
 

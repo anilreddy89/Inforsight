@@ -10,6 +10,8 @@ Current machine-readable experiment evidence includes:
 - `phase-02-04-feature-pipeline-manifest.json` — training-only preprocessing state, exact fit IDs, frozen output columns, partition shapes and digests, upstream provenance, and the continuing pipeline-engineering-only limitation without raw or transformed rows.
 - `phase-02-05-logistic-baseline-manifest.json` — frozen estimator configuration, exact train-only provenance, explicit fitted parameters, train and validation diagnostics, prediction digests, and sealed-test evidence.
 - `phase-02-05-logistic-baseline-report.md` — human-readable benchmark configuration, diagnostics, coefficient table, interpretation boundaries, and limitations.
+- `phase-02-06-boosted-comparison-manifest.json` — frozen XGBoost configuration, native JSON fitted state, exact train-only provenance, identical model-comparison membership, prediction digests, and sealed-test evidence.
+- `phase-02-06-boosted-comparison-report.md` — bounded train and validation comparison with configuration, metrics, engineering disposition, and claim limitations.
 
 Regenerate or verify the Phase 2.04 evidence with:
 
@@ -26,3 +28,12 @@ python3 scripts/train_logistic_baseline.py --check
 ```
 
 The baseline command fits the frozen train matrix and scores train and validation only. The canonical test partition remains sealed.
+
+Regenerate or verify the Phase 2.06 evidence with:
+
+```bash
+python3 scripts/train_boosted_comparison.py --write
+python3 scripts/train_boosted_comparison.py --check
+```
+
+The comparison command fits the single issue-#26 XGBoost candidate on train only and compares it with the unchanged logistic benchmark on identical train and validation observations. It does not score test, tune the candidate, calibrate probabilities, or select a threshold.

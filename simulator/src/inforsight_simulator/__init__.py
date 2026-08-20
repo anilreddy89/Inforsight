@@ -45,6 +45,20 @@ from .modeling import (
     fitted_baseline_bytes,
     predict_positive_probabilities,
 )
+from .boosted_modeling import (
+    BOOSTED_MODEL_VERSION,
+    BOOSTED_RANDOM_SEED,
+    BOOSTED_TRAINING_CONFIGURATION_VERSION,
+    FROZEN_BOOSTED_SPECIFICATION,
+    XGBOOST_PINNED_VERSION,
+    BoostedModelSpecification,
+    FittedBoostedModel,
+    compare_models,
+    evaluate_boosted_model,
+    fit_boosted_model,
+    fitted_boosted_bytes,
+    predict_boosted_probabilities,
+)
 from .reconstruction import PolicyState, reconstruct_policy_state
 from .preprocessing import (
     UNKNOWN_CATEGORY,
@@ -76,6 +90,10 @@ __version__ = "0.1.0"
 __all__ = [
     "GeneratorConfig",
     "BASELINE_RANDOM_SEED",
+    "BOOSTED_MODEL_VERSION",
+    "BOOSTED_RANDOM_SEED",
+    "BOOSTED_TRAINING_CONFIGURATION_VERSION",
+    "FROZEN_BOOSTED_SPECIFICATION",
     "FROZEN_LOGISTIC_SPECIFICATION",
     "LOGISTIC_BASELINE_VERSION",
     "TRAINING_CONFIGURATION_VERSION",
@@ -100,6 +118,8 @@ __all__ = [
     "BaselineMetrics",
     "FittedLogisticBaseline",
     "LogisticBaselineSpecification",
+    "BoostedModelSpecification",
+    "FittedBoostedModel",
     "TemporalSplitResult",
     "TemporalSplitSpecification",
     "UNKNOWN_CATEGORY",
@@ -108,10 +128,14 @@ __all__ = [
     "build_feature_pipeline",
     "build_observation",
     "coefficient_summary",
+    "compare_models",
+    "evaluate_boosted_model",
     "evaluate_logistic_baseline",
     "first_billing_observation_time",
     "fit_preprocessor",
     "fit_logistic_baseline",
+    "fit_boosted_model",
+    "fitted_boosted_bytes",
     "fitted_baseline_bytes",
     "fitted_state_bytes",
     "find_exact_deterministic_proxies",
@@ -126,6 +150,7 @@ __all__ = [
     "source_observation_digest",
     "matrix_digest",
     "predict_positive_probabilities",
+    "predict_boosted_probabilities",
     "summarize_observations",
     "summarize_temporal_split",
     "validate_feature_payload",
@@ -134,6 +159,7 @@ __all__ = [
     "validate_policy_history",
     "validate_temporal_split",
     "transform_partition",
+    "XGBOOST_PINNED_VERSION",
 ]
 
 

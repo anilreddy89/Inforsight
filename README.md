@@ -66,7 +66,7 @@ Phase 2.01 defines the versioned [modeling and observation contract](docs/modeli
 
 Phase 2.03 is complete with a versioned [policy-aware temporal split contract](docs/modeling/phase-02-03-temporal-split-contract.md) and deterministic [split manifest](docs/experiments/phase-02-03-temporal-split-manifest.json) ([issue #20](https://github.com/anilreddy89/Inforsight/issues/20), [PR #21](https://github.com/anilreddy89/Inforsight/pull/21)). The strict 90-day embargo and isolation checks support pipeline engineering only: first-billing timing separates billing-frequency categories across the canonical train, validation, and test partitions, so the synthetic split does not establish temporal generalization.
 
-Phase 2.04 provides a deterministic [feature pipeline](docs/modeling/phase-02-04-feature-pipeline-contract.md) with training-only preprocessing. Phase 2.05 adds a seeded [logistic-regression baseline](docs/modeling/phase-02-05-logistic-baseline-contract.md) and reproducible [benchmark report](docs/experiments/phase-02-05-logistic-baseline-report.md). The model fits train only, reports predeclared train and validation diagnostics, and keeps the canonical test partition sealed. These results demonstrate pipeline mechanics only while `LIM-002-001` remains unresolved. The next increment will freeze one boosted-tree candidate and compare it with this benchmark without test scoring, calibration, threshold selection, or release claims.
+Phase 2.04 provides a deterministic [feature pipeline](docs/modeling/phase-02-04-feature-pipeline-contract.md) with training-only preprocessing. Phase 2.05 adds a seeded [logistic-regression baseline](docs/modeling/phase-02-05-logistic-baseline-contract.md). Phase 2.06 freezes one XGBoost candidate and publishes a reproducible [comparison report](docs/experiments/phase-02-06-boosted-comparison-report.md) on identical train and validation observations. Both models fit train only, the canonical test partition remains sealed, and results demonstrate pipeline mechanics only while `LIM-002-001` remains unresolved. No tuning, calibration, threshold selection, or release claim is introduced.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), [limitation register](docs/limitations.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
@@ -80,7 +80,7 @@ cd Inforsight
 make check
 ```
 
-The check runs repository-boundary validation; published-dataset, synthetic-rate, observation-sufficiency, temporal-split, feature-pipeline, and logistic-baseline reproducibility checks; focused leakage and model-pipeline tests; data-contract tests; and the complete simulator test suite.
+The check runs repository-boundary validation; published-dataset, synthetic-rate, observation-sufficiency, temporal-split, feature-pipeline, logistic-baseline, and boosted-comparison reproducibility checks; focused leakage and model-pipeline tests; data-contract tests; and the complete simulator test suite.
 
 [GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request.
 

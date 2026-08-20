@@ -373,6 +373,20 @@ make logistic-baseline-check
 
 The published diagnostics are pipeline-engineering evidence only. `LIM-002-001` remains claim-blocking; no calibration, threshold selection, boosted-model comparison, temporal-generalization claim, or action authority is introduced.
 
+## Phase 2 boosted-model comparison
+
+Phase 2.06 fits one predeclared [XGBoost candidate](../docs/modeling/phase-02-06-boosted-model-comparison-contract.md) on the exact Phase 2.04 train matrix and compares it with the unchanged Phase 2.05 logistic benchmark on identical train and validation observations. Issue #26 freezes XGBoost `3.3.0`, 25 depth-2 exact-method trees, learning rate `0.1`, minimum child weight `2.0`, unit sampling, L2 regularization `1.0`, seed `20260817`, one worker, and no early stopping.
+
+The candidate is reconstructed from XGBoost-native JSON model data with explicit provenance and digests; pickle and joblib are not used. Both models share the Phase 2.05 metric definitions and use unrounded probabilities. Candidate and comparison APIs reject canonical test scoring.
+
+```bash
+python3 scripts/train_boosted_comparison.py --write
+python3 scripts/train_boosted_comparison.py --check
+make boosted-comparison-check
+```
+
+The comparison is `pipeline_engineering_only`. With 26 monthly training observations and semiannual-only validation, it cannot establish production superiority, temporal generalization, calibration, or an operational threshold.
+
 ## Tests
 
 From the repository root, with the contract test requirements installed:
@@ -407,6 +421,12 @@ Run the Phase 2.05 logistic-baseline suite and sealed-test artifact verification
 
 ```bash
 make logistic-baseline-check
+```
+
+Run the Phase 2.06 boosted-comparison suite and sealed-test artifact verification with:
+
+```bash
+make boosted-comparison-check
 ```
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).
