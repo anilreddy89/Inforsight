@@ -62,6 +62,14 @@ class LogisticBaselineTests(unittest.TestCase):
             predict_positive_probabilities(second, self.pipeline.validation),
         )
 
+    def test_artifact_state_ignores_subprecision_platform_noise(self) -> None:
+        fitted = fit_logistic_baseline(self.pipeline.train)
+        perturbed = replace(
+            fitted,
+            coefficients=(fitted.coefficients[0] + 1e-12,) + fitted.coefficients[1:],
+        )
+        self.assertEqual(fitted_baseline_bytes(fitted), fitted_baseline_bytes(perturbed))
+
     def test_fit_uses_exact_training_membership(self) -> None:
         fitted = fit_logistic_baseline(self.pipeline.train)
         self.assertEqual(fitted.training_observation_ids, self.pipeline.train.observation_ids)

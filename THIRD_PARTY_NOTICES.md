@@ -9,7 +9,7 @@ As dependencies are introduced, record each material package, version, source, l
 | jsonschema | 4.26.0 | https://pypi.org/project/jsonschema/ | MIT | Test-only JSON Schema validation |
 | referencing | 0.37.0 | https://pypi.org/project/referencing/ | MIT | Test-only local JSON Schema reference registry |
 | rfc3339-validator | 0.1.4 | https://pypi.org/project/rfc3339-validator/ | MIT | Test-only RFC 3339 date-time format validation |
-| scikit-learn | >=1.7,<1.8 | https://pypi.org/project/scikit-learn/ | BSD-3-Clause | Runtime logistic-regression estimator and metric primitives |
+| scikit-learn | 1.7.2 | https://pypi.org/project/scikit-learn/ | BSD-3-Clause | Runtime logistic-regression estimator and metric primitives |
 | NumPy | >=1.22 | https://pypi.org/project/numpy/ | BSD-3-Clause | Transitive numerical-array dependency of scikit-learn |
 | SciPy | >=1.8 | https://pypi.org/project/scipy/ | BSD-3-Clause | Transitive numerical-optimization dependency of scikit-learn |
 | joblib | >=1.2 | https://pypi.org/project/joblib/ | BSD-3-Clause | Transitive execution dependency of scikit-learn |

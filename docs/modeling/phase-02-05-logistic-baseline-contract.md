@@ -25,7 +25,7 @@ The version `1.0.0` configuration is fixed before model results are inspected:
 | Parameter | Value |
 | --- | --- |
 | Estimator | `sklearn.linear_model.LogisticRegression` |
-| Dependency | `scikit-learn>=1.7,<1.8` |
+| Dependency | `scikit-learn==1.7.2` |
 | Penalty | L2 |
 | Regularization strength `C` | `1.0` |
 | Solver | `liblinear` |
@@ -72,7 +72,7 @@ These values describe associations inside a small, engineered synthetic corpus. 
 
 The fitted model is represented as canonical JSON-compatible values, not pickle, joblib, or another executable serialization format. Prediction reconstruction applies the stored intercept and coefficients using a numerically stable sigmoid. Loading fails for unsupported model, configuration, feature-contract, or scikit-learn versions; malformed, non-finite, incomplete, or misaligned state also fails closed.
 
-The committed manifest includes upstream artifact digests, fitted-state digest, complete configuration and provenance, coefficient mapping, convergence evidence, permitted metrics, prediction digests, test-seal status, and limitations. It does not contain raw observation records or transformed row-level matrices.
+The committed manifest includes upstream artifact digests, fitted-state digest, complete configuration and provenance, coefficient mapping, convergence evidence, permitted metrics, prediction digests, test-seal status, and limitations. It does not contain raw observation records or transformed row-level matrices. Floating-point artifact values and prediction-digest inputs are rounded to 10 decimal places before canonical serialization so insignificant platform-level solver differences do not create false drift; runtime scoring retains full precision.
 
 ## Deterministic artifacts
 

@@ -43,6 +43,7 @@ MANIFEST_ID = "inforsight-phase-02-05-logistic-baseline"
 MANIFEST_VERSION = "1.0.0"
 SEED = 20260817
 POLICY_COUNT = 100
+ARTIFACT_DECIMAL_PLACES = 10
 EXPERIMENTS_DIR = REPOSITORY_ROOT / "docs" / "experiments"
 MANIFEST_PATH = EXPERIMENTS_DIR / "phase-02-05-logistic-baseline-manifest.json"
 REPORT_PATH = EXPERIMENTS_DIR / "phase-02-05-logistic-baseline-report.md"
@@ -51,6 +52,19 @@ FEATURE_MANIFEST_PATH = EXPERIMENTS_DIR / "phase-02-04-feature-pipeline-manifest
 
 def _canonical_json(value: dict) -> bytes:
     return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _canonicalize_artifact_numbers(value):
+    if isinstance(value, float):
+        rounded = round(value, ARTIFACT_DECIMAL_PLACES)
+        return 0.0 if rounded == 0.0 else rounded
+    if isinstance(value, dict):
+        return {key: _canonicalize_artifact_numbers(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_canonicalize_artifact_numbers(item) for item in value]
+    if isinstance(value, tuple):
+        return [_canonicalize_artifact_numbers(item) for item in value]
+    return value
 
 
 def build_baseline() -> tuple[dict, bytes]:
@@ -115,7 +129,7 @@ def build_baseline() -> tuple[dict, bytes]:
             "Coefficients describe this fitted synthetic model and are not causal or action-authorizing effects.",
         ],
     }
-    return manifest, fitted_bytes
+    return _canonicalize_artifact_numbers(manifest), fitted_bytes
 
 
 def manifest_bytes() -> bytes:
@@ -127,7 +141,7 @@ def report_bytes(manifest: dict) -> bytes:
     train = manifest["evaluation"]["train"]["metrics"]
     validation = manifest["evaluation"]["validation"]["metrics"]
     rows = "\n".join(
-        f"| `{item['feature_name']}` | {item['coefficient']:.12g} | {item['odds_ratio']:.12g} |"
+        f"| `{item['feature_name']}` | {item['coefficient']:.10g} | {item['odds_ratio']:.10g} |"
         for item in manifest["coefficients"]
     )
     text = f"""# Phase 2.05 Logistic-Regression Baseline Report

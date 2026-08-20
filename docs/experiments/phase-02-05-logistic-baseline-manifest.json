@@ -1,9 +1,9 @@
 {
   "coefficients": [
     {
-      "coefficient": 0.4613097888386774,
+      "coefficient": 0.4613097888,
       "feature_name": "premium_amount_cents",
-      "odds_ratio": 1.5861501467896273
+      "odds_ratio": 1.5861501468
     },
     {
       "coefficient": 0.0,
@@ -41,14 +41,14 @@
       "odds_ratio": 1.0
     },
     {
-      "coefficient": -0.12086084497273379,
+      "coefficient": -0.120860845,
       "feature_name": "product_variant=fictional_term_life",
-      "odds_ratio": 0.8861572642517141
+      "odds_ratio": 0.8861572643
     },
     {
-      "coefficient": 0.12571020525447493,
+      "coefficient": 0.1257102053,
       "feature_name": "product_variant=fictional_whole_life",
-      "odds_ratio": 1.1339535068951856
+      "odds_ratio": 1.1339535069
     },
     {
       "coefficient": 0.0,
@@ -56,9 +56,9 @@
       "odds_ratio": 1.0
     },
     {
-      "coefficient": 0.004849360281741554,
+      "coefficient": 0.0048493603,
       "feature_name": "billing_frequency=monthly",
-      "odds_ratio": 1.0048611374588752
+      "odds_ratio": 1.0048611375
     },
     {
       "coefficient": 0.0,
@@ -76,41 +76,41 @@
   "evaluation": {
     "train": {
       "metrics": {
-        "average_predicted_probability": 0.49981348575397655,
-        "brier_score": 0.23099740537877825,
+        "average_predicted_probability": 0.4998134858,
+        "brier_score": 0.2309974054,
         "class_distribution": {
           "negative": 13,
           "positive": 13
         },
-        "log_loss": 0.6525953157913122,
+        "log_loss": 0.6525953158,
         "observed_positive_fraction": 0.5,
         "partition": "train",
         "record_count": 26,
-        "roc_auc": 0.6420118343195267
+        "roc_auc": 0.6420118343
       },
-      "prediction_sha256": "d2efd11da95c6c0cee398fbda81d64b03fdbc9c703cdeb4a6f3c4e463b1322e8"
+      "prediction_sha256": "298bec8f464120f9421732d2bc42d54dda84cea08a1ac6bc531c51d9fce4b0a0"
     },
     "validation": {
       "metrics": {
-        "average_predicted_probability": 0.5500384480147829,
-        "brier_score": 0.24855914015012115,
+        "average_predicted_probability": 0.550038448,
+        "brier_score": 0.2485591402,
         "class_distribution": {
           "negative": 12,
           "positive": 15
         },
-        "log_loss": 0.6893507663616454,
-        "observed_positive_fraction": 0.5555555555555556,
+        "log_loss": 0.6893507664,
+        "observed_positive_fraction": 0.5555555556,
         "partition": "validation",
         "record_count": 27,
-        "roc_auc": 0.5638888888888889
+        "roc_auc": 0.5638888889
       },
-      "prediction_sha256": "3d7ba57bf7e32215fa3c6974fb3900f71bb4f34562ffabbf061e594419cacad7"
+      "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
     }
   },
   "fit": {
     "baseline_version": "1.0.0",
     "coefficients": [
-      0.4613097888386774,
+      0.4613097888,
       0.0,
       0.0,
       0.0,
@@ -118,10 +118,10 @@
       0.0,
       0.0,
       0.0,
-      -0.12086084497273379,
-      0.12571020525447493,
+      -0.120860845,
+      0.1257102053,
       0.0,
-      0.004849360281741554,
+      0.0048493603,
       0.0
     ],
     "converged": true,
@@ -142,8 +142,8 @@
       "billing_frequency=__unknown__"
     ],
     "feature_pipeline_version": "1.0.0",
-    "fitted_state_sha256": "e27eb38cb84a5199ced9eb615ed258c9fc7d50408bda5a80cca01929faf2d17f",
-    "intercept": 0.004849360281741554,
+    "fitted_state_sha256": "9e85d87f42a984bc6090ab2cac23ced9f21f0af01092b6b5c3936accf651cc31",
+    "intercept": 0.0048493603,
     "iteration_count": 6,
     "sklearn_version": "1.7.2",
     "specification": {

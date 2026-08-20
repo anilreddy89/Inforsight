@@ -359,7 +359,7 @@ This remains a pipeline-engineering fixture under `LIM-002-001`. Phase 2.04 perf
 
 ## Phase 2 logistic baseline
 
-Phase 2.05 fits one frozen [logistic-regression baseline](../docs/modeling/phase-02-05-logistic-baseline-contract.md) on the exact Phase 2.04 train matrix. The versioned specification uses scikit-learn's `liblinear` solver, L2 regularization with `C=1.0`, seed `20260817`, no class weighting, tolerance `1e-8`, and a 1,000-iteration convergence ceiling.
+Phase 2.05 fits one frozen [logistic-regression baseline](../docs/modeling/phase-02-05-logistic-baseline-contract.md) on the exact Phase 2.04 train matrix. The versioned specification pins scikit-learn `1.7.2` and uses its `liblinear` solver, L2 regularization with `C=1.0`, seed `20260817`, no class weighting, tolerance `1e-8`, and a 1,000-iteration convergence ceiling. Published floating-point evidence uses an explicit 10-decimal normalization boundary while runtime scoring retains full precision.
 
 Fitted state is explicit JSON-compatible metadata: intercept, coefficients, feature order, training IDs and digest, dependency and contract versions, and convergence evidence. No executable pickle is committed. Train and validation probabilities can be reconstructed directly from the explicit state; the model API rejects canonical test scoring.
 

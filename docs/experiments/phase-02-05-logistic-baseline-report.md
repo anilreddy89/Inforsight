@@ -28,7 +28,7 @@ These values were not used to tune the estimator, preprocessing, calibration, or
 
 | Frozen transformed feature | Coefficient | Odds ratio |
 | --- | ---: | ---: |
-| `premium_amount_cents` | 0.461309788839 | 1.58615014679 |
+| `premium_amount_cents` | 0.4613097888 | 1.586150147 |
 | `policy_age_days` | 0 | 1 |
 | `visible_event_count` | 0 | 1 |
 | `visible_billing_count` | 0 | 1 |
@@ -36,10 +36,10 @@ These values were not used to tune the estimator, preprocessing, calibration, or
 | `visible_received_payment_count` | 0 | 1 |
 | `visible_notice_count` | 0 | 1 |
 | `visible_service_contact_count` | 0 | 1 |
-| `product_variant=fictional_term_life` | -0.120860844973 | 0.886157264252 |
-| `product_variant=fictional_whole_life` | 0.125710205254 | 1.1339535069 |
+| `product_variant=fictional_term_life` | -0.120860845 | 0.8861572643 |
+| `product_variant=fictional_whole_life` | 0.1257102053 | 1.133953507 |
 | `product_variant=__unknown__` | 0 | 1 |
-| `billing_frequency=monthly` | 0.00484936028174 | 1.00486113746 |
+| `billing_frequency=monthly` | 0.0048493603 | 1.004861138 |
 | `billing_frequency=__unknown__` | 0 | 1 |
 
 Coefficients operate on standardized numeric fields and frozen one-hot columns. They are associations in a small, deliberately engineered synthetic corpus; they are not causal effects, actuarial factors, customer-impact evidence, or authority for conservation action.

@@ -21,6 +21,7 @@ from .preprocessing import ModelMatrix, matrix_digest
 LOGISTIC_BASELINE_VERSION = "1.0.0"
 TRAINING_CONFIGURATION_VERSION = "1.0.0"
 BASELINE_RANDOM_SEED = 20260817
+ARTIFACT_DECIMAL_PLACES = 10
 PERMITTED_SCORING_PARTITIONS = ("train", "validation")
 
 
@@ -240,7 +241,7 @@ def evaluate_logistic_baseline(
         {
             "partition": matrix.partition,
             "observation_ids": list(matrix.observation_ids),
-            "probabilities": list(probabilities),
+            "probabilities": [_artifact_float(value) for value in probabilities],
         },
         sort_keys=True,
         separators=(",", ":"),
@@ -250,7 +251,8 @@ def evaluate_logistic_baseline(
 
 def fitted_baseline_bytes(fitted: FittedLogisticBaseline) -> bytes:
     _validate_fitted(fitted)
-    return (json.dumps(fitted.to_dict(), sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+    state = _canonicalize_artifact_numbers(fitted.to_dict())
+    return (json.dumps(state, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
 
 
 def coefficient_summary(fitted: FittedLogisticBaseline) -> tuple[dict[str, float | str], ...]:
@@ -313,3 +315,22 @@ def _sigmoid(value: float) -> float:
         return 1.0 / (1.0 + factor)
     factor = exp(value)
     return factor / (1.0 + factor)
+
+
+def _artifact_float(value: float) -> float:
+    """Normalize insignificant cross-platform numeric noise for artifacts only."""
+
+    rounded = round(value, ARTIFACT_DECIMAL_PLACES)
+    return 0.0 if rounded == 0.0 else rounded
+
+
+def _canonicalize_artifact_numbers(value: Any) -> Any:
+    if isinstance(value, float):
+        return _artifact_float(value)
+    if isinstance(value, dict):
+        return {key: _canonicalize_artifact_numbers(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_canonicalize_artifact_numbers(item) for item in value]
+    if isinstance(value, tuple):
+        return [_canonicalize_artifact_numbers(item) for item in value]
+    return value
