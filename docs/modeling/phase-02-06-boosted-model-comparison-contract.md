@@ -6,7 +6,7 @@
 | --- | --- |
 | Phase | Phase 2.06 |
 | Tracker ID | `P2-06` |
-| Status | Frozen for implementation in issue #26 |
+| Status | Completed in issue #26 and PR #27 (`fd9fc3b`) |
 | Candidate library | XGBoost `3.3.0` |
 | Fit partition | Exact frozen Phase 2.04 train matrix only |
 | Comparison partitions | Train and validation only |
