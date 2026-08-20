@@ -46,7 +46,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
 | Owner | Unassigned; create a focused issue when the resolution trigger is reached |
-| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json` |
+| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json` |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
 

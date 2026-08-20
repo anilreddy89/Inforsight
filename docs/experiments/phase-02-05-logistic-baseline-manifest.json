@@ -1,0 +1,276 @@
+{
+  "coefficients": [
+    {
+      "coefficient": 0.4613097888,
+      "feature_name": "premium_amount_cents",
+      "odds_ratio": 1.5861501468
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "policy_age_days",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "visible_event_count",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "visible_billing_count",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "visible_failed_payment_count",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "visible_received_payment_count",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "visible_notice_count",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "visible_service_contact_count",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": -0.120860845,
+      "feature_name": "product_variant=fictional_term_life",
+      "odds_ratio": 0.8861572643
+    },
+    {
+      "coefficient": 0.1257102053,
+      "feature_name": "product_variant=fictional_whole_life",
+      "odds_ratio": 1.1339535069
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "product_variant=__unknown__",
+      "odds_ratio": 1.0
+    },
+    {
+      "coefficient": 0.0048493603,
+      "feature_name": "billing_frequency=monthly",
+      "odds_ratio": 1.0048611375
+    },
+    {
+      "coefficient": 0.0,
+      "feature_name": "billing_frequency=__unknown__",
+      "odds_ratio": 1.0
+    }
+  ],
+  "contracts": {
+    "feature_dictionary_version": "1.0.0",
+    "feature_pipeline_version": "1.0.0",
+    "logistic_baseline_version": "1.0.0",
+    "training_configuration_version": "1.0.0"
+  },
+  "decision": "pipeline_engineering_only",
+  "evaluation": {
+    "train": {
+      "metrics": {
+        "average_predicted_probability": 0.4998134858,
+        "brier_score": 0.2309974054,
+        "class_distribution": {
+          "negative": 13,
+          "positive": 13
+        },
+        "log_loss": 0.6525953158,
+        "observed_positive_fraction": 0.5,
+        "partition": "train",
+        "record_count": 26,
+        "roc_auc": 0.6420118343
+      },
+      "prediction_sha256": "298bec8f464120f9421732d2bc42d54dda84cea08a1ac6bc531c51d9fce4b0a0"
+    },
+    "validation": {
+      "metrics": {
+        "average_predicted_probability": 0.550038448,
+        "brier_score": 0.2485591402,
+        "class_distribution": {
+          "negative": 12,
+          "positive": 15
+        },
+        "log_loss": 0.6893507664,
+        "observed_positive_fraction": 0.5555555556,
+        "partition": "validation",
+        "record_count": 27,
+        "roc_auc": 0.5638888889
+      },
+      "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+    }
+  },
+  "fit": {
+    "baseline_version": "1.0.0",
+    "coefficients": [
+      0.4613097888,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.120860845,
+      0.1257102053,
+      0.0,
+      0.0048493603,
+      0.0
+    ],
+    "converged": true,
+    "feature_dictionary_version": "1.0.0",
+    "feature_names": [
+      "premium_amount_cents",
+      "policy_age_days",
+      "visible_event_count",
+      "visible_billing_count",
+      "visible_failed_payment_count",
+      "visible_received_payment_count",
+      "visible_notice_count",
+      "visible_service_contact_count",
+      "product_variant=fictional_term_life",
+      "product_variant=fictional_whole_life",
+      "product_variant=__unknown__",
+      "billing_frequency=monthly",
+      "billing_frequency=__unknown__"
+    ],
+    "feature_pipeline_version": "1.0.0",
+    "fitted_state_sha256": "9e85d87f42a984bc6090ab2cac23ced9f21f0af01092b6b5c3936accf651cc31",
+    "intercept": 0.0048493603,
+    "iteration_count": 6,
+    "sklearn_version": "1.7.2",
+    "specification": {
+      "class_weight": null,
+      "fit_intercept": true,
+      "maximum_iterations": 1000,
+      "penalty": "l2",
+      "random_seed": 20260817,
+      "regularization_strength": 1.0,
+      "solver": "liblinear",
+      "tolerance": 1e-08
+    },
+    "training_configuration_version": "1.0.0",
+    "training_matrix_sha256": "a943fba2c3c234acf5223cb91bdb8539c1dc03a45680f77b26a1d68570a0b897",
+    "training_observation_ids": [
+      "obs_558eaf40a6e29da8b4e902f5",
+      "obs_e8dfebcb8cacd7e9a308cc75",
+      "obs_193b0fe8af5a46b4afc2bb48",
+      "obs_ae21f6226f7e65dc2225470d",
+      "obs_db715ed14c0d3d57a63e961a",
+      "obs_c5f3d66c945d52e912518bba",
+      "obs_4e76d670714089f751cae3d5",
+      "obs_1fc50a377cf4801041280f1b",
+      "obs_1298747fbe474ce2a644b63f",
+      "obs_ee12babbb34f8c9d5cf720ae",
+      "obs_ccf82823a431e04f935eb40f",
+      "obs_16582f34fc253223d49d054d",
+      "obs_58825ffe27f7034d780e3c88",
+      "obs_af8d525e610cd2694c4d05c9",
+      "obs_3a45981f90912fe29ac0c8e6",
+      "obs_817baf9c9d487e855767ce66",
+      "obs_1f1b3d8a5d3ce1fe51bdcfdf",
+      "obs_768553295ede093146c13142",
+      "obs_f4e322de703099377195dd9a",
+      "obs_c3459069f6c933b296bfd4fa",
+      "obs_c27eaf55bb10b3790dc8de87",
+      "obs_623c588a5b6e7d39bbd47a8f",
+      "obs_9032fd4bf51998ce98e02e44",
+      "obs_d8b387acc4b8f8eae781c0d2",
+      "obs_8019b886b228ffb0c903962c",
+      "obs_c0bc5bf6f15b1128dd239f61"
+    ]
+  },
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "limitations": [
+    "LIM-002-001 remains claim-blocking and unresolved.",
+    "Training is monthly-only and validation is semiannual-only; billing frequency is confounded with observation time.",
+    "Metrics demonstrate pipeline mechanics and are not evidence of temporal generalization or real-world performance.",
+    "The canonical test partition remains sealed and was not scored.",
+    "No calibration, threshold selection, resampling, feature selection, or model comparison occurs in this phase.",
+    "Coefficients describe this fitted synthetic model and are not causal or action-authorizing effects."
+  ],
+  "manifest_id": "inforsight-phase-02-05-logistic-baseline",
+  "manifest_version": "1.0.0",
+  "source": {
+    "feature_pipeline_manifest_sha256": "45e0e45f3e06e781ba8e1c9e05f19f5dee1c0136961792186c3fbf597131884e",
+    "input_matrices": {
+      "train": {
+        "matrix_sha256": "a943fba2c3c234acf5223cb91bdb8539c1dc03a45680f77b26a1d68570a0b897",
+        "observation_ids": [
+          "obs_558eaf40a6e29da8b4e902f5",
+          "obs_e8dfebcb8cacd7e9a308cc75",
+          "obs_193b0fe8af5a46b4afc2bb48",
+          "obs_ae21f6226f7e65dc2225470d",
+          "obs_db715ed14c0d3d57a63e961a",
+          "obs_c5f3d66c945d52e912518bba",
+          "obs_4e76d670714089f751cae3d5",
+          "obs_1fc50a377cf4801041280f1b",
+          "obs_1298747fbe474ce2a644b63f",
+          "obs_ee12babbb34f8c9d5cf720ae",
+          "obs_ccf82823a431e04f935eb40f",
+          "obs_16582f34fc253223d49d054d",
+          "obs_58825ffe27f7034d780e3c88",
+          "obs_af8d525e610cd2694c4d05c9",
+          "obs_3a45981f90912fe29ac0c8e6",
+          "obs_817baf9c9d487e855767ce66",
+          "obs_1f1b3d8a5d3ce1fe51bdcfdf",
+          "obs_768553295ede093146c13142",
+          "obs_f4e322de703099377195dd9a",
+          "obs_c3459069f6c933b296bfd4fa",
+          "obs_c27eaf55bb10b3790dc8de87",
+          "obs_623c588a5b6e7d39bbd47a8f",
+          "obs_9032fd4bf51998ce98e02e44",
+          "obs_d8b387acc4b8f8eae781c0d2",
+          "obs_8019b886b228ffb0c903962c",
+          "obs_c0bc5bf6f15b1128dd239f61"
+        ]
+      },
+      "validation": {
+        "matrix_sha256": "04fe6bfc0fa44f9b9cb1e9e104f152a5eadc0936e5ef7f28bb5b1e4cbec58202",
+        "observation_ids": [
+          "obs_4dee8b3eebcce3c22ade88ff",
+          "obs_81320aefca37f350178df9e7",
+          "obs_c49bfbfeb9c3aa9205f47731",
+          "obs_82ab0039f89be84cda40c67e",
+          "obs_02c35f6b766fe58ea83c060b",
+          "obs_604d31488d928b5b3eb1e412",
+          "obs_6a954de9120aacbc1fdb19ce",
+          "obs_46f472dd376c07c678254bdd",
+          "obs_c3801254012fead2416bbd98",
+          "obs_8fbe0f844169d7d14fc3deec",
+          "obs_5615870c6e0e027721aa0f6e",
+          "obs_972e18aa3c9f6870d7614c6f",
+          "obs_1c4ff0b6d74fb51bf829d9ef",
+          "obs_da7b51e78db3879b8bf83987",
+          "obs_f5c42c7f83ed61ceda8ebf9e",
+          "obs_a81e8dcc8b1a3bfbb9c15256",
+          "obs_531ff8b8fd1e9aed1302d90d",
+          "obs_5fb81614017ec385fa115fff",
+          "obs_9177ab99e507b1eb442ab5b4",
+          "obs_8e9e78a851899ebb48fb6e8a",
+          "obs_a0671bb74e8a712b2fe22a80",
+          "obs_9fb384985beb5a8c0cb72438",
+          "obs_7f5f93de122ccf9a9403ca16",
+          "obs_1c9e10926450d77cf363765f",
+          "obs_c932b493db708c83e6e19291",
+          "obs_8ec83145ff58f0d148255a65",
+          "obs_617a3eb90064ad9f2b7226a4"
+        ]
+      }
+    }
+  },
+  "test_partition_status": "sealed_not_scored"
+}

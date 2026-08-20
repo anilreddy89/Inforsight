@@ -58,6 +58,8 @@ These assumptions define the first simulator boundary. They are deliberately sim
 - Test observations must not influence feature preprocessing, resampling, model selection, calibration, or threshold selection.
 - Phase 2.04 rejects missing required feature values, fits numeric z-score statistics and categorical vocabularies on train only, and reserves an explicit unknown column for categories absent from train.
 - Current status and currency are explicitly excluded from the version `1.0.0` model matrix because they are constant across eligible canonical observations.
+- Phase 2.05 fits one frozen seeded logistic-regression specification on train only, permits predeclared train and validation diagnostics, and rejects canonical test scoring until the comparison and evaluation protocol is frozen.
+- Logistic fitted state is stored as explicit coefficients and compatibility metadata rather than an executable pickle; coefficient and odds-ratio summaries are non-causal descriptions of the synthetic fitted model.
 - Deferred lifecycle fields are not required for the narrow engineering baseline and must not be invented inside observation construction.
 - Synthetic-data results demonstrate engineering method, not real-world predictive performance.
 

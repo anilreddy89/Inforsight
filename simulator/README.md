@@ -357,6 +357,22 @@ make feature-pipeline-check
 
 This remains a pipeline-engineering fixture under `LIM-002-001`. Phase 2.04 performs no model fitting, resampling, calibration, threshold selection, or test-guided choice.
 
+## Phase 2 logistic baseline
+
+Phase 2.05 fits one frozen [logistic-regression baseline](../docs/modeling/phase-02-05-logistic-baseline-contract.md) on the exact Phase 2.04 train matrix. The versioned specification pins scikit-learn `1.7.2` and uses its `liblinear` solver, L2 regularization with `C=1.0`, seed `20260817`, no class weighting, tolerance `1e-8`, and a 1,000-iteration convergence ceiling. Published floating-point evidence uses an explicit 10-decimal normalization boundary while runtime scoring retains full precision.
+
+Fitted state is explicit JSON-compatible metadata: intercept, coefficients, feature order, training IDs and digest, dependency and contract versions, and convergence evidence. No executable pickle is committed. Train and validation probabilities can be reconstructed directly from the explicit state; the model API rejects canonical test scoring.
+
+Regenerate or verify the manifest and report with:
+
+```bash
+python3 scripts/train_logistic_baseline.py --write
+python3 scripts/train_logistic_baseline.py --check
+make logistic-baseline-check
+```
+
+The published diagnostics are pipeline-engineering evidence only. `LIM-002-001` remains claim-blocking; no calibration, threshold selection, boosted-model comparison, temporal-generalization claim, or action authority is introduced.
+
 ## Tests
 
 From the repository root, with the contract test requirements installed:
@@ -385,6 +401,12 @@ Run the Phase 2.04 feature-pipeline suite and artifact verification with:
 
 ```bash
 make feature-pipeline-check
+```
+
+Run the Phase 2.05 logistic-baseline suite and sealed-test artifact verification with:
+
+```bash
+make logistic-baseline-check
 ```
 
 For the end-to-end implementation journey and current function-call map, see [`docs/simulator-process-flow.md`](../docs/simulator-process-flow.md).
