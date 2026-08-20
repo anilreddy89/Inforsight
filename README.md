@@ -62,15 +62,17 @@ scripts/          Repository validation and developer utilities
 
 Phase 1 - Policy Digital Twin is complete. The versioned event contracts, deterministic 100-policy generator, point-in-time reconstruction, cross-event history validation, and reproducible eight-policy fictional [sample dataset](datasets/sample-policy-events.jsonl) are implemented. The aggregate [synthetic-rate assessment](docs/experiments/phase-01-07-synthetic-rate-assessment.md) retains the equal scenario mix as a coverage fixture rather than a prevalence estimate.
 
-Phase 2.01 now defines the versioned [modeling and observation contract](docs/modeling/phase-02-01-modeling-contract.md), dual effective-and-ingestion-time feature visibility, active-policy eligibility, explicit 90-day lapse-or-surrender labels, and right-censoring. The deterministic [data-sufficiency gate](docs/experiments/phase-02-01-observation-sufficiency.json) permits a narrow baseline engineering experiment with prominent synthetic-data limitations; no model has been trained.
+Phase 2.01 defines the versioned [modeling and observation contract](docs/modeling/phase-02-01-modeling-contract.md), dual effective-and-ingestion-time feature visibility, active-policy eligibility, explicit 90-day lapse-or-surrender labels, and right-censoring. The deterministic [data-sufficiency gate](docs/experiments/phase-02-01-observation-sufficiency.json) permits a narrow baseline engineering experiment with prominent synthetic-data limitations.
 
 Phase 2.03 is complete with a versioned [policy-aware temporal split contract](docs/modeling/phase-02-03-temporal-split-contract.md) and deterministic [split manifest](docs/experiments/phase-02-03-temporal-split-manifest.json) ([issue #20](https://github.com/anilreddy89/Inforsight/issues/20), [PR #21](https://github.com/anilreddy89/Inforsight/pull/21)). The strict 90-day embargo and isolation checks support pipeline engineering only: first-billing timing separates billing-frequency categories across the canonical train, validation, and test partitions, so the synthetic split does not establish temporal generalization.
+
+Phase 2.04 provides a deterministic [feature pipeline](docs/modeling/phase-02-04-feature-pipeline-contract.md) with training-only preprocessing. Phase 2.05 adds a seeded [logistic-regression baseline](docs/modeling/phase-02-05-logistic-baseline-contract.md) and reproducible [benchmark report](docs/experiments/phase-02-05-logistic-baseline-report.md). The model fits train only, reports predeclared train and validation diagnostics, and keeps the canonical test partition sealed. These results demonstrate pipeline mechanics only while `LIM-002-001` remains unresolved. The next increment will freeze one boosted-tree candidate and compare it with this benchmark without test scoring, calibration, threshold selection, or release claims.
 
 See [the initial backlog](docs/backlog.md), [domain assumptions](docs/assumptions.md), [limitation register](docs/limitations.md), and [clean-room policy](docs/clean-room-policy.md) before contributing.
 
 ## Getting started
 
-The Phase 0 scaffold requires Python 3.11 or newer, GNU Make, and Git. It has no runtime third-party dependencies.
+The current repository requires Python 3.11 or newer, GNU Make, Git, and the pinned simulator dependency `scikit-learn==1.7.2`.
 
 ```bash
 git clone https://github.com/anilreddy89/Inforsight.git
@@ -78,7 +80,7 @@ cd Inforsight
 make check
 ```
 
-The check runs repository boundary validation, published-dataset, synthetic-rate, observation-sufficiency, and temporal-split reproducibility checks, data-contract tests, and simulator tests. Additional language-specific checks will be added when those components become real.
+The check runs repository-boundary validation; published-dataset, synthetic-rate, observation-sufficiency, temporal-split, feature-pipeline, and logistic-baseline reproducibility checks; focused leakage and model-pipeline tests; data-contract tests; and the complete simulator test suite.
 
 [GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request.
 

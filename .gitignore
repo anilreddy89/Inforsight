@@ -107,6 +107,7 @@ temp/
 # Keep these out of version control until they are reviewed for publication.
 Documents/
 PROJECT_PROGRESS.md
+learnings/
 
 
 # Git commit script for local only
