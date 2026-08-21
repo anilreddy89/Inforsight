@@ -201,6 +201,14 @@ Assign the issue to the earliest release that genuinely needs the improvement.
 - Use a maintenance milestone when the current release is already complete but requires a focused hardening pass.
 - Leave the issue unassigned only when there is no credible release target; review unassigned issues during milestone planning.
 
+Release milestones use the repository's SemVer-plus-capability format:
+
+```text
+v<major>.<minor>.<patch>-<capability>
+```
+
+Examples are `v0.1.0-data-foundation` and [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3). Internal phases, remediation gates, and workstream IDs organize issues inside a release milestone; they do not receive separate GitHub milestones unless they intentionally ship as a distinct release. The milestone name, eventual Git tag, and GitHub release title should remain aligned.
+
 Do not reopen or rewrite a merged feature pull request. A post-merge improvement receives its own issue, branch, pull request, and completion evidence.
 
 ## When to update the repository backlog
@@ -233,6 +241,83 @@ Observation -> GitHub issue -> Milestone -> Branch -> Tests and implementation
             -> Pull request -> CI and review -> Merge -> Issue closed -> Release notes
 ```
 
+## Phase 2R branching and merge strategy
+
+Phase 2R is a dependency-gated remediation program, not a collection of opportunistic fixes. The detailed outcomes and acceptance gates live in [`docs/backlog.md`](backlog.md#phase-2r---modeling-foundation-remediation-gate). Use the following strategy for R2-00 through R2-07.
+
+### Source of truth and readiness
+
+1. Assign every R2 issue to the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) milestone. Do not create a separate Phase 2R milestone; the R2 work IDs and dependency graph provide the internal gate.
+2. Create one issue per R2 backlog item using the implementation template. Use the architecture-decision template for the R2-04 ADR and link it to the R2-04 implementation issue if the decision and contract cannot remain one reviewable issue.
+3. Copy the stable work ID (`R2-00` through `R2-07`) into the issue and pull request. Do not substitute the GitHub issue number for the backlog ID.
+4. Mark an issue ready only when outcome, scope, out-of-scope boundaries, dependencies, claim impact, contract/version impact, and objective acceptance checks are complete.
+5. GitHub Issues own active work. `docs/backlog.md` owns phase order. `docs/limitations.md` owns claim blockers. The change tracker mirrors merged evidence; it must not become a second task queue.
+
+### Merge train
+
+Use this default merge order:
+
+```text
+R2-00 -> R2-01 -> R2-02 -> R2-03 -> R2-04 -> R2-05 -> R2-06 -> R2-07
+```
+
+- Do not create a dependent implementation branch until its predecessor is merged and local `main` is updated from `origin/main`.
+- Do not use stacked pull requests for Phase 2R. If review reveals a missing prerequisite, stop the current issue, create or amend the prerequisite issue, and make the dependency explicit.
+- One issue maps to one implementation branch and one primary pull request. A small documentation-only closeout pull request is allowed when the merge commit or final issue link cannot be recorded before the implementation merge.
+- Do not combine two R2 work IDs in one pull request merely because they touch the same file. Cross-cutting edits must be attributed to the earliest issue that requires them and kept compatible with later work.
+- P2-08 and P2-09 branches must not be created or revived until R2-07 merges with a `proceed` decision.
+
+### Branch names
+
+Use lowercase kebab-case with the GitHub issue number and stable work ID:
+
+| Work | Branch pattern | Example |
+| --- | --- | --- |
+| Documentation/governance | `docs/<issue>-<work-id>-<slug>` | `docs/30-r2-00-status-reconciliation` |
+| Defect or invariant repair | `fix/<issue>-<work-id>-<slug>` | `fix/31-r2-01-generator-config` |
+| Versioned capability | `feat/<issue>-<work-id>-<slug>` | `feat/35-r2-05-v2-modeling-corpus` |
+| Evidence or test gate | `test/<issue>-<work-id>-<slug>` | `test/37-r2-07-statistical-gate` |
+
+R2-04 should use `docs/` while it changes only decisions and contracts; use `feat/` only if the same approved issue also introduces supported runtime behavior.
+
+### Starting a branch
+
+Use an up-to-date mainline and an explicit branch name:
+
+```bash
+git switch main
+git pull --ff-only origin main
+git switch -c fix/31-r2-01-generator-config
+```
+
+Before implementation, move the tracker row to `In progress`, record the issue and branch in the relevant phase document, and add the predecessor issue or pull request under Dependencies.
+
+### Pull-request and merge gate
+
+Each Phase 2R pull request must satisfy all of the following before merge:
+
+- The title begins with the stable work ID, for example `R2-01: Bind generation to exact configuration`.
+- The body uses `Closes #<issue-number>` and names the milestone.
+- The diff stays within the issue's declared scope and explicitly lists any contract, generator, artifact, or claim-boundary change.
+- Focused regression tests demonstrate the repaired invariant or evidence gate.
+- `make check` and `git diff --check` pass on the final reviewed commit.
+- Versioned artifacts either remain byte-identical or change under a documented new version with regenerated manifests and review evidence.
+- No final holdout is created, inspected, transformed, predicted, or evaluated unless the issue is the explicitly authorized one-shot evaluation issue created after Phase 2R.
+- Required CI passes and review comments are resolved.
+- Documentation, limitation status, and tracker state accurately describe what will be true after merge.
+
+Use GitHub's **Create a merge commit** option to match the repository's established history and preserve the relationship between the issue branch and reviewed commits. Do not merge Phase 2R implementation by direct push to `main`. Delete the remote branch after merge and start the next branch from the resulting `origin/main`.
+
+### After each merge
+
+1. Confirm the merge commit and required CI on `main`.
+2. Confirm the issue closed through `Closes #...`.
+3. Record the PR, merge date, merge commit, and primary evidence in the change tracker.
+4. Mark the backlog checkbox complete only when all issue acceptance checks are represented on `main`.
+5. Update limitation status only when its complete closure evidence is satisfied; an intermediate R2 merge may leave a limitation `Scheduled`.
+6. Confirm P2-08 and P2-09 remain paused until the R2-07 `proceed` decision is merged.
+7. Create the next branch from updated `main`; do not reuse the merged branch.
+
 ### Before implementation
 
 1. Confirm the issue has an observable outcome and acceptance checks.
@@ -243,7 +328,7 @@ Observation -> GitHub issue -> Milestone -> Branch -> Tests and implementation
    fix/<issue-number>-repeatable-simulator-identifiers
    ```
 
-   Use `feat/` only when the issue adds supported behavior; use `docs/` for documentation-only changes.
+   Use `feat/` only when the issue adds supported behavior; use `docs/` for documentation-only changes; use `test/` for a test or evidence gate whose primary deliverable is verification rather than runtime capability.
 
 4. Capture the failing or missing case with a focused test when practical.
 

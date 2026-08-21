@@ -11,6 +11,8 @@
 
 Improvements discovered during implementation, review, or maintenance should follow the [engineering improvement workflow](docs/engineering-improvement-workflow.md). Use a focused follow-up issue when an observation is outside the active issue or is discovered after merge.
 
+Phase 2R work must also follow the documented [dependency-gated branching and merge strategy](docs/engineering-improvement-workflow.md#phase-2r-branching-and-merge-strategy): one work ID, issue, branch, and primary pull request at a time, with each dependent branch created from `main` only after its predecessor merges.
+
 ## Clean-room requirement
 
 Contributions must use fictional data, fictional procedures, public references, and original implementation. Do not contribute confidential or proprietary insurer data, code, schemas, screenshots, rules, internal terminology, credentials, or customer information. See [the clean-room policy](docs/clean-room-policy.md).

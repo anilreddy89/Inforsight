@@ -42,10 +42,10 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 
 | Field | Value |
 | --- | --- |
-| Status | Accepted temporarily |
+| Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | Unassigned; create a focused issue when the resolution trigger is reached |
+| Owner | Phase 2R items R2-04, R2-05, R2-06, and R2-07; GitHub issues assigned when created |
 | Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json`; feature-sanity evidence in `docs/experiments/phase-02-07-feature-diagnostics-manifest.json` |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
@@ -63,14 +63,16 @@ Phase 2.07 confirms that billing frequency and several first-billing event-count
 - Versioned feature construction and deterministic regeneration.
 - Training-only preprocessing with explicit handling for unknown held-out categories.
 - Seeded model training, artifact loading, and scoring-path reproducibility.
-- Leakage, isolation, calibration-code, threshold-code, explanation-code, and reporting-mechanics tests.
+- Leakage, isolation, and separately scoped scoring-path or reporting-mechanics tests that do not publish Phase 2.08 or Phase 2.09 evidence.
 - Synthetic metrics labeled strictly as pipeline demonstrations.
+- Phase 2R correctness, contract, corpus, split, and statistical-gate work.
 
 #### Work or claims blocked
 
 - Claims that held-out results demonstrate temporal generalization.
 - Claims of real-world predictive, actuarial, fairness, operational, or business performance.
 - Model-release approval based on the current temporal split.
+- Phase 2.08 calibration or threshold artifacts and Phase 2.09 model-behavior explanations until R2-07 passes.
 - Changing to a random or stratified split to conceal the temporal confounding.
 - Using validation or test results to redesign the existing split after results are observed.
 
@@ -94,6 +96,97 @@ Introduce a separately versioned generator and observation design with:
 - [ ] The regenerated versioned split manifest passes deterministic verification.
 - [ ] Each modeling partition has an adequate, documented sample and outcome count for the intended claim.
 - [ ] The model decision note either authorizes the narrower claim with evidence or records a stop decision.
+
+### LIM-002-002 — The v1 corpus has no designed pre-cutoff feature-to-outcome risk mechanism
+
+| Field | Value |
+| --- | --- |
+| Status | Scheduled |
+| Severity | Claim-blocking |
+| Discovered in | Independent ML engineering review after Phase 2.07 |
+| Owner | Phase 2R items R2-04, R2-05, R2-06, and R2-07; GitHub issues assigned when created |
+| Evidence | `simulator/src/inforsight_simulator/generator.py`; `simulator/src/inforsight_simulator/observations.py`; `docs/experiments/phase-02-05-logistic-baseline-report.md`; `docs/experiments/phase-02-06-boosted-comparison-report.md`; `docs/experiments/phase-02-07-feature-diagnostics-report.md` |
+| Detailed plan | `docs/backlog.md`, Phase 2R items R2-04 through R2-07 |
+| Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
+
+#### Finding
+
+The v1 generator assigns coverage scenarios independently of the policy attributes and pre-cutoff observations available to the model. Outcome branches are driven by the assigned scenario after the observation cutoff, while the first-billing observation occurs before the behavioral events that would otherwise differentiate policy histories. Several behavioral feature groups are consequently constant in training.
+
+The corpus is useful for exercising deterministic branches, contracts, point-in-time reconstruction, leakage controls, preprocessing, model serialization, and report generation. It does not provide a known feature-conditioned statistical relationship that a risk model can be expected to recover. Validation discrimination can therefore reflect finite-sample seed variation, temporal category composition, or other artifacts rather than learned risk.
+
+#### Work that may continue
+
+- R2-00 through R2-07 remediation work.
+- Correctness, determinism, leakage, isolation, serialization, and scoring-interface tests.
+- Historical v1 reproduction when labeled `pipeline_engineering_only`.
+- Design-only model-card, calibration-interface, or explanation-interface work that publishes no performance or substantive interpretation.
+
+#### Work or claims blocked
+
+- Phase 2.08 probability-calibration and operational-threshold evidence.
+- Phase 2.09 substantive SHAP or equivalent model-behavior interpretation.
+- Claims that v1 model discrimination represents recoverable policy risk.
+- Final-test performance reporting or risk-model release approval.
+- Redesigning the generator to target a desired AUC after observing results without a predeclared acceptance protocol.
+
+#### Proposed resolution
+
+Preserve v1 as an immutable coverage fixture and introduce a separately versioned v2 statistical corpus with multiple cohorts, recurring exposure, varied pre-cutoff behavior, a stochastic feature-conditioned outcome mechanism, latent noise, oracle probabilities, censoring and missingness mechanisms, and predeclared multi-seed acceptance tests.
+
+#### Closure evidence
+
+- [ ] The R2-04 ADR and versioned statistical contract are approved before v2 results are inspected.
+- [ ] The v2 generator exposes a documented stochastic risk mechanism and oracle probabilities without leaking them into model features.
+- [ ] Recurring pre-cutoff observations contain adequate behavioral and feature variation.
+- [ ] Null-signal and label-shuffle controls behave according to predeclared chance rules.
+- [ ] Known simulated signal is recovered consistently across seeds and temporal folds with uncertainty.
+- [ ] Learning, ablation, missingness, category, and temporal-stability evidence satisfies the predeclared R2-07 decision rules.
+- [ ] The R2-07 decision note records `proceed`, `redesign`, or `stop`; only `proceed` permits P2-08 and P2-09 to resume.
+
+### LIM-002-003 — The v1 test fixture is API-guarded and was prediction-accessed during review
+
+| Field | Value |
+| --- | --- |
+| Status | Scheduled |
+| Severity | Claim-blocking |
+| Discovered in | Independent engineering review after Phase 2.07 |
+| Owner | Phase 2R items R2-00 and R2-03; GitHub issues assigned when created |
+| Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
+| Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
+| Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
+
+#### Finding
+
+The scoring APIs authorize validation predictions primarily from a caller-controlled partition string and feature-name checks. Relabeling the immutable v1 test `ModelMatrix` as `validation` produced logistic and boosted predictions during adversarial review. No test metric was computed and no repository artifact was changed, but prediction access occurred. The v1 fixture must therefore be described as review-exposed prediction-only historical evidence, not untouched or `sealed_not_scored`.
+
+The deterministic corpus, split membership, and transformed matrices are also locally inspectable. The current control is an API convention and misuse guard, not a hard security or access-control boundary.
+
+#### Work that may continue
+
+- R2 correctness, scoring-authorization, inference-contract, and negative-test work.
+- Reproduction of train and validation pipeline artifacts under their historical engineering-only claim.
+- Design of a future access-controlled one-shot evaluation protocol.
+
+#### Work or claims blocked
+
+- Any claim that the v1 test fixture remained untouched after Phase 2.07 review.
+- Computing or publishing v1 test metrics as final performance evidence.
+- Treating a renamed partition or public deterministic fixture as an access-controlled release holdout.
+- Creating a new final release holdout before the v2 evaluation protocol and release candidate are frozen.
+
+#### Proposed resolution
+
+Bind authorized scoring membership, row identity, feature contract, preprocessing identity, and matrix digests to verified fitted state or an evaluation manifest. Separate ordinary unlabeled inference from experiment evaluation. Preserve the v1 test fixture only as historical pipeline evidence, and create the future v2 release holdout under a predeclared access-controlled one-shot protocol.
+
+#### Closure evidence
+
+- [ ] Current repository status and affected reports describe the v1 fixture truthfully without rewriting historical artifacts.
+- [ ] Relabeling, row substitution, reordering, feature substitution, and digest mismatch fail across logistic, boosted, diagnostic, and reload paths.
+- [ ] Authorized non-final scoring succeeds only for verified membership and fitted-state compatibility.
+- [ ] Unlabeled inference does not depend on experiment partition names or targets.
+- [ ] The v2 final-holdout protocol is approved before holdout materialization or access.
+- [ ] A later one-shot evaluation records the authorized accessor, frozen artifact digests, command, timestamp, and result without permitting iterative model changes.
 
 ## Register maintenance
 

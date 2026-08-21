@@ -1,6 +1,6 @@
-# Initial Backlog
+# Inforsight Backlog
 
-This backlog is ordered for a natural repository history. Each item should become a tracked issue before implementation.
+This backlog is ordered for a natural repository history. Each item should become a tracked issue before implementation. GitHub Issues are the operational source of truth; this file records phase order, dependencies, and acceptance gates rather than replacing issue-level execution detail.
 
 ## Phase 0 - Foundation
 
@@ -32,12 +32,230 @@ Phase 1 is complete for the repository's documented MVP boundary. The broader 14
 - [x] Train and document a seeded logistic-regression baseline as the transparent benchmark ([issue #24](https://github.com/anilreddy89/Inforsight/issues/24), [PR #25](https://github.com/anilreddy89/Inforsight/pull/25)).
 - [x] Freeze one seeded LightGBM or XGBoost configuration before inspecting its results, fit it on the exact Phase 2.04 training matrix only, and compare it with the Phase 2.05 logistic-regression benchmark on identical train and validation observations using the same predeclared metrics. Pin the selected dependency, prohibit validation-driven hyperparameter search and preprocessing refits, keep the canonical test partition sealed, publish deterministic comparison artifacts, and label all results `pipeline_engineering_only` while `LIM-002-001` remains unresolved ([issue #26](https://github.com/anilreddy89/Inforsight/issues/26), [PR #27](https://github.com/anilreddy89/Inforsight/pull/27)).
 - [x] Run leakage-aware feature sanity and shortcut diagnostics on the frozen splits, including training-only univariate mutual information, validation-scored single-feature shallow models, identifier/cardinality checks, and targeted permutation or ablation tests; record an explicit allow, exclude, or investigate decision for each flagged feature without treating correlation alone as proof of leakage ([issue #28](https://github.com/anilreddy89/Inforsight/issues/28), [PR #29](https://github.com/anilreddy89/Inforsight/pull/29)).
-- [ ] Calibrate probabilities using validation data only and report held-out discrimination, calibration, precision at operational review capacity, recall in high-risk bands, threshold tradeoffs, and explicit false-positive cost assumptions.
-- [ ] Publish SHAP or equivalent attribution examples with feature sanity checks and clear boundaries that explanations describe model behavior rather than authorize conservation actions.
-- [ ] Version the training configuration, dependencies, feature contract, split manifest, fitted preprocessing pipeline, metrics, and model artifacts; bundle compatible preprocessing and model objects or bind them through verified artifact metadata, and prove that reloading the frozen artifacts reproduces held-out predictions from documented commands.
-- [ ] Resolve or explicitly disposition the Phase 2 claim-blocking limitations before interpreting held-out metrics as temporal generalization or approving a model release. For `LIM-002-001`, add multiple issuance cohorts across sufficient calendar duration, represent every supported billing frequency in train, validation, and test, preserve chronological ordering and the 90-day embargo, and regenerate the split manifest; pipeline-engineering work may continue meanwhile. See `docs/limitations.md`.
-- [ ] Publish `MODEL_CARD.md`, an experiment report, and a Phase 2 decision note that compare both models, disclose synthetic-data limitations and the absence of a meaningful subgroup-fairness assessment, inventory any legally and ethically appropriate audit attributes, state that missing protected attributes are not evidence of fairness, and demonstrate the acceptance gate: reproducible training, held-out temporal scoring, calibrated probabilities, shortcut review, and explanations without future information.
-- [ ] Publish the agreed risk-model release marker and release notes after the Phase 2 gate, reconciling the roadmap's `v0.3.0-risk-model` name with the repository's actual release sequence rather than creating an inconsistent tag.
+
+Phases 2.01 through 2.07 remain valid historical pipeline-engineering increments. An independent review after Phase 2.07 found claim-blocking data-design limitations, correctness defects, and a bypassable test-scoring guard. The v1 canonical test fixture was prediction-accessed during that review, although no test metric was computed and no repository artifact was changed. It is therefore a review-exposed historical fixture, not an untouched release holdout.
+
+## Phase 2R - Modeling Foundation Remediation Gate
+
+Phase 2R is a required remediation gate between Phase 2.07 and performance-dependent Phase 2 work. Assign every R2-00 through R2-07 issue to the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) GitHub milestone. R2 is an internal sequencing and acceptance gate within that release milestone, not a separate milestone. Create one focused implementation issue and pull request for each item below; do not place all remediation in one branch or reopen completed Phase 2 pull requests.
+
+### Pause boundary
+
+- **P2-08 probability calibration and threshold evaluation is paused.** Calibration plumbing may be unit-tested only inside a separately approved remediation issue; no Phase 2.08 experiment artifact or performance conclusion may be published before R2-07 passes.
+- **P2-09 SHAP or equivalent attribution is paused.** Explanation plumbing may be unit-tested only with clearly marked fixtures; no v1 feature importance may be interpreted as a substantive risk mechanism.
+- P2-10 through P2-12 remain pending. Model-specific artifact freezing, a final evaluation, a model decision, and a release marker cannot proceed before R2-07 passes.
+- The v1 generator, observations, splits, and model artifacts remain immutable historical evidence. Phase 2R adds separately versioned contracts and artifacts rather than rewriting prior evidence.
+- No new final release holdout may be materialized, inspected, transformed, or scored until the v2 evaluation protocol defines its access boundary.
+
+### Dependency and merge order
+
+```text
+R2-00
+  -> R2-01 -> R2-02 -> R2-03
+  -> R2-04
+  -> R2-05
+  -> R2-06
+  -> R2-07
+  -> resume governed Phase 2 work
+```
+
+For this solo-developer repository, follow the order strictly even where implementation could be parallelized. Start each dependent branch from updated `main` only after the preceding pull request merges. See the [engineering improvement workflow](engineering-improvement-workflow.md#phase-2r-branching-and-merge-strategy).
+
+### R2-00 - Reconcile review findings and establish truthful status
+
+**Outcome:** Repository-facing status, claim boundaries, and ownership accurately describe the independent review and the Phase 2R gate.
+
+**Scope:**
+
+- Add `LIM-002-002` for the absence of a designed pre-cutoff feature-to-outcome risk mechanism in v1.
+- Add `LIM-002-003` for the bypassable scoring guard and prediction access to the v1 test fixture.
+- Reconcile `README.md`, this backlog, the limitation register, the change tracker, experiment indexes, and affected historical status language.
+- Preserve historical artifacts while clearly distinguishing the state recorded at creation from the state discovered during later review.
+- Assign R2 ownership, dependencies, paused work, and resume conditions.
+
+**Acceptance checks:**
+
+- [ ] No current repository status describes the v1 test fixture as untouched or `sealed_not_scored` without historical qualification.
+- [ ] P2-08 and P2-09 are visibly paused in every authoritative current-status location.
+- [ ] `LIM-002-001`, `LIM-002-002`, and `LIM-002-003` identify owners, blocked claims, allowed work, and objective closure evidence.
+- [ ] Completed Phase 2.01-2.07 evidence remains unchanged and is labeled `pipeline_engineering_only` where interpreted.
+- [ ] Documentation links and repository checks pass.
+
+**Out of scope:** Fixing generator, schema, scoring, or statistical behavior.
+
+### R2-01 - Bind generation to exact configuration, provenance, and run identity
+
+**Outcome:** Generated histories are controlled by the exact versioned configuration reported in provenance, and identifiers are unique within a deterministic run namespace.
+
+**Scope:**
+
+- Change the public generation API to consume the exact `GeneratorConfig` rather than reconstructing defaults from selected fields.
+- Bind provenance and returned histories to the same canonical configuration and generator version.
+- Introduce a deterministic run namespace or require an explicit dataset namespace so different configured runs cannot silently reuse policy and event identifiers.
+- Add migration notes where deterministic public output intentionally changes; do not overwrite v1 artifacts.
+
+**Acceptance checks:**
+
+- [ ] A custom `simulation_start` changes generated issuance dates and matches recorded provenance.
+- [ ] Configuration fields that affect generation are covered by regression or property tests.
+- [ ] Repeating the same namespaced configuration is byte deterministic.
+- [ ] Different run namespaces cannot collide on policy or event identifiers in the tested corpus.
+- [ ] Existing v1 fixtures remain reproducible through their documented legacy path or are explicitly version-pinned as historical.
+- [ ] Focused tests and `make check` pass.
+
+**Depends on:** R2-00. **Blocks:** R2-02 and every v2 generator artifact.
+
+### R2-02 - Enforce structural and semantic observation invariants
+
+**Outcome:** Serialized observations and runtime domain objects cannot represent contradictory label, eligibility, feature, or provenance states.
+
+**Scope:**
+
+- Add mutually exclusive JSON Schema variants or equivalent conditionals for outcome status, value, censoring reason, and label provenance.
+- Enforce eligibility-to-feature consistency and strict schema-version and currency rules.
+- Add runtime invariants to `ObservationRecord` and `OutcomeLabel` construction.
+- Provide one composite public ingress validator that applies event JSON Schema validation before cross-event history semantics.
+- Retain narrowly named internal validators where useful, but document their boundary.
+
+**Acceptance checks:**
+
+- [ ] Contradictory observed-positive, observed-negative, right-censored, and eligibility combinations fail schema validation.
+- [ ] The same contradictions fail runtime construction or composite ingress validation.
+- [ ] Invalid schema versions, unsupported currencies, and unexpected properties fail through the documented public ingress path.
+- [ ] Existing valid examples and published v1 artifacts continue to validate.
+- [ ] Negative contract tests, runtime tests, and `make check` pass.
+
+**Depends on:** R2-01. **Blocks:** R2-03 and the v2 observation contract.
+
+### R2-03 - Harden scoring authorization and retire the v1 fixture as a release holdout
+
+**Outcome:** Changing a caller-controlled partition label cannot authorize prediction or evaluation, and the release holdout boundary is explicit and auditable.
+
+**Scope:**
+
+- Bind permitted scoring membership, row identity, feature contract, preprocessing identity, and matrix digest to frozen fitted state or a verified evaluation manifest.
+- Make `dataclasses.replace(..., partition="validation")` and equivalent relabeling fail for logistic, boosted, and diagnostic scoring paths.
+- Separate ordinary inference from labeled experiment partitions; do not require a user-editable partition string as authorization.
+- Record the v1 test fixture as review-exposed prediction-only historical evidence; never claim that it was re-sealed.
+- Specify that the eventual v2 final holdout remains unavailable until the release candidate and one-shot evaluation protocol are frozen.
+
+**Acceptance checks:**
+
+- [ ] Direct and relabeled unauthorized matrices fail before prediction.
+- [ ] Authorized validation or calibration matrices succeed only when membership and digests match the frozen manifest.
+- [ ] Logistic, boosted, diagnostics, and reload paths share the same authorization invariant.
+- [ ] Negative tests cover relabeling, row substitution, reordering, feature substitution, and digest mismatch.
+- [ ] No final test metric is computed as part of this issue.
+- [ ] Focused tests and `make check` pass.
+
+**Depends on:** R2-02. **Blocks:** R2-04 and any future final-test protocol.
+
+### R2-04 - Approve the versioned v2 statistical simulator and observation design
+
+**Outcome:** A reviewed ADR and versioned contract define a modeling corpus that can test known statistical behavior without changing the v1 coverage fixture.
+
+**Scope:**
+
+- Define intended use, prohibited claims, the estimand, prediction time, label horizon, unit of observation, and censoring policy.
+- Define multiple issuance cohorts, recurring exposure and observations, behavior visible before prediction, stochastic feature-conditioned hazard, latent noise, and oracle probabilities.
+- Define missingness, ingestion delay, corrections, late arrival, unknown categories, and temporal drift mechanisms.
+- Define separate dataset roles for model fitting, selection, calibration, and final one-shot testing.
+- Predeclare structural, negative-control, signal-recovery, uncertainty, and robustness acceptance tests before implementation results are inspected.
+- Decide which richer lifecycle fields are genuinely required; keep unrelated future architecture deferred.
+
+**Acceptance checks:**
+
+- [ ] The ADR records alternatives, tradeoffs, compatibility, versioning, and why v1 remains a coverage fixture.
+- [ ] Every generated outcome has a documented stochastic mechanism and, where applicable, an oracle probability.
+- [ ] Pre-cutoff observable drivers can affect risk without creating deterministic outcome proxies.
+- [ ] Cohort, recurrence, censoring, missingness, and temporal-shift mechanisms are testable from the contract.
+- [ ] Holdout creation and access rules are specified before any v2 final-test data exists.
+- [ ] The R2-07 protocol, number of seeds or folds, metrics, uncertainty method, and decision rules are predeclared.
+
+**Depends on:** R2-03. **Blocks:** R2-05. Use the architecture-decision issue template for the ADR and a linked implementation issue for the versioned contract if both cannot remain one reviewable change.
+
+### R2-05 - Implement the v2 modeling corpus and recurring observations
+
+**Outcome:** A separately versioned deterministic generator and observation builder implement the approved v2 statistical design.
+
+**Scope:**
+
+- Implement multiple issuance cohorts and recurring policy exposure across sufficient calendar duration.
+- Generate varied pre-cutoff payments, failures, recoveries, notices, contacts, changes, and state transitions according to the approved scope.
+- Implement the stochastic risk mechanism, latent noise, oracle probability, censoring, missingness, ingestion delay, and correction behavior from R2-04.
+- Produce recurring point-in-time observations without future effective-time or ingestion-time visibility.
+- Publish a v2 data card and deterministic provenance without changing v1 fixtures or manifests.
+
+**Acceptance checks:**
+
+- [ ] Same configuration, namespace, and seed reproduce byte-identical v2 histories and observations.
+- [ ] Multiple cohorts and recurring observations exist with sufficient pre-cutoff behavioral variation.
+- [ ] Oracle probabilities and realized outcomes follow the versioned contract without leaking oracle or scenario fields into model features.
+- [ ] Point-in-time mutation tests reject future effective and ingestion information.
+- [ ] Missingness, censoring, delay, correction, and unknown-category fixtures cover approved edge cases.
+- [ ] Schema, runtime, deterministic-generation, leakage, and full repository checks pass.
+
+**Depends on:** R2-04. **Blocks:** R2-06.
+
+### R2-06 - Rebuild temporal evaluation data, features, and baselines on v2
+
+**Outcome:** Versioned v2 split, feature, preprocessing, logistic, and boosted artifacts are regenerated under the approved evaluation protocol without overwriting v1 evidence.
+
+**Scope:**
+
+- Create the predeclared chronological folds or partitions for fitting, selection, calibration, and inaccessible final testing.
+- Preserve the 90-day horizon embargo, policy and outcome-episode isolation, and train-only learned preprocessing.
+- Ensure supported billing frequencies and relevant feature distributions overlap sufficiently across non-final evaluation periods.
+- Re-run feature diagnostics, null screens, identifiers/cardinality checks, and baseline comparisons on v2.
+- Namespace all v2 artifacts and bind them to generator, observation, split, feature, preprocessing, and model versions.
+
+**Acceptance checks:**
+
+- [ ] Split manifests prove chronology, embargo compliance, zero policy overlap, and zero outcome-episode overlap.
+- [ ] Every supported billing-frequency category appears in each required non-final modeling partition or fold.
+- [ ] Train-constant and unseen-category findings have explicit allow, exclude, investigate, or redesign dispositions.
+- [ ] Logistic and boosted candidates use identical governed memberships and metrics.
+- [ ] Preprocessing is fitted only on the approved training data for each fold.
+- [ ] The final release holdout remains inaccessible and unscored.
+- [ ] All v2 artifacts regenerate deterministically and `make check` passes.
+
+**Depends on:** R2-05. **Blocks:** R2-07.
+
+### R2-07 - Run the predeclared statistical acceptance gate
+
+**Outcome:** Governed multi-seed and temporal evidence determines whether v2 is suitable for resuming calibration and model interpretation.
+
+**Scope:**
+
+- Run the predeclared multi-seed or repeated-corpus protocol and report distributions with uncertainty rather than isolated point estimates.
+- Run null-signal and label-shuffle controls, oracle-risk recovery, learning curves, ablations, missingness and unknown-category stress, and rolling-origin stability checks.
+- Compare observed results only with the acceptance rules frozen in R2-04; do not revise gates after seeing results.
+- Publish an evidence manifest, report, and explicit proceed, redesign, or stop decision.
+- Evaluate closure evidence for `LIM-002-001` and `LIM-002-002`; keep `LIM-002-003` open until the final-holdout protocol is proven through its authorized release workflow.
+
+**Acceptance checks:**
+
+- [ ] Null-signal and label-shuffle behavior is consistent with chance within the predeclared uncertainty rule.
+- [ ] Known simulated signal is recovered consistently across seeds and temporal folds according to the predeclared rule.
+- [ ] Results include uncertainty, learning behavior, failure cases, and sensitivity to missingness, categories, and temporal shift.
+- [ ] No final release holdout is materialized or scored during acceptance testing.
+- [ ] Every claim is limited to synthetic signal recovery and pipeline robustness unless a later governed external-data protocol supports more.
+- [ ] The decision note identifies which limitations close, remain open, or require redesign, with objective evidence links.
+- [ ] Reproduction commands and full repository checks pass.
+
+**Depends on:** R2-06. **Blocks:** P2-08 and P2-09.
+
+### Phase 2R completion gate
+
+Phase 2R completes only when R2-00 through R2-07 are merged in order and the R2-07 decision is `proceed`. A favorable single seed, a passing unit-test suite, or a manually accepted limitation is not sufficient. If R2-07 decides `redesign` or `stop`, P2-08 and P2-09 remain paused and a new focused backlog item must own the next action.
+
+## Phase 2 - Baseline ML resumed after Phase 2R
+
+- [ ] **P2-08 - Probability calibration and operational thresholds (PAUSED):** After R2-07 passes, fit calibration using the separately designated non-test calibration data and report discrimination, calibration, precision at operational review capacity, recall in high-risk bands, threshold tradeoffs, uncertainty, and explicit false-positive cost assumptions. Do not access the final release holdout for model or threshold selection.
+- [ ] **P2-09 - Model-behavior explanations (PAUSED):** After the calibrated candidate and feature contract are frozen, publish SHAP or equivalent attribution examples with feature sanity checks and clear boundaries that explanations describe model behavior rather than authorize conservation actions. Use only approved non-final data for explanation development.
+- [ ] **P2-10 - Artifact and environment reproducibility:** Version the training configuration, dependencies, feature contract, split manifest, fitted preprocessing and calibration pipelines, metrics, and model artifacts; bundle compatible objects or bind them through verified metadata, and prove that reloading the frozen release candidate reproduces authorized predictions from documented commands.
+- [ ] **P2-11 - Final evaluation, model card, and decision note:** Freeze the release candidate and evaluation protocol before one access-controlled final test; then publish `MODEL_CARD.md`, the final experiment report, and a Phase 2 decision note that disclose limitations, uncertainty, synthetic-data boundaries, the absence of a meaningful subgroup-fairness assessment, and the release decision.
+- [ ] **P2-12 - Release marker and notes:** After the Phase 2 decision gate passes, publish the `v0.2.0-risk-model` tag and GitHub release from the completed [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) milestone. The tag, release title, and milestone capability name must remain aligned.
 
 ## Deferred intentionally
 
