@@ -9,6 +9,19 @@ body:
       Use this form for a focused implementation task. Describe the observable outcome and objective completion checks without including confidential or proprietary information.
 
 - type: textarea
+  id: work_metadata
+  attributes:
+    label: Work metadata
+    description: Enter the stable backlog ID, classification, priority, and milestone using the engineering improvement workflow definitions.
+    placeholder: |
+      Backlog work ID: R2-01
+      Classification: Current defect
+      Priority: Release blocking
+      Milestone: v0.2.0-risk-model
+  validations:
+    required: true
+
+- type: textarea
   id: outcome
   attributes:
     label: Outcome
@@ -23,6 +36,35 @@ body:
     label: Context
     description: Why is this change needed, and what existing behavior or backlog item does it address?
     placeholder: Include relevant background, constraints, and links to related issues or documentation.
+  validations:
+    required: true
+
+- type: textarea
+  id: scope
+  attributes:
+    label: In scope and out of scope
+    description: List what the issue owns and the adjacent work that must remain separate.
+    placeholder: |
+      In scope:
+      - Component, protected invariant, and required evidence
+
+      Out of scope:
+      - Adjacent behavior or refactor
+  validations:
+    required: true
+
+- type: textarea
+  id: impact
+  attributes:
+    label: Claim, limitation, contract, and artifact impact
+    description: State the claim boundary and whether schemas, deterministic output, versions, manifests, datasets, or artifacts change.
+    placeholder: |
+      Allowed while open:
+      Blocked while open:
+      Limitations affected:
+      Downstream work resumed at closure:
+      Contract or version change:
+      Artifact migration or compatibility:
   validations:
     required: true
 
@@ -49,18 +91,16 @@ body:
     required: true
 
 - type: textarea
-  id: out_of_scope
-  attributes:
-    label: Out of scope
-    description: Identify adjacent work intentionally deferred to separate issues.
-    placeholder: List anything that should not be implemented as part of this issue.
-
-- type: textarea
   id: dependencies
   attributes:
     label: Dependencies
-    description: List prerequisites, blocked issues, or follow-up work, if any.
-    placeholder: Enter issue links or write "None."
+    description: List prerequisite issues or pull requests, paused downstream items, and follow-up work.
+    placeholder: |
+      Must merge first:
+      Blocks:
+      Related decisions or limitations:
+  validations:
+    required: true
 
 - type: checkboxes
   id: boundaries
@@ -73,4 +113,8 @@ body:
     - label: This issue does not include credentials, customer information, or proprietary material.
       required: true
     - label: This issue preserves point-in-time, authority, and human-review boundaries where applicable.
+      required: true
+    - label: This issue does not access, transform, predict, or evaluate a final holdout unless that access is explicitly authorized in scope.
+      required: true
+    - label: Any deterministic-output, schema, generator, or artifact change has an explicit versioning and migration plan.
       required: true

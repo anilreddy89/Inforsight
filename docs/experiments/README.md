@@ -4,6 +4,8 @@ Record each meaningful experiment with its question, data version, observation b
 
 Current machine-readable experiment evidence includes:
 
+The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeline evidence. Their recorded `sealed_not_scored` state describes the artifact-generation runs at the time. Independent review after Phase 2.07 later generated predictions from the v1 test fixture through a partition-relabeling bypass; no test metric was computed. Current holdout status and remediation are governed by `LIM-002-003` and R2-03.
+
 - `phase-01-07-synthetic-rate-assessment.json` — deterministic Phase 1 aggregate assessment.
 - `phase-02-01-observation-sufficiency.json` — deterministic observation counts, contract boundary, field inventory, limitations, and the Phase 2 proceed-with-limitations decision.
 - `phase-02-03-temporal-split-manifest.json` — versioned chronological assignments, embargo accounting, class and billing-frequency distributions, source digest, isolation checks, and the pipeline-engineering-only decision.
@@ -29,7 +31,7 @@ python3 scripts/train_logistic_baseline.py --write
 python3 scripts/train_logistic_baseline.py --check
 ```
 
-The baseline command fits the frozen train matrix and scores train and validation only. The canonical test partition remains sealed.
+The baseline command reproduces the historical Phase 2.05 run: it fits the frozen train matrix and scores train and validation only. It does not make the later review-exposed v1 fixture an untouched release holdout.
 
 Regenerate or verify the Phase 2.06 evidence with:
 

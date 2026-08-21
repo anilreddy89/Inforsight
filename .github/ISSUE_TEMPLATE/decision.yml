@@ -4,9 +4,27 @@ title: "ADR: "
 labels: ["decision"]
 body:
   - type: textarea
+    id: work_metadata
+    attributes:
+      label: Work and release metadata
+      description: Enter the stable roadmap or remediation ID and the release milestone associated with the decision.
+      placeholder: |
+        Backlog work ID: R2-04
+        Milestone: v0.2.0-risk-model
+    validations:
+      required: true
+  - type: textarea
     id: context
     attributes:
       label: Context
+      description: Describe the decision trigger, existing evidence, affected contracts, and current limitations.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and non-negotiable boundaries
+      description: Record clean-room, point-in-time, holdout, human-authority, compatibility, and claim boundaries.
     validations:
       required: true
   - type: textarea
@@ -19,5 +37,23 @@ body:
     id: recommendation
     attributes:
       label: Recommendation and consequences
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Decision acceptance checks
+      description: List observable evidence required before implementation may begin and the conditions that would trigger redesign or reversal.
+      placeholder: |
+        - [ ] Intended use and prohibited claims are explicit.
+        - [ ] Compatibility and versioning consequences are documented.
+        - [ ] Evaluation rules are predeclared before results are inspected.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and downstream work
+      description: List prerequisite issues, implementation issues enabled by this decision, and work that remains paused.
     validations:
       required: true
