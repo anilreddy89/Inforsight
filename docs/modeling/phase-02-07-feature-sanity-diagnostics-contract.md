@@ -7,7 +7,7 @@
 | Phase | Phase 2.07 |
 | Tracker ID | `P2-07` |
 | Issue | [#28](https://github.com/anilreddy89/Inforsight/issues/28) |
-| Status | Implemented locally for issue #28; awaiting pull request and merge |
+| Status | Completed in issue #28 and PR #29 (`8db20ce`) |
 | Diagnostic configuration | `1.0.0` |
 | Seed | `20260817` |
 | Fit partition | Exact frozen Phase 2.04 train matrix only |
