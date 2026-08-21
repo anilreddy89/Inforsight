@@ -1,0 +1,1023 @@
+{
+  "configuration": {
+    "artifact_decimal_places": 10,
+    "mutual_information_neighbors": 3,
+    "random_seed": 20260817,
+    "scikit_learn_version": "1.7.2",
+    "shallow_model": {
+      "criterion": "log_loss",
+      "estimator": "DecisionTreeClassifier",
+      "max_depth": 1,
+      "min_samples_leaf": 2,
+      "splitter": "best"
+    },
+    "thresholds": {
+      "high_cardinality_ratio": 0.9,
+      "material_auc_change": 0.1,
+      "material_log_loss_increase": 0.1,
+      "near_constant_ratio": 0.95,
+      "strong_mutual_information": 0.5,
+      "strong_shallow_auc": 0.9,
+      "strong_shallow_log_loss": 0.4
+    }
+  },
+  "contracts": {
+    "diagnostic_configuration_version": "1.0.0",
+    "feature_diagnostics_version": "1.0.0",
+    "feature_dictionary_version": "1.0.0",
+    "feature_pipeline_version": "1.0.0"
+  },
+  "decision": "pipeline_engineering_only",
+  "diagnostics": {
+    "identifier_and_cardinality": [
+      {
+        "constant_in_train": false,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "premium_amount_cents"
+        ],
+        "source_feature": "premium_amount_cents",
+        "train_dominant_pattern_ratio": 0.0769230769,
+        "train_unique_patterns": 21,
+        "train_uniqueness_ratio": 0.8076923077,
+        "validation_unique_patterns": 21,
+        "validation_uniqueness_ratio": 0.7777777778
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "policy_age_days"
+        ],
+        "source_feature": "policy_age_days",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "visible_event_count"
+        ],
+        "source_feature": "visible_event_count",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "visible_billing_count"
+        ],
+        "source_feature": "visible_billing_count",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "visible_failed_payment_count"
+        ],
+        "source_feature": "visible_failed_payment_count",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "visible_received_payment_count"
+        ],
+        "source_feature": "visible_received_payment_count",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "visible_notice_count"
+        ],
+        "source_feature": "visible_notice_count",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "visible_service_contact_count"
+        ],
+        "source_feature": "visible_service_contact_count",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      },
+      {
+        "constant_in_train": false,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "product_variant=fictional_term_life",
+          "product_variant=fictional_whole_life",
+          "product_variant=__unknown__"
+        ],
+        "source_feature": "product_variant",
+        "train_dominant_pattern_ratio": 0.5384615385,
+        "train_unique_patterns": 2,
+        "train_uniqueness_ratio": 0.0769230769,
+        "validation_unique_patterns": 2,
+        "validation_uniqueness_ratio": 0.0740740741
+      },
+      {
+        "constant_in_train": true,
+        "high_cardinality_in_train": false,
+        "identifier_token_matches": [],
+        "near_constant_in_train": false,
+        "output_features": [
+          "billing_frequency=monthly",
+          "billing_frequency=__unknown__"
+        ],
+        "source_feature": "billing_frequency",
+        "train_dominant_pattern_ratio": 1.0,
+        "train_unique_patterns": 1,
+        "train_uniqueness_ratio": 0.0384615385,
+        "validation_unique_patterns": 1,
+        "validation_uniqueness_ratio": 0.037037037
+      }
+    ],
+    "targeted_validation_permutation": [
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "1135129dfef0d71ae5549d7086cc72b71932c7ff0f3d0c1a24527b74bcf78116",
+        "source_feature": "billing_frequency"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "5d7a421a358f72fc0d677a9e86f0e6be7f8665c8934db122d7d302e794a0d4a8",
+        "source_feature": "policy_age_days"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "c05e36efe3e0711b74bdd9bd1fb8a14ec214b38fafe996c3ba636d8c6bf6d518",
+        "source_feature": "visible_billing_count"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "6f6e66f88860b6088b85e152809ce1a5efcac9572fbab3ac37f15325631fab3e",
+        "source_feature": "visible_event_count"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "23d416006e9a59116a12c062a73d5fb61b7d69223ab54a53fd4a3d252ce8a569",
+        "source_feature": "visible_failed_payment_count"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "f57039f271f426931180251a315553c6cd4361ac6791f1ea1f0aa325d597b156",
+        "source_feature": "visible_notice_count"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "b104147ed5973bfc00d02e12d89b711a6ea1131bb80bab37d072a212e9d4a93f",
+        "source_feature": "visible_received_payment_count"
+      },
+      {
+        "models": {
+          "logistic_regression": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2485591402,
+              "log_loss": 0.6893507664,
+              "record_count": 27,
+              "roc_auc": 0.5638888889
+            },
+            "prediction_sha256": "f7dec7ebcb9ddfd5a6191177c5738a41fde69d88ecd0504089772c03470c6800"
+          },
+          "xgboost": {
+            "delta_log_loss": 0.0,
+            "delta_roc_auc": 0.0,
+            "metrics": {
+              "brier_score": 0.2557756357,
+              "log_loss": 0.7048904532,
+              "record_count": 27,
+              "roc_auc": 0.5333333333
+            },
+            "prediction_sha256": "1085f5fdd4591af40db107b704a5ec43f482d644b3eee3016534daa3608f467c"
+          }
+        },
+        "partition": "validation",
+        "permutation_order_sha256": "85adce8bbc2f587e31e73caa27c97c27b68511c599b8795f21e97d8289fd3126",
+        "source_feature": "visible_service_contact_count"
+      }
+    ],
+    "train_fit_validation_scored_shallow_models": [
+      {
+        "fit_partition": "train",
+        "leaf_count": 2,
+        "metrics": {
+          "brier_score": 0.3578971534,
+          "log_loss": 7.1421887917,
+          "record_count": 27,
+          "roc_auc": 0.4583333333
+        },
+        "output_features": [
+          "premium_amount_cents"
+        ],
+        "prediction_sha256": "26e84e21ca6a9f3aeff9eeb6cb47d755c2d6874ef241dd5c4c18579ff187d234",
+        "score_partition": "validation",
+        "source_feature": "premium_amount_cents",
+        "trained_depth": 1
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "policy_age_days"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "policy_age_days",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "visible_event_count"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "visible_event_count",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "visible_billing_count"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "visible_billing_count",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "visible_failed_payment_count"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "visible_failed_payment_count",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "visible_received_payment_count"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "visible_received_payment_count",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "visible_notice_count"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "visible_notice_count",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "visible_service_contact_count"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "visible_service_contact_count",
+        "trained_depth": 0
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 2,
+        "metrics": {
+          "brier_score": 0.2351295456,
+          "log_loss": 0.6631853827,
+          "record_count": 27,
+          "roc_auc": 0.6416666667
+        },
+        "output_features": [
+          "product_variant=fictional_term_life",
+          "product_variant=fictional_whole_life",
+          "product_variant=__unknown__"
+        ],
+        "prediction_sha256": "c6f60e895f96229c7bce80c7f95bdfbbdfb522786549b346cc5564c8753825f9",
+        "score_partition": "validation",
+        "source_feature": "product_variant",
+        "trained_depth": 1
+      },
+      {
+        "fit_partition": "train",
+        "leaf_count": 1,
+        "metrics": {
+          "brier_score": 0.25,
+          "log_loss": 0.6931471806,
+          "record_count": 27,
+          "roc_auc": 0.5
+        },
+        "output_features": [
+          "billing_frequency=monthly",
+          "billing_frequency=__unknown__"
+        ],
+        "prediction_sha256": "34f2a5358e6583344f537c1ce3dd5d1dcef3a5d40ba8aa04c4717e039cd95f33",
+        "score_partition": "validation",
+        "source_feature": "billing_frequency",
+        "trained_depth": 0
+      }
+    ],
+    "training_mutual_information": [
+      {
+        "maximum_mutual_information": 0.0905100148,
+        "output_scores": [
+          {
+            "mutual_information": 0.0905100148,
+            "output_feature": "premium_amount_cents"
+          }
+        ],
+        "source_feature": "premium_amount_cents"
+      },
+      {
+        "maximum_mutual_information": 0.1463999582,
+        "output_scores": [
+          {
+            "mutual_information": 0.1463999582,
+            "output_feature": "policy_age_days"
+          }
+        ],
+        "source_feature": "policy_age_days"
+      },
+      {
+        "maximum_mutual_information": 0.0619233237,
+        "output_scores": [
+          {
+            "mutual_information": 0.0619233237,
+            "output_feature": "visible_event_count"
+          }
+        ],
+        "source_feature": "visible_event_count"
+      },
+      {
+        "maximum_mutual_information": 0.0849697218,
+        "output_scores": [
+          {
+            "mutual_information": 0.0849697218,
+            "output_feature": "visible_billing_count"
+          }
+        ],
+        "source_feature": "visible_billing_count"
+      },
+      {
+        "maximum_mutual_information": 0.0084587328,
+        "output_scores": [
+          {
+            "mutual_information": 0.0084587328,
+            "output_feature": "visible_failed_payment_count"
+          }
+        ],
+        "source_feature": "visible_failed_payment_count"
+      },
+      {
+        "maximum_mutual_information": 0.0,
+        "output_scores": [
+          {
+            "mutual_information": 0.0,
+            "output_feature": "visible_received_payment_count"
+          }
+        ],
+        "source_feature": "visible_received_payment_count"
+      },
+      {
+        "maximum_mutual_information": 0.0443561687,
+        "output_scores": [
+          {
+            "mutual_information": 0.0443561687,
+            "output_feature": "visible_notice_count"
+          }
+        ],
+        "source_feature": "visible_notice_count"
+      },
+      {
+        "maximum_mutual_information": 0.0492706986,
+        "output_scores": [
+          {
+            "mutual_information": 0.0492706986,
+            "output_feature": "visible_service_contact_count"
+          }
+        ],
+        "source_feature": "visible_service_contact_count"
+      },
+      {
+        "maximum_mutual_information": 0.0119536168,
+        "output_scores": [
+          {
+            "mutual_information": 0.0119536168,
+            "output_feature": "product_variant=fictional_term_life"
+          },
+          {
+            "mutual_information": 0.0119536168,
+            "output_feature": "product_variant=fictional_whole_life"
+          },
+          {
+            "mutual_information": 0.0,
+            "output_feature": "product_variant=__unknown__"
+          }
+        ],
+        "source_feature": "product_variant"
+      },
+      {
+        "maximum_mutual_information": 0.0,
+        "output_scores": [
+          {
+            "mutual_information": 0.0,
+            "output_feature": "billing_frequency=monthly"
+          },
+          {
+            "mutual_information": 0.0,
+            "output_feature": "billing_frequency=__unknown__"
+          }
+        ],
+        "source_feature": "billing_frequency"
+      }
+    ]
+  },
+  "dispositions": [
+    {
+      "decision": "investigate",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "billing_frequency:constant"
+      ],
+      "follow_up": "Resolve or explicitly disposition LIM-002-001 before the Phase 2 evaluation gate.",
+      "owner": "Inforsight maintainer",
+      "rationale": "Billing frequency is temporally valid but confounded with observation time; diagnostic strength cannot be separated from LIM-002-001 in the current corpus.",
+      "source_feature": "billing_frequency"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "policy_age_days:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "policy_age_days"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "visible_billing_count:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "visible_billing_count"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "visible_event_count:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "visible_event_count"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "visible_failed_payment_count:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "visible_failed_payment_count"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "visible_notice_count:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "visible_notice_count"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "visible_received_payment_count:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "visible_received_payment_count"
+    },
+    {
+      "decision": "allow",
+      "decision_date": "2026-08-20",
+      "flag_ids": [
+        "visible_service_contact_count:constant"
+      ],
+      "follow_up": "Retain under the existing leakage guards and re-evaluate after the corpus limitation is resolved.",
+      "owner": "Inforsight maintainer",
+      "rationale": "The source is contract-approved and cutoff-visible; the triggered screen is review evidence, not proof of an identifier, future-data leak, terminal-outcome proxy, or simulator marker.",
+      "source_feature": "visible_service_contact_count"
+    }
+  ],
+  "flags": [
+    {
+      "flag_id": "billing_frequency:constant",
+      "rule": "constant",
+      "source_feature": "billing_frequency"
+    },
+    {
+      "flag_id": "policy_age_days:constant",
+      "rule": "constant",
+      "source_feature": "policy_age_days"
+    },
+    {
+      "flag_id": "visible_billing_count:constant",
+      "rule": "constant",
+      "source_feature": "visible_billing_count"
+    },
+    {
+      "flag_id": "visible_event_count:constant",
+      "rule": "constant",
+      "source_feature": "visible_event_count"
+    },
+    {
+      "flag_id": "visible_failed_payment_count:constant",
+      "rule": "constant",
+      "source_feature": "visible_failed_payment_count"
+    },
+    {
+      "flag_id": "visible_notice_count:constant",
+      "rule": "constant",
+      "source_feature": "visible_notice_count"
+    },
+    {
+      "flag_id": "visible_received_payment_count:constant",
+      "rule": "constant",
+      "source_feature": "visible_received_payment_count"
+    },
+    {
+      "flag_id": "visible_service_contact_count:constant",
+      "rule": "constant",
+      "source_feature": "visible_service_contact_count"
+    }
+  ],
+  "generation": {
+    "generator_version": "0.1.0",
+    "policy_count": 100,
+    "schema_version": "1.0.0",
+    "seed": 20260817,
+    "simulation_start": "2024-01-01T00:00:00Z"
+  },
+  "integrity": {
+    "fitted_state_unchanged": {
+      "logistic_regression": true,
+      "preprocessor": true,
+      "xgboost": true
+    },
+    "targeted_source_features": [
+      "billing_frequency",
+      "policy_age_days",
+      "visible_billing_count",
+      "visible_event_count",
+      "visible_failed_payment_count",
+      "visible_notice_count",
+      "visible_received_payment_count",
+      "visible_service_contact_count"
+    ],
+    "upstream_artifacts_unchanged": true
+  },
+  "limitations": [
+    "LIM-002-001 remains claim-blocking and unresolved.",
+    "The corpus is small and synthetic; diagnostic estimates are unstable screening evidence.",
+    "Training is monthly-only and validation is semiannual-only, so billing frequency is confounded with observation time.",
+    "Association, mutual information, shallow-model strength, and permutation impact do not by themselves prove leakage.",
+    "The canonical test partition remains sealed and was not inspected or scored.",
+    "No feature change, model tuning, preprocessing refit, calibration, threshold selection, or release decision occurs here."
+  ],
+  "manifest_id": "inforsight-phase-02-07-feature-diagnostics",
+  "manifest_version": "1.0.0",
+  "source": {
+    "identity_policy": "observation IDs and targets are audit sidecars and never diagnostic feature columns",
+    "input_matrices": {
+      "train": {
+        "column_count": 13,
+        "matrix_sha256": "a943fba2c3c234acf5223cb91bdb8539c1dc03a45680f77b26a1d68570a0b897",
+        "observation_ids": [
+          "obs_558eaf40a6e29da8b4e902f5",
+          "obs_e8dfebcb8cacd7e9a308cc75",
+          "obs_193b0fe8af5a46b4afc2bb48",
+          "obs_ae21f6226f7e65dc2225470d",
+          "obs_db715ed14c0d3d57a63e961a",
+          "obs_c5f3d66c945d52e912518bba",
+          "obs_4e76d670714089f751cae3d5",
+          "obs_1fc50a377cf4801041280f1b",
+          "obs_1298747fbe474ce2a644b63f",
+          "obs_ee12babbb34f8c9d5cf720ae",
+          "obs_ccf82823a431e04f935eb40f",
+          "obs_16582f34fc253223d49d054d",
+          "obs_58825ffe27f7034d780e3c88",
+          "obs_af8d525e610cd2694c4d05c9",
+          "obs_3a45981f90912fe29ac0c8e6",
+          "obs_817baf9c9d487e855767ce66",
+          "obs_1f1b3d8a5d3ce1fe51bdcfdf",
+          "obs_768553295ede093146c13142",
+          "obs_f4e322de703099377195dd9a",
+          "obs_c3459069f6c933b296bfd4fa",
+          "obs_c27eaf55bb10b3790dc8de87",
+          "obs_623c588a5b6e7d39bbd47a8f",
+          "obs_9032fd4bf51998ce98e02e44",
+          "obs_d8b387acc4b8f8eae781c0d2",
+          "obs_8019b886b228ffb0c903962c",
+          "obs_c0bc5bf6f15b1128dd239f61"
+        ],
+        "row_count": 26
+      },
+      "validation": {
+        "column_count": 13,
+        "matrix_sha256": "04fe6bfc0fa44f9b9cb1e9e104f152a5eadc0936e5ef7f28bb5b1e4cbec58202",
+        "observation_ids": [
+          "obs_4dee8b3eebcce3c22ade88ff",
+          "obs_81320aefca37f350178df9e7",
+          "obs_c49bfbfeb9c3aa9205f47731",
+          "obs_82ab0039f89be84cda40c67e",
+          "obs_02c35f6b766fe58ea83c060b",
+          "obs_604d31488d928b5b3eb1e412",
+          "obs_6a954de9120aacbc1fdb19ce",
+          "obs_46f472dd376c07c678254bdd",
+          "obs_c3801254012fead2416bbd98",
+          "obs_8fbe0f844169d7d14fc3deec",
+          "obs_5615870c6e0e027721aa0f6e",
+          "obs_972e18aa3c9f6870d7614c6f",
+          "obs_1c4ff0b6d74fb51bf829d9ef",
+          "obs_da7b51e78db3879b8bf83987",
+          "obs_f5c42c7f83ed61ceda8ebf9e",
+          "obs_a81e8dcc8b1a3bfbb9c15256",
+          "obs_531ff8b8fd1e9aed1302d90d",
+          "obs_5fb81614017ec385fa115fff",
+          "obs_9177ab99e507b1eb442ab5b4",
+          "obs_8e9e78a851899ebb48fb6e8a",
+          "obs_a0671bb74e8a712b2fe22a80",
+          "obs_9fb384985beb5a8c0cb72438",
+          "obs_7f5f93de122ccf9a9403ca16",
+          "obs_1c9e10926450d77cf363765f",
+          "obs_c932b493db708c83e6e19291",
+          "obs_8ec83145ff58f0d148255a65",
+          "obs_617a3eb90064ad9f2b7226a4"
+        ],
+        "row_count": 27
+      }
+    },
+    "upstream_artifact_sha256": {
+      "phase-02-04-feature-pipeline-manifest.json": "45e0e45f3e06e781ba8e1c9e05f19f5dee1c0136961792186c3fbf597131884e",
+      "phase-02-05-logistic-baseline-manifest.json": "2d551c9a61efb3ac76e919f88a14da599cb135c29824ff94da04ca54fe4243a4",
+      "phase-02-05-logistic-baseline-report.md": "7d7304175441631efc7e024ac6167465eb5962b7f3ebf14ff66f50684b76d7ae",
+      "phase-02-06-boosted-comparison-manifest.json": "b357e0a29941e2e162dad27e495bc5f0c9be631feed1ef5931b517b1438806c4",
+      "phase-02-06-boosted-comparison-report.md": "3ea5a902ed5c20429347222961623d781bf1785abe63cd67bc43858da4891b4d"
+    }
+  },
+  "source_feature_groups": [
+    {
+      "output_features": [
+        "premium_amount_cents"
+      ],
+      "source_feature": "premium_amount_cents"
+    },
+    {
+      "output_features": [
+        "policy_age_days"
+      ],
+      "source_feature": "policy_age_days"
+    },
+    {
+      "output_features": [
+        "visible_event_count"
+      ],
+      "source_feature": "visible_event_count"
+    },
+    {
+      "output_features": [
+        "visible_billing_count"
+      ],
+      "source_feature": "visible_billing_count"
+    },
+    {
+      "output_features": [
+        "visible_failed_payment_count"
+      ],
+      "source_feature": "visible_failed_payment_count"
+    },
+    {
+      "output_features": [
+        "visible_received_payment_count"
+      ],
+      "source_feature": "visible_received_payment_count"
+    },
+    {
+      "output_features": [
+        "visible_notice_count"
+      ],
+      "source_feature": "visible_notice_count"
+    },
+    {
+      "output_features": [
+        "visible_service_contact_count"
+      ],
+      "source_feature": "visible_service_contact_count"
+    },
+    {
+      "output_features": [
+        "product_variant=fictional_term_life",
+        "product_variant=fictional_whole_life",
+        "product_variant=__unknown__"
+      ],
+      "source_feature": "product_variant"
+    },
+    {
+      "output_features": [
+        "billing_frequency=monthly",
+        "billing_frequency=__unknown__"
+      ],
+      "source_feature": "billing_frequency"
+    }
+  ],
+  "test_partition_status": "sealed_not_scored"
+}

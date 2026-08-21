@@ -46,7 +46,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
 | Owner | Unassigned; create a focused issue when the resolution trigger is reached |
-| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json` |
+| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json`; feature-sanity evidence in `docs/experiments/phase-02-07-feature-diagnostics-manifest.json` |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
 
@@ -55,6 +55,8 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 Observation contract `1.0.0` creates one observation at first-billing ingestion. The canonical policies are issued during one short initial period, so billing frequency largely determines observation date. The strict chronological split consequently contains monthly policies in train, quarterly policies in the embargo, semiannual policies in validation, and annual policies in test.
 
 Billing frequency is also entangled with policy age at the observation cutoff. A validation or test result therefore cannot distinguish temporal generalization from behavior on feature categories absent from training.
+
+Phase 2.07 confirms that billing frequency and several first-billing event-count or age fields are constant in the training partition. Billing frequency therefore retains an `investigate` disposition; the other constant fields are temporally valid and retained as non-leakage screens, but they contribute no training variation in the current corpus.
 
 #### Work that may continue
 
