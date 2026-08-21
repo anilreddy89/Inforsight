@@ -106,6 +106,16 @@ Caller or CLI
     |       +-- calculate both prediction digests from unrounded probabilities
     |       +-- reject canonical test scoring at each model boundary
     |
+    +-- feature diagnostics on train and validation
+    |       |
+    |       +-- group frozen output columns by reviewed source feature
+    |       +-- calculate univariate mutual information on train only
+    |       +-- fit decision stumps on train and score validation
+    |       +-- screen identifiers, cardinality, constancy, and near constancy
+    |       +-- permute mechanically flagged validation groups deterministically
+    |       +-- require allow, exclude, or investigate dispositions for flags
+    |       +-- reject canonical test access and preserve frozen model state
+    |
     +-- histories_to_jsonl(histories)
     |       |
     |       +-- stable event flattening
@@ -159,11 +169,18 @@ Caller or CLI
     |       +-- publish or verify explicit fitted state, diagnostics, and report
     |
     +-- scripts/train_boosted_comparison.py
+    |       |
+    |       +-- rebuild the same frozen matrices and unchanged logistic baseline
+    |       +-- fit the single XGBoost candidate on train only
+    |       +-- compare both models on identical train and validation membership
+    |       +-- publish or verify safe fitted state, comparison evidence, and test seal
+    |
+    +-- scripts/run_feature_diagnostics.py
             |
-            +-- rebuild the same frozen matrices and unchanged logistic baseline
-            +-- fit the single XGBoost candidate on train only
-            +-- compare both models on identical train and validation membership
-            +-- publish or verify safe fitted state, comparison evidence, and test seal
+            +-- rebuild frozen matrices and both unchanged frozen models
+            +-- run train-only and validation-scored source-feature screens
+            +-- perturb only mechanically flagged validation groups
+            +-- publish flags, governed dispositions, upstream digests, and test seal
 ```
 
 Generation, validation, reconstruction, observation construction, temporal splitting, feature preprocessing, baseline fitting, serialization, publication, and assessment are separate capabilities. A caller may generate and serialize without reconstructing state, or validate and reconstruct a history supplied from another schema-valid source. Publication and assessment are repository-maintenance paths rather than part of the simulator's public Python API.
@@ -620,6 +637,8 @@ Failures are intentionally raised near the boundary that owns them:
 | Feature extraction | Missing, extra, prohibited, null, wrongly typed, or negative source value | `ValueError` with feature context |
 | Preprocessing fit/apply | Unsupported version or disposition, partition membership drift, or inconsistent fitted state | `ValueError` before matrix use |
 | Feature artifact verification | Missing or stale dictionary or preprocessing manifest | Diagnostic and nonzero exit |
+| Feature diagnostics | Partition, membership, feature-order, configuration, or disposition drift | `ValueError` before evidence publication |
+| Diagnostic artifact verification | Missing, stale, unsafe, or nondeterministic manifest or report | Diagnostic and nonzero exit |
 
 The simulator does not silently repair, reorder in place, or infer missing lifecycle facts.
 
@@ -654,6 +673,12 @@ The package exports these current simulator-facing functions and values:
 | `predict_boosted_probabilities` | Reconstruct XGBoost from native JSON and score permitted matrices only |
 | `evaluate_boosted_model` | Calculate the frozen metrics and prediction digest without mutation |
 | `compare_models` | Compare logistic regression and XGBoost on identical train or validation membership |
+| `source_feature_groups` | Map frozen transformed outputs to reviewed source-feature groups |
+| `training_mutual_information` | Calculate deterministic train-only univariate mutual information |
+| `shallow_feature_models` | Fit source-feature decision stumps on train and score validation |
+| `identifier_and_cardinality_checks` | Screen identifier tokens, uniqueness, cardinality, and constancy |
+| `targeted_permutation_checks` | Perturb flagged validation groups against unchanged frozen models |
+| `validate_dispositions` | Require a complete governed decision for every diagnostic flag |
 
 ## Test map
 
@@ -671,6 +696,7 @@ The package exports these current simulator-facing functions and values:
 | `test_feature_pipeline.py` | Dictionary drift, train-only fitting, held-out invariance, unknown categories, and artifact regeneration |
 | `test_logistic_baseline.py` | Train-only fitting, deterministic explicit state, sealed test, compatibility, coefficient alignment, and scoring invariants |
 | `test_boosted_comparison.py` | Frozen XGBoost fit, safe JSON reconstruction, identical comparison membership, determinism, artifact safety, and sealed test |
+| `test_feature_diagnostics.py` | Train-only diagnostics, source grouping, identifier/cardinality screens, deterministic perturbation, dispositions, artifact safety, and sealed test |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
@@ -706,7 +732,7 @@ The flow does not yet include:
 - Corrections, supersession, retractions, or event authority resolution.
 - Reinstatement or transitions out of terminal states.
 - Configurable grace-period or notice calculations.
-- Boosted-model comparison, probability calibration, threshold selection, or explanations.
+- Probability calibration, threshold selection, or explanations.
 - Storage, services, messaging, or cloud execution.
 
 Add these to the journey only when their contracts and implementation are introduced.
