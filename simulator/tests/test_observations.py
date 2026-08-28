@@ -2,7 +2,7 @@ import copy
 import json
 import sys
 import unittest
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -18,6 +18,7 @@ from inforsight_simulator import (  # noqa: E402
     LABEL_HORIZON_DAYS,
     OBSERVATION_CONTRACT_VERSION,
     ObservationRecord,
+    OutcomeLabel,
     build_first_billing_observations,
     build_observation,
     first_billing_observation_time,
@@ -329,6 +330,111 @@ class ObservationTest(unittest.TestCase):
                 cutoff,
                 follow_up_through=cutoff - timedelta(seconds=1),
             )
+
+    def test_schema_rejects_contradictory_label_variants(self) -> None:
+        valid = build_observation(
+            self._history_for("lapsed"),
+            first_billing_observation_time(self._history_for("lapsed")),
+            follow_up_through=self.watermark,
+        ).to_dict()
+        mutations = (
+            ("positive value", {"value": 0}),
+            ("positive censoring", {"censoring_reason": "follow_up_ends_before_horizon"}),
+            (
+                "negative provenance",
+                {
+                    "status": "observed_negative",
+                    "value": 0,
+                    "outcome_type": "outcome.lapsed",
+                },
+            ),
+            (
+                "censored value",
+                {
+                    "status": "right_censored",
+                    "value": 1,
+                    "outcome_type": None,
+                    "source_event_id": None,
+                    "source_effective_at": None,
+                    "source_ingested_at": None,
+                    "censoring_reason": "follow_up_ends_before_horizon",
+                },
+            ),
+            (
+                "not applicable value",
+                {
+                    "status": "not_applicable",
+                    "value": 0,
+                    "outcome_type": None,
+                    "source_event_id": None,
+                    "source_effective_at": None,
+                    "source_ingested_at": None,
+                    "censoring_reason": None,
+                },
+            ),
+        )
+        for name, fields in mutations:
+            with self.subTest(name=name):
+                candidate = copy.deepcopy(valid)
+                candidate["label"].update(fields)
+                self.assertTrue(list(self.validator.iter_errors(candidate)))
+
+    def test_schema_rejects_eligibility_version_currency_and_unknown_fields(self) -> None:
+        record = build_observation(
+            self._history_for("active"),
+            first_billing_observation_time(self._history_for("active")),
+            follow_up_through=self.watermark,
+        ).to_dict()
+        candidates = []
+        missing_features = copy.deepcopy(record)
+        missing_features["features"] = None
+        candidates.append(missing_features)
+        unsupported_version = copy.deepcopy(record)
+        unsupported_version["event_schema_version"] = "9.0.0"
+        candidates.append(unsupported_version)
+        unsupported_currency = copy.deepcopy(record)
+        unsupported_currency["features"]["currency"] = "EUR"
+        candidates.append(unsupported_currency)
+        unexpected = copy.deepcopy(record)
+        unexpected["unexpected"] = True
+        candidates.append(unexpected)
+        for candidate in candidates:
+            self.assertTrue(list(self.validator.iter_errors(candidate)))
+
+    def test_runtime_label_variants_fail_closed(self) -> None:
+        invalid = (
+            ("observed_positive", 0, "outcome.lapsed", "evt_000000000001", "2024-02-01T00:00:00Z", "2024-02-01T01:00:00Z", None),
+            ("observed_negative", 0, "outcome.lapsed", None, None, None, None),
+            ("right_censored", None, None, None, None, None, None),
+            ("not_applicable", 1, None, None, None, None, None),
+        )
+        for fields in invalid:
+            with self.subTest(status=fields[0]), self.assertRaises(ValueError):
+                OutcomeLabel(*fields)
+
+    def test_runtime_record_rejects_composite_and_temporal_contradictions(self) -> None:
+        record = build_observation(
+            self._history_for("active"),
+            first_billing_observation_time(self._history_for("active")),
+            follow_up_through=self.watermark,
+        )
+        invalid_changes = (
+            {"features": None},
+            {"eligible": False},
+            {"eligibility_reason": "policy_not_visible"},
+            {"event_schema_version": "9.0.0"},
+            {"horizon_start": "2024-01-01T00:00:00Z"},
+            {"follow_up_through": "2024-01-01T00:00:00Z"},
+        )
+        for changes in invalid_changes:
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                replace(record, **changes)
+
+        assert record.features is not None
+        with self.assertRaisesRegex(ValueError, "unsupported observation currency"):
+            replace(record.features, currency="EUR")
+        with self.assertRaisesRegex(ValueError, "nonnegative integer"):
+            replace(record.features, visible_event_count=True)
 
     def _history_for(self, scenario: str) -> list[dict]:
         for history in self.histories:

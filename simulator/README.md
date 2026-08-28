@@ -30,7 +30,7 @@ assert len(histories) == 100
 
 ## Policy-history validation
 
-JSON Schema validates one event at a time. The simulator also provides a history-level validator for relationships that can only be checked across events:
+The simulator provides one public ingress for raw histories. It validates every event against the versioned envelope and selected payload JSON Schema before checking relationships across events:
 
 ```python
 from inforsight_simulator import (
@@ -48,7 +48,9 @@ history = generate_policy_histories(config)[0]
 validate_policy_history(history)  # Returns None; raises ValueError when invalid.
 ```
 
-Validation sorts a private representation by `(effective_at, occurred_at, event_id)`. Caller-provided order is not authoritative, and the supplied list and event dictionaries are not mutated.
+`validate_policy_history` is the composite boundary; callers do not need to invoke a schema validator separately. Invalid versions, identifiers, currencies, payload shapes, timestamps, and unexpected properties fail before semantic replay. Validation then sorts a private representation by `(effective_at, occurred_at, event_id)`. Caller-provided order is not authoritative, and the supplied list and event dictionaries are not mutated.
+
+The package declares `jsonschema` and `referencing` as runtime dependencies. Contract resources are resolved from the repository distribution and never fetched over the network.
 
 The current fictional MVP transition graph is:
 

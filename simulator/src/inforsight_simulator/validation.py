@@ -4,7 +4,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
+from functools import lru_cache
+import json
+from pathlib import Path
 from typing import Any
+
+from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema.exceptions import ValidationError
+from referencing import Registry, Resource
 
 
 SUPPORTED_EVENT_TYPES = frozenset(
@@ -49,14 +56,15 @@ class PreparedEvent:
 
 
 def validate_policy_history(history: list[PolicyEvent]) -> None:
-    """Reject a structurally ambiguous or cross-event-inconsistent history."""
+    """Validate event schemas first, then reject cross-event inconsistencies."""
 
     prepare_and_validate_history(history)
 
 
 def prepare_and_validate_history(history: list[PolicyEvent]) -> list[PreparedEvent]:
-    """Return a deterministically ordered, validated private history copy."""
+    """Return a deterministically ordered, schema-and-semantics-valid copy."""
 
+    _validate_event_schemas(history)
     prepared = _prepare_history(history)
     ordered = sorted(
         prepared,
@@ -68,6 +76,59 @@ def prepare_and_validate_history(history: list[PolicyEvent]) -> list[PreparedEve
     )
     _validate_timeline(ordered)
     return ordered
+
+
+def _validate_event_schemas(history: object) -> None:
+    if not isinstance(history, list) or not history:
+        raise ValueError("history must be a non-empty list")
+    validator = _policy_event_validator()
+    for index, event in enumerate(history):
+        errors = list(validator.iter_errors(event))
+        if errors:
+            direct = [error for error in errors if error.validator != "oneOf"]
+            candidates = direct or [
+                leaf for error in errors for leaf in _leaf_validation_errors(error)
+            ]
+            actionable = max(
+                candidates,
+                key=lambda item: (len(item.absolute_path), len(item.absolute_schema_path)),
+            )
+            path = ".".join(str(part) for part in actionable.absolute_path)
+            location = f" at {path}" if path else ""
+            raise ValueError(
+                f"history event at index {index} fails JSON Schema{location}: "
+                f"{actionable.message}"
+            ) from errors[0]
+
+
+def _leaf_validation_errors(error: ValidationError) -> list[ValidationError]:
+    if not error.context:
+        return [error]
+    return [leaf for child in error.context for leaf in _leaf_validation_errors(child)]
+
+
+@lru_cache(maxsize=1)
+def _policy_event_validator() -> Draft202012Validator:
+    contracts = Path(__file__).resolve().parents[3] / "data-contracts"
+    schema_path = contracts / "policy-event.schema.json"
+    if not schema_path.is_file():
+        raise RuntimeError(
+            "policy-event schemas are unavailable; install the Inforsight "
+            "contract resources with the simulator"
+        )
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    payload_schemas = [
+        json.loads(path.read_text(encoding="utf-8"))
+        for path in sorted((contracts / "payloads").glob("*.schema.json"))
+    ]
+    registry = Registry().with_resources(
+        (item["$id"], Resource.from_contents(item)) for item in payload_schemas
+    )
+    return Draft202012Validator(
+        schema,
+        registry=registry,
+        format_checker=FormatChecker(),
+    )
 
 
 def parse_utc_timestamp(value: object, field: str) -> datetime:

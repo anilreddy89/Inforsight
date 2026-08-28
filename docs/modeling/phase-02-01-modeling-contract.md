@@ -103,6 +103,8 @@ Positive labels retain outcome type, source event ID, effective time, and ingest
 
 The event contract already rejects conflicting or repeated terminal outcomes and requires each terminal outcome to pair with the corresponding status transition at the same effective time. Observation construction additionally rejects more than one qualifying outcome episode in a horizon.
 
+R2-02 hardens this historical contract without changing its meaning: the serialized observation schema uses mutually exclusive label and eligibility variants, runtime domain construction enforces the same state matrix and temporal relations, and raw policy histories enter through schema-first `validate_policy_history` validation before cross-event semantics.
+
 ## Follow-up and censoring
 
 Negative labels require an explicit `follow_up_through` watermark at or after the horizon end. A history's last event is not treated as proof that observation continued afterward.

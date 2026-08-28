@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from dataclasses import asdict, replace
 from datetime import timedelta
 import importlib.util
@@ -206,16 +207,24 @@ class FeaturePipelineTests(unittest.TestCase):
         for payload, message in cases:
             with self.subTest(message=message):
                 with self.assertRaisesRegex(ValueError, message):
-                    extract_feature_row(replace(record, features=payload))
+                    invalid = copy.copy(record)
+                    object.__setattr__(invalid, "features", payload)
+                    extract_feature_row(invalid)
 
     def test_censored_or_ineligible_record_cannot_be_extracted(self) -> None:
         record = self.split.train[0]
         with self.assertRaisesRegex(ValueError, "not modeling eligible"):
-            extract_feature_row(replace(record, eligible=False, features=None))
+            invalid = copy.copy(record)
+            object.__setattr__(invalid, "eligible", False)
+            object.__setattr__(invalid, "features", None)
+            extract_feature_row(invalid)
         with self.assertRaisesRegex(ValueError, "label is not observed"):
-            extract_feature_row(
-                replace(record, label=replace(record.label, status="right_censored", value=None))
-            )
+            invalid = copy.copy(record)
+            invalid_label = copy.copy(record.label)
+            object.__setattr__(invalid_label, "status", "right_censored")
+            object.__setattr__(invalid_label, "value", None)
+            object.__setattr__(invalid, "label", invalid_label)
+            extract_feature_row(invalid)
 
     def test_incompatible_fitted_versions_fail(self) -> None:
         invalid = replace(self.pipeline.preprocessor, feature_pipeline_version="2.0.0")

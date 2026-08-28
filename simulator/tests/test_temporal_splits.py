@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from dataclasses import replace
 from datetime import timedelta
 import importlib.util
@@ -94,7 +95,7 @@ class TemporalSplitTests(unittest.TestCase):
         at_train_end = replace(
             train_record,
             observation_id="obs_aaaaaaaaaaaaaaaaaaaaaaaa",
-            policy_id="pol_boundary_train_end",
+            policy_id="pol_aaaaaaaaaaaa",
             as_of=CANONICAL_TEMPORAL_SPLIT_SPECIFICATION.train_end,
             horizon_start=CANONICAL_TEMPORAL_SPLIT_SPECIFICATION.train_end,
             horizon_end="2024-06-30T00:00:00Z",
@@ -108,7 +109,8 @@ class TemporalSplitTests(unittest.TestCase):
         censored = replace(
             original,
             observation_id="obs_bbbbbbbbbbbbbbbbbbbbbbbb",
-            policy_id="pol_censored_split_test",
+            policy_id="pol_bbbbbbbbbbbb",
+            follow_up_through=original.as_of,
             label=replace(
                 original.label,
                 status="right_censored",
@@ -206,13 +208,15 @@ class TemporalSplitTests(unittest.TestCase):
 
     def test_incompatible_observation_contract_fails(self) -> None:
         records = list(self.records)
-        records[0] = replace(records[0], observation_contract_version="2.0.0")
+        records[0] = copy.copy(records[0])
+        object.__setattr__(records[0], "observation_contract_version", "2.0.0")
         with self.assertRaisesRegex(ValueError, "unsupported observation contract"):
             assign_temporal_splits(records)
 
     def test_incompatible_generator_provenance_fails(self) -> None:
         records = list(self.records)
-        records[0] = replace(records[0], generator_version="9.9.9")
+        records[0] = copy.copy(records[0])
+        object.__setattr__(records[0], "generator_version", "9.9.9")
         with self.assertRaisesRegex(ValueError, "unsupported generator version"):
             assign_temporal_splits(records)
 
