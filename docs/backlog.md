@@ -87,7 +87,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-01 - Bind generation to exact configuration, provenance, and run identity
 
-**Status:** Implemented locally on branch `fix/33-r2-01-generator-config` under [issue #33](https://github.com/anilreddy89/Inforsight/issues/33); pending pull request, review, and merge.
+**Status:** Completed on 2026-08-28 through [issue #33](https://github.com/anilreddy89/Inforsight/issues/33) and [PR #34](https://github.com/anilreddy89/Inforsight/pull/34), merge commit `c9c9c88`.
 
 **Outcome:** Generated histories are controlled by the exact versioned configuration reported in provenance, and identifiers are unique within a deterministic run namespace.
 
@@ -100,12 +100,12 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 **Acceptance checks:**
 
-- [ ] A custom `simulation_start` changes generated issuance dates and matches recorded provenance.
-- [ ] Configuration fields that affect generation are covered by regression or property tests.
-- [ ] Repeating the same namespaced configuration is byte deterministic.
-- [ ] Different run namespaces cannot collide on policy or event identifiers in the tested corpus.
-- [ ] Existing v1 fixtures remain reproducible through their documented legacy path or are explicitly version-pinned as historical.
-- [ ] Focused tests and `make check` pass.
+- [x] A custom `simulation_start` changes generated issuance dates and matches recorded provenance.
+- [x] Configuration fields that affect generation are covered by regression or property tests.
+- [x] Repeating the same namespaced configuration is byte deterministic.
+- [x] Different run namespaces cannot collide on policy or event identifiers in the tested corpus.
+- [x] Existing v1 fixtures remain reproducible through their documented legacy path or are explicitly version-pinned as historical.
+- [x] Focused tests and `make check` pass.
 
 **Depends on:** R2-00. **Blocks:** R2-02 and every v2 generator artifact.
 
