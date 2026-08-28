@@ -187,7 +187,7 @@ class PolicyHistoryValidationTest(unittest.TestCase):
         )
         billing["payload"]["due_date"] = "2024-02-30"
 
-        with self.assertRaisesRegex(ValueError, "valid ISO 8601 date"):
+        with self.assertRaisesRegex(ValueError, "fails JSON Schema.*due_date"):
             validate_policy_history(history)
 
     def test_payment_must_reference_an_existing_prior_billing(self) -> None:
@@ -266,6 +266,27 @@ class PolicyHistoryValidationTest(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "does not match current status"):
             reconstruct_policy_state(history, issuance_cutoff)
+
+    def test_public_ingress_rejects_schema_version_before_semantics(self) -> None:
+        history = copy.deepcopy(self._history_for("active"))
+        history[0]["schema_version"] = "9.0.0"
+
+        with self.assertRaisesRegex(ValueError, "fails JSON Schema.*schema_version"):
+            validate_policy_history(history)
+
+    def test_public_ingress_rejects_unexpected_payload_property(self) -> None:
+        history = copy.deepcopy(self._history_for("active"))
+        history[0]["payload"]["unexpected"] = "value"
+
+        with self.assertRaisesRegex(ValueError, "fails JSON Schema.*payload"):
+            validate_policy_history(history)
+
+    def test_public_ingress_rejects_unsupported_currency(self) -> None:
+        history = copy.deepcopy(self._history_for("active"))
+        history[0]["payload"]["currency"] = "EUR"
+
+        with self.assertRaisesRegex(ValueError, "fails JSON Schema.*currency"):
+            validate_policy_history(history)
 
     def _history_for(self, scenario: str) -> list[dict]:
         for history in self.histories:

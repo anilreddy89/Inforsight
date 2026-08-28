@@ -25,13 +25,21 @@
     "observation_contract_version": { "const": "1.0.0" },
     "label_policy_version": { "const": "1.0.0" },
     "observation_id": { "type": "string", "pattern": "^obs_[0-9a-f]{24}$" },
-    "policy_id": { "type": "string", "minLength": 1 },
+    "policy_id": { "type": "string", "pattern": "^pol_[a-z0-9]{12,64}$" },
     "as_of": { "type": "string", "format": "date-time", "pattern": "Z$" },
     "horizon_start": { "type": "string", "format": "date-time", "pattern": "Z$" },
     "horizon_end": { "type": "string", "format": "date-time", "pattern": "Z$" },
     "follow_up_through": { "type": "string", "format": "date-time", "pattern": "Z$" },
     "eligible": { "type": "boolean" },
-    "eligibility_reason": { "type": "string", "minLength": 1 },
+    "eligibility_reason": {
+      "enum": [
+        "eligible_active",
+        "policy_not_visible",
+        "status_grace_period_not_eligible",
+        "status_lapsed_not_eligible",
+        "status_surrendered_not_eligible"
+      ]
+    },
     "features": {
       "oneOf": [
         { "type": "null" },
@@ -42,11 +50,41 @@
     "visible_event_ids": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
+      "items": { "type": "string", "pattern": "^evt_[a-z0-9]{12,64}$" }
     },
-    "generator_version": { "type": "string", "minLength": 1 },
-    "event_schema_version": { "type": "string", "minLength": 1 }
+    "generator_version": { "enum": ["0.1.0", "0.2.0"] },
+    "event_schema_version": { "const": "1.0.0" }
   },
+  "allOf": [
+    {
+      "if": { "properties": { "eligible": { "const": true } }, "required": ["eligible"] },
+      "then": {
+        "properties": {
+          "eligibility_reason": { "const": "eligible_active" },
+          "features": { "$ref": "#/$defs/features" },
+          "label": {
+            "properties": {
+              "status": { "enum": ["observed_positive", "observed_negative", "right_censored"] }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "eligibility_reason": {
+            "enum": [
+              "policy_not_visible",
+              "status_grace_period_not_eligible",
+              "status_lapsed_not_eligible",
+              "status_surrendered_not_eligible"
+            ]
+          },
+          "features": { "type": "null" },
+          "label": { "properties": { "status": { "const": "not_applicable" } } }
+        }
+      }
+    }
+  ],
   "$defs": {
     "features": {
       "type": "object",
@@ -70,7 +108,7 @@
         "product_variant": { "type": "string", "minLength": 1 },
         "billing_frequency": { "type": "string", "minLength": 1 },
         "premium_amount_cents": { "type": "integer", "minimum": 0 },
-        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "currency": { "const": "USD" },
         "policy_age_days": { "type": "integer", "minimum": 0 },
         "visible_event_count": { "type": "integer", "minimum": 1 },
         "visible_billing_count": { "type": "integer", "minimum": 0 },
@@ -102,9 +140,61 @@
           "enum": ["outcome.lapsed", "outcome.surrendered", null]
         },
         "source_event_id": { "type": ["string", "null"] },
-        "source_effective_at": { "type": ["string", "null"], "format": "date-time" },
-        "source_ingested_at": { "type": ["string", "null"], "format": "date-time" },
+        "source_effective_at": { "type": ["string", "null"] },
+        "source_ingested_at": { "type": ["string", "null"] },
         "censoring_reason": { "type": ["string", "null"] }
+      },
+      "oneOf": [
+        { "$ref": "#/$defs/observed_positive_label" },
+        { "$ref": "#/$defs/observed_negative_label" },
+        { "$ref": "#/$defs/right_censored_label" },
+        { "$ref": "#/$defs/not_applicable_label" }
+      ]
+    },
+    "observed_positive_label": {
+      "properties": {
+        "status": { "const": "observed_positive" },
+        "value": { "const": 1 },
+        "outcome_type": { "enum": ["outcome.lapsed", "outcome.surrendered"] },
+        "source_event_id": { "type": "string", "pattern": "^evt_[a-z0-9]{12,64}$" },
+        "source_effective_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "source_ingested_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "censoring_reason": { "type": "null" }
+      }
+    },
+    "observed_negative_label": {
+      "properties": {
+        "status": { "const": "observed_negative" },
+        "value": { "const": 0 },
+        "outcome_type": { "type": "null" },
+        "source_event_id": { "type": "null" },
+        "source_effective_at": { "type": "null" },
+        "source_ingested_at": { "type": "null" },
+        "censoring_reason": { "type": "null" }
+      }
+    },
+    "right_censored_label": {
+      "properties": {
+        "status": { "const": "right_censored" },
+        "value": { "type": "null" },
+        "outcome_type": { "type": "null" },
+        "source_event_id": { "type": "null" },
+        "source_effective_at": { "type": "null" },
+        "source_ingested_at": { "type": "null" },
+        "censoring_reason": {
+          "enum": ["follow_up_ends_before_horizon", "outcome_not_ingested_by_watermark"]
+        }
+      }
+    },
+    "not_applicable_label": {
+      "properties": {
+        "status": { "const": "not_applicable" },
+        "value": { "type": "null" },
+        "outcome_type": { "type": "null" },
+        "source_event_id": { "type": "null" },
+        "source_effective_at": { "type": "null" },
+        "source_ingested_at": { "type": "null" },
+        "censoring_reason": { "type": "null" }
       }
     }
   }

@@ -135,14 +135,14 @@ class ReconstructionTest(unittest.TestCase):
         history = copy.deepcopy(self._history_for("active"))
         history[-1]["event_type"] = "policy.unknown"
 
-        with self.assertRaisesRegex(ValueError, "unsupported event_type"):
+        with self.assertRaisesRegex(ValueError, "fails JSON Schema at event_type"):
             reconstruct_policy_state(history, "2025-01-01T00:00:00Z")
 
     def test_invalid_event_timestamp_is_rejected(self) -> None:
         history = copy.deepcopy(self._history_for("active"))
         history[-1]["effective_at"] = "not-a-timestamp"
 
-        with self.assertRaisesRegex(ValueError, "ending in Z"):
+        with self.assertRaisesRegex(ValueError, "fails JSON Schema at effective_at"):
             reconstruct_policy_state(history, "2025-01-01T00:00:00Z")
 
     def test_non_utc_and_naive_cutoffs_are_rejected(self) -> None:

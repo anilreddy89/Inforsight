@@ -35,6 +35,8 @@ Caller or CLI
     |
     +-- validate_policy_history(history)
     |       |
+    |       +-- policy-event JSON Schema validates envelope fields
+    |       +-- selected payload schema validates event-specific fields
     |       +-- _prepare_history validates replay fields and parses timestamps
     |       +-- deterministic sort by effective_at, occurred_at, event_id
     |       +-- _validate_timeline checks cross-event dates and references
@@ -55,7 +57,9 @@ Caller or CLI
     |       +-- require effective_at and ingested_at at or before as_of
     |       +-- derive active-policy eligibility and feature-visible values
     |       +-- derive the separate 90-day outcome label
-    |       +-- return immutable ObservationRecord
+    |       +-- OutcomeLabel validates one mutually exclusive label state
+    |       +-- ObservationRecord validates eligibility, time, and provenance relations
+    |       +-- return immutable validated ObservationRecord
     |
     +-- build_first_billing_observations(histories, follow_up_through)
     |       |

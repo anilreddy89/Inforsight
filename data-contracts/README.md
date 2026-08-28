@@ -32,13 +32,24 @@ Corrections must be represented as new immutable events rather than edits to an 
 
 Amounts are integer cents and the initial currency is fixed to `USD`. Payload dates are ISO 8601 calendar dates; event times remain UTC timestamps in the envelope. Identifiers use synthetic, type-specific prefixes. Enum values are project-local fictional terms rather than representations of insurer procedures.
 
-These schemas validate individual event structure only. The simulator's `validate_policy_history` API separately enforces the current cross-event ordering, lifecycle-transition, terminal-pair, reference, and date invariants. Correction semantics and configurable grace-period calculations remain separate work. Outcome events are facts; the Phase 2.01 modeling contract derives labels from eligible future outcomes without exposing them as features.
+The schemas define individual event structure. The simulator's public `validate_policy_history` ingress applies those envelope and payload schemas first and then enforces cross-event ordering, lifecycle-transition, terminal-pair, reference, and date invariants. Internal semantic helpers do not replace the public composite boundary. Correction semantics and configurable grace-period calculations remain separate work. Outcome events are facts; the Phase 2.01 modeling contract derives labels from eligible future outcomes without exposing them as features.
 
 ## Observation-record contract
 
 [`observation-record.schema.json`](observation-record.schema.json) defines version `1.0.0` of the strict nested observation shape. Identity and cutoff metadata, feature-visible values, labels, audit provenance, and visible-event identifiers occupy separate fields. Eligible feature visibility requires both `effective_at <= as_of` and `ingested_at <= as_of`.
 
-The schema constrains serialization shape. The simulator observation builder enforces temporal visibility, eligibility, 90-day outcome boundaries, censoring, deterministic identifiers, and feature/label separation. See the [modeling contract](../docs/modeling/phase-02-01-modeling-contract.md) for the complete semantics.
+The schema uses mutually exclusive variants:
+
+| Status | Value | Outcome provenance | Censoring reason |
+| --- | ---: | --- | --- |
+| `observed_positive` | `1` | Required | `null` |
+| `observed_negative` | `0` | All `null` | `null` |
+| `right_censored` | `null` | All `null` | Required supported reason |
+| `not_applicable` | `null` | All `null` | `null` |
+
+Eligible records require `eligible_active`, non-null active-policy features, and an observed or censored label. Ineligible records require null features, a supported ineligibility reason, and `not_applicable`. Contract version `1.0.0` accepts only its frozen versions, identifier shapes, and `USD` currency. Tightening states that were always invalid by the modeling contract does not change valid v1 serialization.
+
+The simulator domain objects additionally enforce temporal relations that JSON Schema cannot express, including the exact 90-day horizon and positive source-event timing. See the [modeling contract](../docs/modeling/phase-02-01-modeling-contract.md) for the complete semantics.
 
 ## Validate the contract
 
@@ -49,4 +60,4 @@ python3 -m pip install -r data-contracts/requirements-test.txt
 python3 -m unittest discover -s data-contracts/tests -v
 ```
 
-The test suite checks that the envelope and every payload schema are valid JSON Schema Draft 2020-12 with unique identifiers. It proves that every supported event type has a valid example, every file under `examples/policy-event/valid` passes, and every file under `examples/policy-event/invalid` fails for its intended reason.
+The test suite checks that the envelope, payload, and observation schemas are valid JSON Schema Draft 2020-12. It covers every event type, the event examples, all four valid observation-label variants, and contradictory label, eligibility, version, currency, and type states.

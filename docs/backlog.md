@@ -111,6 +111,8 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-02 - Enforce structural and semantic observation invariants
 
+**Status:** Implemented locally for [issue #36](https://github.com/anilreddy89/Inforsight/issues/36) on branch `fix/36-r2-02-observation-invariants`; PR and merge pending. Six contract tests, 195 simulator tests, all artifact checks, and repository-boundary checks pass. The implementation scope and acceptance evidence are defined in `Documents/phase-02r-02-structural-and-semantic-observation-invariants.md`.
+
 **Outcome:** Serialized observations and runtime domain objects cannot represent contradictory label, eligibility, feature, or provenance states.
 
 **Scope:**

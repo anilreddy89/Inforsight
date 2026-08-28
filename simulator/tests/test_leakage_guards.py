@@ -167,18 +167,21 @@ class LeakageGuardTest(unittest.TestCase):
 
     def test_duplicate_policy_cutoff_is_rejected_independently(self) -> None:
         first = self.records[0]
-        duplicate = replace(first, observation_id="obs_distinct_for_test")
+        duplicate = replace(first, observation_id="obs_ffffffffffffffffffffffff")
 
         with self.assertRaisesRegex(ValueError, "duplicate policy/as_of"):
             validate_observation_records([first, duplicate])
 
     def test_duplicate_outcome_episode_is_rejected(self) -> None:
         positive = next(record for record in self.records if record.label.value == 1)
+        shifted_as_of = self._datetime(positive.as_of) + timedelta(seconds=1)
         duplicate = replace(
             positive,
-            observation_id="obs_distinct_episode_test",
-            policy_id="pol_distinct_episode_test",
-            as_of=self._timestamp(self._datetime(positive.as_of) + timedelta(seconds=1)),
+            observation_id="obs_eeeeeeeeeeeeeeeeeeeeeeee",
+            policy_id="pol_eeeeeeeeeeee",
+            as_of=self._timestamp(shifted_as_of),
+            horizon_start=self._timestamp(shifted_as_of),
+            horizon_end=self._timestamp(shifted_as_of + timedelta(days=LABEL_HORIZON_DAYS)),
         )
 
         with self.assertRaisesRegex(ValueError, "duplicate outcome episode"):
