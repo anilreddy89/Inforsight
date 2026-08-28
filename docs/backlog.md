@@ -63,6 +63,8 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-00 - Reconcile review findings and establish truthful status
 
+**Status:** Completed on 2026-08-28 by [PR #30](https://github.com/anilreddy89/Inforsight/pull/30), merge commit `4292743`. The GitHub issue was created after the implementation PR; add its link to the change tracker when the issue number is confirmed.
+
 **Outcome:** Repository-facing status, claim boundaries, and ownership accurately describe the independent review and the Phase 2R gate.
 
 **Scope:**
@@ -75,11 +77,11 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 **Acceptance checks:**
 
-- [ ] No current repository status describes the v1 test fixture as untouched or `sealed_not_scored` without historical qualification.
-- [ ] P2-08 and P2-09 are visibly paused in every authoritative current-status location.
-- [ ] `LIM-002-001`, `LIM-002-002`, and `LIM-002-003` identify owners, blocked claims, allowed work, and objective closure evidence.
-- [ ] Completed Phase 2.01-2.07 evidence remains unchanged and is labeled `pipeline_engineering_only` where interpreted.
-- [ ] Documentation links and repository checks pass.
+- [x] No current repository status describes the v1 test fixture as untouched or `sealed_not_scored` without historical qualification.
+- [x] P2-08 and P2-09 are visibly paused in every authoritative current-status location.
+- [x] `LIM-002-001`, `LIM-002-002`, and `LIM-002-003` identify owners, blocked claims, allowed work, and objective closure evidence.
+- [x] Completed Phase 2.01-2.07 evidence remains unchanged and is labeled `pipeline_engineering_only` where interpreted.
+- [x] Documentation links and repository checks pass.
 
 **Out of scope:** Fixing generator, schema, scoring, or statistical behavior.
 

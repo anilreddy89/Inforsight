@@ -151,7 +151,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent engineering review after Phase 2.07 |
-| Owner | Phase 2R items R2-00 and R2-03; GitHub issues assigned when created |
+| Owner | R2-03 for scoring-authorization repair; R2-00 documentation reconciliation completed through PR #30 |
 | Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
 | Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
 | Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
