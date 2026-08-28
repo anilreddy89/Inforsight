@@ -22,12 +22,11 @@ from inforsight_simulator import (  # noqa: E402
     LABEL_POLICY_VERSION,
     OBSERVATION_CONTRACT_VERSION,
     TEMPORAL_SPLIT_CONTRACT_VERSION,
-    GeneratorConfig,
     assign_temporal_splits,
     build_first_billing_observations,
     first_billing_observation_time,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     source_observation_digest,
     summarize_temporal_split,
 )
@@ -44,8 +43,7 @@ RESULT_PATH = EXPERIMENTS_DIR / "phase-02-03-temporal-split-manifest.json"
 def build_manifest() -> dict:
     """Return canonical deterministic Phase 2.03 split evidence."""
 
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     cutoffs = [first_billing_observation_time(history) for history in histories]
     follow_up_through = max(
         cutoff + timedelta(days=LABEL_HORIZON_DAYS) for cutoff in cutoffs
@@ -76,7 +74,7 @@ def build_manifest() -> dict:
         name: [record.observation_id for record in assigned]
         for name, assigned in result.disposition_items()
     }
-    generation = generation_provenance(config)
+    generation = legacy_generation_provenance(SEED, POLICY_COUNT)
     return {
         "manifest_id": MANIFEST_ID,
         "manifest_version": MANIFEST_VERSION,

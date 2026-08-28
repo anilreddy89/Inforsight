@@ -11,7 +11,7 @@ SRC = SIMULATOR_DIR / "src"
 sys.path.insert(0, str(SRC))
 
 from inforsight_simulator import (  # noqa: E402
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     reconstruct_policy_state,
     validate_policy_history,
 )
@@ -20,7 +20,7 @@ from inforsight_simulator import (  # noqa: E402
 class PolicyHistoryValidationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.histories = generate_policy_histories(seed=20260817)
+        cls.histories = generate_legacy_policy_histories(seed=20260817)
 
     def test_every_default_generated_history_is_valid(self) -> None:
         for history in self.histories:

@@ -18,7 +18,6 @@ SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "run_feature_diagnostics.py"
 from inforsight_simulator import (  # noqa: E402
     CANONICAL_TEMPORAL_SPLIT_SPECIFICATION,
     FROZEN_DIAGNOSTIC_SPECIFICATION,
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     assign_temporal_splits,
     build_feature_pipeline,
@@ -30,7 +29,7 @@ from inforsight_simulator import (  # noqa: E402
     fitted_baseline_bytes,
     fitted_boosted_bytes,
     fitted_state_bytes,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     identifier_and_cardinality_checks,
     identifier_token_matches,
     perturbation_flags,
@@ -53,8 +52,7 @@ def _load_artifact_module():
 class FeatureDiagnosticTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        config = GeneratorConfig(seed=20260817, policy_count=100)
-        histories = generate_policy_histories(config.seed, config.policy_count)
+        histories = generate_legacy_policy_histories(20260817, 100)
         cutoffs = [first_billing_observation_time(history) for history in histories]
         watermark = max(value + timedelta(days=LABEL_HORIZON_DAYS) for value in cutoffs)
         records = build_first_billing_observations(histories, follow_up_through=watermark)

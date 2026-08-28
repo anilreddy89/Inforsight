@@ -2,6 +2,7 @@ import random
 import sys
 import unittest
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -12,9 +13,14 @@ sys.path.insert(0, str(SRC))
 from contract_support import policy_event_validator  # noqa: E402
 from inforsight_simulator import (  # noqa: E402
     GeneratorConfig,
+    configuration_digest,
+    generate_legacy_policy_histories,
     generate_policy_histories,
     generation_provenance,
     histories_to_jsonl,
+    legacy_generation_provenance,
+    run_identity,
+    verify_generation_provenance,
 )
 
 
@@ -22,7 +28,11 @@ class GeneratorTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.seed = 20260817
-        cls.histories = generate_policy_histories(cls.seed)
+        cls.config = GeneratorConfig(
+            seed=cls.seed,
+            run_namespace="generator-tests",
+        )
+        cls.histories = generate_policy_histories(cls.config)
         cls.events = [event for history in cls.histories for event in history]
         cls.validator = policy_event_validator()
 
@@ -118,21 +128,28 @@ class GeneratorTest(unittest.TestCase):
             self.assertEqual(ordering_keys, sorted(ordering_keys))
 
     def test_same_inputs_are_structurally_and_byte_deterministic(self) -> None:
-        first = generate_policy_histories(self.seed)
-        second = generate_policy_histories(self.seed)
+        first = generate_policy_histories(self.config)
+        second = generate_policy_histories(self.config)
         self.assertEqual(first, second)
         self.assertEqual(histories_to_jsonl(first), histories_to_jsonl(second))
 
     def test_generation_is_independent_of_global_random_state(self) -> None:
         random.seed(1)
-        first = generate_policy_histories(self.seed, 8)
+        config = GeneratorConfig(
+            seed=self.seed,
+            policy_count=8,
+            run_namespace="global-random-test",
+        )
+        first = generate_policy_histories(config)
         for _ in range(100):
             random.random()
-        second = generate_policy_histories(self.seed, 8)
+        second = generate_policy_histories(config)
         self.assertEqual(first, second)
 
     def test_different_seed_changes_valid_content(self) -> None:
-        other = generate_policy_histories(self.seed + 1)
+        other = generate_policy_histories(
+            GeneratorConfig(seed=self.seed + 1, run_namespace="generator-tests")
+        )
         self.assertNotEqual(self.histories, other)
         for history in other:
             for event in history:
@@ -142,22 +159,121 @@ class GeneratorTest(unittest.TestCase):
         for invalid_count in (0, -1):
             with self.subTest(policy_count=invalid_count):
                 with self.assertRaisesRegex(ValueError, "greater than zero"):
-                    generate_policy_histories(self.seed, invalid_count)
+                    GeneratorConfig(
+                        seed=self.seed,
+                        policy_count=invalid_count,
+                        run_namespace="invalid-count-test",
+                    )
 
     def test_provenance_contains_reproduction_inputs(self) -> None:
-        provenance = generation_provenance(GeneratorConfig(seed=self.seed))
-        self.assertEqual(
-            set(provenance),
-            {
-                "generator_version",
-                "schema_version",
-                "seed",
-                "policy_count",
-                "simulation_start",
-            },
-        )
+        provenance = generation_provenance(self.config)
         self.assertEqual(provenance["seed"], self.seed)
         self.assertEqual(provenance["policy_count"], 100)
+        self.assertEqual(provenance["run_namespace"], "generator-tests")
+        self.assertEqual(provenance["run_identity"], run_identity(self.config))
+        self.assertEqual(
+            provenance["configuration_sha256"], configuration_digest(self.config)
+        )
+        self.assertEqual(provenance["generator_version"], "0.2.0")
+
+    def test_custom_simulation_start_controls_histories_and_provenance(self) -> None:
+        start = datetime(2026, 5, 4, tzinfo=timezone.utc)
+        config = GeneratorConfig(
+            seed=self.seed,
+            policy_count=4,
+            run_namespace="custom-start",
+            simulation_start=start,
+        )
+        histories = generate_policy_histories(config)
+        issuance_times = [
+            datetime.fromisoformat(history[0]["occurred_at"].replace("Z", "+00:00"))
+            for history in histories
+        ]
+        self.assertTrue(all(value >= start for value in issuance_times))
+        self.assertTrue(all(value < start.replace(month=6) for value in issuance_times))
+        self.assertEqual(
+            generation_provenance(config)["simulation_start"],
+            "2026-05-04T00:00:00Z",
+        )
+
+    def test_namespaces_isolate_all_generator_owned_identifiers(self) -> None:
+        first = generate_policy_histories(
+            GeneratorConfig(seed=self.seed, run_namespace="corpus-a")
+        )
+        second = generate_policy_histories(
+            GeneratorConfig(seed=self.seed, run_namespace="corpus-b")
+        )
+
+        def identifiers(histories: list[list[dict]]) -> set[str]:
+            values: set[str] = set()
+            for history in histories:
+                for event in history:
+                    values.add(event["policy_id"])
+                    values.add(event["event_id"])
+                    for field in (
+                        "billing_id",
+                        "payment_id",
+                        "notice_id",
+                        "contact_id",
+                    ):
+                        value = event["payload"].get(field)
+                        if value is not None:
+                            values.add(value)
+            return values
+
+        self.assertTrue(identifiers(first).isdisjoint(identifiers(second)))
+
+    def test_namespace_validation_is_strict(self) -> None:
+        for invalid in ("", "Uppercase", " space", "a" * 65, 3, None):
+            with self.subTest(run_namespace=invalid):
+                with self.assertRaises((TypeError, ValueError)):
+                    GeneratorConfig(seed=self.seed, run_namespace=invalid)  # type: ignore[arg-type]
+
+    def test_every_config_field_participates_in_run_identity(self) -> None:
+        baseline = self.config
+        variants = (
+            GeneratorConfig(seed=self.seed + 1, run_namespace="generator-tests"),
+            GeneratorConfig(
+                seed=self.seed,
+                policy_count=99,
+                run_namespace="generator-tests",
+            ),
+            GeneratorConfig(seed=self.seed, run_namespace="generator-tests-other"),
+            GeneratorConfig(
+                seed=self.seed,
+                run_namespace="generator-tests",
+                simulation_start=datetime(2025, 1, 1, tzinfo=timezone.utc),
+            ),
+        )
+        for variant in variants:
+            with self.subTest(variant=variant):
+                self.assertNotEqual(run_identity(baseline), run_identity(variant))
+
+    def test_provenance_verification_rejects_mismatch(self) -> None:
+        provenance = generation_provenance(self.config)
+        verify_generation_provenance(self.config, provenance)
+        changed = {**provenance, "policy_count": 99}
+        with self.assertRaisesRegex(ValueError, "does not match"):
+            verify_generation_provenance(self.config, changed)
+
+    def test_corrected_api_cannot_silently_select_legacy_generation(self) -> None:
+        with self.assertRaisesRegex(TypeError, "GeneratorConfig"):
+            generate_policy_histories(self.seed)  # type: ignore[arg-type]
+
+    def test_legacy_path_reproduces_v1_identifiers_and_provenance(self) -> None:
+        histories = generate_legacy_policy_histories(self.seed, 1)
+        self.assertEqual(histories[0][0]["policy_id"], "pol_000001000000")
+        self.assertEqual(histories[0][0]["event_id"], "evt_000001000001")
+        self.assertEqual(
+            legacy_generation_provenance(self.seed, 1),
+            {
+                "generator_version": "0.1.0",
+                "schema_version": "1.0.0",
+                "seed": self.seed,
+                "policy_count": 1,
+                "simulation_start": "2024-01-01T00:00:00Z",
+            },
+        )
 
     def test_output_contains_only_bounded_structured_fields(self) -> None:
         prohibited = {

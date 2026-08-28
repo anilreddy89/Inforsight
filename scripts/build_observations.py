@@ -16,14 +16,13 @@ SIMULATOR_SRC = REPOSITORY_ROOT / "simulator" / "src"
 sys.path.insert(0, str(SIMULATOR_SRC))
 
 from inforsight_simulator import (  # noqa: E402
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     LABEL_POLICY_VERSION,
     OBSERVATION_CONTRACT_VERSION,
     build_first_billing_observations,
     first_billing_observation_time,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     summarize_observations,
 )
 
@@ -39,8 +38,7 @@ RESULT_PATH = EXPERIMENTS_DIR / "phase-02-01-observation-sufficiency.json"
 def build_assessment() -> dict:
     """Return the canonical deterministic Phase 2.01 gate evidence."""
 
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     cutoffs = [first_billing_observation_time(history) for history in histories]
     follow_up_through = max(
         cutoff + timedelta(days=LABEL_HORIZON_DAYS) for cutoff in cutoffs
@@ -76,7 +74,7 @@ def build_assessment() -> dict:
             "per policy with explicit follow-up, but its balanced scenarios, simplified "
             "single-cycle paths, and small corpus cannot support real-world performance claims."
         ),
-        "generation": generation_provenance(config),
+        "generation": legacy_generation_provenance(SEED, POLICY_COUNT),
         "observation_contract": {
             "version": OBSERVATION_CONTRACT_VERSION,
             "label_policy_version": LABEL_POLICY_VERSION,

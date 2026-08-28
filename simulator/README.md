@@ -19,22 +19,32 @@ Issue age, face amount, acquisition channel, retries, reinstatement, maturity, l
 Add `simulator/src` to the Python path or install the package, then call:
 
 ```python
-from inforsight_simulator import generate_policy_histories
+from inforsight_simulator import GeneratorConfig, generate_policy_histories
 
-histories = generate_policy_histories(seed=20260817)
+config = GeneratorConfig(seed=20260817, run_namespace="local-demo")
+histories = generate_policy_histories(config)
 assert len(histories) == 100
 ```
 
-`policy_count` defaults to 100 and accepts any positive integer. Each inner list is one ordered policy history, and every history begins with one `policy.issued` event.
+`policy_count` defaults to 100 and accepts any positive integer. `run_namespace` is required, validated, and included in deterministic run identity so separately named corpora do not reuse generator-owned IDs. Each inner list is one ordered policy history, and every history begins with one `policy.issued` event.
 
 ## Policy-history validation
 
 JSON Schema validates one event at a time. The simulator also provides a history-level validator for relationships that can only be checked across events:
 
 ```python
-from inforsight_simulator import generate_policy_histories, validate_policy_history
+from inforsight_simulator import (
+    GeneratorConfig,
+    generate_policy_histories,
+    validate_policy_history,
+)
 
-history = generate_policy_histories(seed=20260817, policy_count=1)[0]
+config = GeneratorConfig(
+    seed=20260817,
+    policy_count=1,
+    run_namespace="validation-demo",
+)
+history = generate_policy_histories(config)[0]
 validate_policy_history(history)  # Returns None; raises ValueError when invalid.
 ```
 
@@ -84,11 +94,17 @@ Reconstruct one generated policy at an inclusive UTC effective-time cutoff:
 
 ```python
 from inforsight_simulator import (
+    GeneratorConfig,
     generate_policy_histories,
     reconstruct_policy_state,
 )
 
-history = generate_policy_histories(seed=20260817, policy_count=1)[0]
+config = GeneratorConfig(
+    seed=20260817,
+    policy_count=1,
+    run_namespace="reconstruction-demo",
+)
+history = generate_policy_histories(config)[0]
 state = reconstruct_policy_state(history, "2025-01-01T00:00:00Z")
 
 if state is not None:
@@ -219,7 +235,8 @@ Generate JSON Lines on standard output:
 ```bash
 PYTHONPATH=simulator/src python3 -m inforsight_simulator \
   --seed 20260817 \
-  --policy-count 100
+  --policy-count 100 \
+  --run-namespace local-demo
 ```
 
 Write to a caller-selected path:
@@ -228,24 +245,36 @@ Write to a caller-selected path:
 PYTHONPATH=simulator/src python3 -m inforsight_simulator \
   --seed 20260817 \
   --policy-count 100 \
+  --run-namespace local-demo \
   --output /tmp/inforsight-policy-events.jsonl
 ```
 
 The CLI refuses to overwrite an existing file. Event JSON is written to standard output or the requested file; generation provenance is written separately to standard error so it cannot corrupt the JSON Lines stream.
 
+Historical generator `0.1.0` output is reproduced only through the explicit compatibility option:
+
+```bash
+PYTHONPATH=simulator/src python3 -m inforsight_simulator \
+  --seed 20260817 \
+  --policy-count 100 \
+  --legacy-v1
+```
+
+`--legacy-v1` cannot be combined with a namespace or a changed simulation start. New datasets must use corrected namespaced generation.
+
 ## Determinism guarantee
 
-For a supported generator version, identical seed and policy-count inputs produce structurally identical histories and byte-identical JSON Lines. Generation uses:
+For corrected generator `0.2.0`, the exact same seed, policy count, UTC simulation start, and run namespace produce structurally identical histories and byte-identical JSON Lines. Provenance contains a canonical configuration digest and deterministic run identity. Generation uses:
 
 - A dedicated seeded pseudorandom-number generator.
-- A fixed UTC simulation start date.
-- Counter-derived synthetic identifiers.
+- An explicit UTC simulation start date.
+- Run-identity and counter-derived synthetic identifiers.
 - Explicit history and event ordering.
 - Stable compact JSON serialization with sorted keys.
 
-It does not use wall-clock time, global random state, random UUIDs, Python hash values, or filesystem ordering. Provenance reports the seed, policy count, generator version, event-schema version, and simulation start.
+It does not use wall-clock time, global random state, random UUIDs, Python hash values, or filesystem ordering. Provenance reports every generation input, generator version, event-schema version, canonicalization version, configuration digest, and run identity.
 
-Generator-version changes may intentionally alter output. Consumers that require exact replay must retain the complete provenance record.
+Generator-version changes may intentionally alter output. Consumers that require exact replay must retain the complete provenance record and reuse the same namespace. Historical v1 artifacts use separately named legacy APIs and remain byte reproducible; the compatibility path must not be used for new corpora.
 
 ## Fictional scenario mix
 
@@ -289,12 +318,14 @@ The simulator now builds versioned observation records under the [Phase 2.01 mod
 ```python
 from datetime import timedelta
 from inforsight_simulator import (
+    GeneratorConfig,
     build_first_billing_observations,
     first_billing_observation_time,
     generate_policy_histories,
 )
 
-histories = generate_policy_histories(seed=20260817)
+config = GeneratorConfig(seed=20260817, run_namespace="observation-demo")
+histories = generate_policy_histories(config)
 watermark = max(
     first_billing_observation_time(history) + timedelta(days=90)
     for history in histories

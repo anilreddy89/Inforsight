@@ -3,14 +3,22 @@
 from __future__ import annotations
 
 import random
+from dataclasses import dataclass
 from datetime import datetime, timedelta
+from hashlib import sha256
+import json
 from typing import Any
 
-from .config import GeneratorConfig
+from .config import DEFAULT_SIMULATION_START, GeneratorConfig
 
 
 SCHEMA_VERSION = "1.0.0"
+# Historical observation artifacts import this name and remain version-pinned.
 GENERATOR_VERSION = "0.1.0"
+LEGACY_GENERATOR_VERSION = GENERATOR_VERSION
+NAMESPACED_GENERATOR_VERSION = "0.2.0"
+CONFIGURATION_CANONICALIZATION_VERSION = "1.0.0"
+CONFIGURATION_DIGEST_ALGORITHM = "sha256"
 SCENARIOS = ("active", "recovered", "lapsed", "surrendered")
 PRODUCT_VARIANTS = ("fictional_term_life", "fictional_whole_life")
 BILLING_FREQUENCIES = ("monthly", "quarterly", "semiannual", "annual")
@@ -32,42 +40,146 @@ PolicyEvent = dict[str, Any]
 PolicyHistory = list[PolicyEvent]
 
 
-def generation_provenance(config: GeneratorConfig) -> dict[str, int | str]:
-    """Return the stable inputs and versions needed to identify a run."""
+@dataclass(frozen=True)
+class _LegacyConfig:
+    seed: int
+    policy_count: int
+    simulation_start: datetime = DEFAULT_SIMULATION_START
+
+    def __post_init__(self) -> None:
+        if isinstance(self.seed, bool) or not isinstance(self.seed, int):
+            raise TypeError("seed must be an integer")
+        if isinstance(self.policy_count, bool) or not isinstance(self.policy_count, int):
+            raise TypeError("policy_count must be an integer")
+        if self.policy_count <= 0:
+            raise ValueError("policy_count must be greater than zero")
+
+
+def canonical_configuration(config: GeneratorConfig) -> dict[str, int | str]:
+    """Return the complete, versioned configuration used by corrected generation."""
 
     return {
-        "generator_version": GENERATOR_VERSION,
+        "canonicalization_version": CONFIGURATION_CANONICALIZATION_VERSION,
+        "generator_version": NAMESPACED_GENERATOR_VERSION,
         "schema_version": SCHEMA_VERSION,
         "seed": config.seed,
         "policy_count": config.policy_count,
+        "run_namespace": config.run_namespace,
         "simulation_start": _timestamp(config.simulation_start),
     }
 
 
-def generate_policy_histories(
+def configuration_digest(config: GeneratorConfig) -> str:
+    """Return the stable digest of every corrected generation input."""
+
+    encoded = json.dumps(
+        canonical_configuration(config),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("ascii")
+    return sha256(encoded).hexdigest()
+
+
+def run_identity(config: GeneratorConfig) -> str:
+    """Return the deterministic bounded identity for a configured run."""
+
+    return configuration_digest(config)[:24]
+
+
+def generation_provenance(config: GeneratorConfig) -> dict[str, int | str]:
+    """Return provenance bound to the exact corrected generation config."""
+
+    return {
+        **canonical_configuration(config),
+        "configuration_digest_algorithm": CONFIGURATION_DIGEST_ALGORITHM,
+        "configuration_sha256": configuration_digest(config),
+        "run_identity": run_identity(config),
+        "compatibility_mode": "namespaced",
+    }
+
+
+def verify_generation_provenance(
+    config: GeneratorConfig,
+    provenance: dict[str, int | str],
+) -> None:
+    """Reject provenance that is not an exact description of the config."""
+
+    if provenance != generation_provenance(config):
+        raise ValueError("generation provenance does not match configuration")
+
+
+def legacy_generation_provenance(
+    seed: int,
+    policy_count: int = 100,
+) -> dict[str, int | str]:
+    """Return truthful provenance for immutable v1 generator output."""
+
+    legacy = _LegacyConfig(
+        seed=seed,
+        policy_count=policy_count,
+    )
+    return {
+        "generator_version": LEGACY_GENERATOR_VERSION,
+        "schema_version": SCHEMA_VERSION,
+        "seed": legacy.seed,
+        "policy_count": legacy.policy_count,
+        "simulation_start": _timestamp(legacy.simulation_start),
+    }
+
+
+def generate_policy_histories(config: GeneratorConfig) -> list[PolicyHistory]:
+    """Generate corrected, namespaced histories from one exact config."""
+
+    if not isinstance(config, GeneratorConfig):
+        raise TypeError("config must be a GeneratorConfig")
+    return _generate_policy_histories(
+        config,
+        run_identity_value=run_identity(config),
+    )
+
+
+def generate_legacy_policy_histories(
     seed: int,
     policy_count: int = 100,
 ) -> list[PolicyHistory]:
-    """Generate deterministic fictional histories from explicit inputs."""
+    """Reproduce immutable generator 0.1.0 output with counter-only IDs."""
 
-    config = GeneratorConfig(seed=seed, policy_count=policy_count)
+    config = _LegacyConfig(seed=seed, policy_count=policy_count)
+    return _generate_policy_histories(config, run_identity_value=None)
+
+
+def _generate_policy_histories(
+    config: GeneratorConfig | _LegacyConfig,
+    *,
+    run_identity_value: str | None,
+) -> list[PolicyHistory]:
     rng = random.Random(config.seed)
-    scenarios = [SCENARIOS[index % len(SCENARIOS)] for index in range(policy_count)]
+    scenarios = [
+        SCENARIOS[index % len(SCENARIOS)] for index in range(config.policy_count)
+    ]
     rng.shuffle(scenarios)
 
     return [
-        _generate_history(config, rng, policy_index, scenario)
+        _generate_history(
+            config,
+            rng,
+            policy_index,
+            scenario,
+            run_identity_value,
+        )
         for policy_index, scenario in enumerate(scenarios, start=1)
     ]
 
 
 def _generate_history(
-    config: GeneratorConfig,
+    config: GeneratorConfig | _LegacyConfig,
     rng: random.Random,
     policy_index: int,
     scenario: str,
+    identity: str | None,
 ) -> PolicyHistory:
-    policy_id = _identifier("pol", policy_index)
+    policy_id = _identifier("pol", policy_index, run_identity_value=identity)
     issue_time = config.simulation_start + timedelta(
         days=rng.randint(0, 30), hours=rng.randint(8, 16)
     )
@@ -84,7 +196,9 @@ def _generate_history(
         history.append(
             {
                 "schema_version": SCHEMA_VERSION,
-                "event_id": _identifier("evt", policy_index, event_index),
+                "event_id": _identifier(
+                    "evt", policy_index, event_index, run_identity_value=identity
+                ),
                 "policy_id": policy_id,
                 "event_type": event_type,
                 "occurred_at": _timestamp(occurred_at),
@@ -107,7 +221,7 @@ def _generate_history(
     )
 
     first_due = issue_time + timedelta(days=BILLING_INTERVAL_DAYS[billing_frequency])
-    billing_id = _identifier("bil", policy_index, 1)
+    billing_id = _identifier("bil", policy_index, 1, run_identity_value=identity)
     add_event(
         "billing.premium_due",
         first_due,
@@ -119,7 +233,7 @@ def _generate_history(
         },
     )
 
-    payment_id = _identifier("pay", policy_index, 1)
+    payment_id = _identifier("pay", policy_index, 1, run_identity_value=identity)
     payment_base = {
         "payment_id": payment_id,
         "billing_id": billing_id,
@@ -131,7 +245,13 @@ def _generate_history(
     if scenario == "active":
         add_event("payment.received", first_due + timedelta(days=1), payment_base)
         if policy_index % 2 == 0:
-            _add_service_contact(add_event, rng, policy_index, first_due + timedelta(days=8))
+            _add_service_contact(
+                add_event,
+                rng,
+                policy_index,
+                first_due + timedelta(days=8),
+                run_identity_value=identity,
+            )
         return history
 
     if scenario == "surrendered":
@@ -141,6 +261,7 @@ def _generate_history(
             rng,
             policy_index,
             first_due + timedelta(days=15),
+            run_identity_value=identity,
             reason="surrender_inquiry",
         )
         terminal_time = first_due + timedelta(days=20)
@@ -175,7 +296,9 @@ def _generate_history(
         "notice.sent",
         first_due + timedelta(days=3),
         {
-            "notice_id": _identifier("ntc", policy_index, 1),
+            "notice_id": _identifier(
+                "ntc", policy_index, 1, run_identity_value=identity
+            ),
             "notice_type": "payment_reminder",
             "delivery_channel": rng.choice(("postal_mail", "email", "phone")),
         },
@@ -196,7 +319,12 @@ def _generate_history(
         add_event(
             "payment.received",
             recovery_time,
-            {**payment_base, "payment_id": _identifier("pay", policy_index, 2)},
+            {
+                **payment_base,
+                "payment_id": _identifier(
+                    "pay", policy_index, 2, run_identity_value=identity
+                ),
+            },
         )
         add_event(
             "policy.status_changed",
@@ -214,7 +342,9 @@ def _generate_history(
         "notice.sent",
         first_due + timedelta(days=25),
         {
-            "notice_id": _identifier("ntc", policy_index, 2),
+            "notice_id": _identifier(
+                "ntc", policy_index, 2, run_identity_value=identity
+            ),
             "notice_type": "lapse_warning",
             "delivery_channel": rng.choice(("postal_mail", "email", "phone")),
         },
@@ -245,13 +375,16 @@ def _add_service_contact(
     rng: random.Random,
     policy_index: int,
     occurred_at: datetime,
+    run_identity_value: str | None = None,
     reason: str = "policy_review",
 ) -> None:
     add_event(
         "service.contact_recorded",
         occurred_at,
         {
-            "contact_id": _identifier("con", policy_index, 1),
+            "contact_id": _identifier(
+                "con", policy_index, 1, run_identity_value=run_identity_value
+            ),
             "direction": rng.choice(("inbound", "outbound")),
             "channel": rng.choice(("phone", "email", "postal_mail")),
             "reason": reason,
@@ -260,7 +393,19 @@ def _add_service_contact(
     )
 
 
-def _identifier(prefix: str, primary: int, secondary: int = 0) -> str:
+def _identifier(
+    prefix: str,
+    primary: int,
+    secondary: int = 0,
+    *,
+    run_identity_value: str | None = None,
+) -> str:
+    if run_identity_value is not None:
+        # The prefix is the derivation domain. Keeping counters as the suffix also
+        # preserves deterministic event ordering for equal timestamps.
+        return (
+            f"{prefix}_{run_identity_value}{primary:06x}{secondary:06x}"
+        )
     return f"{prefix}_{primary:06x}{secondary:06x}"
 
 

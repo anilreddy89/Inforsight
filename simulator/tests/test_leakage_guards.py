@@ -16,7 +16,7 @@ from inforsight_simulator import (  # noqa: E402
     build_observation,
     find_exact_deterministic_proxies,
     first_billing_observation_time,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     validate_feature_payload,
     validate_observation_records,
 )
@@ -25,7 +25,7 @@ from inforsight_simulator import (  # noqa: E402
 class LeakageGuardTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.histories = generate_policy_histories(seed=20260817)
+        cls.histories = generate_legacy_policy_histories(seed=20260817)
         cls.watermark = max(
             first_billing_observation_time(history)
             + timedelta(days=LABEL_HORIZON_DAYS)

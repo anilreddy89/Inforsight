@@ -29,7 +29,7 @@ from inforsight_simulator import (
     first_billing_observation_time,
     fit_preprocessor,
     fitted_state_bytes,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     matrix_digest,
     transform_partition,
     validate_feature_dictionary,
@@ -52,7 +52,7 @@ def _load_artifact_module():
 class FeaturePipelineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        histories = generate_policy_histories(seed=20260817, policy_count=100)
+        histories = generate_legacy_policy_histories(seed=20260817, policy_count=100)
         cutoffs = [first_billing_observation_time(history) for history in histories]
         watermark = max(cutoff + timedelta(days=LABEL_HORIZON_DAYS) for cutoff in cutoffs)
         records = build_first_billing_observations(histories, follow_up_through=watermark)

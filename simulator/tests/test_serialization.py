@@ -19,7 +19,9 @@ class SerializationCliTest(unittest.TestCase):
         stdout = io.StringIO()
         stderr = io.StringIO()
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            result = main(["--seed", "7", "--policy-count", "4"])
+            result = main(
+                ["--seed", "7", "--policy-count", "4", "--legacy-v1"]
+            )
 
         self.assertEqual(result, 0)
         events = [json.loads(line) for line in stdout.getvalue().splitlines()]
@@ -40,6 +42,7 @@ class SerializationCliTest(unittest.TestCase):
                             "17",
                             "--policy-count",
                             "8",
+                            "--legacy-v1",
                             "--output",
                             str(output),
                         ]
@@ -53,14 +56,45 @@ class SerializationCliTest(unittest.TestCase):
             output.write_text("keep me", encoding="utf-8")
             with contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit) as raised:
-                    main(["--seed", "3", "--output", str(output)])
+                    main(["--seed", "3", "--legacy-v1", "--output", str(output)])
             self.assertEqual(raised.exception.code, 2)
             self.assertEqual(output.read_text(encoding="utf-8"), "keep me")
 
     def test_cli_rejects_nonpositive_policy_count(self) -> None:
         with contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit) as raised:
-                main(["--seed", "3", "--policy-count", "0"])
+                main(["--seed", "3", "--policy-count", "0", "--legacy-v1"])
+        self.assertEqual(raised.exception.code, 2)
+
+    def test_corrected_cli_requires_namespace_and_binds_custom_start(self) -> None:
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            result = main(
+                [
+                    "--seed",
+                    "7",
+                    "--policy-count",
+                    "4",
+                    "--run-namespace",
+                    "cli-test",
+                    "--simulation-start",
+                    "2026-05-04T00:00:00Z",
+                ]
+            )
+        self.assertEqual(result, 0)
+        events = [json.loads(line) for line in stdout.getvalue().splitlines()]
+        provenance = json.loads(
+            stderr.getvalue().split("generation_provenance=", maxsplit=1)[1]
+        )
+        self.assertEqual(provenance["run_namespace"], "cli-test")
+        self.assertEqual(provenance["simulation_start"], "2026-05-04T00:00:00Z")
+        self.assertTrue(events[0]["occurred_at"].startswith("2026-05"))
+
+    def test_corrected_cli_rejects_missing_namespace(self) -> None:
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as raised:
+                main(["--seed", "3"])
         self.assertEqual(raised.exception.code, 2)
 
 

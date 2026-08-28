@@ -87,6 +87,8 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-01 - Bind generation to exact configuration, provenance, and run identity
 
+**Status:** Implemented locally on branch `fix/33-r2-01-generator-config` under [issue #33](https://github.com/anilreddy89/Inforsight/issues/33); pending pull request, review, and merge.
+
 **Outcome:** Generated histories are controlled by the exact versioned configuration reported in provenance, and identifiers are unique within a deterministic run namespace.
 
 **Scope:**

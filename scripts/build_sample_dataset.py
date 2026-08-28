@@ -17,10 +17,9 @@ SIMULATOR_SRC = REPOSITORY_ROOT / "simulator" / "src"
 sys.path.insert(0, str(SIMULATOR_SRC))
 
 from inforsight_simulator import (  # noqa: E402
-    GeneratorConfig,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
     histories_to_jsonl,
+    legacy_generation_provenance,
 )
 
 
@@ -79,8 +78,7 @@ def select_sample_histories(histories: list[PolicyHistory]) -> list[PolicyHistor
 def build_artifacts() -> tuple[bytes, bytes]:
     """Return the canonical dataset and manifest bytes."""
 
-    config = GeneratorConfig(seed=SEED, policy_count=SOURCE_POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, SOURCE_POLICY_COUNT)
     selected = select_sample_histories(histories)
     dataset_bytes = histories_to_jsonl(selected).encode("utf-8")
     events = [event for history in selected for event in history]
@@ -90,7 +88,7 @@ def build_artifacts() -> tuple[bytes, bytes]:
     product_variant_counts = Counter(
         history[0]["payload"]["product_variant"] for history in selected
     )
-    provenance = generation_provenance(config)
+    provenance = legacy_generation_provenance(SEED, SOURCE_POLICY_COUNT)
     manifest = {
         "dataset_id": DATASET_ID,
         "dataset_version": DATASET_VERSION,
