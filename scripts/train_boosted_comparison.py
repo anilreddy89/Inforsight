@@ -23,7 +23,6 @@ from inforsight_simulator import (  # noqa: E402
     FEATURE_DICTIONARY_VERSION,
     FEATURE_PIPELINE_VERSION,
     FROZEN_BOOSTED_SPECIFICATION,
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     LOGISTIC_BASELINE_VERSION,
     XGBOOST_PINNED_VERSION,
@@ -36,8 +35,8 @@ from inforsight_simulator import (  # noqa: E402
     fit_logistic_baseline,
     fitted_boosted_bytes,
     fitted_baseline_bytes,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     matrix_digest,
 )
 
@@ -71,8 +70,7 @@ def _canonicalize(value):
 
 
 def build_comparison() -> dict:
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     cutoffs = [first_billing_observation_time(history) for history in histories]
     watermark = max(value + timedelta(days=LABEL_HORIZON_DAYS) for value in cutoffs)
     records = build_first_billing_observations(histories, follow_up_through=watermark)
@@ -97,7 +95,7 @@ def build_comparison() -> dict:
             "feature_pipeline_version": FEATURE_PIPELINE_VERSION,
             "feature_dictionary_version": FEATURE_DICTIONARY_VERSION,
         },
-        "generation": generation_provenance(config),
+        "generation": legacy_generation_provenance(SEED, POLICY_COUNT),
         "source": {
             "feature_pipeline_manifest_sha256": sha256(FEATURE_MANIFEST_PATH.read_bytes()).hexdigest(),
             "logistic_manifest_sha256": sha256(LOGISTIC_MANIFEST_PATH.read_bytes()).hexdigest(),

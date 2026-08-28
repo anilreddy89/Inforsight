@@ -24,7 +24,6 @@ from inforsight_simulator import (  # noqa: E402
     FEATURE_DICTIONARY_VERSION,
     FEATURE_PIPELINE_VERSION,
     FROZEN_DIAGNOSTIC_SPECIFICATION,
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     assign_temporal_splits,
     build_feature_pipeline,
@@ -36,8 +35,8 @@ from inforsight_simulator import (  # noqa: E402
     fitted_baseline_bytes,
     fitted_boosted_bytes,
     fitted_state_bytes,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     identifier_and_cardinality_checks,
     matrix_digest,
     perturbation_flags,
@@ -105,8 +104,7 @@ def _decision_registry(flagged_sources: set[str]) -> dict[str, dict[str, str]]:
 
 def build_diagnostics() -> dict:
     before_upstream = {path.name: path.read_bytes() for path in UPSTREAM_PATHS}
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     cutoffs = [first_billing_observation_time(history) for history in histories]
     watermark = max(value + timedelta(days=LABEL_HORIZON_DAYS) for value in cutoffs)
     records = build_first_billing_observations(histories, follow_up_through=watermark)
@@ -156,7 +154,7 @@ def build_diagnostics() -> dict:
             "scikit_learn_version": "1.7.2",
             "artifact_decimal_places": ARTIFACT_DECIMAL_PLACES,
         },
-        "generation": generation_provenance(config),
+        "generation": legacy_generation_provenance(SEED, POLICY_COUNT),
         "source": {
             "upstream_artifact_sha256": {
                 path.name: sha256(before_upstream[path.name]).hexdigest() for path in UPSTREAM_PATHS

@@ -25,15 +25,14 @@ from inforsight_simulator import (  # noqa: E402
     LABEL_POLICY_VERSION,
     OBSERVATION_CONTRACT_VERSION,
     TEMPORAL_SPLIT_CONTRACT_VERSION,
-    GeneratorConfig,
     assign_temporal_splits,
     build_feature_pipeline,
     build_first_billing_observations,
     feature_dictionary,
     first_billing_observation_time,
     fitted_state_bytes,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     matrix_digest,
     source_observation_digest,
 )
@@ -59,15 +58,14 @@ def dictionary_bytes() -> bytes:
 
 
 def build_manifest() -> dict:
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     cutoffs = [first_billing_observation_time(history) for history in histories]
     watermark = max(cutoff + timedelta(days=LABEL_HORIZON_DAYS) for cutoff in cutoffs)
     records = build_first_billing_observations(histories, follow_up_through=watermark)
     split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
     pipeline = build_feature_pipeline(split)
     fitted_bytes = fitted_state_bytes(pipeline.preprocessor)
-    generation = generation_provenance(config)
+    generation = legacy_generation_provenance(SEED, POLICY_COUNT)
     matrices = {
         name: {
             "row_count": len(getattr(pipeline, name).values),

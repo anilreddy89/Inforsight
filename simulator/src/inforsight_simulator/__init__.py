@@ -1,7 +1,20 @@
 """Inforsight's clean-room fictional policy-event simulator."""
 
 from .config import GeneratorConfig
-from .generator import generate_policy_histories, generation_provenance
+from .generator import (
+    CONFIGURATION_CANONICALIZATION_VERSION,
+    CONFIGURATION_DIGEST_ALGORITHM,
+    LEGACY_GENERATOR_VERSION,
+    NAMESPACED_GENERATOR_VERSION,
+    canonical_configuration,
+    configuration_digest,
+    generate_legacy_policy_histories,
+    generate_policy_histories,
+    generation_provenance,
+    legacy_generation_provenance,
+    run_identity,
+    verify_generation_provenance,
+)
 from .features import (
     FEATURE_DEFINITIONS,
     FEATURE_DICTIONARY_VERSION,
@@ -105,6 +118,10 @@ __version__ = "0.1.0"
 
 __all__ = [
     "GeneratorConfig",
+    "CONFIGURATION_CANONICALIZATION_VERSION",
+    "CONFIGURATION_DIGEST_ALGORITHM",
+    "LEGACY_GENERATOR_VERSION",
+    "NAMESPACED_GENERATOR_VERSION",
     "BASELINE_RANDOM_SEED",
     "BOOSTED_MODEL_VERSION",
     "BOOSTED_RANDOM_SEED",
@@ -163,8 +180,14 @@ __all__ = [
     "identifier_and_cardinality_checks",
     "identifier_token_matches",
     "find_exact_deterministic_proxies",
+    "canonical_configuration",
+    "configuration_digest",
+    "generate_legacy_policy_histories",
     "generate_policy_histories",
     "generation_provenance",
+    "legacy_generation_provenance",
+    "run_identity",
+    "verify_generation_provenance",
     "extract_feature_row",
     "feature_dictionary",
     "histories_to_jsonl",

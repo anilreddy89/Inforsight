@@ -23,7 +23,7 @@ from inforsight_simulator import (
     assign_temporal_splits,
     build_first_billing_observations,
     first_billing_observation_time,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     source_observation_digest,
     summarize_temporal_split,
     validate_temporal_split,
@@ -45,7 +45,7 @@ def _load_manifest_module():
 class TemporalSplitTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.histories = generate_policy_histories(seed=20260817, policy_count=100)
+        cls.histories = generate_legacy_policy_histories(seed=20260817, policy_count=100)
         cutoffs = [first_billing_observation_time(history) for history in cls.histories]
         cls.watermark = max(
             cutoff + timedelta(days=LABEL_HORIZON_DAYS) for cutoff in cutoffs

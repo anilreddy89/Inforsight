@@ -18,7 +18,6 @@ SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "train_logistic_baseline.py"
 from inforsight_simulator import (  # noqa: E402
     CANONICAL_TEMPORAL_SPLIT_SPECIFICATION,
     FittedLogisticBaseline,
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     ModelMatrix,
     assign_temporal_splits,
@@ -29,7 +28,7 @@ from inforsight_simulator import (  # noqa: E402
     first_billing_observation_time,
     fit_logistic_baseline,
     fitted_baseline_bytes,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     predict_positive_probabilities,
 )
 
@@ -45,8 +44,7 @@ def _load_artifact_module():
 class LogisticBaselineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        config = GeneratorConfig(seed=20260817, policy_count=100)
-        histories = generate_policy_histories(config.seed, config.policy_count)
+        histories = generate_legacy_policy_histories(20260817, 100)
         cutoffs = [first_billing_observation_time(history) for history in histories]
         watermark = max(value + timedelta(days=LABEL_HORIZON_DAYS) for value in cutoffs)
         records = build_first_billing_observations(histories, follow_up_through=watermark)

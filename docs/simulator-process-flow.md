@@ -24,9 +24,11 @@ The event JSON Schemas remain the source of truth for individual event structure
 ```text
 Caller or CLI
     |
-    +-- generate_policy_histories(seed, policy_count)
+    +-- generate_policy_histories(config)
     |       |
-    |       +-- GeneratorConfig validates reproducibility inputs
+    |       +-- GeneratorConfig validates all reproducibility inputs
+    |       +-- canonical config digest binds provenance and run identity
+    |       +-- run namespace isolates generator-owned identifiers
     |       +-- _generate_history builds one fictional policy timeline
     |       +-- add_event creates immutable event dictionaries
     |       +-- returns list[list[PolicyEvent]]
@@ -193,11 +195,12 @@ Generation, validation, reconstruction, observation construction, temporal split
 
 ```text
 seed
+run_namespace
 policy_count
 simulation_start
 ```
 
-The seed and count are explicit reproduction inputs. The simulation start is fixed and UTC-aware by default. Invalid types, nonpositive counts, naive timestamps, and non-UTC starts fail before generation.
+All four fields are explicit corrected-generation inputs. The namespace is 1 to 64 canonical lowercase characters and isolates deterministic run identifiers. The simulation start is UTC-aware and defaults to the historical start. Invalid types, nonpositive counts, invalid namespaces, naive timestamps, and non-UTC starts fail before generation.
 
 ### Policy event
 
@@ -274,16 +277,23 @@ The JSON representation follows `data-contracts/observation-record.schema.json`.
 Public call:
 
 ```python
-histories = generate_policy_histories(seed=20260817, policy_count=100)
+config = GeneratorConfig(
+    seed=20260817,
+    policy_count=100,
+    run_namespace="local-demo",
+)
+histories = generate_policy_histories(config)
 ```
 
 Call chain:
 
 ```text
-generate_policy_histories(seed, policy_count)
+generate_policy_histories(config)
     |
-    +-- GeneratorConfig(seed, policy_count)
-    |       +-- __post_init__ validates seed, count, and UTC start
+    +-- use the exact caller-provided GeneratorConfig
+    |       +-- __post_init__ validates seed, namespace, count, and UTC start
+    |       +-- canonical_configuration includes every generation input and version
+    |       +-- SHA-256 config digest produces the deterministic run identity
     |
     +-- random.Random(config.seed)
     |       +-- isolated seeded pseudorandom state
@@ -292,9 +302,9 @@ generate_policy_histories(seed, policy_count)
     |
     +-- _generate_history(...) once per policy
             |
-            +-- derive policy ID and fictional issuance values
+            +-- derive namespaced policy ID and fictional issuance values
             +-- nested add_event(...)
-            |       +-- derive event ID from stable counters
+            |       +-- derive event ID from run identity and stable counters
             |       +-- format UTC timestamps
             |       +-- set ingestion one hour after occurrence
             |       +-- append the event dictionary
@@ -531,7 +541,8 @@ python -m inforsight_simulator
     |
     +-- __main__.main(argv)
             +-- build_parser()
-            +-- parse --seed, --policy-count, --output
+            +-- parse --seed, --policy-count, --run-namespace,
+                --simulation-start, --legacy-v1, and --output
             +-- GeneratorConfig(...)
             +-- generate_policy_histories(...)
             +-- histories_to_jsonl(...)
@@ -547,9 +558,19 @@ Current provenance contains:
 
 - Generator version.
 - Event-schema version.
+- Configuration canonicalization version.
 - Seed.
+- Run namespace.
 - Policy count.
 - Simulation start.
+- SHA-256 configuration digest and digest algorithm.
+- Deterministic run identity.
+- Compatibility mode.
+
+The explicit `--legacy-v1` CLI path and the separately named
+`generate_legacy_policy_histories` and `legacy_generation_provenance` APIs reproduce
+historical generator `0.1.0` bytes. They do not claim namespaced identity and must
+not be used for new corpora.
 
 ## Journey 6: Published sample dataset
 
@@ -565,8 +586,8 @@ Call chain:
 ```text
 build_sample_dataset.py
     |
-    +-- GeneratorConfig(seed=20260817, policy_count=100)
-    +-- generate_policy_histories(...)
+    +-- generate_legacy_policy_histories(seed=20260817, policy_count=100)
+    +-- legacy_generation_provenance(...)
     +-- select_sample_histories(...)
     |       +-- classify structured event sequence
     |       +-- retain first two complete histories per scenario
@@ -597,8 +618,8 @@ Call chain:
 ```text
 assess_synthetic_rates.py
     |
-    +-- GeneratorConfig(seed=20260817, policy_count=100)
-    +-- generate_policy_histories(...)
+    +-- generate_legacy_policy_histories(seed=20260817, policy_count=100)
+    +-- legacy_generation_provenance(...)
     +-- validate_policy_history(...) for every complete history
     +-- classify_scenario(...) from structured lifecycle events
     +-- assess_histories(...)
@@ -649,8 +670,10 @@ The package exports these current simulator-facing functions and values:
 | Public name | Responsibility |
 | --- | --- |
 | `GeneratorConfig` | Validate explicit deterministic generation inputs |
-| `generate_policy_histories` | Produce fictional policy-event histories |
-| `generation_provenance` | Describe the inputs and versions needed to identify a run |
+| `generate_policy_histories` | Produce corrected namespaced fictional histories from one exact config |
+| `generation_provenance` | Bind corrected provenance to the canonical config and run identity |
+| `generate_legacy_policy_histories` | Reproduce immutable generator `0.1.0` histories |
+| `legacy_generation_provenance` | Report truthful generator `0.1.0` reproduction inputs |
 | `validate_policy_history` | Validate cross-event history invariants |
 | `reconstruct_policy_state` | Derive effective-time state at an inclusive cutoff |
 | `PolicyState` | Hold immutable reconstructed state and audit metadata |

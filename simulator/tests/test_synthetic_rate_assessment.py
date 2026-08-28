@@ -35,13 +35,13 @@ from assess_synthetic_rates import (  # noqa: E402
     classify_scenario,
     rate,
 )
-from inforsight_simulator import generate_policy_histories  # noqa: E402
+from inforsight_simulator import generate_legacy_policy_histories  # noqa: E402
 
 
 class SyntheticRateAssessmentTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.histories = generate_policy_histories(SEED, POLICY_COUNT)
+        cls.histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
         cls.assessment = build_assessment()
         cls.committed = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
 

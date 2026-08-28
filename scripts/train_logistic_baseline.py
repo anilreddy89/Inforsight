@@ -21,7 +21,6 @@ from inforsight_simulator import (  # noqa: E402
     FEATURE_DICTIONARY_VERSION,
     FEATURE_PIPELINE_VERSION,
     FROZEN_LOGISTIC_SPECIFICATION,
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     LOGISTIC_BASELINE_VERSION,
     TRAINING_CONFIGURATION_VERSION,
@@ -33,8 +32,8 @@ from inforsight_simulator import (  # noqa: E402
     first_billing_observation_time,
     fit_logistic_baseline,
     fitted_baseline_bytes,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     matrix_digest,
 )
 
@@ -68,8 +67,7 @@ def _canonicalize_artifact_numbers(value):
 
 
 def build_baseline() -> tuple[dict, bytes]:
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     cutoffs = [first_billing_observation_time(history) for history in histories]
     watermark = max(cutoff + timedelta(days=LABEL_HORIZON_DAYS) for cutoff in cutoffs)
     records = build_first_billing_observations(histories, follow_up_through=watermark)
@@ -90,7 +88,7 @@ def build_baseline() -> tuple[dict, bytes]:
             "feature_pipeline_version": FEATURE_PIPELINE_VERSION,
             "feature_dictionary_version": FEATURE_DICTIONARY_VERSION,
         },
-        "generation": generation_provenance(config),
+        "generation": legacy_generation_provenance(SEED, POLICY_COUNT),
         "source": {
             "feature_pipeline_manifest_sha256": sha256(FEATURE_MANIFEST_PATH.read_bytes()).hexdigest(),
             "input_matrices": {

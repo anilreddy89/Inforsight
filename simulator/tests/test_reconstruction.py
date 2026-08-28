@@ -11,7 +11,7 @@ sys.path.insert(0, str(SRC))
 
 from inforsight_simulator import (  # noqa: E402
     PolicyState,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     reconstruct_policy_state,
 )
 
@@ -19,7 +19,7 @@ from inforsight_simulator import (  # noqa: E402
 class ReconstructionTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.histories = generate_policy_histories(seed=20260817)
+        cls.histories = generate_legacy_policy_histories(seed=20260817)
 
     def test_active_state_at_issuance_contains_stable_policy_attributes(self) -> None:
         history = self._history_for("active")

@@ -19,7 +19,6 @@ from inforsight_simulator import (  # noqa: E402
     CANONICAL_TEMPORAL_SPLIT_SPECIFICATION,
     FROZEN_BOOSTED_SPECIFICATION,
     FittedBoostedModel,
-    GeneratorConfig,
     LABEL_HORIZON_DAYS,
     assign_temporal_splits,
     build_feature_pipeline,
@@ -30,7 +29,7 @@ from inforsight_simulator import (  # noqa: E402
     fit_boosted_model,
     fit_logistic_baseline,
     fitted_boosted_bytes,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     predict_boosted_probabilities,
 )
 
@@ -46,8 +45,7 @@ def _load_artifact_module():
 class BoostedComparisonTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        config = GeneratorConfig(seed=20260817, policy_count=100)
-        histories = generate_policy_histories(config.seed, config.policy_count)
+        histories = generate_legacy_policy_histories(20260817, 100)
         cutoffs = [first_billing_observation_time(history) for history in histories]
         watermark = max(value + timedelta(days=LABEL_HORIZON_DAYS) for value in cutoffs)
         records = build_first_billing_observations(histories, follow_up_through=watermark)

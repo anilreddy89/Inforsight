@@ -21,7 +21,7 @@ from inforsight_simulator import (  # noqa: E402
     build_first_billing_observations,
     build_observation,
     first_billing_observation_time,
-    generate_policy_histories,
+    generate_legacy_policy_histories,
     summarize_observations,
 )
 from inforsight_simulator.leakage import PROHIBITED_FEATURE_CONCEPTS  # noqa: E402
@@ -30,7 +30,7 @@ from inforsight_simulator.leakage import PROHIBITED_FEATURE_CONCEPTS  # noqa: E4
 class ObservationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.histories = generate_policy_histories(seed=20260817)
+        cls.histories = generate_legacy_policy_histories(seed=20260817)
         cls.watermark = max(
             first_billing_observation_time(history)
             + timedelta(days=LABEL_HORIZON_DAYS)

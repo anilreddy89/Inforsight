@@ -19,9 +19,8 @@ SIMULATOR_SRC = REPOSITORY_ROOT / "simulator" / "src"
 sys.path.insert(0, str(SIMULATOR_SRC))
 
 from inforsight_simulator import (  # noqa: E402
-    GeneratorConfig,
-    generate_policy_histories,
-    generation_provenance,
+    generate_legacy_policy_histories,
+    legacy_generation_provenance,
     validate_policy_history,
 )
 
@@ -387,14 +386,13 @@ def source_register() -> list[dict[str, Any]]:
 def build_assessment() -> dict[str, Any]:
     """Return the canonical assessment object."""
 
-    config = GeneratorConfig(seed=SEED, policy_count=POLICY_COUNT)
-    histories = generate_policy_histories(config.seed, config.policy_count)
+    histories = generate_legacy_policy_histories(SEED, POLICY_COUNT)
     metrics = assess_histories(histories)
     return {
         "assessment_id": ASSESSMENT_ID,
         "assessment_version": ASSESSMENT_VERSION,
         "metric_definition_version": METRIC_DEFINITION_VERSION,
-        "generation": generation_provenance(config),
+        "generation": legacy_generation_provenance(SEED, POLICY_COUNT),
         "metrics": metrics,
         "sources": source_register(),
         "comparisons": [
