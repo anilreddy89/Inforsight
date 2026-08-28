@@ -56,6 +56,7 @@ from .modeling import (
     evaluate_logistic_baseline,
     fit_logistic_baseline,
     fitted_baseline_bytes,
+    predict_logistic_inference,
     predict_positive_probabilities,
 )
 from .boosted_modeling import (
@@ -70,6 +71,7 @@ from .boosted_modeling import (
     evaluate_boosted_model,
     fit_boosted_model,
     fitted_boosted_bytes,
+    predict_boosted_inference,
     predict_boosted_probabilities,
 )
 from .diagnostics import (
@@ -99,6 +101,19 @@ from .preprocessing import (
     fitted_state_bytes,
     matrix_digest,
     transform_partition,
+)
+from .scoring_authorization import (
+    DIAGNOSTIC_DERIVATIVE,
+    HISTORICAL_TRAIN,
+    NON_FINAL_VALIDATION,
+    SCORING_AUTHORIZATION_VERSION,
+    InferenceMatrix,
+    ScoringAuthorization,
+    ScoringAuthorizations,
+    authorize_diagnostic_derivative,
+    authorize_feature_pipeline,
+    inference_matrix_from_model_matrix,
+    validate_scoring_authorization,
 )
 from .serialization import histories_to_jsonl
 from .splitting import (
@@ -157,14 +172,23 @@ __all__ = [
     "LogisticBaselineSpecification",
     "BoostedModelSpecification",
     "FittedBoostedModel",
+    "InferenceMatrix",
+    "ScoringAuthorization",
+    "ScoringAuthorizations",
     "DiagnosticSpecification",
     "TemporalSplitResult",
     "TemporalSplitSpecification",
     "UNKNOWN_CATEGORY",
+    "SCORING_AUTHORIZATION_VERSION",
+    "HISTORICAL_TRAIN",
+    "NON_FINAL_VALIDATION",
+    "DIAGNOSTIC_DERIVATIVE",
     "assign_temporal_splits",
     "build_first_billing_observations",
     "build_feature_pipeline",
     "build_observation",
+    "authorize_diagnostic_derivative",
+    "authorize_feature_pipeline",
     "coefficient_summary",
     "compare_models",
     "diagnostic_flags",
@@ -196,7 +220,10 @@ __all__ = [
     "reconstruct_policy_state",
     "source_observation_digest",
     "matrix_digest",
+    "inference_matrix_from_model_matrix",
+    "predict_logistic_inference",
     "predict_positive_probabilities",
+    "predict_boosted_inference",
     "predict_boosted_probabilities",
     "perturbation_flags",
     "shallow_feature_models",
@@ -208,6 +235,7 @@ __all__ = [
     "validate_feature_payload",
     "validate_feature_dictionary",
     "validate_observation_records",
+    "validate_scoring_authorization",
     "validate_policy_history",
     "validate_temporal_split",
     "validate_dispositions",

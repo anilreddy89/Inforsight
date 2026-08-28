@@ -28,6 +28,7 @@ from inforsight_simulator import (  # noqa: E402
     XGBOOST_PINNED_VERSION,
     assign_temporal_splits,
     build_feature_pipeline,
+    authorize_feature_pipeline,
     build_first_billing_observations,
     compare_models,
     first_billing_observation_time,
@@ -76,10 +77,13 @@ def build_comparison() -> dict:
     records = build_first_billing_observations(histories, follow_up_through=watermark)
     split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
     pipeline = build_feature_pipeline(split)
+    authorizations = authorize_feature_pipeline(pipeline)
     logistic = fit_logistic_baseline(pipeline.train)
     boosted = fit_boosted_model(pipeline.train)
-    train = compare_models(logistic, boosted, pipeline.train)
-    validation = compare_models(logistic, boosted, pipeline.validation)
+    train = compare_models(logistic, boosted, pipeline.train, authorizations.train)
+    validation = compare_models(
+        logistic, boosted, pipeline.validation, authorizations.validation
+    )
     boosted_bytes = fitted_boosted_bytes(boosted)
     logistic_bytes = fitted_baseline_bytes(logistic)
     manifest = {

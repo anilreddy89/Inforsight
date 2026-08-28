@@ -16,13 +16,18 @@ from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
 
 from .features import FEATURE_DICTIONARY_VERSION, FEATURE_PIPELINE_VERSION
 from .preprocessing import ModelMatrix, matrix_digest
+from .scoring_authorization import (
+    InferenceMatrix,
+    ScoringAuthorization,
+    validate_inference_matrix,
+    validate_scoring_authorization,
+)
 
 
 LOGISTIC_BASELINE_VERSION = "1.0.0"
 TRAINING_CONFIGURATION_VERSION = "1.0.0"
 BASELINE_RANDOM_SEED = 20260817
 ARTIFACT_DECIMAL_PLACES = 10
-PERMITTED_SCORING_PARTITIONS = ("train", "validation")
 
 
 @dataclass(frozen=True)
@@ -200,14 +205,17 @@ def fit_logistic_baseline(
 
 
 def predict_positive_probabilities(
-    fitted: FittedLogisticBaseline, matrix: ModelMatrix
+    fitted: FittedLogisticBaseline,
+    matrix: ModelMatrix,
+    authorization: ScoringAuthorization,
 ) -> tuple[float, ...]:
-    """Score a permitted partition from explicit safe fitted state."""
+    """Score one exactly authorized labeled experiment matrix."""
 
     _validate_fitted(fitted)
     _validate_matrix(matrix)
-    if matrix.partition not in PERMITTED_SCORING_PARTITIONS:
-        raise ValueError(f"scoring partition is sealed or unsupported: {matrix.partition}")
+    validate_scoring_authorization(authorization, matrix)
+    if authorization.training_matrix_sha256 != fitted.training_matrix_sha256:
+        raise ValueError("scoring authorization does not match fitted training data")
     if matrix.feature_names != fitted.feature_names:
         raise ValueError("model matrix feature names do not match fitted coefficient order")
     if matrix.partition == "train":
@@ -218,10 +226,22 @@ def predict_positive_probabilities(
     return tuple(_sigmoid(fitted.intercept + _dot(fitted.coefficients, row)) for row in matrix.values)
 
 
+def predict_logistic_inference(
+    fitted: FittedLogisticBaseline, matrix: InferenceMatrix
+) -> tuple[float, ...]:
+    """Produce probabilities for unlabeled inputs without experiment authority or metrics."""
+
+    _validate_fitted(fitted)
+    validate_inference_matrix(matrix, fitted.feature_names)
+    return tuple(_sigmoid(fitted.intercept + _dot(fitted.coefficients, row)) for row in matrix.values)
+
+
 def evaluate_logistic_baseline(
-    fitted: FittedLogisticBaseline, matrix: ModelMatrix
+    fitted: FittedLogisticBaseline,
+    matrix: ModelMatrix,
+    authorization: ScoringAuthorization,
 ) -> BaselineEvaluation:
-    probabilities = predict_positive_probabilities(fitted, matrix)
+    probabilities = predict_positive_probabilities(fitted, matrix, authorization)
     if set(matrix.targets) != {0, 1}:
         raise ValueError("evaluation targets must contain both binary classes")
     count = len(matrix.targets)

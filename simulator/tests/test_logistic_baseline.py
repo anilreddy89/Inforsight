@@ -21,6 +21,7 @@ from inforsight_simulator import (  # noqa: E402
     LABEL_HORIZON_DAYS,
     ModelMatrix,
     assign_temporal_splits,
+    authorize_feature_pipeline,
     build_feature_pipeline,
     build_first_billing_observations,
     coefficient_summary,
@@ -50,14 +51,15 @@ class LogisticBaselineTests(unittest.TestCase):
         records = build_first_billing_observations(histories, follow_up_through=watermark)
         split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
         cls.pipeline = build_feature_pipeline(split)
+        cls.authorizations = authorize_feature_pipeline(cls.pipeline)
 
     def test_repeated_fit_is_byte_identical(self) -> None:
         first = fit_logistic_baseline(self.pipeline.train)
         second = fit_logistic_baseline(self.pipeline.train)
         self.assertEqual(fitted_baseline_bytes(first), fitted_baseline_bytes(second))
         self.assertEqual(
-            predict_positive_probabilities(first, self.pipeline.validation),
-            predict_positive_probabilities(second, self.pipeline.validation),
+            predict_positive_probabilities(first, self.pipeline.validation, self.authorizations.validation),
+            predict_positive_probabilities(second, self.pipeline.validation, self.authorizations.validation),
         )
 
     def test_artifact_state_ignores_subprecision_platform_noise(self) -> None:
@@ -79,21 +81,29 @@ class LogisticBaselineTests(unittest.TestCase):
 
     def test_canonical_test_scoring_is_sealed(self) -> None:
         fitted = fit_logistic_baseline(self.pipeline.train)
-        with self.assertRaisesRegex(ValueError, "sealed or unsupported"):
-            predict_positive_probabilities(fitted, self.pipeline.test)
+        with self.assertRaisesRegex(ValueError, "partition"):
+            predict_positive_probabilities(
+                fitted, self.pipeline.test, self.authorizations.validation
+            )
 
     def test_validation_scoring_does_not_mutate_fitted_state(self) -> None:
         fitted = fit_logistic_baseline(self.pipeline.train)
         before = fitted_baseline_bytes(fitted)
-        evaluation = evaluate_logistic_baseline(fitted, self.pipeline.validation)
+        evaluation = evaluate_logistic_baseline(
+            fitted, self.pipeline.validation, self.authorizations.validation
+        )
         self.assertEqual(before, fitted_baseline_bytes(fitted))
         self.assertEqual(evaluation.metrics.partition, "validation")
 
     def test_probabilities_and_metrics_are_valid(self) -> None:
         fitted = fit_logistic_baseline(self.pipeline.train)
-        probabilities = predict_positive_probabilities(fitted, self.pipeline.validation)
+        probabilities = predict_positive_probabilities(
+            fitted, self.pipeline.validation, self.authorizations.validation
+        )
         self.assertTrue(all(isfinite(value) and 0.0 <= value <= 1.0 for value in probabilities))
-        metrics = evaluate_logistic_baseline(fitted, self.pipeline.validation).metrics
+        metrics = evaluate_logistic_baseline(
+            fitted, self.pipeline.validation, self.authorizations.validation
+        ).metrics
         self.assertTrue(all(isfinite(value) for value in (metrics.log_loss, metrics.roc_auc, metrics.brier_score)))
         self.assertEqual(metrics.record_count, len(self.pipeline.validation.targets))
 
@@ -102,8 +112,8 @@ class LogisticBaselineTests(unittest.TestCase):
         restored = FittedLogisticBaseline.from_dict(fitted.to_dict())
         self.assertEqual(fitted_baseline_bytes(fitted), fitted_baseline_bytes(restored))
         self.assertEqual(
-            predict_positive_probabilities(fitted, self.pipeline.validation),
-            predict_positive_probabilities(restored, self.pipeline.validation),
+            predict_positive_probabilities(fitted, self.pipeline.validation, self.authorizations.validation),
+            predict_positive_probabilities(restored, self.pipeline.validation, self.authorizations.validation),
         )
 
     def test_coefficient_summary_is_aligned(self) -> None:
@@ -124,10 +134,11 @@ class LogisticBaselineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "non-finite"):
             fit_logistic_baseline(replace(self.pipeline.train, values=bad_values))
         fitted = fit_logistic_baseline(self.pipeline.train)
-        with self.assertRaisesRegex(ValueError, "feature names"):
+        with self.assertRaisesRegex(ValueError, "feature contract"):
             predict_positive_probabilities(
                 fitted,
                 replace(self.pipeline.validation, feature_names=self.pipeline.validation.feature_names[::-1]),
+                self.authorizations.validation,
             )
 
     def test_held_out_changes_cannot_change_fitted_state(self) -> None:
@@ -155,15 +166,15 @@ class LogisticBaselineTests(unittest.TestCase):
             self.pipeline.train,
             observation_ids=self.pipeline.train.observation_ids[::-1],
         )
-        with self.assertRaisesRegex(ValueError, "training membership"):
-            predict_positive_probabilities(fitted, changed_ids)
+        with self.assertRaisesRegex(ValueError, "membership or row order"):
+            predict_positive_probabilities(fitted, changed_ids, self.authorizations.train)
         changed_values = replace(
             self.pipeline.train,
             values=self.pipeline.train.values[::-1],
             targets=self.pipeline.train.targets[::-1],
         )
         with self.assertRaisesRegex(ValueError, "digest"):
-            predict_positive_probabilities(fitted, changed_values)
+            predict_positive_probabilities(fitted, changed_values, self.authorizations.train)
 
     def test_artifacts_are_deterministic_current_and_keep_test_sealed(self) -> None:
         module = _load_artifact_module()

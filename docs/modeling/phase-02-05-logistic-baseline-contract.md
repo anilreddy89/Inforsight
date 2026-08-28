@@ -47,6 +47,8 @@ Fitted state records the exact training observation IDs, training matrix SHA-256
 
 Only train and validation matrices may be scored. The scoring API rejects `test` and unknown partitions. Train rescoring additionally requires exact fitted membership and matrix digest equality. Every score is the positive-class probability for target `1`; estimator class order must be exactly `(0, 1)` during fitting.
 
+R2-03 hardens this historical contract: a partition label is descriptive metadata, not authority. Governed scoring now also requires a versioned `ScoringAuthorization` bound to the exact ordered membership, feature contract, preprocessing identity, complete labeled-matrix digest, and approved non-final purpose. Relabeling a test matrix as validation therefore fails before prediction. Ordinary unlabeled inference uses a separate `InferenceMatrix` without partition names, targets, or metric computation.
+
 The canonical artifact command never transforms or scores the test matrix through the model API. Its manifest records `sealed_not_scored` and contains no test metrics or prediction digest. Test evaluation remains deferred until the comparison and evaluation protocol is frozen.
 
 ## Predeclared diagnostics

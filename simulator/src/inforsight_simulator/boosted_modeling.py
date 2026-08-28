@@ -14,13 +14,18 @@ from xgboost import XGBClassifier
 from .features import FEATURE_DICTIONARY_VERSION, FEATURE_PIPELINE_VERSION
 from .modeling import BaselineEvaluation, BaselineMetrics, evaluate_logistic_baseline
 from .preprocessing import ModelMatrix, matrix_digest
+from .scoring_authorization import (
+    InferenceMatrix,
+    ScoringAuthorization,
+    validate_inference_matrix,
+    validate_scoring_authorization,
+)
 
 
 BOOSTED_MODEL_VERSION = "1.0.0"
 BOOSTED_TRAINING_CONFIGURATION_VERSION = "1.0.0"
 BOOSTED_RANDOM_SEED = 20260817
 XGBOOST_PINNED_VERSION = "3.3.0"
-PERMITTED_SCORING_PARTITIONS = ("train", "validation")
 ARTIFACT_DECIMAL_PLACES = 10
 
 
@@ -190,14 +195,17 @@ def fit_boosted_model(
 
 
 def predict_boosted_probabilities(
-    fitted: FittedBoostedModel, matrix: ModelMatrix
+    fitted: FittedBoostedModel,
+    matrix: ModelMatrix,
+    authorization: ScoringAuthorization,
 ) -> tuple[float, ...]:
-    """Score train or validation by reconstructing native JSON model state."""
+    """Score one exactly authorized labeled experiment matrix."""
 
     _validate_fitted(fitted)
     _validate_matrix(matrix)
-    if matrix.partition not in PERMITTED_SCORING_PARTITIONS:
-        raise ValueError(f"scoring partition is sealed or unsupported: {matrix.partition}")
+    validate_scoring_authorization(authorization, matrix)
+    if authorization.training_matrix_sha256 != fitted.training_matrix_sha256:
+        raise ValueError("scoring authorization does not match fitted training data")
     if matrix.feature_names != fitted.feature_names:
         raise ValueError("model matrix feature names do not match fitted feature order")
     if matrix.partition == "train":
@@ -215,10 +223,27 @@ def predict_boosted_probabilities(
     return probabilities
 
 
+def predict_boosted_inference(
+    fitted: FittedBoostedModel, matrix: InferenceMatrix
+) -> tuple[float, ...]:
+    """Produce probabilities for unlabeled inputs without experiment authority or metrics."""
+
+    _validate_fitted(fitted)
+    validate_inference_matrix(matrix, fitted.feature_names)
+    booster = _restore_booster(fitted)
+    values = booster.predict(xgb.DMatrix(matrix.values, feature_names=list(matrix.feature_names)))
+    probabilities = tuple(float(value) for value in values)
+    if any(not isfinite(value) or value < 0.0 or value > 1.0 for value in probabilities):
+        raise ValueError("boosted-model probabilities are invalid")
+    return probabilities
+
+
 def evaluate_boosted_model(
-    fitted: FittedBoostedModel, matrix: ModelMatrix
+    fitted: FittedBoostedModel,
+    matrix: ModelMatrix,
+    authorization: ScoringAuthorization,
 ) -> BaselineEvaluation:
-    probabilities = predict_boosted_probabilities(fitted, matrix)
+    probabilities = predict_boosted_probabilities(fitted, matrix, authorization)
     if set(matrix.targets) != {0, 1}:
         raise ValueError("evaluation targets must contain both binary classes")
     # Reuse the frozen Phase 2.05 metric implementation with a prediction-only adapter.
@@ -254,11 +279,16 @@ def fitted_boosted_bytes(fitted: FittedBoostedModel) -> bytes:
     return (json.dumps(fitted.to_dict(), sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
 
 
-def compare_models(logistic_fitted, boosted_fitted: FittedBoostedModel, matrix: ModelMatrix) -> dict[str, Any]:
+def compare_models(
+    logistic_fitted,
+    boosted_fitted: FittedBoostedModel,
+    matrix: ModelMatrix,
+    authorization: ScoringAuthorization,
+) -> dict[str, Any]:
     """Evaluate both frozen models on the same permitted matrix."""
 
-    logistic = evaluate_logistic_baseline(logistic_fitted, matrix)
-    boosted = evaluate_boosted_model(boosted_fitted, matrix)
+    logistic = evaluate_logistic_baseline(logistic_fitted, matrix, authorization)
+    boosted = evaluate_boosted_model(boosted_fitted, matrix, authorization)
     if logistic.metrics.record_count != boosted.metrics.record_count:
         raise ValueError("model comparison membership is inconsistent")
     return {

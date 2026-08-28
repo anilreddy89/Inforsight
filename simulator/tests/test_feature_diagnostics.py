@@ -20,6 +20,7 @@ from inforsight_simulator import (  # noqa: E402
     FROZEN_DIAGNOSTIC_SPECIFICATION,
     LABEL_HORIZON_DAYS,
     assign_temporal_splits,
+    authorize_feature_pipeline,
     build_feature_pipeline,
     build_first_billing_observations,
     diagnostic_flags,
@@ -58,6 +59,7 @@ class FeatureDiagnosticTests(unittest.TestCase):
         records = build_first_billing_observations(histories, follow_up_through=watermark)
         split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
         cls.pipeline = build_feature_pipeline(split)
+        cls.authorizations = authorize_feature_pipeline(cls.pipeline)
         cls.logistic = fit_logistic_baseline(cls.pipeline.train)
         cls.boosted = fit_boosted_model(cls.pipeline.train)
 
@@ -75,23 +77,30 @@ class FeatureDiagnosticTests(unittest.TestCase):
 
     def test_test_and_unknown_partitions_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "sealed or unsupported"):
-            training_mutual_information(self.pipeline.test)
+            training_mutual_information(self.pipeline.test, self.authorizations.validation)
         with self.assertRaisesRegex(ValueError, "sealed or unsupported"):
             source_feature_groups(replace(self.pipeline.validation, partition="embargoed"))
 
     def test_mutual_information_is_train_only_and_deterministic(self) -> None:
-        first = training_mutual_information(self.pipeline.train)
-        second = training_mutual_information(self.pipeline.train)
+        first = training_mutual_information(self.pipeline.train, self.authorizations.train)
+        second = training_mutual_information(self.pipeline.train, self.authorizations.train)
         self.assertEqual(first, second)
         self.assertEqual({item["source_feature"] for item in first}, set(dict(source_feature_groups(self.pipeline.train))))
 
     def test_mutated_diagnostic_specification_is_rejected(self) -> None:
         changed = replace(FROZEN_DIAGNOSTIC_SPECIFICATION, random_seed=1)
         with self.assertRaisesRegex(ValueError, "not frozen"):
-            training_mutual_information(self.pipeline.train, changed)
+            training_mutual_information(
+                self.pipeline.train, self.authorizations.train, changed
+            )
 
     def test_shallow_models_fit_train_and_score_validation(self) -> None:
-        results = shallow_feature_models(self.pipeline.train, self.pipeline.validation)
+        results = shallow_feature_models(
+            self.pipeline.train,
+            self.pipeline.validation,
+            self.authorizations.train,
+            self.authorizations.validation,
+        )
         self.assertTrue(results)
         self.assertTrue(all(item["fit_partition"] == "train" for item in results))
         self.assertTrue(all(item["score_partition"] == "validation" for item in results))
@@ -100,10 +109,23 @@ class FeatureDiagnosticTests(unittest.TestCase):
     def test_feature_order_drift_is_rejected(self) -> None:
         changed = replace(self.pipeline.validation, feature_names=self.pipeline.validation.feature_names[::-1])
         with self.assertRaisesRegex(ValueError, "frozen feature names"):
-            shallow_feature_models(self.pipeline.train, changed)
+            shallow_feature_models(
+                self.pipeline.train,
+                changed,
+                self.authorizations.train,
+                self.authorizations.validation,
+            )
 
     def test_cardinality_checks_detect_canonical_constants(self) -> None:
-        checks = {item["source_feature"]: item for item in identifier_and_cardinality_checks(self.pipeline.train, self.pipeline.validation)}
+        checks = {
+            item["source_feature"]: item
+            for item in identifier_and_cardinality_checks(
+                self.pipeline.train,
+                self.pipeline.validation,
+                self.authorizations.train,
+                self.authorizations.validation,
+            )
+        }
         self.assertTrue(checks["policy_age_days"]["constant_in_train"])
         self.assertTrue(checks["billing_frequency"]["constant_in_train"])
         self.assertFalse(checks["premium_amount_cents"]["constant_in_train"])
@@ -115,9 +137,19 @@ class FeatureDiagnosticTests(unittest.TestCase):
         self.assertEqual(identifier_token_matches("scenario_key"), ("key", "scenario"))
 
     def test_flags_are_source_level_and_deterministic(self) -> None:
-        mi = training_mutual_information(self.pipeline.train)
-        shallow = shallow_feature_models(self.pipeline.train, self.pipeline.validation)
-        cardinality = identifier_and_cardinality_checks(self.pipeline.train, self.pipeline.validation)
+        mi = training_mutual_information(self.pipeline.train, self.authorizations.train)
+        shallow = shallow_feature_models(
+            self.pipeline.train,
+            self.pipeline.validation,
+            self.authorizations.train,
+            self.authorizations.validation,
+        )
+        cardinality = identifier_and_cardinality_checks(
+            self.pipeline.train,
+            self.pipeline.validation,
+            self.authorizations.train,
+            self.authorizations.validation,
+        )
         first = diagnostic_flags(mi, shallow, cardinality)
         second = diagnostic_flags(mi, shallow, cardinality)
         self.assertEqual(first, second)
@@ -132,8 +164,20 @@ class FeatureDiagnosticTests(unittest.TestCase):
             self.pipeline.validation,
         )
         sources = ("billing_frequency", "policy_age_days")
-        first = targeted_permutation_checks(self.logistic, self.boosted, self.pipeline.validation, sources)
-        second = targeted_permutation_checks(self.logistic, self.boosted, self.pipeline.validation, sources)
+        first = targeted_permutation_checks(
+            self.logistic,
+            self.boosted,
+            self.pipeline.validation,
+            self.authorizations.validation,
+            sources,
+        )
+        second = targeted_permutation_checks(
+            self.logistic,
+            self.boosted,
+            self.pipeline.validation,
+            self.authorizations.validation,
+            sources,
+        )
         self.assertEqual(first, second)
         self.assertEqual(before, (
             fitted_state_bytes(self.pipeline.preprocessor),
@@ -145,7 +189,13 @@ class FeatureDiagnosticTests(unittest.TestCase):
     def test_unknown_and_duplicate_permutation_targets_are_rejected(self) -> None:
         for sources in (("not_a_feature",), ("policy_age_days", "policy_age_days")):
             with self.assertRaisesRegex(ValueError, "duplicated or unknown"):
-                targeted_permutation_checks(self.logistic, self.boosted, self.pipeline.validation, sources)
+                targeted_permutation_checks(
+                    self.logistic,
+                    self.boosted,
+                    self.pipeline.validation,
+                    self.authorizations.validation,
+                    sources,
+                )
 
     def test_dispositions_must_be_complete_and_valid(self) -> None:
         flags = ({"flag_id": "policy_age_days:constant", "source_feature": "policy_age_days", "rule": "constant"},)

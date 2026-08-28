@@ -151,7 +151,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent engineering review after Phase 2.07 |
-| Owner | R2-03 for scoring-authorization repair; R2-00 documentation reconciliation completed through PR #30 |
+| Owner | R2-03 scoring-authorization repair through GitHub issue #39; R2-00 documentation reconciliation completed through PR #30 |
 | Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
 | Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
 | Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
@@ -178,6 +178,8 @@ The deterministic corpus, split membership, and transformed matrices are also lo
 #### Proposed resolution
 
 Bind authorized scoring membership, row identity, feature contract, preprocessing identity, and matrix digests to verified fitted state or an evaluation manifest. Separate ordinary unlabeled inference from experiment evaluation. Preserve the v1 test fixture only as historical pipeline evidence, and create the future v2 release holdout under a predeclared access-controlled one-shot protocol.
+
+R2-03 implementation is active in issue #39. Completion may satisfy the local scoring-authorization checks below, but it cannot close the future one-shot final-holdout obligation.
 
 #### Closure evidence
 

@@ -1,6 +1,6 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check simulator-test temporal-split-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check scoring-authorization-check simulator-test temporal-split-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check leakage-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check test
 
 boundary-check:
 	./scripts/check_repository_boundaries.sh
@@ -32,6 +32,9 @@ boosted-comparison-check:
 feature-diagnostics-check:
 	python3 scripts/run_feature_diagnostics.py --check
 	python3 -m unittest discover -s simulator/tests -p 'test_feature_diagnostics.py' -v
+
+scoring-authorization-check:
+	python3 -m unittest discover -s simulator/tests -p 'test_scoring_authorization.py' -v
 
 leakage-check:
 	python3 -m unittest discover -s simulator/tests -p 'test_leakage_guards.py' -v
