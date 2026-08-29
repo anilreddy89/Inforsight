@@ -45,7 +45,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), followed by R2-05, R2-06, and R2-07 |
+| Owner | R2-04 design completed through issue #42 and PR #43; implementation and evidence remain owned by R2-05, R2-06, and R2-07 |
 | Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json`; feature-sanity evidence in `docs/experiments/phase-02-07-feature-diagnostics-manifest.json` |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
@@ -104,7 +104,7 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), followed by R2-05, R2-06, and R2-07 |
+| Owner | R2-04 design completed through issue #42 and PR #43; implementation and evidence remain owned by R2-05, R2-06, and R2-07 |
 | Evidence | `simulator/src/inforsight_simulator/generator.py`; `simulator/src/inforsight_simulator/observations.py`; `docs/experiments/phase-02-05-logistic-baseline-report.md`; `docs/experiments/phase-02-06-boosted-comparison-report.md`; `docs/experiments/phase-02-07-feature-diagnostics-report.md` |
 | Detailed plan | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), `docs/adr/0004-versioned-v2-statistical-simulator-and-evaluation-design.md`, the Phase 2R.04 modeling contract and acceptance protocol, and `docs/backlog.md` items R2-04 through R2-07 |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
@@ -136,7 +136,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 
 #### Closure evidence
 
-- [ ] The R2-04 ADR and versioned statistical contract are approved before v2 results are inspected.
+- [x] The R2-04 ADR and versioned statistical contract were approved through issue #42 and PR #43 before v2 results were created or inspected.
 - [ ] The v2 generator exposes a documented stochastic risk mechanism and oracle probabilities without leaking them into model features.
 - [ ] Recurring pre-cutoff observations contain adequate behavioral and feature variation.
 - [ ] Null-signal and label-shuffle controls behave according to predeclared chance rules.
@@ -151,7 +151,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent engineering review after Phase 2.07 |
-| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout design is owned by R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42) and the later authorized release workflow |
+| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout design was approved by R2-04 issue #42 and PR #43, while proof remains owned by the later authorized release workflow |
 | Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
 | Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
 | Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
@@ -179,7 +179,7 @@ R2-03 replaced that convention with a digest-bound local integrity and misuse gu
 
 Bind authorized scoring membership, row identity, feature contract, preprocessing identity, and matrix digests to verified fitted state or an evaluation manifest. Separate ordinary unlabeled inference from experiment evaluation. Preserve the v1 test fixture only as historical pipeline evidence, and create the future v2 release holdout under a predeclared access-controlled one-shot protocol.
 
-R2-03 completed through issue #39 and PR #40, merge commit `5eb67c1`. Scoring authorization contract `1.0.0` now binds exact membership, row order, feature contract, labeled-matrix contents, training-matrix identity, fitted-preprocessor identity, and approved purpose across logistic, boosted, diagnostic, comparison, and reload paths. Ordinary inference uses a separate target-free matrix. The v1 fixture remains review-exposed historical evidence and is not re-sealed.
+R2-03 completed through issue #39 and PR #40, merge commit `5eb67c1`. Scoring authorization contract `1.0.0` now binds exact membership, row order, feature contract, labeled-matrix contents, training-matrix identity, fitted-preprocessor identity, and approved purpose across logistic, boosted, diagnostic, comparison, and reload paths. Ordinary inference uses a separate target-free matrix. The v1 fixture remains review-exposed historical evidence and is not re-sealed. R2-04 issue #42 and PR #43 subsequently approved the future one-shot holdout design while keeping its status `not_materialized` through R2-07.
 
 The limitation remains `Scheduled` because the future v2 final-holdout protocol and one-shot release workflow are not yet approved or proven.
 

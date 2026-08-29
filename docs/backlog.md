@@ -160,7 +160,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-04 - Approve the versioned v2 statistical simulator and observation design
 
-**Status:** In progress through [issue #42](https://github.com/anilreddy89/Inforsight/issues/42) on branch `docs/42-r2-04-v2-statistical-design`. R2-03 completed through PR #40 and merge commit `5eb67c1`.
+**Status:** Completed on 2026-08-29 through [issue #42](https://github.com/anilreddy89/Inforsight/issues/42) and [PR #43](https://github.com/anilreddy89/Inforsight/pull/43), merge commit `1fc48ad`. Both CI runs passed; no v2 result or final holdout was created.
 
 **Outcome:** A reviewed ADR and versioned contract define a modeling corpus that can test known statistical behavior without changing the v1 coverage fixture.
 
@@ -175,12 +175,12 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 **Acceptance checks:**
 
-- [ ] The ADR records alternatives, tradeoffs, compatibility, versioning, and why v1 remains a coverage fixture.
-- [ ] Every generated outcome has a documented stochastic mechanism and, where applicable, an oracle probability.
-- [ ] Pre-cutoff observable drivers can affect risk without creating deterministic outcome proxies.
-- [ ] Cohort, recurrence, censoring, missingness, and temporal-shift mechanisms are testable from the contract.
-- [ ] Holdout creation and access rules are specified before any v2 final-test data exists.
-- [ ] The R2-07 protocol, number of seeds or folds, metrics, uncertainty method, and decision rules are predeclared.
+- [x] The ADR records alternatives, tradeoffs, compatibility, versioning, and why v1 remains a coverage fixture.
+- [x] Every generated outcome has a documented stochastic mechanism and, where applicable, an oracle probability.
+- [x] Pre-cutoff observable drivers can affect risk without creating deterministic outcome proxies.
+- [x] Cohort, recurrence, censoring, missingness, and temporal-shift mechanisms are testable from the contract.
+- [x] Holdout creation and access rules are specified before any v2 final-test data exists.
+- [x] The R2-07 protocol, number of seeds or folds, metrics, uncertainty method, and decision rules are predeclared.
 
 **Depends on:** R2-03. **Blocks:** R2-05. Use the architecture-decision issue template for the ADR and a linked implementation issue for the versioned contract if both cannot remain one reviewable change.
 

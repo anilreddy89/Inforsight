@@ -1,6 +1,6 @@
 # ADR 0004: Introduce a versioned statistical simulator and predeclared evaluation gate
 
-- Status: Proposed in [issue #42](https://github.com/anilreddy89/Inforsight/issues/42)
+- Status: Accepted through [issue #42](https://github.com/anilreddy89/Inforsight/issues/42) and [PR #43](https://github.com/anilreddy89/Inforsight/pull/43), merge commit `1fc48ad`
 - Date: 2026-08-29
 - Decision owner: Anil Jonnala
 - Enables: R2-05 after this ADR and its linked contracts are accepted and merged
