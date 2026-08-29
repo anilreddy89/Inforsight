@@ -26,6 +26,8 @@ Diagnostics consume the exact ordered matrices produced by the Phase 2.04 featur
 
 The implementation must validate partition name, membership, ordering, feature names, width, values, targets, and matrix digest. Only `train` and `validation` are permitted. Test, embargoed, and unknown partitions are rejected.
 
+R2-03 strengthens this historical rule with shared `ScoringAuthorization` evidence. Train and validation diagnostics must receive authorization bound to the exact base matrices and fitted preprocessing state. A permutation receives a separately derived authorization bound to its authorized base, transformation description, deterministic order, and derived matrix digest. An arbitrary relabeled or mutated matrix cannot enter a diagnostic scoring path.
+
 ## Frozen diagnostic configuration
 
 - Dependency: scikit-learn `1.7.2` (already pinned).

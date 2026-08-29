@@ -19,6 +19,13 @@ from .boosted_modeling import FittedBoostedModel, predict_boosted_probabilities
 from .features import INCLUDED_CATEGORICAL_FEATURES, INCLUDED_NUMERIC_FEATURES
 from .modeling import FittedLogisticBaseline, predict_positive_probabilities
 from .preprocessing import ModelMatrix, matrix_digest
+from .scoring_authorization import (
+    HISTORICAL_TRAIN,
+    NON_FINAL_VALIDATION,
+    ScoringAuthorization,
+    authorize_diagnostic_derivative,
+    validate_scoring_authorization,
+)
 
 
 FEATURE_DIAGNOSTICS_VERSION = "1.0.0"
@@ -98,12 +105,14 @@ def source_feature_groups(matrix: ModelMatrix) -> tuple[tuple[str, tuple[int, ..
 
 def training_mutual_information(
     train: ModelMatrix,
+    authorization: ScoringAuthorization,
     specification: DiagnosticSpecification = FROZEN_DIAGNOSTIC_SPECIFICATION,
 ) -> tuple[dict[str, Any], ...]:
     """Compute frozen train-only univariate MI and aggregate by source group."""
 
     _validate_frozen_specification(specification)
     _validate_matrix(train, "train")
+    validate_scoring_authorization(authorization, train, (HISTORICAL_TRAIN,))
     groups = source_feature_groups(train)
     discrete = ["=" in name for name in train.feature_names]
     scores = mutual_info_classif(
@@ -129,12 +138,18 @@ def training_mutual_information(
 def shallow_feature_models(
     train: ModelMatrix,
     validation: ModelMatrix,
+    train_authorization: ScoringAuthorization,
+    validation_authorization: ScoringAuthorization,
     specification: DiagnosticSpecification = FROZEN_DIAGNOSTIC_SPECIFICATION,
 ) -> tuple[dict[str, Any], ...]:
     """Fit one train-only decision stump per source group and score validation."""
 
     _validate_frozen_specification(specification)
     _validate_compatible_matrices(train, validation)
+    validate_scoring_authorization(train_authorization, train, (HISTORICAL_TRAIN,))
+    validate_scoring_authorization(
+        validation_authorization, validation, (NON_FINAL_VALIDATION,)
+    )
     results = []
     for source, indices in source_feature_groups(train):
         estimator = DecisionTreeClassifier(
@@ -164,11 +179,18 @@ def shallow_feature_models(
 
 
 def identifier_and_cardinality_checks(
-    train: ModelMatrix, validation: ModelMatrix
+    train: ModelMatrix,
+    validation: ModelMatrix,
+    train_authorization: ScoringAuthorization,
+    validation_authorization: ScoringAuthorization,
 ) -> tuple[dict[str, Any], ...]:
     """Screen reviewed source groups for identifier names and row-pattern cardinality."""
 
     _validate_compatible_matrices(train, validation)
+    validate_scoring_authorization(train_authorization, train, (HISTORICAL_TRAIN,))
+    validate_scoring_authorization(
+        validation_authorization, validation, (NON_FINAL_VALIDATION,)
+    )
     results = []
     validation_groups = dict(source_feature_groups(validation))
     for source, indices in source_feature_groups(train):
@@ -247,6 +269,7 @@ def targeted_permutation_checks(
     logistic: FittedLogisticBaseline,
     boosted: FittedBoostedModel,
     validation: ModelMatrix,
+    validation_authorization: ScoringAuthorization,
     targeted_sources: tuple[str, ...],
     specification: DiagnosticSpecification = FROZEN_DIAGNOSTIC_SPECIFICATION,
 ) -> tuple[dict[str, Any], ...]:
@@ -256,12 +279,19 @@ def targeted_permutation_checks(
 
     _validate_frozen_specification(specification)
     _validate_matrix(validation, "validation")
+    validate_scoring_authorization(
+        validation_authorization, validation, (NON_FINAL_VALIDATION,)
+    )
     groups = dict(source_feature_groups(validation))
     if len(set(targeted_sources)) != len(targeted_sources) or any(source not in groups for source in targeted_sources):
         raise ValueError("targeted permutation sources are duplicated or unknown")
     baseline_probabilities = {
-        "logistic_regression": predict_positive_probabilities(logistic, validation),
-        "xgboost": predict_boosted_probabilities(boosted, validation),
+        "logistic_regression": predict_positive_probabilities(
+            logistic, validation, validation_authorization
+        ),
+        "xgboost": predict_boosted_probabilities(
+            boosted, validation, validation_authorization
+        ),
     }
     baseline_metrics = {
         name: _probability_metrics(validation, values) for name, values in baseline_probabilities.items()
@@ -276,12 +306,29 @@ def targeted_permutation_checks(
             for column in indices:
                 rows[destination][column] = validation.values[source_row][column]
         permuted = replace(validation, values=tuple(tuple(row) for row in rows))
+        derivative_authorization = authorize_diagnostic_derivative(
+            validation_authorization,
+            validation,
+            permuted,
+            transformation={
+                "kind": "source_feature_permutation",
+                "source_feature": source,
+                "random_seed": specification.random_seed,
+                "order_sha256": sha256(
+                    json.dumps(order, separators=(",", ":")).encode()
+                ).hexdigest(),
+            },
+        )
         model_results = {}
         for name, predictor in (
             ("logistic_regression", predict_positive_probabilities),
             ("xgboost", predict_boosted_probabilities),
         ):
-            probabilities = predictor(logistic if name == "logistic_regression" else boosted, permuted)
+            probabilities = predictor(
+                logistic if name == "logistic_regression" else boosted,
+                permuted,
+                derivative_authorization,
+            )
             metrics = _probability_metrics(permuted, probabilities)
             model_results[name] = {
                 "metrics": metrics,

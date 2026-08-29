@@ -71,6 +71,8 @@ The canonical test partition remains sealed throughout Phase 2.06. Candidate and
 
 Test scoring remains deferred until the broader evaluation, calibration, reporting, and limitation-resolution protocol authorizes it. Fixtures may exercise generic scoring mechanics without using canonical test observations.
 
+R2-03 supersedes partition-name authorization while preserving this historical artifact record. Logistic and boosted experiment scoring now share one versioned authorization invariant bound to exact membership, order, features, labeled-matrix contents, preprocessing identity, and purpose. The invariant is checked before native XGBoost reconstruction or prediction. Reloaded native-JSON state follows the same boundary, and ordinary unlabeled inference is separate from governed evaluation.
+
 ## Implementation boundaries
 
 Shared metric and prediction-digest logic may be extracted from logistic-specific code into a model-neutral module only if Phase 2.05 manifest and report bytes remain unchanged. Library estimator objects must stay private. Committed fitted state must use explicit, validated, non-executable data rather than pickle, joblib, or another executable object format.

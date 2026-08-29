@@ -27,6 +27,7 @@ from inforsight_simulator import (  # noqa: E402
     LABEL_HORIZON_DAYS,
     assign_temporal_splits,
     build_feature_pipeline,
+    authorize_feature_pipeline,
     build_first_billing_observations,
     diagnostic_flags,
     first_billing_observation_time,
@@ -110,18 +111,35 @@ def build_diagnostics() -> dict:
     records = build_first_billing_observations(histories, follow_up_through=watermark)
     split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
     pipeline = build_feature_pipeline(split)
+    authorizations = authorize_feature_pipeline(pipeline)
     preprocessor_before = fitted_state_bytes(pipeline.preprocessor)
     logistic = fit_logistic_baseline(pipeline.train)
     boosted = fit_boosted_model(pipeline.train)
     logistic_before = fitted_baseline_bytes(logistic)
     boosted_before = fitted_boosted_bytes(boosted)
 
-    mutual_information = training_mutual_information(pipeline.train)
-    shallow_models = shallow_feature_models(pipeline.train, pipeline.validation)
-    cardinality = identifier_and_cardinality_checks(pipeline.train, pipeline.validation)
+    mutual_information = training_mutual_information(pipeline.train, authorizations.train)
+    shallow_models = shallow_feature_models(
+        pipeline.train,
+        pipeline.validation,
+        authorizations.train,
+        authorizations.validation,
+    )
+    cardinality = identifier_and_cardinality_checks(
+        pipeline.train,
+        pipeline.validation,
+        authorizations.train,
+        authorizations.validation,
+    )
     initial_flags = diagnostic_flags(mutual_information, shallow_models, cardinality)
     targets = tuple(sorted({flag["source_feature"] for flag in initial_flags}))
-    permutations = targeted_permutation_checks(logistic, boosted, pipeline.validation, targets)
+    permutations = targeted_permutation_checks(
+        logistic,
+        boosted,
+        pipeline.validation,
+        authorizations.validation,
+        targets,
+    )
     all_flags = tuple(
         sorted(
             {flag["flag_id"]: flag for flag in initial_flags + perturbation_flags(permutations)}.values(),

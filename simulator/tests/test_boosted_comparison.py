@@ -21,6 +21,7 @@ from inforsight_simulator import (  # noqa: E402
     FittedBoostedModel,
     LABEL_HORIZON_DAYS,
     assign_temporal_splits,
+    authorize_feature_pipeline,
     build_feature_pipeline,
     build_first_billing_observations,
     compare_models,
@@ -51,14 +52,15 @@ class BoostedComparisonTests(unittest.TestCase):
         records = build_first_billing_observations(histories, follow_up_through=watermark)
         split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
         cls.pipeline = build_feature_pipeline(split)
+        cls.authorizations = authorize_feature_pipeline(cls.pipeline)
 
     def test_frozen_fit_is_deterministic(self) -> None:
         first = fit_boosted_model(self.pipeline.train)
         second = fit_boosted_model(self.pipeline.train)
         self.assertEqual(fitted_boosted_bytes(first), fitted_boosted_bytes(second))
         self.assertEqual(
-            predict_boosted_probabilities(first, self.pipeline.validation),
-            predict_boosted_probabilities(second, self.pipeline.validation),
+            predict_boosted_probabilities(first, self.pipeline.validation, self.authorizations.validation),
+            predict_boosted_probabilities(second, self.pipeline.validation, self.authorizations.validation),
         )
 
     def test_fit_records_exact_training_provenance(self) -> None:
@@ -78,16 +80,18 @@ class BoostedComparisonTests(unittest.TestCase):
 
     def test_test_scoring_is_rejected(self) -> None:
         fitted = fit_boosted_model(self.pipeline.train)
-        with self.assertRaisesRegex(ValueError, "sealed or unsupported"):
-            predict_boosted_probabilities(fitted, self.pipeline.test)
+        with self.assertRaisesRegex(ValueError, "partition"):
+            predict_boosted_probabilities(
+                fitted, self.pipeline.test, self.authorizations.validation
+            )
 
     def test_safe_state_round_trip_reproduces_probabilities(self) -> None:
         fitted = fit_boosted_model(self.pipeline.train)
         restored = FittedBoostedModel.from_dict(fitted.to_dict())
         self.assertEqual(fitted_boosted_bytes(fitted), fitted_boosted_bytes(restored))
         self.assertEqual(
-            predict_boosted_probabilities(fitted, self.pipeline.validation),
-            predict_boosted_probabilities(restored, self.pipeline.validation),
+            predict_boosted_probabilities(fitted, self.pipeline.validation, self.authorizations.validation),
+            predict_boosted_probabilities(restored, self.pipeline.validation, self.authorizations.validation),
         )
 
     def test_malformed_and_incomplete_state_are_rejected(self) -> None:
@@ -99,21 +103,25 @@ class BoostedComparisonTests(unittest.TestCase):
 
     def test_matrix_compatibility_fails_closed(self) -> None:
         fitted = fit_boosted_model(self.pipeline.train)
-        with self.assertRaisesRegex(ValueError, "feature names"):
+        with self.assertRaisesRegex(ValueError, "feature contract"):
             predict_boosted_probabilities(
                 fitted,
                 replace(self.pipeline.validation, feature_names=self.pipeline.validation.feature_names[::-1]),
+                self.authorizations.validation,
             )
-        with self.assertRaisesRegex(ValueError, "training membership"):
+        with self.assertRaisesRegex(ValueError, "membership or row order"):
             predict_boosted_probabilities(
                 fitted,
                 replace(self.pipeline.train, observation_ids=self.pipeline.train.observation_ids[::-1]),
+                self.authorizations.train,
             )
 
     def test_comparison_uses_identical_membership_and_metrics(self) -> None:
         logistic = fit_logistic_baseline(self.pipeline.train)
         boosted = fit_boosted_model(self.pipeline.train)
-        comparison = compare_models(logistic, boosted, self.pipeline.validation)
+        comparison = compare_models(
+            logistic, boosted, self.pipeline.validation, self.authorizations.validation
+        )
         self.assertEqual(comparison["observation_ids"], list(self.pipeline.validation.observation_ids))
         self.assertEqual(
             set(comparison["logistic_regression"]["metrics"]),
@@ -127,7 +135,9 @@ class BoostedComparisonTests(unittest.TestCase):
     def test_validation_scoring_does_not_mutate_state(self) -> None:
         fitted = fit_boosted_model(self.pipeline.train)
         before = fitted_boosted_bytes(fitted)
-        evaluation = evaluate_boosted_model(fitted, self.pipeline.validation)
+        evaluation = evaluate_boosted_model(
+            fitted, self.pipeline.validation, self.authorizations.validation
+        )
         self.assertEqual(evaluation.metrics.partition, "validation")
         self.assertEqual(before, fitted_boosted_bytes(fitted))
 

@@ -26,6 +26,7 @@ from inforsight_simulator import (  # noqa: E402
     TRAINING_CONFIGURATION_VERSION,
     assign_temporal_splits,
     build_feature_pipeline,
+    authorize_feature_pipeline,
     build_first_billing_observations,
     coefficient_summary,
     evaluate_logistic_baseline,
@@ -73,9 +74,12 @@ def build_baseline() -> tuple[dict, bytes]:
     records = build_first_billing_observations(histories, follow_up_through=watermark)
     split = assign_temporal_splits(records, CANONICAL_TEMPORAL_SPLIT_SPECIFICATION)
     pipeline = build_feature_pipeline(split)
+    authorizations = authorize_feature_pipeline(pipeline)
     fitted = fit_logistic_baseline(pipeline.train)
-    train = evaluate_logistic_baseline(fitted, pipeline.train)
-    validation = evaluate_logistic_baseline(fitted, pipeline.validation)
+    train = evaluate_logistic_baseline(fitted, pipeline.train, authorizations.train)
+    validation = evaluate_logistic_baseline(
+        fitted, pipeline.validation, authorizations.validation
+    )
     fitted_bytes = fitted_baseline_bytes(fitted)
     manifest = {
         "manifest_id": MANIFEST_ID,
