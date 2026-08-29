@@ -211,7 +211,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-06 - Rebuild temporal evaluation data, features, and baselines on v2
 
-**Status:** Implemented locally through [issue #48](https://github.com/anilreddy89/Inforsight/issues/48) on branch `feat/48-r2-06-v2-evaluation-pipeline`. Deterministic v2 folds, feature/preprocessing state, diagnostics, frozen baseline comparison, explicit-state reload, and authorization evidence pass 10 focused tests, 231 simulator tests, nine contract tests, artifact checks, and repository-boundary checks. Hosted PR merge remains required; the final holdout remains `not_materialized`.
+**Status:** Completed on 2026-08-29 through [issue #48](https://github.com/anilreddy89/Inforsight/issues/48) and [PR #49](https://github.com/anilreddy89/Inforsight/pull/49), merge commit `58232fc`. Both hosted CI runs passed. Deterministic v2 folds, feature/preprocessing state, diagnostics, frozen baseline comparison, runtime explicit-state reload, portable artifacts, and authorization evidence are on `main`; the final holdout remains `not_materialized` and R2-07 is unblocked.
 
 **Outcome:** Versioned v2 split, feature, preprocessing, logistic, and boosted artifacts are regenerated under the approved evaluation protocol without overwriting v1 evidence.
 
@@ -225,13 +225,13 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 **Acceptance checks:**
 
-- [ ] Split manifests prove chronology, embargo compliance, zero policy overlap, and zero outcome-episode overlap.
-- [ ] Every supported billing-frequency category appears in each required non-final modeling partition or fold.
-- [ ] Train-constant and unseen-category findings have explicit allow, exclude, investigate, or redesign dispositions.
-- [ ] Logistic and boosted candidates use identical governed memberships and metrics.
-- [ ] Preprocessing is fitted only on the approved training data for each fold.
-- [ ] The final release holdout remains inaccessible and unscored.
-- [ ] All v2 artifacts regenerate deterministically and `make check` passes.
+- [x] Split manifests prove chronology, embargo compliance, zero policy overlap, and zero outcome-episode overlap.
+- [x] Every supported billing-frequency category appears in each required non-final modeling partition or fold.
+- [x] Train-constant and unseen-category findings have explicit allow, exclude, investigate, or redesign dispositions.
+- [x] Logistic and boosted candidates use identical governed memberships and metrics.
+- [x] Preprocessing is fitted only on the approved training data for each fold.
+- [x] The final release holdout remains inaccessible and unscored.
+- [x] All v2 artifacts regenerate deterministically and `make check` passes.
 
 **Depends on:** R2-05. **Blocks:** R2-07.
 
