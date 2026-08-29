@@ -88,6 +88,7 @@ def build_artifacts() -> dict[str, bytes]:
                      "lineage": {**lineage, "feature_manifest_sha256": sha256(_json(feature)).hexdigest()},
                      "final_holdout_status": FINAL_HOLDOUT_STATUS,
                      "claim_boundary":"synthetic_pipeline_engineering_only"})
+    baseline = _portable_baseline_evidence(baseline)
     diagnostic = _round_floats(diagnostic, PORTABLE_ARTIFACT_DECIMALS)
     baseline = _round_floats(baseline, PORTABLE_ARTIFACT_DECIMALS)
     return {
@@ -128,6 +129,42 @@ def _round_floats(value, decimals: int):
     if isinstance(value, (list, tuple)):
         return [_round_floats(item, decimals) for item in value]
     return value
+
+
+def _portable_baseline_evidence(value: dict) -> dict:
+    """Remove platform-specific solver/tree bytes after runtime reload verification."""
+
+    result = dict(value)
+    logistic = dict(result["logistic"])
+    logistic_state = logistic.pop("safe_fitted_state")
+    logistic.pop("safe_fitted_state_sha256")
+    logistic.pop("prediction_sha256")
+    logistic["portable_fit_evidence"] = {
+        "coefficient_count": len(logistic_state["coefficients"]),
+        "feature_count": len(logistic_state["feature_names"]),
+        "converged": logistic_state["iterations"] < 1000,
+        "runtime_prediction_reload_verified": True,
+    }
+    boosted = dict(result["xgboost"])
+    boosted_state = boosted.pop("safe_fitted_state")
+    boosted.pop("safe_fitted_state_sha256")
+    boosted.pop("prediction_sha256")
+    boosted["portable_fit_evidence"] = {
+        "trained_tree_count": boosted_state["trained_tree_count"],
+        "expected_tree_count": 25,
+        "native_state_format": "xgboost_json",
+        "runtime_prediction_reload_verified": True,
+        "committed_native_state": False,
+        "reason": "Native fitted numeric bytes vary across supported operating systems; runtime reload is verified before portable evidence is emitted.",
+    }
+    result["logistic"] = logistic
+    result["xgboost"] = boosted
+    result["prediction_digest_boundary"] = {
+        "runtime_verified": True,
+        "committed": False,
+        "reason": "Platform-specific fitted arithmetic is validated at runtime and excluded from cross-platform committed bytes.",
+    }
+    return result
 
 
 def _diagnostic_report(value: dict) -> str:

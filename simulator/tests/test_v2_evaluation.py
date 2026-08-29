@@ -101,6 +101,10 @@ class V2EvaluationTests(unittest.TestCase):
         self.assertEqual(split["final_holdout_status"], "not_materialized")
         self.assertEqual(baseline["final_holdout_status"], "not_materialized")
         self.assertTrue(baseline["explicit_state_reload_verified"])
+        self.assertNotIn("safe_fitted_state", baseline["xgboost"])
+        self.assertNotIn("prediction_sha256", baseline["xgboost"])
+        self.assertFalse(baseline["xgboost"]["portable_fit_evidence"]["committed_native_state"])
+        self.assertTrue(baseline["xgboost"]["portable_fit_evidence"]["runtime_prediction_reload_verified"])
         self.assertEqual({item["id"] for item in diagnostic["flags"]}, {item["flag"] for item in diagnostic["dispositions"]})
         self.assertTrue(diagnostic["targeted_perturbations"])
         for artifact in (split, diagnostic, baseline):

@@ -42,6 +42,6 @@ R2-06 reports category support, missingness, fit constants, near constants, iden
 
 ## Artifact and holdout boundary
 
-All R2-06 artifacts include `phase-02r-06-v2`, bind the R2-05 public-observation digest and every downstream contract/state digest, use finite canonical JSON, and exclude raw observations, full matrices, protected sidecars, and executable serialized objects. Existing v1 artifacts must remain unchanged.
+All R2-06 artifacts include `phase-02r-06-v2`, bind the R2-05 public-observation digest and stable downstream contract, membership, preprocessing, and authorization digests, use finite canonical JSON, and exclude raw observations, full matrices, protected sidecars, and executable serialized objects. Existing v1 artifacts must remain unchanged. Because native solver and tree bytes are not cross-platform stable, explicit logistic and XGBoost state is regenerated and reload-verified at runtime but is not committed. The portable baseline manifest records specifications, membership and matrix lineage, convergence/tree-count evidence, reload success, and four-decimal metrics without platform-specific parameter or prediction hashes.
 
 The final release holdout status is `not_materialized`. R2-06 must not choose its seed, generate membership, inspect distributions, build features, transform, predict, or score it. Passing R2-06 authorizes only execution of the frozen R2-07 acceptance protocol.
