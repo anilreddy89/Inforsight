@@ -45,7 +45,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | Phase 2R items R2-04, R2-05, R2-06, and R2-07; GitHub issues assigned when created |
+| Owner | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), followed by R2-05, R2-06, and R2-07 |
 | Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json`; feature-sanity evidence in `docs/experiments/phase-02-07-feature-diagnostics-manifest.json` |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
@@ -104,9 +104,9 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | Phase 2R items R2-04, R2-05, R2-06, and R2-07; GitHub issues assigned when created |
+| Owner | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), followed by R2-05, R2-06, and R2-07 |
 | Evidence | `simulator/src/inforsight_simulator/generator.py`; `simulator/src/inforsight_simulator/observations.py`; `docs/experiments/phase-02-05-logistic-baseline-report.md`; `docs/experiments/phase-02-06-boosted-comparison-report.md`; `docs/experiments/phase-02-07-feature-diagnostics-report.md` |
-| Detailed plan | `docs/backlog.md`, Phase 2R items R2-04 through R2-07 |
+| Detailed plan | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), `docs/adr/0004-versioned-v2-statistical-simulator-and-evaluation-design.md`, the Phase 2R.04 modeling contract and acceptance protocol, and `docs/backlog.md` items R2-04 through R2-07 |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
 
 #### Finding
@@ -151,7 +151,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent engineering review after Phase 2.07 |
-| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout protocol remains owned by R2-04 and the later authorized release workflow |
+| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout design is owned by R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42) and the later authorized release workflow |
 | Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
 | Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
 | Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
