@@ -3,8 +3,8 @@
 check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check test
 
 v2-corpus-check:
-	.venv/bin/python scripts/build_v2_modeling_corpus.py --check
-	.venv/bin/python -m unittest discover -s simulator/tests -p 'test_v2_*.py' -v
+	python3 scripts/build_v2_modeling_corpus.py --check
+	python3 -m unittest discover -s simulator/tests -p 'test_v2_*.py' -v
 
 boundary-check:
 	./scripts/check_repository_boundaries.sh
