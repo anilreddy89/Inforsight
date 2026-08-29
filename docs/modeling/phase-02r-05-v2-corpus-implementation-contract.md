@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation version `1.0.0` implements the R2-04 simulator and observation contracts `2.0.0`, label policy `2.0.0`, protected oracle sidecar `1.0.0`, and acceptance protocol reference `1.0.0`. The governing work item is issue #45.
+Implementation version `1.0.0` implements the R2-04 simulator and observation contracts `2.0.0`, label policy `2.0.0`, protected oracle sidecar `1.0.0`, and acceptance protocol reference `1.0.0`. Issue #45 closed when PR #46 merged as `25c370d` on 2026-08-29. Hosted CI passed, R2-06 is unblocked, and the final holdout remains `not_materialized`.
 
 ## Runtime boundary
 

@@ -2,6 +2,16 @@
 
 The simulator generates small, seeded, fictional policy-event histories that conform to policy-event contract version `1.0.0`. It is a clean-room engineering fixture, not a model of a real insurer or population.
 
+R2-05 also provides a separately versioned v2 statistical-corpus path through `V2CorpusConfig` and `generate_v2_corpus`. V2 implements 24 issuance cohorts, recurring non-overlapping observations, approved behavioral variation, competing lapse and surrender hazards, named drift and missingness modes, and a physically separate protected oracle sidecar. It does not alter v1 reproduction.
+
+Verify the merged R2-05 corpus evidence with:
+
+```bash
+python3 scripts/build_v2_modeling_corpus.py --check
+```
+
+The v2 final release holdout remains `not_materialized`. R2-05 does not create splits, fit models, publish performance evidence, calibrate probabilities, or generate explanations.
+
 ## Current event boundary
 
 The generator uses the nine-event MVP taxonomy already defined under `data-contracts/`:

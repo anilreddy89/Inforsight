@@ -45,8 +45,8 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | R2-04 design completed through issue #42 and PR #43; implementation and evidence remain owned by R2-05, R2-06, and R2-07 |
-| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; pipeline-only baseline evidence in `docs/experiments/phase-02-05-logistic-baseline-manifest.json`; feature-sanity evidence in `docs/experiments/phase-02-07-feature-diagnostics-manifest.json` |
+| Owner | R2-05 corpus implementation completed through issue #45 and PR #46; partition verification and acceptance evidence remain owned by R2-06 and R2-07 |
+| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
 
@@ -88,7 +88,7 @@ Introduce a separately versioned generator and observation design with:
 
 #### Closure evidence
 
-- [ ] A separately reviewed issue and versioned generator or observation-contract change are merged.
+- [x] A separately reviewed issue and versioned generator or observation-contract change are merged through issue #45 and PR #46.
 - [ ] Every supported billing frequency appears in train, validation, and test.
 - [ ] Train, validation, and test remain strictly chronological.
 - [ ] Both 90-day horizon embargo assertions pass.
@@ -104,8 +104,8 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | R2-04 design completed through issue #42 and PR #43; implementation and evidence remain owned by R2-05, R2-06, and R2-07 |
-| Evidence | `simulator/src/inforsight_simulator/generator.py`; `simulator/src/inforsight_simulator/observations.py`; `docs/experiments/phase-02-05-logistic-baseline-report.md`; `docs/experiments/phase-02-06-boosted-comparison-report.md`; `docs/experiments/phase-02-07-feature-diagnostics-report.md` |
+| Owner | R2-05 designed-signal implementation completed through issue #45 and PR #46; recovery and falsification evidence remain owned by R2-06 and R2-07 |
+| Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json` |
 | Detailed plan | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), `docs/adr/0004-versioned-v2-statistical-simulator-and-evaluation-design.md`, the Phase 2R.04 modeling contract and acceptance protocol, and `docs/backlog.md` items R2-04 through R2-07 |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
 

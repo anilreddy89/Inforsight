@@ -16,6 +16,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02-06-boosted-comparison-report.md` — bounded train and validation comparison with configuration, metrics, engineering disposition, and claim limitations.
 - `phase-02-07-feature-diagnostics-manifest.json` — frozen diagnostic configuration, source-feature grouping, train-only mutual information, validation-scored shallow models, identifier/cardinality screens, targeted permutation evidence, flags, dispositions, upstream digests, and sealed-test evidence.
 - `phase-02-07-feature-diagnostics-report.md` — human-readable feature-sanity results, governed dispositions, integrity checks, and interpretation boundaries.
+- `phase-02r-05-v2-corpus-manifest.json` — deterministic non-final v2 corpus provenance, structural counts, role and billing-frequency coverage, protected-sidecar digest, and `not_materialized` final-holdout evidence.
 
 Regenerate or verify the Phase 2.04 evidence with:
 
@@ -50,3 +51,12 @@ python3 scripts/run_feature_diagnostics.py --check
 ```
 
 The diagnostic command computes mutual information from train only, fits shallow source-feature models on train and scores validation, and perturbs only mechanically flagged validation feature groups against unchanged frozen models. It rejects canonical test access and does not change features, refit preprocessing, tune models, calibrate probabilities, or select a threshold.
+
+Regenerate or verify the R2-05 v2 corpus evidence with:
+
+```bash
+python3 scripts/build_v2_modeling_corpus.py
+python3 scripts/build_v2_modeling_corpus.py --check
+```
+
+The R2-05 command verifies the approved non-final synthetic corpus and protected oracle-sidecar digests. It does not create temporal model folds, fit a model, run R2-07, or materialize a final release holdout.
