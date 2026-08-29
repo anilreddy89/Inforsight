@@ -707,6 +707,24 @@ The package exports these current simulator-facing functions and values:
 | `targeted_permutation_checks` | Perturb flagged validation groups against unchanged frozen models |
 | `validate_dispositions` | Require a complete governed decision for every diagnostic flag |
 
+### Phase 2R v2 evaluation path
+
+R2-06 keeps the historical v1 path immutable and adds a separately versioned path:
+
+```text
+R2-05 public recurring observations
+  -> frozen chronological role/fold membership
+  -> dual 90-day embargo and policy/episode isolation checks
+  -> exact v2 feature validation
+  -> fold-local fit-only preprocessing
+  -> role/fold/purpose-bound scoring authorization
+  -> diagnostics and governed dispositions
+  -> identical-membership logistic/XGBoost comparison
+  -> deterministic namespaced manifests and reports
+```
+
+The protected oracle sidecar cannot enter this path. Calibration, non-final evaluation, and R2-acceptance roles cannot influence candidate selection. The future final release holdout remains `not_materialized`.
+
 ## Test map
 
 | Test module | Process boundary protected |
@@ -724,6 +742,7 @@ The package exports these current simulator-facing functions and values:
 | `test_logistic_baseline.py` | Train-only fitting, deterministic explicit state, sealed test, compatibility, coefficient alignment, and scoring invariants |
 | `test_boosted_comparison.py` | Frozen XGBoost fit, safe JSON reconstruction, identical comparison membership, determinism, artifact safety, and sealed test |
 | `test_feature_diagnostics.py` | Train-only diagnostics, source grouping, identifier/cardinality screens, deterministic perturbation, dispositions, artifact safety, and sealed test |
+| `test_v2_evaluation.py` | v2 folds, both embargoes, role/policy/episode isolation, fit-only preprocessing, unknown categories, authorization mutations, diagnostics, lineage, explicit-state reload, and final-holdout absence |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 

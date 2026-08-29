@@ -1,0 +1,155 @@
+{
+  "artifact_version": "2.0.0",
+  "categorical_state": [
+    {
+      "categories": [
+        "fictional_term_life",
+        "fictional_whole_life",
+        "__unknown__"
+      ],
+      "name": "product_type"
+    },
+    {
+      "categories": [
+        "annual",
+        "monthly",
+        "quarterly",
+        "semiannual",
+        "__unknown__"
+      ],
+      "name": "billing_frequency"
+    },
+    {
+      "categories": [
+        "billing",
+        "late_category",
+        "__unknown__"
+      ],
+      "name": "notice_category"
+    },
+    {
+      "categories": [
+        "billing_question",
+        "missing",
+        "__unknown__"
+      ],
+      "name": "contact_category"
+    }
+  ],
+  "feature_dictionary_version": "2.0.0",
+  "final_holdout_status": "not_materialized",
+  "fit_matrix_sha256": "c6e24d4da0f78348ac3273b8820aa2380a05b9ee64db45386054655e75bd9d8d",
+  "fit_membership_count": 8404,
+  "lineage": {
+    "feature_dictionary_sha256": "2d9c6a19414649eea31c745ca0fad9b6dfeabbf6d72a3f4189377e59bac4c377",
+    "public_observations_sha256": "41fa55cf0b77fc31a0fc90654aa8bcc501e851560a4730b236799806b33a7443",
+    "r2_05_manifest_sha256": "92229f5ce114fbabd6d022ccb011d50f07925c517e4755aef401456fcb6f6595",
+    "split_manifest_sha256": "e66f386092d2554dfbfa12af373ef9fa29eb63a09d0ce654e9e217ddf321b60b"
+  },
+  "numeric_state": [
+    {
+      "mean": 258.7160875773,
+      "name": "tenure_days",
+      "scale": 193.9159222095
+    },
+    {
+      "mean": 12863.7172774869,
+      "name": "premium_amount_cents",
+      "scale": 4017.8434456931
+    },
+    {
+      "mean": 8.5431456449,
+      "name": "due_to_paid_delay_days",
+      "scale": 5.4666795273
+    },
+    {
+      "mean": 0.9055839063,
+      "name": "rolling_on_time_payment_rate",
+      "scale": 0.0893959398
+    },
+    {
+      "mean": 0.3017610662,
+      "name": "recent_failed_payment_count",
+      "scale": 0.490598661
+    },
+    {
+      "mean": 0.3017610662,
+      "name": "recent_retry_count",
+      "scale": 0.490598661
+    },
+    {
+      "mean": 0.2154926226,
+      "name": "recent_recovery_count",
+      "scale": 0.4281757431
+    },
+    {
+      "mean": 4.7106139933,
+      "name": "arrears_duration_days",
+      "scale": 8.6004314921
+    },
+    {
+      "mean": 0.4569252737,
+      "name": "recent_notice_count",
+      "scale": 0.6082691079
+    },
+    {
+      "mean": 0.3033079486,
+      "name": "recent_service_contact_count",
+      "scale": 0.4596871076
+    },
+    {
+      "mean": 0.2867682056,
+      "name": "visible_grace_entries",
+      "scale": 0.4522523652
+    },
+    {
+      "mean": 0.2083531652,
+      "name": "visible_grace_recoveries",
+      "scale": 0.4061306732
+    },
+    {
+      "mean": 0.0529509757,
+      "name": "payment_attribute_missing",
+      "scale": 0.2239356378
+    },
+    {
+      "mean": 0.1056639695,
+      "name": "contact_attribute_missing",
+      "scale": 0.3074070511
+    }
+  ],
+  "output_feature_names": [
+    "tenure_days",
+    "premium_amount_cents",
+    "due_to_paid_delay_days",
+    "rolling_on_time_payment_rate",
+    "recent_failed_payment_count",
+    "recent_retry_count",
+    "recent_recovery_count",
+    "arrears_duration_days",
+    "recent_notice_count",
+    "recent_service_contact_count",
+    "visible_grace_entries",
+    "visible_grace_recoveries",
+    "payment_attribute_missing",
+    "contact_attribute_missing",
+    "product_type=fictional_term_life",
+    "product_type=fictional_whole_life",
+    "product_type=__unknown__",
+    "billing_frequency=annual",
+    "billing_frequency=monthly",
+    "billing_frequency=quarterly",
+    "billing_frequency=semiannual",
+    "billing_frequency=__unknown__",
+    "notice_category=billing",
+    "notice_category=late_category",
+    "notice_category=__unknown__",
+    "contact_category=billing_question",
+    "contact_category=missing",
+    "contact_category=__unknown__"
+  ],
+  "output_width": 28,
+  "preprocessor_sha256": "9e241d98cbb578647967eaf4bde3b0651c86f5537a352d0db67e08b83b413369",
+  "selection_matrix_sha256": "a671066b7f4b5bd8a539a9a90b00763f0c8292f70e09557ee2ae85265fd88d0f",
+  "selection_membership_count": 269
+}

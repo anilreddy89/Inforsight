@@ -17,6 +17,14 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02-07-feature-diagnostics-manifest.json` — frozen diagnostic configuration, source-feature grouping, train-only mutual information, validation-scored shallow models, identifier/cardinality screens, targeted permutation evidence, flags, dispositions, upstream digests, and sealed-test evidence.
 - `phase-02-07-feature-diagnostics-report.md` — human-readable feature-sanity results, governed dispositions, integrity checks, and interpretation boundaries.
 - `phase-02r-05-v2-corpus-manifest.json` — deterministic non-final v2 corpus provenance, structural counts, role and billing-frequency coverage, protected-sidecar digest, and `not_materialized` final-holdout evidence.
+- `phase-02r-06-v2-*.json` and `phase-02r-06-v2-*.md` — governed chronological folds, fit-only v2 preprocessing, diagnostics, frozen baseline comparison, complete lineage, and `not_materialized` final-holdout evidence.
+
+Regenerate or verify the Phase 2R.06 evidence with:
+
+```bash
+python3 scripts/build_v2_evaluation_pipeline.py --write
+python3 scripts/build_v2_evaluation_pipeline.py --check
+```
 
 Regenerate or verify the Phase 2.04 evidence with:
 

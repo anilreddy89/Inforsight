@@ -1,0 +1,26 @@
+{
+  "dictionary_version": "2.0.0",
+  "feature_pipeline_version": "2.0.0",
+  "missingness_policy": "nullable payment delay is zero-filled only with its paired visible missingness indicator",
+  "features": [
+    {"name":"tenure_days","type":"numeric","preprocessing":"fit_zscore","owner":"policy issuance and cutoff","visibility":"issued_at and cutoff visible"},
+    {"name":"premium_amount_cents","type":"numeric","preprocessing":"fit_zscore","owner":"policy.issued","visibility":"effective_at and ingested_at no later than cutoff"},
+    {"name":"product_type","type":"categorical","preprocessing":"fit_one_hot_unknown","owner":"policy.issued","visibility":"effective_at and ingested_at no later than cutoff"},
+    {"name":"billing_frequency","type":"categorical","preprocessing":"fit_one_hot_unknown","owner":"policy.issued","visibility":"effective_at and ingested_at no later than cutoff"},
+    {"name":"due_to_paid_delay_days","type":"numeric_nullable","preprocessing":"zero_fill_then_fit_zscore","owner":"billing and payment events","visibility":"visible completed payment history at cutoff"},
+    {"name":"rolling_on_time_payment_rate","type":"numeric","preprocessing":"fit_zscore","owner":"billing and payment events","visibility":"visible rolling history at cutoff"},
+    {"name":"recent_failed_payment_count","type":"numeric","preprocessing":"fit_zscore","owner":"payment events","visibility":"visible recent history at cutoff"},
+    {"name":"recent_retry_count","type":"numeric","preprocessing":"fit_zscore","owner":"payment events","visibility":"visible recent history at cutoff"},
+    {"name":"recent_recovery_count","type":"numeric","preprocessing":"fit_zscore","owner":"payment events","visibility":"visible recent history at cutoff"},
+    {"name":"arrears_duration_days","type":"numeric","preprocessing":"fit_zscore","owner":"billing and payment events","visibility":"visible arrears state at cutoff"},
+    {"name":"recent_notice_count","type":"numeric","preprocessing":"fit_zscore","owner":"notice events","visibility":"visible recent history at cutoff"},
+    {"name":"notice_category","type":"categorical","preprocessing":"fit_one_hot_unknown","owner":"notice events","visibility":"latest visible category at cutoff"},
+    {"name":"recent_service_contact_count","type":"numeric","preprocessing":"fit_zscore","owner":"service events","visibility":"visible recent history at cutoff"},
+    {"name":"contact_category","type":"categorical","preprocessing":"fit_one_hot_unknown","owner":"service events","visibility":"latest visible category at cutoff"},
+    {"name":"visible_grace_entries","type":"numeric","preprocessing":"fit_zscore","owner":"policy lifecycle events","visibility":"visible history at cutoff"},
+    {"name":"visible_grace_recoveries","type":"numeric","preprocessing":"fit_zscore","owner":"policy lifecycle events","visibility":"visible history at cutoff"},
+    {"name":"payment_attribute_missing","type":"boolean","preprocessing":"numeric_indicator","owner":"cutoff-visible payment attribute","visibility":"visible missingness at cutoff"},
+    {"name":"contact_attribute_missing","type":"boolean","preprocessing":"numeric_indicator","owner":"cutoff-visible contact attribute","visibility":"visible missingness at cutoff"}
+  ],
+  "prohibited_concepts": ["policy_id","observation_id","outcome_episode_id","event_id","role","cohort","outcome","label","oracle","frailty","draw","scenario","future"]
+}
