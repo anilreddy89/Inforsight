@@ -160,7 +160,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-04 - Approve the versioned v2 statistical simulator and observation design
 
-**Status:** Planned and next in the strict merge train after R2-03 completed through PR #40 and merge commit `5eb67c1`.
+**Status:** In progress through [issue #42](https://github.com/anilreddy89/Inforsight/issues/42) on branch `docs/42-r2-04-v2-statistical-design`. R2-03 completed through PR #40 and merge commit `5eb67c1`.
 
 **Outcome:** A reviewed ADR and versioned contract define a modeling corpus that can test known statistical behavior without changing the v1 coverage fixture.
 
