@@ -1,0 +1,175 @@
+{
+  "artifact_version": "1.0.0",
+  "counts": {
+    "cohorts": 24,
+    "events": 71321,
+    "label_status": {
+      "observed_negative": 37179,
+      "observed_positive": 1814,
+      "right_censored": 3802
+    },
+    "observations": 42795,
+    "oracle_records": 42795,
+    "policies": 3600,
+    "roles": {
+      "calibration": {
+        "billing_frequencies": [
+          "annual",
+          "monthly",
+          "quarterly",
+          "semiannual"
+        ],
+        "negative": 3681,
+        "observations": 4225,
+        "positive": 181,
+        "right_censored": 363
+      },
+      "fit": {
+        "billing_frequencies": [
+          "annual",
+          "monthly",
+          "quarterly",
+          "semiannual"
+        ],
+        "negative": 18562,
+        "observations": 21420,
+        "positive": 917,
+        "right_censored": 1941
+      },
+      "non_final_evaluation": {
+        "billing_frequencies": [
+          "annual",
+          "monthly",
+          "quarterly",
+          "semiannual"
+        ],
+        "negative": 3614,
+        "observations": 4141,
+        "positive": 190,
+        "right_censored": 337
+      },
+      "r2_acceptance": {
+        "billing_frequencies": [
+          "annual",
+          "monthly",
+          "quarterly",
+          "semiannual"
+        ],
+        "negative": 7667,
+        "observations": 8802,
+        "positive": 333,
+        "right_censored": 802
+      },
+      "selection": {
+        "billing_frequencies": [
+          "annual",
+          "monthly",
+          "quarterly",
+          "semiannual"
+        ],
+        "negative": 3655,
+        "observations": 4207,
+        "positive": 193,
+        "right_censored": 359
+      }
+    }
+  },
+  "final_holdout_status": "not_materialized",
+  "intended_use": "synthetic signal and governed pipeline validation only",
+  "phase": "R2-05",
+  "prohibited_claims": [
+    "real_world_prediction",
+    "actuarial",
+    "causal",
+    "fairness",
+    "operational_readiness",
+    "production_performance"
+  ],
+  "provenance": {
+    "artifact_version": "1.0.0",
+    "configuration": {
+      "acceptance_protocol_version": "1.0.0",
+      "billing_frequencies": [
+        "monthly",
+        "quarterly",
+        "semiannual",
+        "annual"
+      ],
+      "canonicalization_version": "1.0.0",
+      "cohort_count": 24,
+      "drift_scenario": "stable",
+      "event_censoring_rate": 0.05,
+      "final_holdout_status": "not_materialized",
+      "follow_up_watermark": "2026-12-31T23:59:59Z",
+      "frailty_standard_deviation": 0.35,
+      "issuance_start": "2022-01-01T00:00:00Z",
+      "label_horizon_days": 90,
+      "label_policy_version": "2.0.0",
+      "mcar_missingness_rate": 0.05,
+      "observation_cadence_days": 90,
+      "observation_contract_version": "2.0.0",
+      "policies_per_cohort": 150,
+      "policy_count": 3600,
+      "random_domains": [
+        "allocation",
+        "static_attributes",
+        "recurring_behavior",
+        "frailty",
+        "terminal_outcome",
+        "event_censoring",
+        "mcar_missingness",
+        "conditional_missingness",
+        "ingestion_delay",
+        "correction",
+        "category_arrival",
+        "temporal_drift"
+      ],
+      "role_proportions": [
+        {
+          "proportion": 0.5,
+          "role": "fit"
+        },
+        {
+          "proportion": 0.1,
+          "role": "selection"
+        },
+        {
+          "proportion": 0.1,
+          "role": "calibration"
+        },
+        {
+          "proportion": 0.1,
+          "role": "non_final_evaluation"
+        },
+        {
+          "proportion": 0.2,
+          "role": "r2_acceptance"
+        }
+      ],
+      "run_namespace": "r2-05-default",
+      "seasoning_days": 30,
+      "seed": 20260901,
+      "signal_mode": "signal_present",
+      "simulator_contract_version": "2.0.0"
+    },
+    "configuration_sha256": "6a2b6306149ba55fb5f1a9a3882661e554169c9f7f5049b1b026976cc4f515f8",
+    "final_holdout_status": "not_materialized",
+    "history_count": 3600,
+    "observation_count": 42795,
+    "oracle_record_count": 42795,
+    "run_identity": "6a2b6306149ba55fb5f1a9a3"
+  },
+  "publication": {
+    "oracle_sidecar_committed": false,
+    "raw_histories_committed": false,
+    "raw_observations_committed": false,
+    "reason": "Deterministically regenerated evidence; protected and large raw artifacts are not repository source files."
+  },
+  "sha256": {
+    "data_card": "8fdc11b8028e2a99f0a1d6c84d0eedd8e42cd2a26d249dbf4e1931dfd08d20a4",
+    "histories_jsonl": "fe81e017eece6f787f954455c3e42d4c0e04cbb9772d6efb573ce45ff83a7606",
+    "observations_jsonl": "80c571fa0259833c3746f53f657e4a91c338612c2f24e4ac74dc320809abe6c7",
+    "protected_oracle_sidecar_jsonl": "41c032a5b04ba06d0bd38e426935618f8d3a4d4ecf0d80e0aa013ea57a07fb0b"
+  },
+  "status": "non_final_synthetic_corpus"
+}

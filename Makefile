@@ -1,6 +1,10 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check scoring-authorization-check simulator-test temporal-split-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check scoring-authorization-check simulator-test temporal-split-check v2-corpus-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check test
+
+v2-corpus-check:
+	.venv/bin/python scripts/build_v2_modeling_corpus.py --check
+	.venv/bin/python -m unittest discover -s simulator/tests -p 'test_v2_*.py' -v
 
 boundary-check:
 	./scripts/check_repository_boundaries.sh

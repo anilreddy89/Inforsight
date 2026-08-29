@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/v2/observation-record/2.0.0",
+  "title": "Inforsight v2 recurring observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_contract_version", "label_policy_version", "observation_id", "outcome_episode_id", "policy_id", "role", "cohort", "as_of", "horizon_end", "follow_up_through", "features", "label_status", "label_value", "outcome_type", "censoring_reason", "visible_event_ids"],
+  "properties": {
+    "observation_contract_version": {"const": "2.0.0"},
+    "label_policy_version": {"const": "2.0.0"},
+    "observation_id": {"type": "string", "pattern": "^obs_[0-9a-f]{24}$"},
+    "outcome_episode_id": {"type": "string", "pattern": "^epi_[0-9a-f]{24}$"},
+    "policy_id": {"type": "string", "pattern": "^pol_[0-9a-f]{24}$"},
+    "role": {"enum": ["fit", "selection", "calibration", "non_final_evaluation", "r2_acceptance"]},
+    "cohort": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+    "as_of": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "horizon_end": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "follow_up_through": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "features": {"type": "object", "additionalProperties": {"type": ["string", "integer", "number", "boolean", "null"]}},
+    "label_status": {"enum": ["observed_positive", "observed_negative", "right_censored"]},
+    "label_value": {"type": ["integer", "null"], "enum": [0, 1, null]},
+    "outcome_type": {"type": ["string", "null"], "enum": ["outcome.lapsed", "outcome.surrendered", null]},
+    "censoring_reason": {"type": ["string", "null"], "enum": ["administrative_censoring", "event_driven_censoring", null]},
+    "visible_event_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^evt_[0-9a-f]{24}$"}}
+  }
+}

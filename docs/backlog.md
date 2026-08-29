@@ -186,6 +186,8 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-05 - Implement the v2 modeling corpus and recurring observations
 
+**Status:** Implemented locally through [issue #45](https://github.com/anilreddy89/Inforsight/issues/45) on branch `feat/45-r2-05-v2-modeling-corpus`; awaiting pull-request review and merge.
+
 **Outcome:** A separately versioned deterministic generator and observation builder implement the approved v2 statistical design.
 
 **Scope:**

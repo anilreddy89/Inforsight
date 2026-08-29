@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/v2/oracle-sidecar/1.0.0",
+  "title": "Protected Inforsight v2 oracle sidecar",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sidecar_version", "quadrature_version", "run_identity", "observation_id", "outcome_episode_id", "oracle_conditional_lapse", "oracle_conditional_surrender", "oracle_conditional", "oracle_observable_lapse", "oracle_observable_surrender", "oracle_observable", "latent_frailty", "outcome_uniform_draw", "signal_mode", "drift_scenario"],
+  "properties": {
+    "sidecar_version": {"const": "1.0.0"},
+    "quadrature_version": {"const": "gauss-hermite-32-v1"},
+    "run_identity": {"type": "string", "pattern": "^[0-9a-f]{24}$"},
+    "observation_id": {"type": "string", "pattern": "^obs_[0-9a-f]{24}$"},
+    "outcome_episode_id": {"type": "string", "pattern": "^epi_[0-9a-f]{24}$"},
+    "oracle_conditional_lapse": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_conditional_surrender": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_conditional": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_observable_lapse": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_observable_surrender": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_observable": {"type": "number", "minimum": 0, "maximum": 1},
+    "latent_frailty": {"type": "number"},
+    "outcome_uniform_draw": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+    "signal_mode": {"enum": ["signal_present", "null_signal"]},
+    "drift_scenario": {"enum": ["stable", "moderate_drift", "stress_drift"]}
+  }
+}
