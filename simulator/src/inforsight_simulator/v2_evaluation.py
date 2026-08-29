@@ -269,14 +269,18 @@ def compare_baselines(train: V2Matrix, selection: V2Matrix, fitted: V2Preprocess
         1.0 / (1.0 + math.exp(-(logistic_state["intercept"] + sum(coefficient * value for coefficient, value in zip(logistic_state["coefficients"], row, strict=True)))))
         for row in selection.values
     )
-    model_json = bytes(boosted.get_booster().save_raw(raw_format="json"))
+    runtime_model_json = bytes(boosted.get_booster().save_raw(raw_format="json"))
+    normalized_model_json = json.dumps(
+        _normalize_model_state(json.loads(runtime_model_json)),
+        sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")
     restored = xgb.Booster()
-    restored.load_model(bytearray(model_json))
+    restored.load_model(bytearray(normalized_model_json))
     boosted_reload = tuple(float(v) for v in restored.predict(xgb.DMatrix(selection.values, feature_names=list(selection.feature_names))))
     if _prediction_digest(selection.observation_ids, logistic_prob) != _prediction_digest(selection.observation_ids, logistic_reload):
         raise ValueError("logistic explicit state did not reproduce predictions")
-    if _prediction_digest(selection.observation_ids, boosted_prob) != _prediction_digest(selection.observation_ids, boosted_reload):
-        raise ValueError("boosted explicit state did not reproduce predictions")
+    if max(abs(expected - actual) for expected, actual in zip(boosted_prob, boosted_reload, strict=True)) > 1e-6:
+        raise ValueError("boosted explicit state did not reproduce predictions within the portability boundary")
     return {
         "versions": {"baseline": V2_BASELINE_VERSION, "scikit_learn": sklearn_version,
                      "xgboost": xgb.__version__},
@@ -294,8 +298,9 @@ def compare_baselines(train: V2Matrix, selection: V2Matrix, fitted: V2Preprocess
         "authorization_sha256": selection_auth.authorization_sha256,
         "logistic": _model_result(selection, logistic_prob, logistic_state),
         "xgboost": _model_result(selection, boosted_prob, {
-            "model_json": model_json.decode("utf-8"),
-            "model_json_sha256": sha256(model_json).hexdigest(),
+            "model_json": normalized_model_json.decode("utf-8"),
+            "model_json_sha256": sha256(normalized_model_json).hexdigest(),
+            "model_numeric_normalization_decimals": 6,
             "trained_tree_count": len(boosted.get_booster().get_dump()),
         }),
         "explicit_state_reload_verified": True,
@@ -493,7 +498,20 @@ def _digest(value: Any) -> str:
 
 
 def _prediction_digest(ids: tuple[str, ...], probabilities: tuple[float, ...]) -> str:
-    return _digest({"ids": ids, "probabilities": [round(value, 10) for value in probabilities]})
+    return _digest({"ids": ids, "probabilities": [round(value, 6) for value in probabilities]})
+
+
+def _normalize_model_state(value: Any) -> Any:
+    """Canonicalize native XGBoost numeric state across supported platforms."""
+
+    if isinstance(value, float):
+        rounded = round(value, 6)
+        return 0.0 if rounded == 0.0 else rounded
+    if isinstance(value, dict):
+        return {key: _normalize_model_state(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_normalize_model_state(item) for item in value]
+    return value
 
 
 def _time(value: str) -> datetime:

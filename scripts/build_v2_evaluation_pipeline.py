@@ -87,6 +87,7 @@ def build_artifacts() -> dict[str, bytes]:
                      "lineage": {**lineage, "feature_manifest_sha256": sha256(_json(feature)).hexdigest()},
                      "final_holdout_status": FINAL_HOLDOUT_STATUS,
                      "claim_boundary":"synthetic_pipeline_engineering_only"})
+    baseline = _round_floats(baseline, 6)
     return {
         "split": _json(split), "feature": _json(feature), "diagnostic": _json(diagnostic),
         "diagnostic_report": _diagnostic_report(diagnostic).encode(), "baseline": _json(baseline),
@@ -114,6 +115,17 @@ def _json(value: dict) -> bytes:
         if isinstance(item, (list, tuple)): return [normalize(value) for value in item]
         return item
     return (json.dumps(normalize(value), indent=2, sort_keys=True) + "\n").encode()
+
+
+def _round_floats(value, decimals: int):
+    if isinstance(value, float):
+        rounded = round(value, decimals)
+        return 0.0 if rounded == 0.0 else rounded
+    if isinstance(value, dict):
+        return {key: _round_floats(item, decimals) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_round_floats(item, decimals) for item in value]
+    return value
 
 
 def _diagnostic_report(value: dict) -> str:
