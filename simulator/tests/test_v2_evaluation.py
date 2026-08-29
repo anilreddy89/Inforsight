@@ -8,7 +8,7 @@ import unittest
 from inforsight_simulator.v2_config import V2CorpusConfig
 from inforsight_simulator.v2_corpus import generate_v2_corpus, validate_v2_feature_payload
 from inforsight_simulator.v2_evaluation import (
-    FINAL_HOLDOUT_STATUS, UNKNOWN_CATEGORY, authorize, build_selection_fold,
+    FINAL_HOLDOUT_STATUS, PORTABLE_ARTIFACT_DECIMALS, UNKNOWN_CATEGORY, authorize, build_selection_fold,
     build_temporal_folds, fit_preprocessor, matrix_digest, preprocessor_digest,
     transform, validate_authorization, validate_temporal_fold,
 )
@@ -109,6 +109,11 @@ class V2EvaluationTests(unittest.TestCase):
     def test_final_holdout_is_not_materialized(self):
         self.assertEqual(FINAL_HOLDOUT_STATUS, "not_materialized")
         self.assertFalse(any(row.role == "final_release_holdout" for row in self.corpus.observations))
+
+    def test_portability_boundary_absorbs_subprecision_noise(self):
+        value = 0.1234
+        noise = 0.4 * 10 ** (-PORTABLE_ARTIFACT_DECIMALS)
+        self.assertEqual(round(value + noise, PORTABLE_ARTIFACT_DECIMALS), value)
 
 
 if __name__ == "__main__":

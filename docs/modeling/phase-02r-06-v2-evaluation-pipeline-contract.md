@@ -11,8 +11,8 @@
 | Diagnostics | `2.0.0` |
 | Baseline comparison | `2.0.0` |
 | Numeric metric normalization | 10 decimal places |
-| Native XGBoost JSON normalization | 6 decimal places before committed serialization and reload verification |
-| Baseline fitted-state, metric, and prediction-digest portability boundary | 6 decimal places |
+| Native XGBoost JSON normalization | 4 decimal places before committed serialization and reload verification |
+| Diagnostic and baseline committed-evidence portability boundary | 4 decimal places; runtime calculations retain full precision |
 
 R2-06 consumes only R2-05 public observations from corpus contract `2.0.0`. The primary target remains lapse-or-surrender in `(as_of, as_of + 90 elapsed days]`. Right-censored observations are accounted for but excluded from fitting and metrics. Protected oracle records are not accepted by this pipeline.
 

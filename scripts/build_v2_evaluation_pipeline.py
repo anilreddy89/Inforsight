@@ -18,6 +18,7 @@ from inforsight_simulator.v2_corpus import corpus_jsonl, generate_v2_corpus  # n
 from inforsight_simulator.v2_evaluation import (  # noqa: E402
     FINAL_HOLDOUT_STATUS, V2_BASELINE_VERSION, V2_DIAGNOSTIC_VERSION,
     V2_FEATURE_DICTIONARY_VERSION, V2_FEATURE_PIPELINE_VERSION, V2_SPLIT_VERSION,
+    PORTABLE_ARTIFACT_DECIMALS,
     build_selection_fold, build_temporal_folds, compare_baselines, diagnostics,
     fit_preprocessor, matrix_digest, preprocessor_digest, transform,
 )
@@ -87,7 +88,8 @@ def build_artifacts() -> dict[str, bytes]:
                      "lineage": {**lineage, "feature_manifest_sha256": sha256(_json(feature)).hexdigest()},
                      "final_holdout_status": FINAL_HOLDOUT_STATUS,
                      "claim_boundary":"synthetic_pipeline_engineering_only"})
-    baseline = _round_floats(baseline, 6)
+    diagnostic = _round_floats(diagnostic, PORTABLE_ARTIFACT_DECIMALS)
+    baseline = _round_floats(baseline, PORTABLE_ARTIFACT_DECIMALS)
     return {
         "split": _json(split), "feature": _json(feature), "diagnostic": _json(diagnostic),
         "diagnostic_report": _diagnostic_report(diagnostic).encode(), "baseline": _json(baseline),

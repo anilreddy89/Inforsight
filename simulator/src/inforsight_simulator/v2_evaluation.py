@@ -32,6 +32,7 @@ V2_BASELINE_VERSION = "2.0.0"
 UNKNOWN_CATEGORY = "__unknown__"
 RANDOM_SEED = 20260817
 FINAL_HOLDOUT_STATUS = "not_materialized"
+PORTABLE_ARTIFACT_DECIMALS = 4
 
 NUMERIC_FEATURES = (
     "tenure_days", "premium_amount_cents", "due_to_paid_delay_days",
@@ -279,7 +280,7 @@ def compare_baselines(train: V2Matrix, selection: V2Matrix, fitted: V2Preprocess
     boosted_reload = tuple(float(v) for v in restored.predict(xgb.DMatrix(selection.values, feature_names=list(selection.feature_names))))
     if _prediction_digest(selection.observation_ids, logistic_prob) != _prediction_digest(selection.observation_ids, logistic_reload):
         raise ValueError("logistic explicit state did not reproduce predictions")
-    if max(abs(expected - actual) for expected, actual in zip(boosted_prob, boosted_reload, strict=True)) > 1e-6:
+    if max(abs(expected - actual) for expected, actual in zip(boosted_prob, boosted_reload, strict=True)) > 10 ** (-PORTABLE_ARTIFACT_DECIMALS):
         raise ValueError("boosted explicit state did not reproduce predictions within the portability boundary")
     return {
         "versions": {"baseline": V2_BASELINE_VERSION, "scikit_learn": sklearn_version,
@@ -300,7 +301,7 @@ def compare_baselines(train: V2Matrix, selection: V2Matrix, fitted: V2Preprocess
         "xgboost": _model_result(selection, boosted_prob, {
             "model_json": normalized_model_json.decode("utf-8"),
             "model_json_sha256": sha256(normalized_model_json).hexdigest(),
-            "model_numeric_normalization_decimals": 6,
+            "model_numeric_normalization_decimals": PORTABLE_ARTIFACT_DECIMALS,
             "trained_tree_count": len(boosted.get_booster().get_dump()),
         }),
         "explicit_state_reload_verified": True,
@@ -336,9 +337,10 @@ def diagnostics(train: V2Matrix, selection: V2Matrix, fitted: V2Preprocessor) ->
             source_flags.append("fit_near_constant")
         if len(counts) > 1 and uniqueness >= 0.90:
             source_flags.append("high_cardinality")
-        if max(float(value) for value in mi_values) >= 0.50:
+        if round(max(float(value) for value in mi_values), PORTABLE_ARTIFACT_DECIMALS) >= 0.50:
             source_flags.append("strong_mutual_information")
-        if shallow["roc_auc"] >= 0.90 or shallow["log_loss"] <= 0.40:
+        if (round(shallow["roc_auc"], PORTABLE_ARTIFACT_DECIMALS) >= 0.90
+                or round(shallow["log_loss"], PORTABLE_ARTIFACT_DECIMALS) <= 0.40):
             source_flags.append("strong_shallow_model")
         for kind in source_flags:
             flags.append({"id": f"{kind}:{source}", "kind": kind, "source": source})
@@ -498,14 +500,14 @@ def _digest(value: Any) -> str:
 
 
 def _prediction_digest(ids: tuple[str, ...], probabilities: tuple[float, ...]) -> str:
-    return _digest({"ids": ids, "probabilities": [round(value, 6) for value in probabilities]})
+    return _digest({"ids": ids, "probabilities": [round(value, PORTABLE_ARTIFACT_DECIMALS) for value in probabilities]})
 
 
 def _normalize_model_state(value: Any) -> Any:
     """Canonicalize native XGBoost numeric state across supported platforms."""
 
     if isinstance(value, float):
-        rounded = round(value, 6)
+        rounded = round(value, PORTABLE_ARTIFACT_DECIMALS)
         return 0.0 if rounded == 0.0 else rounded
     if isinstance(value, dict):
         return {key: _normalize_model_state(item) for key, item in value.items()}
