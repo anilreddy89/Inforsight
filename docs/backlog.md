@@ -186,7 +186,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-05 - Implement the v2 modeling corpus and recurring observations
 
-**Status:** Implemented locally through [issue #45](https://github.com/anilreddy89/Inforsight/issues/45) on branch `feat/45-r2-05-v2-modeling-corpus`; awaiting pull-request review and merge.
+**Status:** Completed on 2026-08-29 through [issue #45](https://github.com/anilreddy89/Inforsight/issues/45) and [PR #46](https://github.com/anilreddy89/Inforsight/pull/46), merge commit `25c370d`. CI and the deterministic v2 corpus check passed; the final holdout remains `not_materialized`.
 
 **Outcome:** A separately versioned deterministic generator and observation builder implement the approved v2 statistical design.
 
@@ -210,6 +210,8 @@ For this solo-developer repository, follow the order strictly even where impleme
 **Depends on:** R2-04. **Blocks:** R2-06.
 
 ### R2-06 - Rebuild temporal evaluation data, features, and baselines on v2
+
+**Status:** Next strict dependency-gated increment; unblocked by merged R2-05 PR #46. No implementation issue or branch is active yet.
 
 **Outcome:** Versioned v2 split, feature, preprocessing, logistic, and boosted artifacts are regenerated under the approved evaluation protocol without overwriting v1 evidence.
 

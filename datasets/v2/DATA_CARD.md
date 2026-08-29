@@ -31,7 +31,7 @@ Conditional and observable oracle probabilities are generated into a separate pr
 ## Reproduction
 
 ```bash
-.venv/bin/python scripts/build_v2_modeling_corpus.py --check
+python3 scripts/build_v2_modeling_corpus.py --check
 ```
 
 The committed manifest records deterministic counts and SHA-256 digests. Raw histories, observations, and protected oracle rows regenerate in memory and are intentionally not committed as source artifacts.

@@ -2,6 +2,10 @@
 
 This directory contains versioned JSON Schema definitions and small valid and invalid fictional examples.
 
+## Version 2 statistical-corpus contracts
+
+[`v2/`](v2/) contains the separately versioned policy-event `2.0.0`, recurring-observation `2.0.0`, and protected oracle-sidecar `1.0.0` schemas implemented through R2-05 issue #45 and PR #46. These contracts support the non-final synthetic modeling corpus without changing the v1 envelope, payload, or observation bytes. Oracle, latent, draw, scenario, role, identifier, outcome, and post-cutoff concepts remain outside the model-visible feature surface.
+
 ## Policy-event envelope
 
 [`policy-event.schema.json`](policy-event.schema.json) defines version `1.0.0` of the shared envelope for immutable events in a fictional policy history. The envelope selects a strict schema under [`payloads/`](payloads/) according to `event_type`. Unsupported event types, mismatched payloads, missing required fields, and unknown payload properties are rejected.
