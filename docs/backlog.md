@@ -211,7 +211,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-06 - Rebuild temporal evaluation data, features, and baselines on v2
 
-**Status:** Next strict dependency-gated increment; unblocked by merged R2-05 PR #46. No implementation issue or branch is active yet.
+**Status:** Implemented locally through [issue #48](https://github.com/anilreddy89/Inforsight/issues/48) on branch `feat/48-r2-06-v2-evaluation-pipeline`. Deterministic v2 folds, feature/preprocessing state, diagnostics, frozen baseline comparison, explicit-state reload, and authorization evidence pass 10 focused tests, 231 simulator tests, nine contract tests, artifact checks, and repository-boundary checks. Hosted PR merge remains required; the final holdout remains `not_materialized`.
 
 **Outcome:** Versioned v2 split, feature, preprocessing, logistic, and boosted artifacts are regenerated under the approved evaluation protocol without overwriting v1 evidence.
 

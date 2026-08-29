@@ -1,0 +1,698 @@
+{
+  "billing_frequency_support": {
+    "fit": [
+      "annual",
+      "monthly",
+      "quarterly",
+      "semiannual"
+    ],
+    "selection": [
+      "annual",
+      "monthly",
+      "quarterly",
+      "semiannual"
+    ]
+  },
+  "configuration": {
+    "cardinality_ratio_threshold": 0.9,
+    "mutual_information_threshold": 0.5,
+    "near_constant_threshold": 0.95,
+    "perturbation_auc_delta": 0.1,
+    "perturbation_log_loss_delta": 0.1,
+    "seed": 20260817,
+    "shallow_auc_threshold": 0.9,
+    "shallow_log_loss_threshold": 0.4
+  },
+  "decision": "investigate",
+  "diagnostic_version": "2.0.0",
+  "dispositions": [
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:tenure_days",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:premium_amount_cents",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:due_to_paid_delay_days",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "allow",
+      "flag": "high_cardinality:rolling_on_time_payment_rate",
+      "rationale": "approved point-in-time feature; the screen reflects expected continuous or sparse synthetic support"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:rolling_on_time_payment_rate",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:recent_failed_payment_count",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:recent_retry_count",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:recent_recovery_count",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:arrears_duration_days",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:recent_notice_count",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:recent_service_contact_count",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:visible_grace_entries",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:visible_grace_recoveries",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:payment_attribute_missing",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:contact_attribute_missing",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:product_type",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:billing_frequency",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_near_constant:notice_category",
+      "rationale": "approved point-in-time feature; the screen reflects expected continuous or sparse synthetic support"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:notice_category",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    },
+    {
+      "decision": "investigate",
+      "flag": "strong_shallow_model:contact_category",
+      "rationale": "association screen requires R2-07 multi-seed and negative-control evidence before interpretation"
+    }
+  ],
+  "final_holdout_status": "not_materialized",
+  "flags": [
+    {
+      "id": "strong_shallow_model:tenure_days",
+      "kind": "strong_shallow_model",
+      "source": "tenure_days"
+    },
+    {
+      "id": "strong_shallow_model:premium_amount_cents",
+      "kind": "strong_shallow_model",
+      "source": "premium_amount_cents"
+    },
+    {
+      "id": "strong_shallow_model:due_to_paid_delay_days",
+      "kind": "strong_shallow_model",
+      "source": "due_to_paid_delay_days"
+    },
+    {
+      "id": "high_cardinality:rolling_on_time_payment_rate",
+      "kind": "high_cardinality",
+      "source": "rolling_on_time_payment_rate"
+    },
+    {
+      "id": "strong_shallow_model:rolling_on_time_payment_rate",
+      "kind": "strong_shallow_model",
+      "source": "rolling_on_time_payment_rate"
+    },
+    {
+      "id": "strong_shallow_model:recent_failed_payment_count",
+      "kind": "strong_shallow_model",
+      "source": "recent_failed_payment_count"
+    },
+    {
+      "id": "strong_shallow_model:recent_retry_count",
+      "kind": "strong_shallow_model",
+      "source": "recent_retry_count"
+    },
+    {
+      "id": "strong_shallow_model:recent_recovery_count",
+      "kind": "strong_shallow_model",
+      "source": "recent_recovery_count"
+    },
+    {
+      "id": "strong_shallow_model:arrears_duration_days",
+      "kind": "strong_shallow_model",
+      "source": "arrears_duration_days"
+    },
+    {
+      "id": "strong_shallow_model:recent_notice_count",
+      "kind": "strong_shallow_model",
+      "source": "recent_notice_count"
+    },
+    {
+      "id": "strong_shallow_model:recent_service_contact_count",
+      "kind": "strong_shallow_model",
+      "source": "recent_service_contact_count"
+    },
+    {
+      "id": "strong_shallow_model:visible_grace_entries",
+      "kind": "strong_shallow_model",
+      "source": "visible_grace_entries"
+    },
+    {
+      "id": "strong_shallow_model:visible_grace_recoveries",
+      "kind": "strong_shallow_model",
+      "source": "visible_grace_recoveries"
+    },
+    {
+      "id": "strong_shallow_model:payment_attribute_missing",
+      "kind": "strong_shallow_model",
+      "source": "payment_attribute_missing"
+    },
+    {
+      "id": "strong_shallow_model:contact_attribute_missing",
+      "kind": "strong_shallow_model",
+      "source": "contact_attribute_missing"
+    },
+    {
+      "id": "strong_shallow_model:product_type",
+      "kind": "strong_shallow_model",
+      "source": "product_type"
+    },
+    {
+      "id": "strong_shallow_model:billing_frequency",
+      "kind": "strong_shallow_model",
+      "source": "billing_frequency"
+    },
+    {
+      "id": "fit_near_constant:notice_category",
+      "kind": "fit_near_constant",
+      "source": "notice_category"
+    },
+    {
+      "id": "strong_shallow_model:notice_category",
+      "kind": "strong_shallow_model",
+      "source": "notice_category"
+    },
+    {
+      "id": "strong_shallow_model:contact_category",
+      "kind": "strong_shallow_model",
+      "source": "contact_category"
+    }
+  ],
+  "identifier_screen": {
+    "hits": [],
+    "status": "passed"
+  },
+  "lineage": {
+    "feature_dictionary_sha256": "2d9c6a19414649eea31c745ca0fad9b6dfeabbf6d72a3f4189377e59bac4c377",
+    "feature_manifest_sha256": "f1b8053e06dea6723997b1f79911478e59dceb9c973cbb4a97c75e7118b4bb0a",
+    "public_observations_sha256": "41fa55cf0b77fc31a0fc90654aa8bcc501e851560a4730b236799806b33a7443",
+    "r2_05_manifest_sha256": "92229f5ce114fbabd6d022ccb011d50f07925c517e4755aef401456fcb6f6595"
+  },
+  "missingness_indicator_rates": {
+    "contact_attribute_missing": {
+      "fit_rate": 0.1057,
+      "selection_rate": 0.1227
+    },
+    "payment_attribute_missing": {
+      "fit_rate": 0.053,
+      "selection_rate": 0.0558
+    }
+  },
+  "phase": "R2-06",
+  "selection_unknown_counts": {
+    "billing_frequency": 0,
+    "contact_category": 0,
+    "notice_category": 0,
+    "product_type": 0
+  },
+  "source_results": [
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0011,
+      "output_width": 1,
+      "selection_unique_patterns": 8,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0461,
+        "log_loss": 0.1948,
+        "roc_auc": 0.5
+      },
+      "source": "tenure_days",
+      "train_majority_fraction": 0.2041,
+      "train_unique_patterns": 9,
+      "train_uniqueness_ratio": 0.0011
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0082,
+      "output_width": 1,
+      "selection_unique_patterns": 262,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0459,
+        "log_loss": 0.193,
+        "roc_auc": 0.5452
+      },
+      "source": "premium_amount_cents",
+      "train_majority_fraction": 0.0026,
+      "train_unique_patterns": 1682,
+      "train_uniqueness_ratio": 0.2001
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0,
+      "output_width": 1,
+      "selection_unique_patterns": 254,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1929,
+        "roc_auc": 0.5137
+      },
+      "source": "due_to_paid_delay_days",
+      "train_majority_fraction": 0.0531,
+      "train_unique_patterns": 6392,
+      "train_uniqueness_ratio": 0.7606
+    },
+    {
+      "flags": [
+        "high_cardinality",
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0051,
+      "output_width": 1,
+      "selection_unique_patterns": 269,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1942,
+        "roc_auc": 0.5386
+      },
+      "source": "rolling_on_time_payment_rate",
+      "train_majority_fraction": 0.0001,
+      "train_unique_patterns": 8404,
+      "train_uniqueness_ratio": 1.0
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0018,
+      "output_width": 1,
+      "selection_unique_patterns": 3,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0458,
+        "log_loss": 0.1918,
+        "roc_auc": 0.5712
+      },
+      "source": "recent_failed_payment_count",
+      "train_majority_fraction": 0.7132,
+      "train_unique_patterns": 3,
+      "train_uniqueness_ratio": 0.0004
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0018,
+      "output_width": 1,
+      "selection_unique_patterns": 3,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0458,
+        "log_loss": 0.1918,
+        "roc_auc": 0.5712
+      },
+      "source": "recent_retry_count",
+      "train_majority_fraction": 0.7132,
+      "train_unique_patterns": 3,
+      "train_uniqueness_ratio": 0.0004
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0042,
+      "output_width": 1,
+      "selection_unique_patterns": 3,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1942,
+        "roc_auc": 0.5236
+      },
+      "source": "recent_recovery_count",
+      "train_majority_fraction": 0.7916,
+      "train_unique_patterns": 3,
+      "train_uniqueness_ratio": 0.0004
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0044,
+      "output_width": 1,
+      "selection_unique_patterns": 28,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1937,
+        "roc_auc": 0.5445
+      },
+      "source": "arrears_duration_days",
+      "train_majority_fraction": 0.7132,
+      "train_unique_patterns": 29,
+      "train_uniqueness_ratio": 0.0035
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.004,
+      "output_width": 1,
+      "selection_unique_patterns": 4,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0461,
+        "log_loss": 0.1949,
+        "roc_auc": 0.5282
+      },
+      "source": "recent_notice_count",
+      "train_majority_fraction": 0.6014,
+      "train_unique_patterns": 4,
+      "train_uniqueness_ratio": 0.0005
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0032,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1935,
+        "roc_auc": 0.6553
+      },
+      "source": "recent_service_contact_count",
+      "train_majority_fraction": 0.6967,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0018,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0458,
+        "log_loss": 0.1918,
+        "roc_auc": 0.5712
+      },
+      "source": "visible_grace_entries",
+      "train_majority_fraction": 0.7132,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0059,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1942,
+        "roc_auc": 0.5236
+      },
+      "source": "visible_grace_recoveries",
+      "train_majority_fraction": 0.7916,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0461,
+        "log_loss": 0.1945,
+        "roc_auc": 0.4707
+      },
+      "source": "payment_attribute_missing",
+      "train_majority_fraction": 0.947,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0016,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.194,
+        "roc_auc": 0.476
+      },
+      "source": "contact_attribute_missing",
+      "train_majority_fraction": 0.8943,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0002,
+      "output_width": 3,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.1941,
+        "roc_auc": 0.5003
+      },
+      "source": "product_type",
+      "train_majority_fraction": 0.5065,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0001,
+      "output_width": 5,
+      "selection_unique_patterns": 4,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0461,
+        "log_loss": 0.1948,
+        "roc_auc": 0.4422
+      },
+      "source": "billing_frequency",
+      "train_majority_fraction": 0.2573,
+      "train_unique_patterns": 4,
+      "train_uniqueness_ratio": 0.0005
+    },
+    {
+      "flags": [
+        "fit_near_constant",
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0001,
+      "output_width": 3,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0462,
+        "log_loss": 0.1965,
+        "roc_auc": 0.4797
+      },
+      "source": "notice_category",
+      "train_majority_fraction": 0.9837,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    },
+    {
+      "flags": [
+        "strong_shallow_model"
+      ],
+      "mutual_information_max": 0.0,
+      "output_width": 3,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.046,
+        "log_loss": 0.194,
+        "roc_auc": 0.476
+      },
+      "source": "contact_category",
+      "train_majority_fraction": 0.8943,
+      "train_unique_patterns": 2,
+      "train_uniqueness_ratio": 0.0002
+    }
+  ],
+  "targeted_perturbations": [
+    {
+      "logistic_auc_delta": -0.0207,
+      "logistic_log_loss_delta": 0.0009,
+      "source": "arrears_duration_days",
+      "xgboost_auc_delta": -0.0219,
+      "xgboost_log_loss_delta": 0.0015
+    },
+    {
+      "logistic_auc_delta": 0.0282,
+      "logistic_log_loss_delta": -0.0025,
+      "source": "billing_frequency",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0006
+    },
+    {
+      "logistic_auc_delta": -0.0373,
+      "logistic_log_loss_delta": 0.0053,
+      "source": "contact_attribute_missing",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": 0.0024,
+      "logistic_log_loss_delta": 0.0013,
+      "source": "contact_category",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": -0.0075,
+      "logistic_log_loss_delta": 0.0009,
+      "source": "due_to_paid_delay_days",
+      "xgboost_auc_delta": -0.0252,
+      "xgboost_log_loss_delta": 0.0014
+    },
+    {
+      "logistic_auc_delta": 0.0108,
+      "logistic_log_loss_delta": -0.0012,
+      "source": "notice_category",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": 0.0072,
+      "logistic_log_loss_delta": -0.0013,
+      "source": "payment_attribute_missing",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": 0.0192,
+      "logistic_log_loss_delta": -0.0026,
+      "source": "premium_amount_cents",
+      "xgboost_auc_delta": -0.0086,
+      "xgboost_log_loss_delta": -0.001
+    },
+    {
+      "logistic_auc_delta": -0.0117,
+      "logistic_log_loss_delta": 0.0016,
+      "source": "product_type",
+      "xgboost_auc_delta": -0.0254,
+      "xgboost_log_loss_delta": 0.0006
+    },
+    {
+      "logistic_auc_delta": -0.0457,
+      "logistic_log_loss_delta": 0.001,
+      "source": "recent_failed_payment_count",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": 0.0003,
+      "logistic_log_loss_delta": -0.0002,
+      "source": "recent_notice_count",
+      "xgboost_auc_delta": 0.0051,
+      "xgboost_log_loss_delta": 0.0004
+    },
+    {
+      "logistic_auc_delta": -0.0303,
+      "logistic_log_loss_delta": 0.0033,
+      "source": "recent_recovery_count",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": -0.1118,
+      "logistic_log_loss_delta": 0.0062,
+      "source": "recent_retry_count",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": -0.0039,
+      "logistic_log_loss_delta": 0.0004,
+      "source": "recent_service_contact_count",
+      "xgboost_auc_delta": -0.0009,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": 0.0255,
+      "logistic_log_loss_delta": 0.0008,
+      "source": "rolling_on_time_payment_rate",
+      "xgboost_auc_delta": 0.0753,
+      "xgboost_log_loss_delta": -0.0054
+    },
+    {
+      "logistic_auc_delta": -0.0054,
+      "logistic_log_loss_delta": -0.0002,
+      "source": "tenure_days",
+      "xgboost_auc_delta": 0.0002,
+      "xgboost_log_loss_delta": -0.0003
+    },
+    {
+      "logistic_auc_delta": -0.0159,
+      "logistic_log_loss_delta": 0.0048,
+      "source": "visible_grace_entries",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    },
+    {
+      "logistic_auc_delta": 0.0027,
+      "logistic_log_loss_delta": -0.0009,
+      "source": "visible_grace_recoveries",
+      "xgboost_auc_delta": 0.0,
+      "xgboost_log_loss_delta": 0.0
+    }
+  ]
+}

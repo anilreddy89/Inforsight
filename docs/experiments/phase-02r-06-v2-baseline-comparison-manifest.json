@@ -1,0 +1,86 @@
+{
+  "artifact_version": "2.0.0",
+  "authorization_sha256": "1e0f433bbf1dc5801611fdf10d56da7d21f519edea63fcdeecf453df877caabb",
+  "claim_boundary": "synthetic_pipeline_engineering_only",
+  "explicit_state_reload_verified": true,
+  "final_holdout_status": "not_materialized",
+  "lineage": {
+    "feature_dictionary_sha256": "2d9c6a19414649eea31c745ca0fad9b6dfeabbf6d72a3f4189377e59bac4c377",
+    "feature_manifest_sha256": "f1b8053e06dea6723997b1f79911478e59dceb9c973cbb4a97c75e7118b4bb0a",
+    "public_observations_sha256": "41fa55cf0b77fc31a0fc90654aa8bcc501e851560a4730b236799806b33a7443",
+    "r2_05_manifest_sha256": "92229f5ce114fbabd6d022ccb011d50f07925c517e4755aef401456fcb6f6595"
+  },
+  "logistic": {
+    "metrics": {
+      "average_predicted_probability": 0.0363,
+      "brier_score": 0.0465,
+      "log_loss": 0.1997,
+      "negative": 256,
+      "observed_positive_fraction": 0.0483,
+      "positive": 13,
+      "records": 269,
+      "roc_auc": 0.5427
+    },
+    "portable_fit_evidence": {
+      "coefficient_count": 28,
+      "converged": true,
+      "feature_count": 28,
+      "runtime_prediction_reload_verified": true
+    }
+  },
+  "membership_sha256": "440ff2f8d8057451ff2915495408b601540fc0558233a85539478c8ae6965a0b",
+  "phase": "R2-06",
+  "prediction_digest_boundary": {
+    "committed": false,
+    "reason": "Platform-specific fitted arithmetic is validated at runtime and excluded from cross-platform committed bytes.",
+    "runtime_verified": true
+  },
+  "preprocessor_sha256": "9e241d98cbb578647967eaf4bde3b0651c86f5537a352d0db67e08b83b413369",
+  "selection_matrix_sha256": "a671066b7f4b5bd8a539a9a90b00763f0c8292f70e09557ee2ae85265fd88d0f",
+  "specifications": {
+    "logistic": {
+      "C": 1.0,
+      "max_iter": 1000,
+      "penalty": "l2",
+      "random_seed": 20260817,
+      "solver": "liblinear",
+      "tol": 0.0
+    },
+    "xgboost": {
+      "early_stopping": false,
+      "learning_rate": 0.1,
+      "max_depth": 2,
+      "min_child_weight": 2.0,
+      "n_estimators": 25,
+      "n_jobs": 1,
+      "random_seed": 20260817,
+      "tree_method": "exact"
+    }
+  },
+  "training_matrix_sha256": "c6e24d4da0f78348ac3273b8820aa2380a05b9ee64db45386054655e75bd9d8d",
+  "versions": {
+    "baseline": "2.0.0",
+    "scikit_learn": "1.7.2",
+    "xgboost": "3.3.0"
+  },
+  "xgboost": {
+    "metrics": {
+      "average_predicted_probability": 0.0788,
+      "brier_score": 0.0473,
+      "log_loss": 0.2014,
+      "negative": 256,
+      "observed_positive_fraction": 0.0483,
+      "positive": 13,
+      "records": 269,
+      "roc_auc": 0.5514
+    },
+    "portable_fit_evidence": {
+      "committed_native_state": false,
+      "expected_tree_count": 25,
+      "native_state_format": "xgboost_json",
+      "reason": "Native fitted numeric bytes vary across supported operating systems; runtime reload is verified before portable evidence is emitted.",
+      "runtime_prediction_reload_verified": true,
+      "trained_tree_count": 25
+    }
+  }
+}
