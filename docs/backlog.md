@@ -135,7 +135,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-03 - Harden scoring authorization and retire the v1 fixture as a release holdout
 
-**Status:** Implemented locally for [issue #39](https://github.com/anilreddy89/Inforsight/issues/39) on branch `fix/39-r2-03-scoring-authorization`; awaiting commit, pull request, and merge. R2-02 completed through issue #36, PR #37, and merge commit `7b23f1c`.
+**Status:** Completed on 2026-08-28 through [issue #39](https://github.com/anilreddy89/Inforsight/issues/39) and [PR #40](https://github.com/anilreddy89/Inforsight/pull/40), merge commit `5eb67c1`. Ten focused authorization tests, 205 simulator tests, six contract tests, all artifact checks, and repository-boundary checks pass.
 
 **Outcome:** Changing a caller-controlled partition label cannot authorize prediction or evaluation, and the release holdout boundary is explicit and auditable.
 
@@ -149,16 +149,18 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 **Acceptance checks:**
 
-- [ ] Direct and relabeled unauthorized matrices fail before prediction.
-- [ ] Authorized validation or calibration matrices succeed only when membership and digests match the frozen manifest.
-- [ ] Logistic, boosted, diagnostics, and reload paths share the same authorization invariant.
-- [ ] Negative tests cover relabeling, row substitution, reordering, feature substitution, and digest mismatch.
-- [ ] No final test metric is computed as part of this issue.
-- [ ] Focused tests and `make check` pass.
+- [x] Direct and relabeled unauthorized matrices fail before prediction.
+- [x] Authorized validation matrices succeed only when membership, purpose, feature contract, preprocessing identity, and digests match frozen evidence.
+- [x] Logistic, boosted, diagnostics, and reload paths share the same authorization invariant.
+- [x] Negative tests cover relabeling, row substitution, reordering, feature substitution, target substitution, authorization tampering, and digest mismatch.
+- [x] No final test metric was computed as part of this issue.
+- [x] Focused tests and `make check` pass.
 
 **Depends on:** R2-02. **Blocks:** R2-04 and any future final-test protocol.
 
 ### R2-04 - Approve the versioned v2 statistical simulator and observation design
+
+**Status:** Planned and next in the strict merge train after R2-03 completed through PR #40 and merge commit `5eb67c1`.
 
 **Outcome:** A reviewed ADR and versioned contract define a modeling corpus that can test known statistical behavior without changing the v1 coverage fixture.
 

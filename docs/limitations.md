@@ -151,20 +151,20 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent engineering review after Phase 2.07 |
-| Owner | R2-03 scoring-authorization repair through GitHub issue #39; R2-00 documentation reconciliation completed through PR #30 |
+| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout protocol remains owned by R2-04 and the later authorized release workflow |
 | Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
 | Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
 | Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
 
 #### Finding
 
-The scoring APIs authorize validation predictions primarily from a caller-controlled partition string and feature-name checks. Relabeling the immutable v1 test `ModelMatrix` as `validation` produced logistic and boosted predictions during adversarial review. No test metric was computed and no repository artifact was changed, but prediction access occurred. The v1 fixture must therefore be described as review-exposed prediction-only historical evidence, not untouched or `sealed_not_scored`.
+Before R2-03, the scoring APIs authorized validation predictions primarily from a caller-controlled partition string and feature-name checks. Relabeling the immutable v1 test `ModelMatrix` as `validation` produced logistic and boosted predictions during adversarial review. No test metric was computed and no repository artifact was changed, but prediction access occurred. The v1 fixture must therefore be described as review-exposed prediction-only historical evidence, not untouched or `sealed_not_scored`.
 
-The deterministic corpus, split membership, and transformed matrices are also locally inspectable. The current control is an API convention and misuse guard, not a hard security or access-control boundary.
+R2-03 replaced that convention with a digest-bound local integrity and misuse guard. The deterministic corpus, split membership, and transformed matrices remain locally inspectable, so the repaired control is not a hard security or access-control boundary against a party who can modify repository code or files.
 
 #### Work that may continue
 
-- R2 correctness, scoring-authorization, inference-contract, and negative-test work.
+- R2 statistical-design, corpus, evaluation-data, and acceptance-gate work.
 - Reproduction of train and validation pipeline artifacts under their historical engineering-only claim.
 - Design of a future access-controlled one-shot evaluation protocol.
 
@@ -179,14 +179,16 @@ The deterministic corpus, split membership, and transformed matrices are also lo
 
 Bind authorized scoring membership, row identity, feature contract, preprocessing identity, and matrix digests to verified fitted state or an evaluation manifest. Separate ordinary unlabeled inference from experiment evaluation. Preserve the v1 test fixture only as historical pipeline evidence, and create the future v2 release holdout under a predeclared access-controlled one-shot protocol.
 
-R2-03 implementation is active in issue #39. Completion may satisfy the local scoring-authorization checks below, but it cannot close the future one-shot final-holdout obligation.
+R2-03 completed through issue #39 and PR #40, merge commit `5eb67c1`. Scoring authorization contract `1.0.0` now binds exact membership, row order, feature contract, labeled-matrix contents, training-matrix identity, fitted-preprocessor identity, and approved purpose across logistic, boosted, diagnostic, comparison, and reload paths. Ordinary inference uses a separate target-free matrix. The v1 fixture remains review-exposed historical evidence and is not re-sealed.
+
+The limitation remains `Scheduled` because the future v2 final-holdout protocol and one-shot release workflow are not yet approved or proven.
 
 #### Closure evidence
 
-- [ ] Current repository status and affected reports describe the v1 fixture truthfully without rewriting historical artifacts.
-- [ ] Relabeling, row substitution, reordering, feature substitution, and digest mismatch fail across logistic, boosted, diagnostic, and reload paths.
-- [ ] Authorized non-final scoring succeeds only for verified membership and fitted-state compatibility.
-- [ ] Unlabeled inference does not depend on experiment partition names or targets.
+- [x] Current repository status and affected reports describe the v1 fixture truthfully without rewriting historical artifacts.
+- [x] Relabeling, row substitution, reordering, feature substitution, target substitution, authorization tampering, and digest mismatch fail across logistic, boosted, diagnostic, and reload paths.
+- [x] Authorized non-final scoring succeeds only for verified membership, purpose, preprocessing identity, and fitted-state compatibility.
+- [x] Unlabeled inference does not depend on experiment partition names or targets.
 - [ ] The v2 final-holdout protocol is approved before holdout materialization or access.
 - [ ] A later one-shot evaluation records the authorized accessor, frozen artifact digests, command, timestamp, and result without permitting iterative model changes.
 
