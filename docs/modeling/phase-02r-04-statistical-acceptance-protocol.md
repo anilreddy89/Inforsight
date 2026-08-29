@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Protocol version | `1.0.0` |
-| Status | Predeclared; no v2 result inspected |
+| Status | Approved and predeclared through PR #43, merge commit `1fc48ad`; no v2 result inspected |
 | Governing issue | [#42](https://github.com/anilreddy89/Inforsight/issues/42) |
 | Simulator/observation contract | `phase-02r-04-v2-statistical-simulator-and-observation-contract.md` |
 | Decision point | R2-07 |

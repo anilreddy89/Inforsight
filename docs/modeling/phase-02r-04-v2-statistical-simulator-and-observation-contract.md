@@ -8,7 +8,7 @@
 | Observation contract | `2.0.0` |
 | Label policy | `2.0.0` |
 | Evaluation protocol | `1.0.0` |
-| Status | Proposed in issue #42; no v2 result may be generated before acceptance and merge |
+| Status | Approved through issue #42 and PR #43, merge commit `1fc48ad`; no v2 result has been generated |
 | ADR | `docs/adr/0004-versioned-v2-statistical-simulator-and-evaluation-design.md` |
 | Acceptance protocol | `docs/modeling/phase-02r-04-statistical-acceptance-protocol.md` |
 
