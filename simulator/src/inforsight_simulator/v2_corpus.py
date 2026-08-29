@@ -26,6 +26,7 @@ V2_EVENT_SCHEMA_VERSION = "2.0.0"
 V2_ORACLE_SIDECAR_VERSION = "1.0.0"
 V2_QUADRATURE_VERSION = "gauss-hermite-32-v1"
 V2_ARTIFACT_VERSION = "1.0.0"
+V2_NUMERIC_SERIALIZATION_DECIMALS = 10
 _PRODUCTS = ("fictional_term_life", "fictional_whole_life")
 _ROLES = ("fit", "selection", "calibration", "non_final_evaluation", "r2_acceptance")
 _ROLE_COUNTS_PER_150 = (75, 15, 15, 15, 30)
@@ -380,10 +381,27 @@ def validate_v2_corpus(corpus: V2Corpus, config: V2CorpusConfig) -> None:
 
 def corpus_jsonl(records: tuple[Any, ...]) -> bytes:
     return ("\n".join(
-        json.dumps(record.to_dict() if hasattr(record, "to_dict") else asdict(record),
+        json.dumps(_normalize_serialized_numbers(
+                       record.to_dict() if hasattr(record, "to_dict") else asdict(record)
+                   ),
                    allow_nan=False, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
         for record in records
     ) + "\n").encode("ascii")
+
+
+def _normalize_serialized_numbers(value: Any) -> Any:
+    """Normalize computed floats for cross-platform canonical artifact bytes."""
+
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("v2 artifacts cannot serialize NaN or infinity")
+        normalized = round(value, V2_NUMERIC_SERIALIZATION_DECIMALS)
+        return 0.0 if normalized == 0.0 else normalized
+    if isinstance(value, dict):
+        return {key: _normalize_serialized_numbers(nested) for key, nested in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_normalize_serialized_numbers(nested) for nested in value]
+    return value
 
 
 def _episode_features(

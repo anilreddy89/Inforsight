@@ -24,6 +24,8 @@ The oracle sidecar is not embedded in public observations. The frozen v2 feature
 
 `scripts/build_v2_modeling_corpus.py` regenerates the default 3,600-policy corpus and verifies `docs/experiments/phase-02r-05-v2-corpus-manifest.json`. The manifest records structural counts and independent SHA-256 digests for histories, public observations, and the protected sidecar. Large raw rows and protected oracle values are deliberately regenerated rather than committed.
 
+Computed floating-point values use canonical finite JSON serialization rounded to 10 decimal places before artifact hashing. Runtime calculations retain full precision. This normalization prevents platform-specific NumPy/libm differences from changing provenance bytes without weakening the numeric reference tests.
+
 The data card is `datasets/v2/DATA_CARD.md`. No temporal split, feature matrix, fitted model, metric report, calibration, explanation, R2-07 decision, or final holdout is produced by R2-05.
 
 ## Reproduction

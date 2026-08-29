@@ -40,6 +40,9 @@ class V2CorpusTest(unittest.TestCase):
             corpus_jsonl(self.corpus.observations),
             corpus_jsonl(repeated.observations),
         )
+        oracle_bytes = corpus_jsonl(self.corpus.oracle_sidecar)
+        self.assertNotIn(b"NaN", oracle_bytes)
+        self.assertNotIn(b"Infinity", oracle_bytes)
 
     def test_recurring_episodes_are_unique_and_non_overlapping(self) -> None:
         by_policy: dict[str, list] = {}
