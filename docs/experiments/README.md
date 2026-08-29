@@ -4,7 +4,7 @@ Record each meaningful experiment with its question, data version, observation b
 
 Current machine-readable experiment evidence includes:
 
-The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeline evidence. Their recorded `sealed_not_scored` state describes the artifact-generation runs at the time. Independent review after Phase 2.07 later generated predictions from the v1 test fixture through a partition-relabeling bypass; no test metric was computed. Current holdout status and remediation are governed by `LIM-002-003` and R2-03.
+The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeline evidence. Their recorded `sealed_not_scored` state describes the artifact-generation runs at the time. Independent review after Phase 2.07 later generated predictions from the v1 test fixture through a partition-relabeling bypass; no test metric was computed. R2-03 repaired the local scoring boundary through issue #39 and PR #40 without changing these artifacts. The fixture remains review-exposed historical evidence, while the future one-shot holdout obligation remains governed by `LIM-002-003`.
 
 - `phase-01-07-synthetic-rate-assessment.json` — deterministic Phase 1 aggregate assessment.
 - `phase-02-01-observation-sufficiency.json` — deterministic observation counts, contract boundary, field inventory, limitations, and the Phase 2 proceed-with-limitations decision.
