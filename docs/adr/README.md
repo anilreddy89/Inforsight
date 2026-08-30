@@ -8,4 +8,4 @@ ADRs capture decisions that are costly or confusing to rediscover. Use the next 
 - [0002 — Separate risk estimation from action eligibility](0002-separate-risk-from-action-eligibility.md)
 - [0003 — Start locally and defer distributed infrastructure](0003-start-local-and-defer-distributed-infrastructure.md)
 - [0004 — Introduce a versioned statistical simulator and predeclared evaluation gate](0004-versioned-v2-statistical-simulator-and-evaluation-design.md) — accepted through issue #42 and PR #43
-- [0005 — Replace v2 with a dual-time, matched-control v3 statistical substrate](0005-replace-v2-with-a-dual-time-matched-control-v3-statistical-substrate.md) — proposed through issue #53
+- [0005 — Replace v2 with a dual-time, matched-control v3 statistical substrate](0005-replace-v2-with-a-dual-time-matched-control-v3-statistical-substrate.md) — accepted through issue #53 and PR #54
