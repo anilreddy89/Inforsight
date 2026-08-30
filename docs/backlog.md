@@ -237,6 +237,8 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-07 - Run the predeclared statistical acceptance gate
 
+**Status:** Implemented locally through [issue #51](https://github.com/anilreddy89/Inforsight/issues/51), pending pull-request review. The fail-closed readiness gate records `stop` before model fitting because its structural fixture detects post-cutoff ingestion leakage. Seven independent readiness failures also require versioned redesign. No acceptance metrics were generated, the final holdout remains `not_materialized`, and P2-08/P2-09 remain paused.
+
 **Outcome:** Governed multi-seed and temporal evidence determines whether v2 is suitable for resuming calibration and model interpretation.
 
 **Scope:**
@@ -252,12 +254,18 @@ For this solo-developer repository, follow the order strictly even where impleme
 - [ ] Null-signal and label-shuffle behavior is consistent with chance within the predeclared uncertainty rule.
 - [ ] Known simulated signal is recovered consistently across seeds and temporal folds according to the predeclared rule.
 - [ ] Results include uncertainty, learning behavior, failure cases, and sensitivity to missingness, categories, and temporal shift.
-- [ ] No final release holdout is materialized or scored during acceptance testing.
-- [ ] Every claim is limited to synthetic signal recovery and pipeline robustness unless a later governed external-data protocol supports more.
-- [ ] The decision note identifies which limitations close, remain open, or require redesign, with objective evidence links.
-- [ ] Reproduction commands and full repository checks pass.
+- [x] No final release holdout is materialized or scored during acceptance testing.
+- [x] Every claim is limited to protocol readiness and synthetic pipeline correctness unless a later governed external-data protocol supports more.
+- [x] The decision note identifies which limitations remain open and which findings require corrective redesign, with objective evidence links.
+- [x] Reproduction commands and full repository checks pass locally; hosted CI and merge evidence remain pending.
 
 **Depends on:** R2-06. **Blocks:** P2-08 and P2-09.
+
+### Required follow-up after the R2-07 stop decision
+
+**Status:** Pending a focused issue and stable work ID.
+
+The next increment must repair the v2 dual-time feature boundary and own a versioned simulator, observation, matched-control, robustness, and acceptance-protocol redesign. It must preserve protocol `1.0.0`, the R2-07 `stop` evidence, and all v1/current-v2 artifacts. Statistical acceptance, P2-08, P2-09, limitation closure, and final-holdout access remain blocked until that corrective work is reviewed and a replacement acceptance gate later records `proceed`.
 
 ### Phase 2R completion gate
 

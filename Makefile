@@ -1,6 +1,10 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check scoring-authorization-check simulator-test temporal-split-check v2-corpus-check v2-evaluation-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check test
+
+v2-acceptance-check:
+	python3 scripts/run_v2_statistical_acceptance.py --check
+	python3 -m unittest discover -s simulator/tests -p 'test_v2_acceptance.py' -v
 
 v2-evaluation-check:
 	python3 scripts/build_v2_evaluation_pipeline.py --check

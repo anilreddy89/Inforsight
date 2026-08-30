@@ -1,0 +1,833 @@
+{
+  "acceptance_protocol_version": "1.0.0",
+  "acceptance_results_generated": false,
+  "artifact_version": "1.0.0",
+  "bootstrap_performed": false,
+  "claim_boundary": "protocol_readiness_and_synthetic_pipeline_correctness_only",
+  "decision": "stop",
+  "decision_precedence": [
+    "stop",
+    "redesign",
+    "proceed"
+  ],
+  "downstream_status": {
+    "P2-08": "paused",
+    "P2-09": "paused"
+  },
+  "execution_contract_version": "1.0.0",
+  "execution_mode": "readiness_preflight_only",
+  "final_holdout_status": "not_materialized",
+  "limitation_dispositions": {
+    "LIM-002-001": "remains_scheduled_no_closure_evidence",
+    "LIM-002-002": "remains_scheduled_no_closure_evidence",
+    "LIM-002-003": "remains_scheduled_final_holdout_workflow_not_exercised",
+    "LIM-002-004": "open_blocking_corrective_issue_required"
+  },
+  "lineage": {
+    "docs/experiments/phase-02r-05-v2-corpus-manifest.json": "92229f5ce114fbabd6d022ccb011d50f07925c517e4755aef401456fcb6f6595",
+    "docs/experiments/phase-02r-06-v2-baseline-comparison-manifest.json": "51008cf1ac202beadf57c55319aa831459f7a243cf2c44a877f9c05d2df89017",
+    "docs/experiments/phase-02r-06-v2-feature-diagnostics-manifest.json": "e2f0108423905efcfda8723d903c9dd99d863b78d85ce4d54e34583c2245d7fc",
+    "docs/experiments/phase-02r-06-v2-feature-pipeline-manifest.json": "f1b8053e06dea6723997b1f79911478e59dceb9c973cbb4a97c75e7118b4bb0a",
+    "docs/experiments/phase-02r-06-v2-split-manifest.json": "e66f386092d2554dfbfa12af373ef9fa29eb63a09d0ce654e9e217ddf321b60b",
+    "docs/modeling/phase-02r-04-statistical-acceptance-protocol.md": "0b94c5f089f3311c4df643abf6224b347b740a71c0609696d11eaa60100575cf",
+    "docs/modeling/phase-02r-04-v2-statistical-simulator-and-observation-contract.md": "6fc5bfbb6349f2e78ccf236861b68322372097aa885479a37493979967405669",
+    "docs/modeling/phase-02r-06-v2-evaluation-pipeline-contract.md": "4727fd52f2b34d6036b868b35915850e985b9cf03590674064d6503d795b3a1b",
+    "docs/modeling/phase-02r-06-v2-feature-dictionary.json": "2d9c6a19414649eea31c745ca0fad9b6dfeabbf6d72a3f4189377e59bac4c377",
+    "docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md": "dd388a343f8cfe81b2f91dc977a88cc43b7aa2b23ad8c858045d4f538edf8721",
+    "scripts/run_v2_statistical_acceptance.py": "d21c7590b6e2d0e68012845593b06689ed7a22a32a997a5eb049f6b2292e4c73",
+    "simulator/src/inforsight_simulator/v2_acceptance.py": "7340de4a3f6821f537360cd99c3f12c6f048ac76bd27de8ea485dfc47f14982f",
+    "simulator/src/inforsight_simulator/v2_config.py": "9a5e10465ac51588a76530146a24214ecb647406d5b6e966e63725011f4e9a39",
+    "simulator/src/inforsight_simulator/v2_corpus.py": "0e254e66dc696c5c61b272d389a4763746affbb7ba76cd087017ed8a4f5c9079"
+  },
+  "model_fit_performed": false,
+  "phase": "R2-07",
+  "planned_replications": [
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260901,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260902,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260903,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260904,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260905,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260906,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260907,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260908,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260909,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260910,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260911,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260912,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260913,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260914,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260915,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260916,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260917,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260918,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260919,
+      "signal_status": "not_run_protocol_not_executable"
+    },
+    {
+      "blocked_by": [
+        "READINESS-SELECTED-CANDIDATE",
+        "READINESS-DRIVER-GROUPS",
+        "READINESS-COEFFICIENT-REGISTRY",
+        "READINESS-MATCHED-NULL-STREAMS",
+        "READINESS-MATCHED-STRESS-STREAMS",
+        "READINESS-SHUFFLE-DOMAIN",
+        "READINESS-FOLD-SUPPORT",
+        "READINESS-DUAL-TIME-VISIBILITY"
+      ],
+      "folds": [
+        {
+          "name": "fold_1",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_2",
+          "status": "not_run_protocol_not_executable"
+        },
+        {
+          "name": "fold_3",
+          "status": "not_run_protocol_not_executable"
+        }
+      ],
+      "null_status": "not_run_protocol_not_executable",
+      "seed": 20260920,
+      "signal_status": "not_run_protocol_not_executable"
+    }
+  ],
+  "prediction_performed": false,
+  "protocol_sections_not_evaluated": [
+    "negative_controls",
+    "signal_recovery",
+    "calibration_sanity",
+    "learning_behavior",
+    "driver_ablation",
+    "robustness",
+    "temporal_stability"
+  ],
+  "readiness_rules": [
+    {
+      "evidence": [
+        "docs/experiments/phase-02r-06-v2-baseline-comparison-manifest.json"
+      ],
+      "expected": "one of logistic or xgboost plus a frozen selection rule",
+      "failure_classification": "redesign",
+      "observed": {
+        "available_candidates": [
+          "logistic",
+          "xgboost"
+        ],
+        "selected_candidate": null,
+        "selection_rule": null
+      },
+      "rule_id": "READINESS-SELECTED-CANDIDATE",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "docs/experiments/phase-02r-06-v2-feature-diagnostics-manifest.json"
+      ],
+      "expected": "five frozen macro groups, strongest group, zero-effect group, and directions",
+      "failure_classification": "redesign",
+      "observed": {
+        "expected_directions": null,
+        "source_feature_groups": null,
+        "strongest_driver_group": null,
+        "zero_effect_group": null
+      },
+      "rule_id": "READINESS-DRIVER-GROUPS",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "docs/experiments/phase-02r-05-v2-corpus-manifest.json"
+      ],
+      "expected": "non-empty coefficient_registry in canonical v2 configuration",
+      "failure_classification": "redesign",
+      "observed": null,
+      "rule_id": "READINESS-COEFFICIENT-REGISTRY",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "simulator/src/inforsight_simulator/v2_config.py"
+      ],
+      "expected": {
+        "matching_domains": [
+          "allocation",
+          "static_attributes",
+          "recurring_behavior",
+          "frailty",
+          "terminal_outcome",
+          "event_censoring",
+          "mcar_missingness",
+          "conditional_missingness",
+          "ingestion_delay",
+          "correction",
+          "category_arrival",
+          "temporal_drift"
+        ]
+      },
+      "failure_classification": "redesign",
+      "observed": {
+        "domain_count": 12,
+        "matching_domains": []
+      },
+      "rule_id": "READINESS-MATCHED-NULL-STREAMS",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "simulator/src/inforsight_simulator/v2_config.py"
+      ],
+      "expected": {
+        "matching_invariant_domains": [
+          "allocation",
+          "static_attributes",
+          "frailty",
+          "terminal_outcome",
+          "event_censoring",
+          "correction"
+        ]
+      },
+      "failure_classification": "redesign",
+      "observed": {
+        "doubled_missingness_matching_domains": [],
+        "moderate_drift_matching_domains": []
+      },
+      "rule_id": "READINESS-MATCHED-STRESS-STREAMS",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "simulator/src/inforsight_simulator/v2_config.py"
+      ],
+      "expected": "label_shuffle present in the frozen random-domain registry",
+      "failure_classification": "redesign",
+      "observed": {
+        "present": false,
+        "registered_domains": [
+          "allocation",
+          "static_attributes",
+          "recurring_behavior",
+          "frailty",
+          "terminal_outcome",
+          "event_censoring",
+          "mcar_missingness",
+          "conditional_missingness",
+          "ingestion_delay",
+          "correction",
+          "category_arrival",
+          "temporal_drift"
+        ]
+      },
+      "rule_id": "READINESS-SHUFFLE-DOMAIN",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "docs/experiments/phase-02r-06-v2-split-manifest.json"
+      ],
+      "expected": {
+        "negative_min": 50,
+        "observations_min": 500,
+        "positive_min": 50
+      },
+      "failure_classification": "redesign",
+      "observed": [
+        {
+          "fold": "fold_1",
+          "negative": 504,
+          "observations": 527,
+          "passes": false,
+          "positive": 23
+        },
+        {
+          "fold": "fold_2",
+          "negative": 554,
+          "observations": 573,
+          "passes": false,
+          "positive": 19
+        },
+        {
+          "fold": "fold_3",
+          "negative": 498,
+          "observations": 529,
+          "passes": false,
+          "positive": 31
+        }
+      ],
+      "rule_id": "READINESS-FOLD-SUPPORT",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "simulator/src/inforsight_simulator/v2_corpus.py"
+      ],
+      "expected": {
+        "observations_with_post_cutoff_ingestion_features": 0
+      },
+      "failure_classification": "stop",
+      "observed": {
+        "audit_observations": 55,
+        "audit_policies": 5,
+        "observations_with_post_cutoff_ingestion_features": 6,
+        "post_cutoff_ingestion_behavior_events": 6
+      },
+      "rule_id": "READINESS-DUAL-TIME-VISIBILITY",
+      "status": "fail"
+    },
+    {
+      "evidence": [
+        "docs/experiments/phase-02r-05-v2-corpus-manifest.json",
+        "docs/experiments/phase-02r-06-v2-split-manifest.json",
+        "docs/experiments/phase-02r-06-v2-feature-pipeline-manifest.json",
+        "docs/experiments/phase-02r-06-v2-feature-diagnostics-manifest.json",
+        "docs/experiments/phase-02r-06-v2-baseline-comparison-manifest.json"
+      ],
+      "expected": {
+        "all_statuses": "not_materialized"
+      },
+      "failure_classification": "stop",
+      "observed": {
+        "baseline_manifest": "not_materialized",
+        "configuration": "not_materialized",
+        "corpus_manifest": "not_materialized",
+        "diagnostic_manifest": "not_materialized",
+        "feature_manifest": "not_materialized",
+        "split_manifest": "not_materialized"
+      },
+      "rule_id": "READINESS-HOLDOUT-ABSENCE",
+      "status": "pass"
+    }
+  ],
+  "reproduction_command": "python3 scripts/run_v2_statistical_acceptance.py --check"
+}

@@ -45,8 +45,8 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | R2-05 corpus implementation completed through issue #45 and PR #46; partition verification and acceptance evidence remain owned by R2-06 and R2-07 |
-| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
+| Owner | R2-05 corpus implementation completed through issue #45 and PR #46; R2-06 partition verification completed through issue #48 and PR #49; acceptance evidence is owned by R2-07 issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
+| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
 
@@ -95,7 +95,7 @@ Introduce a separately versioned generator and observation design with:
 - [ ] Policy and outcome-episode overlap remain zero.
 - [ ] The regenerated versioned split manifest passes deterministic verification.
 - [ ] Each modeling partition has an adequate, documented sample and outcome count for the intended claim.
-- [ ] The model decision note either authorizes the narrower claim with evidence or records a stop decision.
+- [x] The R2-07 decision note records `stop`; no narrower temporal-generalization claim is authorized.
 
 ### LIM-002-002 — The v1 corpus has no designed pre-cutoff feature-to-outcome risk mechanism
 
@@ -104,8 +104,8 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | R2-05 designed-signal implementation completed through issue #45 and PR #46; recovery and falsification evidence remain owned by R2-06 and R2-07 |
-| Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json` |
+| Owner | R2-05 designed-signal implementation completed through issue #45 and PR #46; R2-06 evaluation mechanics completed through issue #48 and PR #49; recovery and falsification evidence is owned by R2-07 issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
+| Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json` |
 | Detailed plan | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), `docs/adr/0004-versioned-v2-statistical-simulator-and-evaluation-design.md`, the Phase 2R.04 modeling contract and acceptance protocol, and `docs/backlog.md` items R2-04 through R2-07 |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
 
@@ -142,7 +142,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 - [ ] Null-signal and label-shuffle controls behave according to predeclared chance rules.
 - [ ] Known simulated signal is recovered consistently across seeds and temporal folds with uncertainty.
 - [ ] Learning, ablation, missingness, category, and temporal-stability evidence satisfies the predeclared R2-07 decision rules.
-- [ ] The R2-07 decision note records `proceed`, `redesign`, or `stop`; only `proceed` permits P2-08 and P2-09 to resume.
+- [x] The R2-07 decision note records `stop`; P2-08 and P2-09 remain paused.
 
 ### LIM-002-003 — The v1 test fixture is API-guarded and was prediction-accessed during review
 
@@ -191,6 +191,55 @@ The limitation remains `Scheduled` because the future v2 final-holdout protocol 
 - [x] Unlabeled inference does not depend on experiment partition names or targets.
 - [ ] The v2 final-holdout protocol is approved before holdout materialization or access.
 - [ ] A later one-shot evaluation records the authorized accessor, frozen artifact digests, command, timestamp, and result without permitting iterative model changes.
+
+### LIM-002-004 — The v2 acceptance substrate violates dual-time and matched-control requirements
+
+| Field | Value |
+| --- | --- |
+| Status | Open |
+| Severity | Blocking |
+| Discovered in | R2-07 readiness audit under issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
+| Owner | A new focused corrective and versioned-redesign issue is required; R2-07 owns preservation of the `stop` evidence |
+| Evidence | `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`, report, and decision; `simulator/tests/test_v2_acceptance.py` |
+| Detailed contract | `docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md` |
+| Resolution trigger | Before any R2-07 model fit, prediction, bootstrap, acceptance metric, limitation closure, or downstream performance-dependent work |
+
+#### Finding
+
+The v2 corpus builder constructs behavior features directly before applying ingestion-time visibility to the owning behavior event. The deterministic R2-07 structural fixture contains observations whose behavior event has `ingested_at > as_of` and is absent from `visible_event_ids`, while values from that event payload are present in the cutoff feature record. Protocol `1.0.0` classifies this post-cutoff ingestion leakage as `stop`.
+
+Independent readiness checks also show that the current corpus API cannot produce the protocol's matched null or paired robustness scenarios. `signal_mode`, `drift_scenario`, and `mcar_missingness_rate` are part of run identity, and every random-domain seed derives from that identity, so changing any of them rerandomizes unaffected streams. R2-06 also did not freeze a selected candidate, the required five macro driver groups, strongest and zero-effect groups, or a canonical coefficient registry. The published seed's three acceptance folds have 23, 19, and 31 positives, below the protocol's minimum of 50 per evaluated membership.
+
+#### Work that may continue
+
+- A focused corrective issue and reviewed versioned simulator, observation, and protocol redesign.
+- Structural, deterministic, dual-time, stream-pairing, authorization, and artifact tests that generate no acceptance metrics.
+- Historical v1 and v2 reproduction when described according to their existing evidence and limitations.
+- Documentation and audit-trail preservation.
+
+#### Work or claims blocked
+
+- R2-07 model fitting, prediction, bootstrap, negative controls, signal recovery, learning curves, ablations, robustness metrics, or temporal-stability metrics.
+- Closure of `LIM-002-001` or `LIM-002-002` from current v2 evidence.
+- P2-08 probability calibration and threshold evidence.
+- P2-09 substantive model interpretation.
+- Final-holdout materialization or any model-performance or release claim.
+- Reclassifying `stop` as `redesign` or `proceed` by changing protocol rules after seeing v2 output.
+
+#### Proposed resolution
+
+Create a new versioned v2 statistical substrate that reconstructs every feature only from events satisfying both `effective_at <= as_of` and `ingested_at <= as_of`. Separate artifact identity from scenario-invariant random-stream identity so null and stress interventions preserve all required matched streams. Freeze candidate selection, coefficient/group registries, shuffle/bootstrap/learning derivations, independently addressable robustness scenarios, and structurally adequate folds before inspecting replacement-protocol results.
+
+#### Closure evidence
+
+- [ ] A focused corrective issue owns the leakage repair and protocol redesign.
+- [ ] Delayed-event mutation tests prove that an event with `ingested_at > as_of` cannot alter cutoff features or visible membership.
+- [ ] Corrected observations and all downstream artifacts use new versions and preserve v1/current-v2 evidence unchanged.
+- [ ] Matched null and robustness tests prove equality of every required unaffected random stream.
+- [ ] Candidate, coefficient, driver-group, strongest-driver, zero-effect, shuffle, bootstrap, learning, and robustness specifications are frozen before replacement results.
+- [ ] Every replacement acceptance membership meets the unchanged structural count rule or a new reviewed protocol records why the rule changed.
+- [ ] The replacement protocol is approved and linked without rewriting protocol `1.0.0` or the R2-07 `stop` decision.
+- [ ] Full repository checks and hosted CI pass before statistical execution resumes.
 
 ## Register maintenance
 
