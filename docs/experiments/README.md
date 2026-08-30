@@ -18,6 +18,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02-07-feature-diagnostics-report.md` — human-readable feature-sanity results, governed dispositions, integrity checks, and interpretation boundaries.
 - `phase-02r-05-v2-corpus-manifest.json` — deterministic non-final v2 corpus provenance, structural counts, role and billing-frequency coverage, protected-sidecar digest, and `not_materialized` final-holdout evidence.
 - `phase-02r-06-v2-*.json` and `phase-02r-06-v2-*.md` — governed chronological folds, fit-only v2 preprocessing, diagnostics, frozen baseline comparison, complete lineage, and `not_materialized` final-holdout evidence.
+- `phase-02r-07-v2-statistical-acceptance-*` — fail-closed readiness evidence, complete planned seed/fold accounting, a mechanical `stop` decision for post-cutoff ingestion leakage, independent redesign findings, and confirmation that no statistical run or final-holdout access occurred.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -25,6 +26,19 @@ Regenerate or verify the Phase 2R.06 evidence with:
 python3 scripts/build_v2_evaluation_pipeline.py --write
 python3 scripts/build_v2_evaluation_pipeline.py --check
 ```
+
+Run or verify the Phase 2R.07 readiness decision evidence with:
+
+```bash
+python3 scripts/run_v2_statistical_acceptance.py --write
+python3 scripts/run_v2_statistical_acceptance.py --check
+```
+
+The R2-07 command is deliberately a fail-closed readiness preflight. It records the protocol
+`1.0.0` decision `stop` before model fitting because the structural audit detects post-cutoff
+ingestion leakage. It also records independent redesign blockers in the matched-control identity,
+candidate-selection, driver-group, coefficient-registry, shuffle-domain, and fold-support
+boundaries. It does not run acceptance metrics or materialize a final release holdout.
 
 Regenerate or verify the Phase 2.04 evidence with:
 

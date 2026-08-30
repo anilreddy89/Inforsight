@@ -725,6 +725,27 @@ R2-05 public recurring observations
 
 The protected oracle sidecar cannot enter this path. Calibration, non-final evaluation, and R2-acceptance roles cannot influence candidate selection. The future final release holdout remains `not_materialized`.
 
+### Phase 2R v2 acceptance-readiness path
+
+R2-07 runs a structural readiness gate before any acceptance model fit or score:
+
+```text
+R2-04 protocol + R2-05/R2-06 contracts and artifacts
+  -> selected-candidate and driver-registry readiness
+  -> matched null/stress stream-identity readiness
+  -> published fold-support readiness
+  -> five-policy dual-time visibility audit
+  -> stop > redesign > proceed decision aggregation
+  -> deterministic manifest, report, and decision note
+```
+
+The current audit finds behavior values in cutoff features even when their owning behavior event is
+ingested after the cutoff and absent from `visible_event_ids`. Protocol `1.0.0` therefore records
+`stop` before model fitting. Independent redesign failures also prevent matched null/stress
+replications and show that candidate/group registries and structural fold support were not frozen as
+required. All planned seeds and folds remain `not_run_protocol_not_executable`; the final holdout
+remains `not_materialized`.
+
 ## Test map
 
 | Test module | Process boundary protected |
@@ -743,6 +764,7 @@ The protected oracle sidecar cannot enter this path. Calibration, non-final eval
 | `test_boosted_comparison.py` | Frozen XGBoost fit, safe JSON reconstruction, identical comparison membership, determinism, artifact safety, and sealed test |
 | `test_feature_diagnostics.py` | Train-only diagnostics, source grouping, identifier/cardinality screens, deterministic perturbation, dispositions, artifact safety, and sealed test |
 | `test_v2_evaluation.py` | v2 folds, both embargoes, role/policy/episode isolation, fit-only preprocessing, unknown categories, authorization mutations, diagnostics, lineage, explicit-state reload, and final-holdout absence |
+| `test_v2_acceptance.py` | R2-07 readiness rules, matched-stream failures, dual-time leakage detection, decision precedence, seed/fold accounting, artifact lineage, payload safety, and final-holdout absence |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
