@@ -746,6 +746,27 @@ replications and show that candidate/group registries and structural fold suppor
 required. All planned seeds and folds remain `not_run_protocol_not_executable`; the final holdout
 remains `not_materialized`.
 
+### Phase 2R v3 replacement-design path
+
+R2-08 is documentation-only and freezes the replacement boundary before v3 output exists:
+
+```text
+R2-07 immutable stop evidence
+  -> ADR 0005 replacement decision
+  -> event-first immutable v3 events
+  -> effective-time AND ingestion-time visible-event filtering
+  -> public features reconstructed only from admitted events
+  -> stream-set identity separated from artifact/execution identity
+  -> matched primitive streams and atomic interventions
+  -> frozen coefficients, driver groups, candidates, and selection
+  -> executable bootstrap, shuffle, learning, robustness, and decision rules
+  -> R2-09 implementation -> R2-10 evaluation rebuild -> R2-11 protocol 2.0.0
+```
+
+R2-08 generates no corpus, model, prediction, metric, or holdout. Protocol `1.0.0` and the R2-07
+decision remain unchanged. The final holdout remains `not_materialized`, and only a later merged
+R2-11 `proceed` decision can resume P2-08 and P2-09.
+
 ## Test map
 
 | Test module | Process boundary protected |
