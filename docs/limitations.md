@@ -45,7 +45,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | R2-05 corpus implementation completed through issue #45 and PR #46; R2-06 partition verification completed through issue #48 and PR #49; acceptance evidence is owned by R2-07 issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
+| Owner | Historical v2 work completed through R2-07; replacement design is owned by R2-08 issue [#53](https://github.com/anilreddy89/Inforsight/issues/53), with implementation/evidence scheduled for R2-09 through R2-11 |
 | Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
@@ -72,7 +72,7 @@ Phase 2.07 confirms that billing frequency and several first-billing event-count
 - Claims that held-out results demonstrate temporal generalization.
 - Claims of real-world predictive, actuarial, fairness, operational, or business performance.
 - Model-release approval based on the current temporal split.
-- Phase 2.08 calibration or threshold artifacts and Phase 2.09 model-behavior explanations until R2-07 passes.
+- Phase 2.08 calibration or threshold artifacts and Phase 2.09 model-behavior explanations until R2-11 records a merged `proceed` decision.
 - Changing to a random or stratified split to conceal the temporal confounding.
 - Using validation or test results to redesign the existing split after results are observed.
 
@@ -96,6 +96,7 @@ Introduce a separately versioned generator and observation design with:
 - [ ] The regenerated versioned split manifest passes deterministic verification.
 - [ ] Each modeling partition has an adequate, documented sample and outcome count for the intended claim.
 - [x] The R2-07 decision note records `stop`; no narrower temporal-generalization claim is authorized.
+- [x] R2-08 contract `3.0.0` and protocol `2.0.0` predeclare replacement cohorts, folds, support rules, and temporal-stability evidence before v3 output exists.
 
 ### LIM-002-002 — The v1 corpus has no designed pre-cutoff feature-to-outcome risk mechanism
 
@@ -104,9 +105,9 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | R2-05 designed-signal implementation completed through issue #45 and PR #46; R2-06 evaluation mechanics completed through issue #48 and PR #49; recovery and falsification evidence is owned by R2-07 issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
+| Owner | Historical v2 work completed through R2-07; replacement design is owned by R2-08 issue [#53](https://github.com/anilreddy89/Inforsight/issues/53), with implementation/evidence scheduled for R2-09 through R2-11 |
 | Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json` |
-| Detailed plan | R2-04 issue [#42](https://github.com/anilreddy89/Inforsight/issues/42), `docs/adr/0004-versioned-v2-statistical-simulator-and-evaluation-design.md`, the Phase 2R.04 modeling contract and acceptance protocol, and `docs/backlog.md` items R2-04 through R2-07 |
+| Detailed plan | Historical v2 design remains in ADR 0004 and protocol `1.0.0`; replacement design is ADR 0005, `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md`, protocol `2.0.0`, and backlog R2-08 through R2-11 |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
 
 #### Finding
@@ -117,7 +118,7 @@ The corpus is useful for exercising deterministic branches, contracts, point-in-
 
 #### Work that may continue
 
-- R2-00 through R2-07 remediation work.
+- R2-00 through R2-11 remediation work within each dependency boundary.
 - Correctness, determinism, leakage, isolation, serialization, and scoring-interface tests.
 - Historical v1 reproduction when labeled `pipeline_engineering_only`.
 - Design-only model-card, calibration-interface, or explanation-interface work that publishes no performance or substantive interpretation.
@@ -130,9 +131,9 @@ The corpus is useful for exercising deterministic branches, contracts, point-in-
 - Final-test performance reporting or risk-model release approval.
 - Redesigning the generator to target a desired AUC after observing results without a predeclared acceptance protocol.
 
-#### Proposed resolution
+#### Approved replacement design
 
-Preserve v1 as an immutable coverage fixture and introduce a separately versioned v2 statistical corpus with multiple cohorts, recurring exposure, varied pre-cutoff behavior, a stochastic feature-conditioned outcome mechanism, latent noise, oracle probabilities, censoring and missingness mechanisms, and predeclared multi-seed acceptance tests.
+Preserve v1 and current v2 as immutable evidence and introduce a separately versioned v3 event-first statistical corpus with multiple cohorts, recurring exposure, varied dual-time-visible behavior, a stochastic feature-conditioned outcome mechanism, latent noise, oracle probabilities, matched controls, and predeclared multi-seed acceptance protocol `2.0.0`.
 
 #### Closure evidence
 
@@ -143,6 +144,7 @@ Preserve v1 as an immutable coverage fixture and introduce a separately versione
 - [ ] Known simulated signal is recovered consistently across seeds and temporal folds with uncertainty.
 - [ ] Learning, ablation, missingness, category, and temporal-stability evidence satisfies the predeclared R2-07 decision rules.
 - [x] The R2-07 decision note records `stop`; P2-08 and P2-09 remain paused.
+- [x] R2-08 freezes the v3 mechanism, coefficient/group registries, matched streams, candidate selection, and executable protocol `2.0.0` before v3 output exists.
 
 ### LIM-002-003 — The v1 test fixture is API-guarded and was prediction-accessed during review
 
@@ -196,13 +198,13 @@ The limitation remains `Scheduled` because the future v2 final-holdout protocol 
 
 | Field | Value |
 | --- | --- |
-| Status | Open |
+| Status | Scheduled |
 | Severity | Blocking |
 | Discovered in | R2-07 readiness audit under issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
-| Owner | A new focused corrective and versioned-redesign issue is required; R2-07 owns preservation of the `stop` evidence |
+| Owner | R2-08 design through issue [#53](https://github.com/anilreddy89/Inforsight/issues/53); R2-09 implementation, R2-10 evaluation construction, and R2-11 replacement acceptance evidence |
 | Evidence | `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`, report, and decision; `simulator/tests/test_v2_acceptance.py` |
-| Detailed contract | `docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md` |
-| Resolution trigger | Before any R2-07 model fit, prediction, bootstrap, acceptance metric, limitation closure, or downstream performance-dependent work |
+| Detailed contract | Historical finding: `docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md`; replacement: `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md` and protocol `2.0.0` |
+| Resolution trigger | Before any replacement acceptance model fit, prediction, bootstrap, metric, limitation closure, or downstream performance-dependent work |
 
 #### Finding
 
@@ -212,7 +214,7 @@ Independent readiness checks also show that the current corpus API cannot produc
 
 #### Work that may continue
 
-- A focused corrective issue and reviewed versioned simulator, observation, and protocol redesign.
+- R2-08 through R2-11 corrective design, implementation, and governed evidence work.
 - Structural, deterministic, dual-time, stream-pairing, authorization, and artifact tests that generate no acceptance metrics.
 - Historical v1 and v2 reproduction when described according to their existing evidence and limitations.
 - Documentation and audit-trail preservation.
@@ -226,19 +228,19 @@ Independent readiness checks also show that the current corpus API cannot produc
 - Final-holdout materialization or any model-performance or release claim.
 - Reclassifying `stop` as `redesign` or `proceed` by changing protocol rules after seeing v2 output.
 
-#### Proposed resolution
+#### Approved replacement design
 
-Create a new versioned v2 statistical substrate that reconstructs every feature only from events satisfying both `effective_at <= as_of` and `ingested_at <= as_of`. Separate artifact identity from scenario-invariant random-stream identity so null and stress interventions preserve all required matched streams. Freeze candidate selection, coefficient/group registries, shuffle/bootstrap/learning derivations, independently addressable robustness scenarios, and structurally adequate folds before inspecting replacement-protocol results.
+Create the versioned v3 statistical substrate defined by ADR 0005 and contract `3.0.0`. It reconstructs every feature only from events satisfying both `effective_at <= as_of` and `ingested_at <= as_of`, separates stream-set, artifact, and execution identities, preserves matched primitive streams, freezes all selection and statistical procedures, and increases planned capacity without conditioning on realized outcomes.
 
 #### Closure evidence
 
-- [ ] A focused corrective issue owns the leakage repair and protocol redesign.
+- [x] Focused issue #53 and stable work IDs R2-08 through R2-11 own the design, implementation, evaluation reconstruction, and replacement gate.
 - [ ] Delayed-event mutation tests prove that an event with `ingested_at > as_of` cannot alter cutoff features or visible membership.
 - [ ] Corrected observations and all downstream artifacts use new versions and preserve v1/current-v2 evidence unchanged.
 - [ ] Matched null and robustness tests prove equality of every required unaffected random stream.
 - [ ] Candidate, coefficient, driver-group, strongest-driver, zero-effect, shuffle, bootstrap, learning, and robustness specifications are frozen before replacement results.
 - [ ] Every replacement acceptance membership meets the unchanged structural count rule or a new reviewed protocol records why the rule changed.
-- [ ] The replacement protocol is approved and linked without rewriting protocol `1.0.0` or the R2-07 `stop` decision.
+- [x] Replacement protocol `2.0.0` is linked and predeclared without rewriting protocol `1.0.0` or the R2-07 `stop` decision; hosted review and merge remain pending.
 - [ ] Full repository checks and hosted CI pass before statistical execution resumes.
 
 ## Register maintenance

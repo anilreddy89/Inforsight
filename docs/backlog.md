@@ -37,15 +37,15 @@ Phases 2.01 through 2.07 remain valid historical pipeline-engineering increments
 
 ## Phase 2R - Modeling Foundation Remediation Gate
 
-Phase 2R is a required remediation gate between Phase 2.07 and performance-dependent Phase 2 work. Assign every R2-00 through R2-07 issue to the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) GitHub milestone. R2 is an internal sequencing and acceptance gate within that release milestone, not a separate milestone. Create one focused implementation issue and pull request for each item below; do not place all remediation in one branch or reopen completed Phase 2 pull requests.
+Phase 2R is a required remediation gate between Phase 2.07 and performance-dependent Phase 2 work. Assign every R2-00 through R2-11 issue to the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) GitHub milestone. R2 is an internal sequencing and acceptance gate within that release milestone, not a separate milestone. Create one focused issue and pull request for each item below; do not place all remediation in one branch or reopen completed Phase 2 pull requests.
 
 ### Pause boundary
 
-- **P2-08 probability calibration and threshold evaluation is paused.** Calibration plumbing may be unit-tested only inside a separately approved remediation issue; no Phase 2.08 experiment artifact or performance conclusion may be published before R2-07 passes.
+- **P2-08 probability calibration and threshold evaluation is paused.** Calibration plumbing may be unit-tested only inside a separately approved remediation issue; no Phase 2.08 experiment artifact or performance conclusion may be published before R2-11 records `proceed`.
 - **P2-09 SHAP or equivalent attribution is paused.** Explanation plumbing may be unit-tested only with clearly marked fixtures; no v1 feature importance may be interpreted as a substantive risk mechanism.
-- P2-10 through P2-12 remain pending. Model-specific artifact freezing, a final evaluation, a model decision, and a release marker cannot proceed before R2-07 passes.
+- P2-10 through P2-12 remain pending. Model-specific artifact freezing, a final evaluation, a model decision, and a release marker cannot proceed before R2-11 records `proceed`.
 - The v1 generator, observations, splits, and model artifacts remain immutable historical evidence. Phase 2R adds separately versioned contracts and artifacts rather than rewriting prior evidence.
-- No new final release holdout may be materialized, inspected, transformed, or scored until the v2 evaluation protocol defines its access boundary.
+- No new final release holdout may be materialized, inspected, transformed, or scored until a later dedicated one-shot release issue authorizes it after the replacement candidate is frozen.
 
 ### Dependency and merge order
 
@@ -56,6 +56,10 @@ R2-00
   -> R2-05
   -> R2-06
   -> R2-07
+  -> R2-08
+  -> R2-09
+  -> R2-10
+  -> R2-11
   -> resume governed Phase 2 work
 ```
 
@@ -237,7 +241,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-07 - Run the predeclared statistical acceptance gate
 
-**Status:** Implemented locally through [issue #51](https://github.com/anilreddy89/Inforsight/issues/51), pending pull-request review. The fail-closed readiness gate records `stop` before model fitting because its structural fixture detects post-cutoff ingestion leakage. Seven independent readiness failures also require versioned redesign. No acceptance metrics were generated, the final holdout remains `not_materialized`, and P2-08/P2-09 remain paused.
+**Status:** Completed on 2026-08-30 through [issue #51](https://github.com/anilreddy89/Inforsight/issues/51) and [PR #52](https://github.com/anilreddy89/Inforsight/pull/52), merge commit `66ae092`. The fail-closed readiness gate records `stop` before model fitting because its structural fixture detects post-cutoff ingestion leakage. Seven independent readiness failures require versioned redesign. No acceptance metrics were generated, the final holdout remains `not_materialized`, and P2-08/P2-09 remain paused.
 
 **Outcome:** Governed multi-seed and temporal evidence determines whether v2 is suitable for resuming calibration and model interpretation.
 
@@ -259,21 +263,64 @@ For this solo-developer repository, follow the order strictly even where impleme
 - [x] The decision note identifies which limitations remain open and which findings require corrective redesign, with objective evidence links.
 - [x] Reproduction commands and full repository checks pass locally; hosted CI and merge evidence remain pending.
 
-**Depends on:** R2-06. **Blocks:** P2-08 and P2-09.
+**Depends on:** R2-06. **Blocks:** R2-08 and performance-dependent work.
 
-### Required follow-up after the R2-07 stop decision
+### R2-08 - Approve the v3 statistical substrate and replacement acceptance protocol
 
-**Status:** Pending a focused issue and stable work ID.
+**Status:** Implemented locally through [issue #53](https://github.com/anilreddy89/Inforsight/issues/53) on branch `docs/53-r2-08-v3-statistical-design`; pull request, hosted checks, and merge evidence remain pending.
 
-The next increment must repair the v2 dual-time feature boundary and own a versioned simulator, observation, matched-control, robustness, and acceptance-protocol redesign. It must preserve protocol `1.0.0`, the R2-07 `stop` evidence, and all v1/current-v2 artifacts. Statistical acceptance, P2-08, P2-09, limitation closure, and final-holdout access remain blocked until that corrective work is reviewed and a replacement acceptance gate later records `proceed`.
+**Outcome:** A reviewed ADR, v3 substrate contract, and acceptance protocol `2.0.0` replace the unexecutable v2 statistical boundary without rewriting historical evidence or generating replacement results.
+
+**Scope:**
+
+- Freeze event-first dual-time reconstruction and feature lineage.
+- Separate scenario-invariant stream-set, complete artifact, and execution identities.
+- Freeze the random-stream, coefficient, driver-group, candidate-selection, resampling, shuffle, learning-subset, robustness, and decision registries.
+- Use a new 20-seed block and 14,400-policy design while preserving the three folds, minimum support, metrics, uncertainty count, and numeric thresholds.
+- Map every R2-07 finding to a normative correction and planned falsification test.
+
+**Acceptance checks:**
+
+- [x] ADR 0005 records the replacement, alternatives, compatibility, claim boundary, and reversal conditions.
+- [x] Contract `3.0.0` defines event-first dual-time construction, exact identities/streams, equations, roles, and authorization.
+- [x] Protocol `2.0.0` resolves all caller-controlled R2-07 ambiguities before v3 output exists.
+- [x] Protocol `1.0.0`, the R2-07 `stop` evidence, and all v1/v2 artifacts remain unchanged.
+- [x] No v3 output or final holdout is generated; P2-08/P2-09 remain paused.
+- [ ] Pull-request review, hosted CI, and merge evidence are recorded.
+
+**Depends on:** R2-07. **Blocks:** R2-09.
+
+### R2-09 - Implement the v3 event-first corpus and observations
+
+**Status:** Pending R2-08 merge.
+
+Implement contract `3.0.0`, including event-first generation, dual-time reconstruction, exact oracle sidecars, identities, stream registry, atomic interventions, and deterministic mutation/equality tests. Produce no model or final holdout.
+
+**Depends on:** R2-08. **Blocks:** R2-10.
+
+### R2-10 - Rebuild v3 evaluation, features, candidates, and selection
+
+**Status:** Pending R2-09 merge.
+
+Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. Produce no acceptance metric or final holdout.
+
+**Depends on:** R2-09. **Blocks:** R2-11.
+
+### R2-11 - Run replacement statistical acceptance protocol 2.0.0
+
+**Status:** Pending R2-10 merge.
+
+Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
+
+**Depends on:** R2-10. **Blocks:** P2-08 and P2-09 unless the merged decision is `proceed`.
 
 ### Phase 2R completion gate
 
-Phase 2R completes only when R2-00 through R2-07 are merged in order and the R2-07 decision is `proceed`. A favorable single seed, a passing unit-test suite, or a manually accepted limitation is not sufficient. If R2-07 decides `redesign` or `stop`, P2-08 and P2-09 remain paused and a new focused backlog item must own the next action.
+Phase 2R completes only when R2-00 through R2-11 are merged in order and the R2-11 decision is `proceed`. A favorable single seed, a passing unit-test suite, or a manually accepted limitation is not sufficient. If R2-11 decides `redesign` or `stop`, P2-08 and P2-09 remain paused and a new focused backlog item must own the next action.
 
 ## Phase 2 - Baseline ML resumed after Phase 2R
 
-- [ ] **P2-08 - Probability calibration and operational thresholds (PAUSED):** After R2-07 passes, fit calibration using the separately designated non-test calibration data and report discrimination, calibration, precision at operational review capacity, recall in high-risk bands, threshold tradeoffs, uncertainty, and explicit false-positive cost assumptions. Do not access the final release holdout for model or threshold selection.
+- [ ] **P2-08 - Probability calibration and operational thresholds (PAUSED):** After R2-11 records a merged `proceed`, fit calibration using the separately designated non-test calibration data and report discrimination, calibration, precision at operational review capacity, recall in high-risk bands, threshold tradeoffs, uncertainty, and explicit false-positive cost assumptions. Do not access the final release holdout for model or threshold selection.
 - [ ] **P2-09 - Model-behavior explanations (PAUSED):** After the calibrated candidate and feature contract are frozen, publish SHAP or equivalent attribution examples with feature sanity checks and clear boundaries that explanations describe model behavior rather than authorize conservation actions. Use only approved non-final data for explanation development.
 - [ ] **P2-10 - Artifact and environment reproducibility:** Version the training configuration, dependencies, feature contract, split manifest, fitted preprocessing and calibration pipelines, metrics, and model artifacts; bundle compatible objects or bind them through verified metadata, and prove that reloading the frozen release candidate reproduces authorized predictions from documented commands.
 - [ ] **P2-11 - Final evaluation, model card, and decision note:** Freeze the release candidate and evaluation protocol before one access-controlled final test; then publish `MODEL_CARD.md`, the final experiment report, and a Phase 2 decision note that disclose limitations, uncertainty, synthetic-data boundaries, the absence of a meaningful subgroup-fairness assessment, and the release decision.
