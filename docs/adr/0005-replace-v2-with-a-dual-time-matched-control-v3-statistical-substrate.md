@@ -1,6 +1,6 @@
 # ADR 0005: Replace v2 with a dual-time, matched-control v3 statistical substrate
 
-- Status: Proposed through [issue #53](https://github.com/anilreddy89/Inforsight/issues/53)
+- Status: Accepted through [issue #53](https://github.com/anilreddy89/Inforsight/issues/53) and [PR #54](https://github.com/anilreddy89/Inforsight/pull/54), merge commit `09f678a`
 - Date: 2026-08-29
 - Decision owner: Anil Jonnala
 - Supersedes: The statistical-substrate and acceptance-execution portions of ADR 0004

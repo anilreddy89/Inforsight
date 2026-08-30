@@ -240,7 +240,7 @@ Create the versioned v3 statistical substrate defined by ADR 0005 and contract `
 - [ ] Matched null and robustness tests prove equality of every required unaffected random stream.
 - [ ] Candidate, coefficient, driver-group, strongest-driver, zero-effect, shuffle, bootstrap, learning, and robustness specifications are frozen before replacement results.
 - [ ] Every replacement acceptance membership meets the unchanged structural count rule or a new reviewed protocol records why the rule changed.
-- [x] Replacement protocol `2.0.0` is linked and predeclared without rewriting protocol `1.0.0` or the R2-07 `stop` decision; hosted review and merge remain pending.
+- [x] Replacement protocol `2.0.0` was approved through issue #53 and PR #54 without rewriting protocol `1.0.0` or the R2-07 `stop` decision.
 - [ ] Full repository checks and hosted CI pass before statistical execution resumes.
 
 ## Register maintenance

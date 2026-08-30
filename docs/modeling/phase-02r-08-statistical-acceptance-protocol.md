@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Protocol version | `2.0.0` |
-| Status | Proposed through issue #53; no v3 output inspected |
+| Status | Approved through issue #53 and PR #54, merge commit `09f678a`; no v3 output inspected |
 | Governing ADR | `docs/adr/0005-replace-v2-with-a-dual-time-matched-control-v3-statistical-substrate.md` |
 | Substrate contract | `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md` |
 | Execution owner | R2-11 |

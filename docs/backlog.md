@@ -267,7 +267,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-08 - Approve the v3 statistical substrate and replacement acceptance protocol
 
-**Status:** Implemented locally through [issue #53](https://github.com/anilreddy89/Inforsight/issues/53) on branch `docs/53-r2-08-v3-statistical-design`; pull request, hosted checks, and merge evidence remain pending.
+**Status:** Completed on 2026-08-30 through [issue #53](https://github.com/anilreddy89/Inforsight/issues/53) and [PR #54](https://github.com/anilreddy89/Inforsight/pull/54), merge commit `09f678a`. ADR 0005, contract `3.0.0`, random-stream registry `1.0.0`, and acceptance protocol `2.0.0` are approved; no v3 output or final holdout was created.
 
 **Outcome:** A reviewed ADR, v3 substrate contract, and acceptance protocol `2.0.0` replace the unexecutable v2 statistical boundary without rewriting historical evidence or generating replacement results.
 
@@ -286,13 +286,13 @@ For this solo-developer repository, follow the order strictly even where impleme
 - [x] Protocol `2.0.0` resolves all caller-controlled R2-07 ambiguities before v3 output exists.
 - [x] Protocol `1.0.0`, the R2-07 `stop` evidence, and all v1/v2 artifacts remain unchanged.
 - [x] No v3 output or final holdout is generated; P2-08/P2-09 remain paused.
-- [ ] Pull-request review, hosted CI, and merge evidence are recorded.
+- [x] Pull-request review and merge evidence are recorded; the issue closed on merge.
 
 **Depends on:** R2-07. **Blocks:** R2-09.
 
 ### R2-09 - Implement the v3 event-first corpus and observations
 
-**Status:** Pending R2-08 merge.
+**Status:** Ready; create a focused implementation issue and branch from updated `main`.
 
 Implement contract `3.0.0`, including event-first generation, dual-time reconstruction, exact oracle sidecars, identities, stream registry, atomic interventions, and deterministic mutation/equality tests. Produce no model or final holdout.
 
