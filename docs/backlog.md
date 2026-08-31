@@ -292,7 +292,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-09 - Implement the v3 event-first corpus and observations
 
-**Status:** Implemented and verified locally through [issue #56](https://github.com/anilreddy89/Inforsight/issues/56) on branch `feat/56-r2-09-v3-event-first-corpus`; pull request and merge evidence remain pending.
+**Status:** Completed on 2026-08-30 through [issue #56](https://github.com/anilreddy89/Inforsight/issues/56) and [PR #57](https://github.com/anilreddy89/Inforsight/pull/57), merge commit `89c2291`. The deterministic v3 manifest records 14,400 policies and 76,545 event-first recurring observations; all hosted checks passed and the final holdout remains `not_materialized`.
 
 Implement contract `3.0.0`, including event-first generation, dual-time reconstruction, exact oracle sidecars, identities, stream registry, atomic interventions, and deterministic mutation/equality tests. Produce no model or final holdout.
 
@@ -300,7 +300,7 @@ Implement contract `3.0.0`, including event-first generation, dual-time reconstr
 
 ### R2-10 - Rebuild v3 evaluation, features, candidates, and selection
 
-**Status:** Pending R2-09 merge.
+**Status:** Ready; R2-09 merged as `89c2291`. Create a focused implementation issue and branch from updated `main`.
 
 Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. Produce no acceptance metric or final holdout.
 
