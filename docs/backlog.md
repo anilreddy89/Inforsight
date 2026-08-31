@@ -292,7 +292,7 @@ For this solo-developer repository, follow the order strictly even where impleme
 
 ### R2-09 - Implement the v3 event-first corpus and observations
 
-**Status:** Ready; create a focused implementation issue and branch from updated `main`.
+**Status:** Implemented and verified locally through [issue #56](https://github.com/anilreddy89/Inforsight/issues/56) on branch `feat/56-r2-09-v3-event-first-corpus`; pull request and merge evidence remain pending.
 
 Implement contract `3.0.0`, including event-first generation, dual-time reconstruction, exact oracle sidecars, identities, stream registry, atomic interventions, and deterministic mutation/equality tests. Produce no model or final holdout.
 

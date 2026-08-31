@@ -12,6 +12,16 @@ python3 scripts/build_v2_modeling_corpus.py --check
 
 The v2 final release holdout remains `not_materialized`. R2-05 does not create splits, fit models, publish performance evidence, calibrate probabilities, or generate explanations.
 
+R2-09 adds a separately namespaced v3 path through `V3CorpusConfig` and `generate_v3_corpus`. It implements immutable event-first generation, dual effective/ingestion-time reconstruction, visible-event digests, per-feature lineage, stream-set/artifact identities, random-stream registry `1.0.0`, atomic scenarios, exact competing hazards, and protected conditional/observable oracle sidecars.
+
+Verify the deterministic non-final evidence with:
+
+```bash
+python3 scripts/build_v3_modeling_corpus.py --check
+```
+
+V3 creates no fold, feature matrix, model, prediction, acceptance result, or final holdout. The final release holdout remains `not_materialized`, and R2-10 remains blocked until R2-09 merges.
+
 ## Current event boundary
 
 The generator uses the nine-event MVP taxonomy already defined under `data-contracts/`:

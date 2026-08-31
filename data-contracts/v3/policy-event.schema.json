@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/v3/policy-event/3.0.0",
+  "title": "Inforsight v3 immutable synthetic policy event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "policy_id", "event_type", "effective_at", "ingested_at", "payload"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "event_id": {"type": "string", "pattern": "^v3-evt-[0-9a-f]{24}$"},
+    "policy_id": {"type": "string", "pattern": "^v3-pol-[0-9a-f]{24}$"},
+    "event_type": {"enum": ["policy.issued", "payment.recorded", "notice.sent", "service.contact", "event.corrected", "outcome.lapsed", "outcome.surrendered"]},
+    "effective_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "ingested_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "payload": {"type": "object"}
+  }
+}

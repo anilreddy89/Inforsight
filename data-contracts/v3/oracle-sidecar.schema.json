@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/v3/oracle-sidecar/3.0.0",
+  "title": "Protected Inforsight v3 oracle sidecar",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sidecar_version", "quadrature_version", "artifact_id", "observation_id", "outcome_episode_id", "oracle_conditional_lapse", "oracle_conditional_surrender", "oracle_conditional_union", "oracle_observable_lapse", "oracle_observable_surrender", "oracle_observable_union", "latent_frailty", "outcome_uniforms"],
+  "properties": {
+    "sidecar_version": {"const": "3.0.0"},
+    "quadrature_version": {"const": "gauss-hermite-32-v1"},
+    "artifact_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observation_id": {"type": "string", "pattern": "^v3-obs-[0-9a-f]{24}$"},
+    "outcome_episode_id": {"type": "string", "pattern": "^v3-epi-[0-9a-f]{24}$"},
+    "oracle_conditional_lapse": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_conditional_surrender": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_conditional_union": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_observable_lapse": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_observable_surrender": {"type": "number", "minimum": 0, "maximum": 1},
+    "oracle_observable_union": {"type": "number", "minimum": 0, "maximum": 1},
+    "latent_frailty": {"type": "number"},
+    "outcome_uniforms": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}}
+  }
+}

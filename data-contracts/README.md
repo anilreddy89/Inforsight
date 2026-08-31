@@ -2,6 +2,10 @@
 
 This directory contains versioned JSON Schema definitions and small valid and invalid fictional examples.
 
+## Version 3 event-first statistical-corpus contracts
+
+[`v3/`](v3/) contains the closed event, recurring-observation, and protected oracle-sidecar schemas for substrate contract `3.0.0`, implemented through R2-09 issue #56. V3 observations bind a scenario-specific artifact identity, sorted dual-time-visible event IDs, a canonical visible-history digest, and complete per-feature lineage. V1/v2 schemas remain unchanged, and v3 protected sidecars cannot satisfy the public observation contract.
+
 ## Version 2 statistical-corpus contracts
 
 [`v2/`](v2/) contains the separately versioned policy-event `2.0.0`, recurring-observation `2.0.0`, and protected oracle-sidecar `1.0.0` schemas implemented through R2-05 issue #45 and PR #46. These contracts support the non-final synthetic modeling corpus without changing the v1 envelope, payload, or observation bytes. Oracle, latent, draw, scenario, role, identifier, outcome, and post-cutoff concepts remain outside the model-visible feature surface.
