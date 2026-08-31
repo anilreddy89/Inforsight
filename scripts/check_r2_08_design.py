@@ -37,7 +37,7 @@ REQUIRED = {
         "not_materialized",
     ),
     "backlog": ("R2-08", "R2-09", "R2-10", "R2-11", "issue #53", "protocol `2.0.0`"),
-    "limitations": ("LIM-002-004", "issue #53", "R2-09 through R2-11", "protocol `2.0.0`"),
+    "limitations": ("LIM-002-004", "issue #53", "issue [#56]", "protocol `2.0.0`"),
     "readme": ("R2-08", "issue #53", "R2-11", "not_materialized"),
 }
 
@@ -53,14 +53,14 @@ def main() -> None:
             if token not in text:
                 failures.append(f"{path.relative_to(ROOT)} missing {token!r}")
 
-    forbidden_roots = (ROOT / "datasets/v3", ROOT / "docs/experiments/phase-02r-08-v3")
+    forbidden_roots = (ROOT / "docs/experiments/phase-02r-08-v3", ROOT / "datasets/v3/final-holdout")
     for path in forbidden_roots:
         if path.exists():
-            failures.append(f"R2-08 must not materialize {path.relative_to(ROOT)}")
+            failures.append(f"R2-08/R2-09 must not materialize {path.relative_to(ROOT)}")
 
     if failures:
         raise SystemExit("R2-08 design check failed:\n- " + "\n- ".join(failures))
-    print("R2-08 design consistency check passed; no v3 output or final holdout materialized.")
+    print("R2-08 design consistency check passed; no R2-08 result or final holdout materialized.")
 
 
 if __name__ == "__main__":

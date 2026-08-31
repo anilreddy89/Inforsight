@@ -10,6 +10,11 @@ required_files=(
   docs/assumptions.md
   docs/adr/0001-clean-room-and-synthetic-data.md
   docs/adr/0002-separate-risk-from-action-eligibility.md
+  data-contracts/v3/policy-event.schema.json
+  data-contracts/v3/observation-record.schema.json
+  data-contracts/v3/oracle-sidecar.schema.json
+  docs/experiments/phase-02r-09-v3-corpus-manifest.json
+  datasets/v3/DATA_CARD.md
 )
 
 # Missing Repository Artifact Chekc

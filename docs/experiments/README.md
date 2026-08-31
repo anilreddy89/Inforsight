@@ -19,6 +19,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-05-v2-corpus-manifest.json` — deterministic non-final v2 corpus provenance, structural counts, role and billing-frequency coverage, protected-sidecar digest, and `not_materialized` final-holdout evidence.
 - `phase-02r-06-v2-*.json` and `phase-02r-06-v2-*.md` — governed chronological folds, fit-only v2 preprocessing, diagnostics, frozen baseline comparison, complete lineage, and `not_materialized` final-holdout evidence.
 - `phase-02r-07-v2-statistical-acceptance-*` — fail-closed readiness evidence, complete planned seed/fold accounting, a mechanical `stop` decision for post-cutoff ingestion leakage, independent redesign findings, and confirmation that no statistical run or final-holdout access occurred.
+- `phase-02r-09-v3-corpus-manifest.json` — deterministic non-final v3 event-first corpus provenance, structural counts, dual-time/lineage invariants, protected-sidecar digests, random-stream registry identity, and `not_materialized` final-holdout evidence.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -82,3 +83,12 @@ python3 scripts/build_v2_modeling_corpus.py --check
 ```
 
 The R2-05 command verifies the approved non-final synthetic corpus and protected oracle-sidecar digests. It does not create temporal model folds, fit a model, run R2-07, or materialize a final release holdout.
+
+Regenerate or verify the R2-09 v3 corpus evidence with:
+
+```bash
+python3 scripts/build_v3_modeling_corpus.py --write
+python3 scripts/build_v3_modeling_corpus.py --check
+```
+
+The R2-09 command verifies event-first generation and dual-time observations only. It does not build R2-10 evaluation data, run protocol `2.0.0`, or materialize a final release holdout.

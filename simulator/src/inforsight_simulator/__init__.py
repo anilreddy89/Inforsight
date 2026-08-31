@@ -160,12 +160,43 @@ from .v2_corpus import (
     validate_v2_corpus,
     validate_v2_feature_payload,
 )
+from .v3_config import (
+    V3_ACCEPTANCE_PROTOCOL_VERSION, V3_CANONICALIZATION_VERSION,
+    V3_CONTRACT_VERSION, V3_FINAL_HOLDOUT_STATUS, V3_RANDOM_DOMAINS,
+    V3_STREAM_REGISTRY_VERSION, V3CorpusConfig, artifact_id,
+    canonical_json_bytes, complete_configuration, execution_id,
+    intervention_manifest, primitive_normal, primitive_uniform,
+    scenario_configuration, stable_identifier, stream_set_id,
+    structural_configuration,
+)
+from .v3_corpus import (
+    V3_ARTIFACT_VERSION, V3_EVENT_SCHEMA_VERSION, V3_OBSERVATION_SCHEMA_VERSION,
+    V3_ORACLE_SIDECAR_VERSION, V3_QUADRATURE_VERSION, V3Corpus, V3Features,
+    V3Observation, V3OracleRecord, competing_hazards as v3_competing_hazards,
+    corpus_digest as v3_corpus_digest, cumulative_incidence as v3_cumulative_incidence,
+    generate_v3_corpus, observable_oracle as v3_observable_oracle,
+    reconstruct_v3_features, validate_feature_lineage, validate_v3_corpus,
+    validate_v3_feature_payload, visible_events,
+)
 
 
 __version__ = "0.1.0"
 
 __all__ = [
     "GeneratorConfig",
+    "V3CorpusConfig", "V3Corpus", "V3Features", "V3Observation", "V3OracleRecord",
+    "V3_ACCEPTANCE_PROTOCOL_VERSION", "V3_ARTIFACT_VERSION",
+    "V3_CANONICALIZATION_VERSION", "V3_CONTRACT_VERSION", "V3_EVENT_SCHEMA_VERSION",
+    "V3_FINAL_HOLDOUT_STATUS", "V3_OBSERVATION_SCHEMA_VERSION",
+    "V3_ORACLE_SIDECAR_VERSION", "V3_QUADRATURE_VERSION", "V3_RANDOM_DOMAINS",
+    "V3_STREAM_REGISTRY_VERSION", "artifact_id", "canonical_json_bytes",
+    "complete_configuration", "execution_id", "generate_v3_corpus",
+    "intervention_manifest", "primitive_normal", "primitive_uniform",
+    "reconstruct_v3_features", "scenario_configuration", "stable_identifier",
+    "stream_set_id", "structural_configuration", "v3_competing_hazards",
+    "v3_corpus_digest", "v3_cumulative_incidence", "v3_observable_oracle",
+    "validate_feature_lineage", "validate_v3_corpus", "validate_v3_feature_payload",
+    "visible_events",
     "V2CorpusConfig",
     "V2Corpus",
     "V2Features",

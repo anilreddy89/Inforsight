@@ -1,0 +1,144 @@
+{
+  "artifact_version": "1.0.0",
+  "claim_boundary": "fictional_mechanism_implementation_only",
+  "counts": {
+    "billing_frequency": {
+      "annual": 18570,
+      "monthly": 20087,
+      "quarterly": 19346,
+      "semiannual": 18542
+    },
+    "cohorts": {
+      "2022-01": 3269,
+      "2022-02": 3346,
+      "2022-03": 3201,
+      "2022-04": 3385,
+      "2022-05": 3407,
+      "2022-06": 3423,
+      "2022-07": 3210,
+      "2022-08": 3288,
+      "2022-09": 3212,
+      "2022-10": 3344,
+      "2022-11": 3051,
+      "2022-12": 3009,
+      "2023-01": 3217,
+      "2023-02": 3179,
+      "2023-03": 3161,
+      "2023-04": 3259,
+      "2023-05": 3155,
+      "2023-06": 3109,
+      "2023-07": 3050,
+      "2023-08": 3202,
+      "2023-09": 2842,
+      "2023-10": 3066,
+      "2023-11": 3164,
+      "2023-12": 2996
+    },
+    "event_type": {
+      "event.corrected": 2148,
+      "notice.sent": 26879,
+      "outcome.lapsed": 8721,
+      "outcome.surrendered": 4710,
+      "payment.recorded": 76545,
+      "policy.issued": 14400,
+      "service.contact": 23095
+    },
+    "label_status": {
+      "observed_negative": 63114,
+      "observed_positive": 13431
+    },
+    "observations": 76545,
+    "oracle_records": 76545,
+    "policies": 14400,
+    "role": {
+      "acceptance": 15439,
+      "calibration": 7728,
+      "fit": 37796,
+      "non_final_evaluation": 7551,
+      "selection": 8031
+    }
+  },
+  "digests": {
+    "histories_sha256": "edfe878ed8359dbc4be17edd4d14cd505b73a0ff8fbdb6fc9f28adc30744bfe7",
+    "observations_sha256": "c22350372a3c4a343632353f72e7f098fb8b3d33a48eed0a9dffbbbf0d532737",
+    "oracle_sidecar_sha256": "31cf8a6bad8bc991f8e8e5555240b5c933ab666f828d88784424d095615fb140"
+  },
+  "invariants": {
+    "dual_time_visibility": "tested",
+    "event_first_generation": "tested",
+    "feature_lineage_complete": true,
+    "identity_uniqueness": true,
+    "non_overlapping_episodes": true,
+    "oracle_sidecars_protected": true,
+    "random_stream_registry": "1.0.0",
+    "v1_v2_compatibility": "unchanged"
+  },
+  "issue": 56,
+  "materialization": {
+    "final_holdout": "not_materialized",
+    "public_observations": "regenerated_not_committed",
+    "raw_histories": "regenerated_not_committed",
+    "row_level_oracle_sidecars": "regenerated_not_committed"
+  },
+  "phase": "R2-09",
+  "provenance": {
+    "artifact_id": "6709dd4613ce04d26f27614cb994f155bede1f2370c84fd0b5f9862a9f84683e",
+    "artifact_version": "1.0.0",
+    "command_digest": "7e3fe5687a40d489d5ea1c00e86801ac1638d35a96ee2adab58319bb0e8e5160",
+    "configuration": {
+      "acceptance_protocol_version": "2.0.0",
+      "base_seed": 20261001,
+      "billing_frequencies": [
+        "monthly",
+        "quarterly",
+        "semiannual",
+        "annual"
+      ],
+      "canonicalization_version": "1.0.0",
+      "contract_version": "3.0.0",
+      "final_holdout_status": "not_materialized",
+      "namespace": "r2-09-default",
+      "random_stream_registry_version": "1.0.0",
+      "scenario": {
+        "name": "stable",
+        "settings": {
+          "baseline_log_odds_shift": "0.00",
+          "category_arrival": false,
+          "delay_mixture": [
+            "0.90",
+            "0.09",
+            "0.01"
+          ],
+          "mcar_threshold": "0.05",
+          "prevalence_shift": "0.00",
+          "signal_scale": "1.00"
+        }
+      },
+      "structural": {
+        "cohort_count": 24,
+        "episode_days": 90,
+        "issuance_start": "2022-01-01T00:00:00Z",
+        "policies_per_cohort": 600,
+        "policy_count": 14400,
+        "role_counts_per_cohort": {
+          "acceptance": 120,
+          "calibration": 60,
+          "fit": 300,
+          "non_final_evaluation": 60,
+          "selection": 60
+        },
+        "seasoning_days": 30,
+        "watermark": "2026-12-31T23:59:59Z"
+      }
+    },
+    "dependency_lock_digest": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "execution_id": "b64fbb888cb471462e78d9b634a842efd9311b6eb82e2aba1b92c82c5ffc8bcb",
+    "final_holdout_status": "not_materialized",
+    "intervention": {
+      "owned_transforms": [],
+      "scenario": "stable"
+    },
+    "source_digest": "49ea1b358daf228c4a8a789993f5dec0ab947b4baa1d2609903b015472d45954",
+    "stream_set_id": "eac2b8e521b69db5a889308407ba35029f1bdb1d1639421470b106da1d98acf8"
+  }
+}
