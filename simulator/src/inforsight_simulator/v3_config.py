@@ -212,7 +212,10 @@ def primitive_uniform(config: V3CorpusConfig, domain: str, *keys: object) -> flo
 
 
 def primitive_normal(config: V3CorpusConfig, domain: str, *keys: object) -> float:
-    return NormalDist().inv_cdf(primitive_uniform(config, domain, *keys))
+    # Python 3.11 and 3.12 may differ below portable artifact precision in the
+    # stdlib inverse-CDF implementation. Contract 3.0.0 therefore freezes the
+    # transform at twelve decimal places before it can affect generated state.
+    return round(NormalDist().inv_cdf(primitive_uniform(config, domain, *keys)), 12)
 
 
 def stable_identifier(prefix: str, config: V3CorpusConfig, *keys: object) -> str:

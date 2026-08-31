@@ -34,6 +34,7 @@ class V3ConfigTest(unittest.TestCase):
         self.assertGreater(first, 0)
         self.assertLess(first, 1)
         self.assertTrue(math.isfinite(primitive_normal(self.config, "frailty", "policy")))
+        self.assertEqual(primitive_normal(self.config, "frailty", "policy"), -1.2940649404)
 
     def test_domain_arity_and_unknown_domain_fail_closed(self) -> None:
         with self.assertRaises(ValueError):

@@ -293,7 +293,7 @@ def observable_oracle(features: V3Features, *, signal_scale: float,
             features, frailty, signal_scale=signal_scale, drift=drift,
             enforce_generated_bound=False))
     totals /= math.sqrt(math.pi)
-    return tuple(float(value) for value in totals)  # type: ignore[return-value]
+    return tuple(round(float(value), 12) for value in totals)  # type: ignore[return-value]
 
 
 def generate_v3_corpus(config: V3CorpusConfig) -> V3Corpus:
@@ -315,7 +315,7 @@ def generate_v3_corpus(config: V3CorpusConfig) -> V3Corpus:
                 "billing_frequency": frequency, "currency": "USD",
                 "premium_amount_cents": premium, "product_type": product,
             })]
-            frailty = 0.35 * primitive_normal(config, "frailty", policy_id)
+            frailty = round(0.35 * primitive_normal(config, "frailty", policy_id), 12)
             cutoff = issued_at + timedelta(days=30)
             episode = 0
             terminal = False
@@ -325,7 +325,8 @@ def generate_v3_corpus(config: V3CorpusConfig) -> V3Corpus:
                 validate_v3_feature_payload(features)
                 drift = float(scenario["baseline_log_odds_shift"]) if cutoff >= datetime(2024, 1, 1, tzinfo=timezone.utc) else 0.0
                 signal = float(scenario["signal_scale"])
-                conditional = cumulative_incidence(features, frailty, signal_scale=signal, drift=drift)
+                conditional = tuple(round(value, 12) for value in cumulative_incidence(
+                    features, frailty, signal_scale=signal, drift=drift))
                 observable = observable_oracle(features, signal_scale=signal, drift=drift)
                 episode_id = stable_identifier("epi", config, policy_id, cutoff.isoformat())
                 observation_id = stable_identifier("obs", config, policy_id, cutoff.isoformat())
@@ -413,11 +414,27 @@ def validate_v3_corpus(corpus: V3Corpus, config: V3CorpusConfig) -> None:
 
 def corpus_digest(corpus: V3Corpus) -> dict[str, str]:
     return {
-        "histories_sha256": sha256(canonical_json_bytes(corpus.histories)).hexdigest(),
+        "histories_sha256": sha256(canonical_json_bytes(
+            _portable_artifact(corpus.histories))).hexdigest(),
         "observations_sha256": sha256(canonical_json_bytes(
-            [record.to_dict() for record in corpus.observations])).hexdigest(),
-        "oracle_sidecar_sha256": sha256(canonical_json_bytes(corpus.oracle_sidecar)).hexdigest(),
+            _portable_artifact([record.to_dict() for record in corpus.observations]))).hexdigest(),
+        "oracle_sidecar_sha256": sha256(canonical_json_bytes(
+            _portable_artifact(corpus.oracle_sidecar))).hexdigest(),
     }
+
+
+def _portable_artifact(value: Any) -> Any:
+    """Normalize subprecision native-math noise at the committed evidence boundary."""
+
+    if isinstance(value, float):
+        return round(value, 10)
+    if isinstance(value, dict):
+        return {key: _portable_artifact(nested) for key, nested in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_portable_artifact(nested) for nested in value]
+    if hasattr(value, "__dataclass_fields__"):
+        return _portable_artifact(asdict(value))
+    return value
 
 
 def _behavior_events(config: V3CorpusConfig, policy_id: str, cutoff: datetime,

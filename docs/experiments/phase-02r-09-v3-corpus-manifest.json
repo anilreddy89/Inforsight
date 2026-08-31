@@ -60,8 +60,8 @@
   },
   "digests": {
     "histories_sha256": "edfe878ed8359dbc4be17edd4d14cd505b73a0ff8fbdb6fc9f28adc30744bfe7",
-    "observations_sha256": "73667c70af81f02fa3a93792d36596741cfa568ff4950fb5ae73094aa5db7617",
-    "oracle_sidecar_sha256": "e85c97e923175b56ff2a616db45661c3f874204b46ea662f1f31d3389792b19a"
+    "observations_sha256": "c22350372a3c4a343632353f72e7f098fb8b3d33a48eed0a9dffbbbf0d532737",
+    "oracle_sidecar_sha256": "31cf8a6bad8bc991f8e8e5555240b5c933ab666f828d88784424d095615fb140"
   },
   "invariants": {
     "dual_time_visibility": "tested",
@@ -132,13 +132,13 @@
       }
     },
     "dependency_lock_digest": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
-    "execution_id": "55275a7ad6d80c9bfa76fd4adb479d074d6295f223bfd44dd2edbee66ad408ea",
+    "execution_id": "b64fbb888cb471462e78d9b634a842efd9311b6eb82e2aba1b92c82c5ffc8bcb",
     "final_holdout_status": "not_materialized",
     "intervention": {
       "owned_transforms": [],
       "scenario": "stable"
     },
-    "source_digest": "156b88091c5d2754c8f1e8a26c77518c304727a6caa0d41d9d5369f997a47a40",
+    "source_digest": "49ea1b358daf228c4a8a789993f5dec0ab947b4baa1d2609903b015472d45954",
     "stream_set_id": "eac2b8e521b69db5a889308407ba35029f1bdb1d1639421470b106da1d98acf8"
   }
 }
