@@ -56,7 +56,7 @@ Current release milestone: [**v0.2.0-risk-model**](https://github.com/anilreddy8
 | R2-07 | Phase 2R — Evidence gate | Run predeclared multi-seed, negative-control, signal-recovery, uncertainty, and temporal-robustness acceptance tests. | Completed | [#51](https://github.com/anilreddy89/Inforsight/issues/51) | [#52](https://github.com/anilreddy89/Inforsight/pull/52) | 2026-08-30 | `66ae092` | Execution contract, deterministic readiness manifest/report/decision, fail-closed runner, and nine focused tests | Mechanical decision `stop` before model fitting for post-cutoff ingestion leakage; seven independent findings require redesign; P2-08 and P2-09 remain paused. |
 | R2-08 | Phase 2R — Statistical redesign | Approve the event-first, dual-time, matched-control v3 substrate and acceptance protocol `2.0.0`. | Completed | [#53](https://github.com/anilreddy89/Inforsight/issues/53) | [#54](https://github.com/anilreddy89/Inforsight/pull/54) | 2026-08-30 | `09f678a` | ADR 0005, substrate contract `3.0.0`, random-stream registry `1.0.0`, acceptance protocol `2.0.0`, and full R2-07 traceability | Documentation-only; no v3 result or holdout; issue closed on merge. |
 | R2-09 | Phase 2R — Modeling corpus | Implement v3 event-first generation, dual-time observations, oracles, identities, and matched streams. | Completed | [#56](https://github.com/anilreddy89/Inforsight/issues/56) | [#57](https://github.com/anilreddy89/Inforsight/pull/57) | 2026-08-30 | `89c2291` | v3 contracts; 14,400-policy manifest; 76,545 observations; data card; 17 focused v3 tests; 12 contract and 258 simulator tests | Hosted CI passed; no model or final holdout; R2-10 is ready. |
-| R2-10 | Phase 2R — Evaluation data | Rebuild v3 folds, features, preprocessing, diagnostics, candidates, selection, and authorization. | Pending | TBD | TBD | Ready after R2-09 merge | — | Deterministic readiness inputs and frozen selected candidate | Create a focused issue and branch from updated `main`; no acceptance result or final holdout. |
+| R2-10 | Phase 2R — Evaluation data | Rebuild v3 folds, features, preprocessing, diagnostics, candidates, selection, and authorization. | In progress | [#59](https://github.com/anilreddy89/Inforsight/issues/59) | TBD | 2026-08-30 | — | Deterministic readiness inputs and frozen selected candidate | Focused scope is frozen in the phase plan; no acceptance result or final holdout. |
 | R2-11 | Phase 2R — Evidence gate | Run acceptance protocol `2.0.0` after readiness passes. | Pending | TBD | TBD | After R2-10 merge | — | Multi-seed controls, recovery, uncertainty, robustness, and decision evidence | Only merged `proceed` resumes P2-08/P2-09. |
 | P2-08 | Phase 2 — Baseline ML | Calibrate probabilities and evaluate non-final operational thresholds. | Paused | TBD | TBD | After R2-11 proceed decision | — | Calibration, discrimination, review-capacity precision, high-risk recall, threshold, uncertainty, and false-positive-cost evidence | Paused by `LIM-002-001` and `LIM-002-002`; final holdout is not selection data. |
 | P2-09 | Phase 2 — Baseline ML | Publish SHAP or equivalent attribution examples and feature sanity checks. | Paused | TBD | TBD | After R2-11 and P2-08 | — | Explanation examples with model-behavior and action-authority boundaries | Paused; do not substantively interpret v1 seed-noise behavior. |
@@ -85,7 +85,7 @@ Inforsight has a strong and repeatable v1 pipeline-engineering foundation. Phase
 
 In one sentence: Inforsight now has a reproducible event-first v3 corpus that corrects the v2 dual-time and matched-stream implementation boundary, but no performance-dependent work may resume until R2-10 constructs governed evaluation evidence and R2-11 records `proceed`.
 
-R2-00 through R2-09 are complete through PR #57, merge commit `89c2291`. R2-10 is the next ready increment. R2-00 through R2-11 belong to the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) milestone. P2-08 probability calibration and P2-09 explanations remain paused until R2-11 records a merged `proceed` decision.
+R2-00 through R2-09 are complete through PR #57, merge commit `89c2291`. R2-10 is in progress through issue #59. R2-00 through R2-11 belong to the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) milestone. P2-08 probability calibration and P2-09 explanations remain paused until R2-11 records a merged `proceed` decision.
 
 | Measure | Value |
 | --- | ---: |
@@ -282,6 +282,7 @@ Completion evidence:
 - Issue #51 closed when PR #52 merged as `66ae092`; R2-07 preserves the mechanical `stop` decision and R2-08 is unblocked.
 - Issue #53 closed when PR #54 merged as `09f678a`; R2-08 completed and R2-09 became ready.
 - Issue #56 closed when PR #57 merged as `89c2291`; hosted CI passed, R2-09 is complete, and R2-10 is ready.
+- Issue #59 opened R2-10 with a focused v3 evaluation, feature, candidate-selection, and authorization boundary; R2-11 remains blocked.
 
 ## Update procedure
 

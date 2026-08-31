@@ -67,7 +67,7 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-07 | Phase 2R | Run the predeclared multi-seed statistical acceptance gate | Completed | Issue #51 and PR #52 merged as `66ae092`; deterministic readiness evidence records `stop` before model fitting and preserves all redesign findings. |
 | R2-08 | Phase 2R | Approve the event-first, dual-time, matched-control v3 substrate and acceptance protocol `2.0.0` | Completed | Issue #53 and PR #54 merged as `09f678a`; ADR 0005 and normative contracts freeze identities, streams, coefficients/groups, selection, resampling, robustness, support, and decisions before v3 output. |
 | R2-09 | Phase 2R | Implement the v3 corpus and recurring observations | Completed | Issue #56 and PR #57 merged as `89c2291`; 14,400-policy manifest, 76,545 observations, 17 focused v3 tests, 12 contract tests, and 258 simulator tests pass. |
-| R2-10 | Phase 2R | Rebuild v3 evaluation, features, candidates, selection, and authorization | Pending | Ready after R2-09 merge; create a focused issue and branch from updated `main`. |
+| R2-10 | Phase 2R | Rebuild v3 evaluation, features, candidates, selection, and authorization | In progress | Focused issue [#59](https://github.com/anilreddy89/Inforsight/issues/59) is open; the phase plan freezes scope before implementation. |
 | R2-11 | Phase 2R | Run replacement statistical acceptance protocol `2.0.0` | Pending | Blocked until R2-10 merges; only merged `proceed` resumes performance-dependent work. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until R2-11 records a merged `proceed` decision; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
@@ -75,7 +75,7 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 completed through issue #53 and PR #54, merge commit `09f678a`, approving the v3 design and protocol `2.0.0`. R2-09 completed through issue #56 and PR #57, merge commit `89c2291`, implementing the event-first v3 corpus without generating model or final-holdout results. R2-10 is ready, R2-11 remains dependency-gated, and P2-08/P2-09 remain paused.
+R2-08 completed through issue #53 and PR #54, merge commit `09f678a`, approving the v3 design and protocol `2.0.0`. R2-09 completed through issue #56 and PR #57, merge commit `89c2291`, implementing the event-first v3 corpus without generating model or final-holdout results. R2-10 started through focused issue #59; R2-11 remains dependency-gated, and P2-08/P2-09 remain paused.
 
 | Measure | Value |
 | --- | ---: |

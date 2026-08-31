@@ -300,7 +300,7 @@ Implement contract `3.0.0`, including event-first generation, dual-time reconstr
 
 ### R2-10 - Rebuild v3 evaluation, features, candidates, and selection
 
-**Status:** Ready; R2-09 merged as `89c2291`. Create a focused implementation issue and branch from updated `main`.
+**Status:** In progress through focused implementation issue [#59](https://github.com/anilreddy89/Inforsight/issues/59); R2-09 merged as `89c2291`. The implementation branch must start from updated `main`.
 
 Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. Produce no acceptance metric or final holdout.
 

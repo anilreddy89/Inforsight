@@ -178,6 +178,15 @@ from .v3_corpus import (
     reconstruct_v3_features, validate_feature_lineage, validate_v3_corpus,
     validate_v3_feature_payload, visible_events,
 )
+from .v3_evaluation import (
+    FEATURE_GROUPS as V3_FEATURE_GROUPS, FOLDS as V3_EVALUATION_FOLDS,
+    V3_FEATURE_DICTIONARY_VERSION, V3_FEATURE_PIPELINE_VERSION,
+    V3_SCORING_AUTHORIZATION_VERSION, V3_SPLIT_VERSION, V3TemporalFold,
+    build_selection_fold as build_v3_selection_fold,
+    build_temporal_folds as build_v3_temporal_folds,
+    validate_feature_registry as validate_v3_feature_registry,
+    validate_temporal_fold as validate_v3_temporal_fold,
+)
 
 
 __version__ = "0.1.0"
@@ -197,6 +206,11 @@ __all__ = [
     "v3_corpus_digest", "v3_cumulative_incidence", "v3_observable_oracle",
     "validate_feature_lineage", "validate_v3_corpus", "validate_v3_feature_payload",
     "visible_events",
+    "V3_EVALUATION_FOLDS", "V3_FEATURE_DICTIONARY_VERSION",
+    "V3_FEATURE_GROUPS", "V3_FEATURE_PIPELINE_VERSION",
+    "V3_SCORING_AUTHORIZATION_VERSION", "V3_SPLIT_VERSION", "V3TemporalFold",
+    "build_v3_selection_fold", "build_v3_temporal_folds",
+    "validate_v3_feature_registry", "validate_v3_temporal_fold",
     "V2CorpusConfig",
     "V2Corpus",
     "V2Features",
