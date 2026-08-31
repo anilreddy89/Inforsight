@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections import Counter
 from datetime import datetime, timezone
+from hashlib import sha256
 from typing import Iterable
 
 from .v3_config import V3_BILLING_FREQUENCIES, V3_CONTRACT_VERSION
@@ -15,6 +17,7 @@ V3_FEATURE_DICTIONARY_VERSION = V3_CONTRACT_VERSION
 V3_FEATURE_PIPELINE_VERSION = V3_CONTRACT_VERSION
 V3_SCORING_AUTHORIZATION_VERSION = V3_CONTRACT_VERSION
 V3_FINAL_HOLDOUT_STATUS = "not_materialized"
+V3_STRUCTURAL_SUPPORT_VERSION = "1.0.0"
 
 MIN_ELIGIBLE_OBSERVATIONS = 500
 MIN_CLASS_OBSERVATIONS = 50
@@ -62,6 +65,87 @@ def validate_feature_registry() -> None:
         missing = sorted(expected - set(registered))
         extra = sorted(set(registered) - expected)
         raise ValueError(f"v3 feature registry mismatch; missing={missing}, extra={extra}")
+
+
+def structural_support_report(observations: Iterable[V3Observation]) -> dict[str, object]:
+    """Summarize frozen memberships without fitting, transforming, or scoring."""
+
+    rows = _normalized(observations)
+    if not rows:
+        raise ValueError("v3 observations are empty")
+    artifact_ids = {row.artifact_id for row in rows}
+    if len(artifact_ids) != 1:
+        raise ValueError("v3 structural evidence requires one artifact identity")
+    validate_feature_registry()
+    memberships = []
+    for specification, evaluation_role in (
+        *((specification, "acceptance") for specification in FOLDS),
+        (SELECTION_FOLD, "selection"),
+    ):
+        name, fit_end, evaluation_start, evaluation_end = specification
+        fit_window = _window(rows, "fit", None, fit_end)
+        evaluation_window = _window(rows, evaluation_role, evaluation_start, evaluation_end)
+        fit = _observed(fit_window)
+        evaluation = _observed(evaluation_window)
+        support_failures = [
+            *_support_failures(fit, "fit"),
+            *_support_failures(evaluation, evaluation_role),
+        ]
+        latest_fit_cutoff = max(_time(row.as_of) for row in fit)
+        latest_fit_horizon = max(_time(row.horizon_end) for row in fit)
+        earliest_evaluation = min(_time(row.as_of) for row in evaluation)
+        chronology_passed = latest_fit_cutoff < earliest_evaluation
+        embargo_passed = latest_fit_horizon < earliest_evaluation
+        policy_overlap = len({row.policy_id for row in fit} & {row.policy_id for row in evaluation})
+        episode_overlap = len(
+            {row.outcome_episode_id for row in fit}
+            & {row.outcome_episode_id for row in evaluation}
+        )
+        if not chronology_passed:
+            support_failures.append("feature cutoff chronology is invalid")
+        if not embargo_passed:
+            support_failures.append("fit outcome horizon crosses the evaluation boundary")
+        if policy_overlap:
+            support_failures.append("policy identity overlaps governed roles")
+        if episode_overlap:
+            support_failures.append("outcome episode overlaps governed roles")
+        memberships.append({
+            "name": name,
+            "fit_through": fit_end,
+            "evaluation_role": evaluation_role,
+            "evaluation_start": evaluation_start,
+            "evaluation_end": evaluation_end,
+            "fit": _membership_summary(fit_window, fit),
+            "evaluation": _membership_summary(evaluation_window, evaluation),
+            "boundaries": {
+                "latest_fit_cutoff": _timestamp(latest_fit_cutoff),
+                "latest_fit_horizon": _timestamp(latest_fit_horizon),
+                "earliest_evaluation_cutoff": _timestamp(earliest_evaluation),
+                "strict_cutoff_chronology": chronology_passed,
+                "full_90_day_embargo": embargo_passed,
+                "policy_overlap": policy_overlap,
+                "outcome_episode_overlap": episode_overlap,
+            },
+            "support_status": "pass" if not support_failures else "fail",
+            "support_failures": support_failures,
+        })
+    return {
+        "artifact_version": V3_STRUCTURAL_SUPPORT_VERSION,
+        "split_contract_version": V3_SPLIT_VERSION,
+        "phase": "R2-10",
+        "artifact_id": next(iter(artifact_ids)),
+        "minimums": {
+            "eligible_observations": MIN_ELIGIBLE_OBSERVATIONS,
+            "observations_per_class": MIN_CLASS_OBSERVATIONS,
+            "required_billing_frequencies": list(V3_BILLING_FREQUENCIES),
+        },
+        "memberships": memberships,
+        "overall_status": "pass" if all(
+            membership["support_status"] == "pass" for membership in memberships
+        ) else "fail",
+        "claim_boundary": "structural_support_only_no_modeling_or_metrics",
+        "final_holdout_status": V3_FINAL_HOLDOUT_STATUS,
+    }
 
 
 def build_temporal_folds(observations: Iterable[V3Observation]) -> tuple[V3TemporalFold, ...]:
@@ -140,16 +224,72 @@ def _eligible(
     )
 
 
+def _window(
+    rows: tuple[V3Observation, ...], role: str, start: str | None, end: str,
+) -> tuple[V3Observation, ...]:
+    return tuple(
+        row for row in rows
+        if row.role == role
+        and (start is None or _time(row.as_of) >= _time(start))
+        and _time(row.as_of) <= _time(end)
+    )
+
+
+def _observed(rows: tuple[V3Observation, ...]) -> tuple[V3Observation, ...]:
+    return tuple(
+        row for row in rows
+        if row.label_status in {"observed_positive", "observed_negative"}
+        and row.label_value in {0, 1}
+    )
+
+
 def _validate_support(rows: tuple[V3Observation, ...], role: str) -> None:
+    failures = _support_failures(rows, role)
+    if failures:
+        raise ValueError(failures[0])
+
+
+def _support_failures(rows: tuple[V3Observation, ...], role: str) -> list[str]:
+    failures = []
     if len(rows) < MIN_ELIGIBLE_OBSERVATIONS:
-        raise ValueError(f"{role} membership has fewer than {MIN_ELIGIBLE_OBSERVATIONS} eligible observations")
+        failures.append(
+            f"{role} membership has fewer than {MIN_ELIGIBLE_OBSERVATIONS} eligible observations"
+        )
     labels = [row.label_value for row in rows]
     for value in (0, 1):
         if labels.count(value) < MIN_CLASS_OBSERVATIONS:
-            raise ValueError(f"{role} membership has fewer than {MIN_CLASS_OBSERVATIONS} rows for class {value}")
+            failures.append(
+                f"{role} membership has fewer than {MIN_CLASS_OBSERVATIONS} rows for class {value}"
+            )
     frequencies = {row.features.billing_frequency for row in rows}
     if frequencies != set(V3_BILLING_FREQUENCIES):
-        raise ValueError("governed membership lacks a supported billing frequency")
+        failures.append(f"{role} membership lacks a supported billing frequency")
+    return failures
+
+
+def _membership_summary(
+    window: tuple[V3Observation, ...], eligible: tuple[V3Observation, ...],
+) -> dict[str, object]:
+    label_status = Counter(row.label_status for row in window)
+    labels = Counter(row.label_value for row in eligible)
+    frequencies = Counter(row.features.billing_frequency for row in eligible)
+    censored = sum(row.label_status not in {"observed_positive", "observed_negative"} for row in window)
+    return {
+        "window_observations": len(window),
+        "eligible_uncensored_observations": len(eligible),
+        "right_censored_observations": censored,
+        "right_censoring_fraction": censored / len(window) if window else 0.0,
+        "positive": labels[1],
+        "negative": labels[0],
+        "unique_policies": len({row.policy_id for row in eligible}),
+        "billing_frequency": dict(sorted(frequencies.items())),
+        "label_status": dict(sorted(label_status.items())),
+        "earliest_cutoff": min(row.as_of for row in eligible),
+        "latest_cutoff": max(row.as_of for row in eligible),
+        "membership_sha256": sha256(
+            ("\n".join(row.observation_id for row in eligible) + "\n").encode("utf-8")
+        ).hexdigest(),
+    }
 
 
 def _normalized(observations: Iterable[V3Observation]) -> tuple[V3Observation, ...]:
@@ -169,3 +309,7 @@ def _time(value: str) -> datetime:
     if parsed.tzinfo is None or parsed.utcoffset() != timezone.utc.utcoffset(parsed):
         raise ValueError("v3 evaluation timestamps must be UTC")
     return parsed
+
+
+def _timestamp(value: datetime) -> str:
+    return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")

@@ -34,7 +34,16 @@ Aggregate class counts may be inspected only for the predeclared structural supp
 
 ## Initial structural finding
 
-The first full default-corpus test confirms that all three frozen acceptance folds pass the implemented chronology, isolation, frequency, and minimum-count checks. The separately frozen selection interval fails closed because its selection membership contains fewer than 500 eligible observations.
+The deterministic structural-support evidence confirms that all three frozen acceptance folds pass the implemented chronology, isolation, frequency, and minimum-count checks. The separately frozen selection interval fails closed with 467 eligible observations: 80 positive, 387 negative, zero right-censored, and all four billing frequencies represented. The only recorded selection failure is the frozen minimum of 500 eligible observations.
+
+Machine-readable and human-readable evidence is published at:
+
+```text
+docs/experiments/phase-02r-10-v3-structural-support.json
+docs/experiments/phase-02r-10-v3-structural-support.md
+```
+
+It regenerates through `scripts/check_v3_evaluation_support.py --write` and verifies byte-for-byte through `--check`.
 
 This is a pre-model structural finding. R2-10 must not widen the selection interval, lower the minimum, reassign policies, replace the seed, or otherwise repair the result inside implementation code. Candidate fitting and selection remain blocked until the governing contract is reviewed and, if necessary, amended through its versioned change process.
 

@@ -181,10 +181,12 @@ from .v3_corpus import (
 from .v3_evaluation import (
     FEATURE_GROUPS as V3_FEATURE_GROUPS, FOLDS as V3_EVALUATION_FOLDS,
     V3_FEATURE_DICTIONARY_VERSION, V3_FEATURE_PIPELINE_VERSION,
-    V3_SCORING_AUTHORIZATION_VERSION, V3_SPLIT_VERSION, V3TemporalFold,
+    V3_SCORING_AUTHORIZATION_VERSION, V3_SPLIT_VERSION,
+    V3_STRUCTURAL_SUPPORT_VERSION, V3TemporalFold,
     build_selection_fold as build_v3_selection_fold,
     build_temporal_folds as build_v3_temporal_folds,
     validate_feature_registry as validate_v3_feature_registry,
+    structural_support_report as v3_structural_support_report,
     validate_temporal_fold as validate_v3_temporal_fold,
 )
 
@@ -209,8 +211,10 @@ __all__ = [
     "V3_EVALUATION_FOLDS", "V3_FEATURE_DICTIONARY_VERSION",
     "V3_FEATURE_GROUPS", "V3_FEATURE_PIPELINE_VERSION",
     "V3_SCORING_AUTHORIZATION_VERSION", "V3_SPLIT_VERSION", "V3TemporalFold",
+    "V3_STRUCTURAL_SUPPORT_VERSION",
     "build_v3_selection_fold", "build_v3_temporal_folds",
     "validate_v3_feature_registry", "validate_v3_temporal_fold",
+    "v3_structural_support_report",
     "V2CorpusConfig",
     "V2Corpus",
     "V2Features",

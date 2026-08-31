@@ -20,6 +20,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-06-v2-*.json` and `phase-02r-06-v2-*.md` — governed chronological folds, fit-only v2 preprocessing, diagnostics, frozen baseline comparison, complete lineage, and `not_materialized` final-holdout evidence.
 - `phase-02r-07-v2-statistical-acceptance-*` — fail-closed readiness evidence, complete planned seed/fold accounting, a mechanical `stop` decision for post-cutoff ingestion leakage, independent redesign findings, and confirmation that no statistical run or final-holdout access occurred.
 - `phase-02r-09-v3-corpus-manifest.json` — deterministic non-final v3 event-first corpus provenance, structural counts, dual-time/lineage invariants, protected-sidecar digests, random-stream registry identity, and `not_materialized` final-holdout evidence.
+- `phase-02r-10-v3-structural-support.json` and `.md` — read-only governed fold support, chronology, embargo, isolation, censoring, class/frequency counts, and the retained selection-support failure without preprocessing, fitting, prediction, model metrics, oracle access, or final-holdout materialization.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -92,3 +93,12 @@ python3 scripts/build_v3_modeling_corpus.py --check
 ```
 
 The R2-09 command verifies event-first generation and dual-time observations only. It does not build R2-10 evaluation data, run protocol `2.0.0`, or materialize a final release holdout.
+
+Generate or verify the R2-10 structural-support evidence with:
+
+```bash
+python3 scripts/check_v3_evaluation_support.py --write
+python3 scripts/check_v3_evaluation_support.py --check
+```
+
+The R2-10 command is a read-only structural audit over regenerated public observations. It records the frozen selection-support failure without fitting preprocessing or models, producing predictions or model metrics, accessing protected oracle sidecars, or materializing a final release holdout.

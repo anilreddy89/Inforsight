@@ -24,7 +24,7 @@
 | Final holdout | Must remain `not_materialized` throughout R2-10 |
 | Last reviewed | 2026-08-30 |
 
-Initial implementation evidence: the default corpus passes all three frozen acceptance-fold structural checks, while the frozen selection interval fails closed with fewer than 500 eligible selection observations. No interval, threshold, role, seed, or corpus setting has been changed in response. Candidate fitting and selection remain blocked pending contract review.
+Initial implementation evidence: the default corpus passes all three frozen acceptance-fold structural checks, while the frozen selection interval fails closed with 467 eligible observations (80 positive, 387 negative, zero right-censored, and all four billing frequencies represented) against the 500-row minimum. No interval, threshold, role, seed, or corpus setting has been changed in response. Candidate fitting and selection remain blocked pending contract review.
 
 ## Objective
 
