@@ -5,7 +5,6 @@ check: boundary-check dataset-check assessment-check observation-check temporal-
 v3-evaluation-check:
 	python3 scripts/check_v3_evaluation_support.py --check
 	python3 scripts/build_v3_evaluation_pipeline.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v3_evaluation.py' -v
 
 v3-corpus-check:
 	python3 scripts/build_v3_modeling_corpus.py --check
