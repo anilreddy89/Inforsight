@@ -27,7 +27,7 @@ python3 scripts/check_v3_evaluation_support.py --check
 python3 scripts/build_v3_evaluation_pipeline.py --check
 ```
 
-The pipeline regenerates public observations and matrices at runtime but commits only aggregate evidence and portable digests. It selects XGBoost from the selection role and creates no acceptance prediction, acceptance metric, oracle access, executable fitted object, or final holdout. R2-10 merged through PR #62; R2-11 protocol `2.2.0` is the next authorized increment.
+The pipeline regenerates public observations and matrices at runtime but commits only aggregate evidence and portable digests. It selects XGBoost from the selection role and creates no R2-10 acceptance prediction, acceptance metric, oracle access, executable fitted object, or final holdout. R2-10 merged through PR #62. R2-11 issue #64 executes protocol `2.2.0` through `scripts/run_v3_statistical_acceptance.py`; its local mechanical decision is `redesign`, and P2-08/P2-09 remain paused.
 
 ## Current event boundary
 

@@ -308,9 +308,11 @@ Build governed v3 folds, feature/preprocessing state, diagnostics, authorization
 
 ### R2-11 - Run replacement statistical acceptance protocol 2.2.0
 
-**Status:** Ready to open after R2-10 merge; execute protocol `2.2.0` as one focused dependency-gated increment.
+**Status:** Implemented locally through [issue #64](https://github.com/anilreddy89/Inforsight/issues/64) on branch `test/64-r2-11-v3-statistical-acceptance`; mechanical decision `redesign`, with review, hosted CI, and merge pending.
 
 Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
+
+All 20 signal/null pairs pass structural readiness. Authorized primary scoring records `0/20` signal seeds at median-fold AUC `>=0.65`, an across-seed median signal AUC near `0.519` against `0.68`, and `0/20` matched-null improvements at least `0.10`. Later required families terminated after this decisive failure and are explicitly failed as incomplete. The resulting decision is `redesign`; P2-08/P2-09 remain paused.
 
 **Depends on:** R2-10. **Blocks:** P2-08 and P2-09 unless the merged decision is `proceed`.
 
