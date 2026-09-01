@@ -201,8 +201,8 @@ The limitation remains `Scheduled` because the future v2 final-holdout protocol 
 | Status | Scheduled |
 | Severity | Blocking |
 | Discovered in | R2-07 readiness audit under issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
-| Owner | R2-08/R2-09 design and corpus are merged; R2-10 governed evaluation merged through [PR #62](https://github.com/anilreddy89/Inforsight/pull/62); R2-11 replacement acceptance evidence is the next increment |
-| Evidence | `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`, report, and decision; `simulator/tests/test_v2_acceptance.py`; R2-09 implementation evidence in `docs/experiments/phase-02r-09-v3-corpus-manifest.json` and `simulator/tests/test_v3_*.py` |
+| Owner | R2-08/R2-09 design and corpus are merged; R2-10 governed evaluation merged through [PR #62](https://github.com/anilreddy89/Inforsight/pull/62); R2-11 issue [#64](https://github.com/anilreddy89/Inforsight/issues/64) records local decision `redesign` |
+| Evidence | Historical R2-07 manifest/report/decision; R2-09/R2-10 v3 evidence; `docs/experiments/phase-02r-11-v3-statistical-acceptance-*`; `simulator/tests/test_v3_acceptance.py` |
 | Detailed contract | Historical finding: `docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md`; replacement: `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md` and protocol `2.0.0` |
 | Resolution trigger | Before any replacement acceptance model fit, prediction, bootstrap, metric, limitation closure, or downstream performance-dependent work |
 
@@ -239,6 +239,8 @@ Create the versioned v3 statistical substrate defined by ADR 0005 and contract `
 - [ ] Corrected observations and all downstream artifacts use new versions and preserve v1/current-v2 evidence unchanged.
 - [ ] Matched null and robustness tests prove equality of every required unaffected random stream.
 - [ ] Candidate, coefficient, driver-group, strongest-driver, zero-effect, shuffle, bootstrap, learning, and robustness specifications are frozen before replacement results.
+- [x] R2-11 accounts for all 20 signal/null pairs, passes structural readiness, and records the failed primary recovery rules without accessing the final holdout.
+- [ ] A reviewed redesign resolves the failed signal-recovery evidence before another acceptance run or downstream performance-dependent work.
 - [ ] Every replacement acceptance membership meets the unchanged structural count rule or a new reviewed protocol records why the rule changed.
 - [x] Replacement protocol `2.0.0` was approved through issue #53 and PR #54 without rewriting protocol `1.0.0` or the R2-07 `stop` decision.
 - [ ] Full repository checks and hosted CI pass before statistical execution resumes.

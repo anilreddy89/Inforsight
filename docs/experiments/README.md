@@ -23,6 +23,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-10-v3-structural-support.json` and `.md` — immutable pre-amendment `3.0.0` evidence of governed fold support and the retained 467-row selection-support failure. Their bytes and digests remain fixed under issue #60.
 - `phase-02r-10-v3.1-pre-remediation-disposition.json` and `phase-02r-10-v3-*-3.1.0.*` — retained, digest-bound evidence of the invalidated first attempt; these files cannot authorize R2-11.
 - `phase-02r-10-v3-*-3.2.0.*` — authoritative issue-#61 structural, split, fit-only preprocessing, diagnostic, candidate-selection, portable-state, and scoring-authorization evidence under simulator contract `3.1.0`, evaluation membership `3.2.0`, and protocol `2.2.0`.
+- `phase-02r-11-v3-statistical-acceptance-*` — issue-#64 readiness and authorized 20-seed primary evidence plus the mechanical `redesign` decision. All seed pairs pass structural readiness, but `0/20` pass the signal-AUC and matched-null-improvement recovery counts. Required later families not run after the decisive recovery failure are explicitly failed as incomplete rather than waived.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -112,3 +113,13 @@ python3 scripts/build_v3_evaluation_pipeline.py --check
 ```
 
 The command consumes the separately versioned v3.1 arrears remediation and writes only authoritative `3.2.0` aggregate evidence. It keeps acceptance roles out of prediction and metrics, does not access protected oracle sidecars, and leaves the final release holdout `not_materialized`. The Jul–Dec selection membership contains 1,498 episodes from 787 unique policies; repeated episodes do not add independent-policy capacity. Diagnostics authorize comparison and the frozen rule selects XGBoost, but no R2-11 acceptance result exists. Results are limited to synthetic candidate selection and are not a prospective real-world backtest, operational claim, actuarial claim, or release claim.
+
+Generate or verify the R2-11 decision evidence with:
+
+```bash
+python3 scripts/run_v3_statistical_acceptance.py --write
+python3 scripts/run_v3_statistical_acceptance.py --check
+make v3-acceptance-check
+```
+
+The non-committed `tmp/r2-11-readiness` and `tmp/r2-11-primary` intermediates are regenerated through the documented per-seed commands and digest-bound in the committed manifest. The mechanical decision is `redesign`: all 20 pairs pass readiness, but the frozen signal-recovery thresholds fail. P2-08/P2-09 remain paused and the final holdout remains `not_materialized`.

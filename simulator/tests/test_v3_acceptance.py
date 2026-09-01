@@ -118,6 +118,24 @@ class V3AcceptanceTests(unittest.TestCase):
         rules = {item.rule_id: item for item in evaluate_readiness_payloads(changed, digests)}
         self.assertEqual(rules["READINESS-FINAL-HOLDOUT"].status, "fail")
 
+    def test_committed_redesign_evidence_is_complete_and_bounded(self) -> None:
+        import json
+        path = ROOT / "docs/experiments/phase-02r-11-v3-statistical-acceptance-manifest.json"
+        manifest = json.loads(path.read_text())
+        self.assertEqual(manifest["decision"], "redesign")
+        self.assertEqual(manifest["readiness"]["passing_seed_pairs"], 20)
+        self.assertEqual(len(manifest["primary_seed_evidence"]), 20)
+        self.assertEqual(manifest["final_holdout_status"], "not_materialized")
+        self.assertEqual(manifest["failed_stop_rules"], [])
+        by_id = {item["rule_id"]: item for item in manifest["rules"]}
+        self.assertEqual(by_id["SIGNAL-SEED-AUC-PASSCOUNT"]["observed"], 0)
+        self.assertEqual(by_id["SIGNAL-MEDIAN-AUC"]["status"], "fail")
+        rendered = path.read_text()
+        for prohibited in ("safe_fitted_state", "matrix_values",
+                           "final_holdout_seed", "bootstrap_samples\": ["):
+            self.assertNotIn(prohibited, rendered)
+        self.assertEqual(manifest["materialization"]["oracle_sidecars"], "not_accessed")
+
     def test_frozen_candidate_scores_only_authorized_acceptance_matrix(self) -> None:
         artifact = "a" * 64
         feature_names = ("x1", "x2")

@@ -16,10 +16,14 @@ import xgboost as xgb
 from xgboost import XGBClassifier
 
 from .v3_config import primitive_uniform
-from .v3_1_config import V31CorpusConfig
+from .v3_1_config import (
+    V31CorpusConfig, intervention_manifest, stream_set_id,
+)
+from .v3_1_corpus import generate_v3_corpus
 from .v3_evaluation import (
-    RANDOM_SEED, V3Matrix, V3Preprocessor, authorize, matrix_digest,
-    preprocessor_digest, validate_authorization,
+    RANDOM_SEED, V3Matrix, V3Preprocessor, authorize, build_temporal_folds,
+    fit_preprocessor, matrix_digest, preprocessor_digest, structural_support_report,
+    transform, validate_authorization,
 )
 
 R2_V3_ACCEPTANCE_VERSION = "1.0.0"
@@ -242,6 +246,151 @@ def build_readiness_manifest(root: Path) -> dict[str, Any]:
         "acceptance_results_generated": False,
         "final_holdout_status": FINAL_HOLDOUT_STATUS,
     }
+
+
+def evaluate_seed_readiness(seed: int, *, generator=generate_v3_corpus,
+                            support_builder=structural_support_report) -> dict[str, Any]:
+    """Regenerate one governed signal/null pair and retain structural evidence only."""
+
+    if seed not in R2_V3_ACCEPTANCE_SEEDS:
+        raise ValueError("seed is outside the frozen R2-11 inventory")
+    signal_config = V31CorpusConfig(
+        base_seed=seed, namespace="r2-09-default", scenario="stable",
+    )
+    null_config = V31CorpusConfig(
+        base_seed=seed, namespace="r2-09-default", scenario="null_signal",
+    )
+    if stream_set_id(signal_config) != stream_set_id(null_config):
+        raise ValueError("matched signal/null pair does not share stream-set identity")
+    null_intervention = intervention_manifest(null_config)
+    if null_intervention != {
+        "scenario": "null_signal", "owned_transforms": ["signal_scale"],
+    }:
+        raise ValueError("null intervention is not atomic")
+    pair = {}
+    for name, config in (("signal", signal_config), ("null", null_config)):
+        corpus = generator(config)
+        support = support_builder(corpus.observations)
+        memberships = {item["name"]: item for item in support["memberships"]}
+        pair[name] = {
+            "artifact_id": corpus.provenance["artifact_id"],
+            "stream_set_id": corpus.provenance["stream_set_id"],
+            "structural_status": support["overall_status"],
+            "folds": {
+                fold: {
+                    "status": memberships[fold]["support_status"],
+                    "fit": memberships[fold]["fit"],
+                    "evaluation": memberships[fold]["evaluation"],
+                    "boundaries": memberships[fold]["boundaries"],
+                }
+                for fold in R2_V3_ACCEPTANCE_FOLDS
+            },
+            "final_holdout_status": support["final_holdout_status"],
+        }
+    matched = pair["signal"]["stream_set_id"] == pair["null"]["stream_set_id"]
+    passed = matched and all(
+        pair[variant]["structural_status"] == "pass"
+        and pair[variant]["final_holdout_status"] == FINAL_HOLDOUT_STATUS
+        for variant in ("signal", "null")
+    )
+    return {
+        "seed": seed,
+        "status": "pass" if passed else "fail",
+        "matched_stream_set": matched,
+        "null_intervention": null_intervention,
+        "signal": pair["signal"],
+        "null": pair["null"],
+    }
+
+
+def execute_primary_seed(seed: int) -> dict[str, Any]:
+    """Run authorized stable/null discrimination metrics without retaining predictions."""
+
+    if seed not in R2_V3_ACCEPTANCE_SEEDS:
+        raise ValueError("seed is outside the frozen R2-11 inventory")
+    variants = {}
+    for scenario in ("stable", "null_signal"):
+        config = V31CorpusConfig(
+            base_seed=seed, namespace="r2-09-default", scenario=scenario,
+        )
+        corpus = generate_v3_corpus(config)
+        folds = []
+        for fold in build_temporal_folds(corpus.observations):
+            fitted = fit_preprocessor(fold)
+            train = transform(fitted, fold.fit, purpose="fit", role="fit")
+            evaluation = transform(
+                fitted, fold.evaluation, purpose="acceptance", role="acceptance",
+            )
+            requested = ("xgboost",) if scenario == "stable" else (
+                "logistic", "xgboost",
+            )
+            predictions = fit_authorized_candidates(
+                train, evaluation, fitted, candidates=requested,
+            )
+            candidate_metrics = {}
+            for item in predictions:
+                prevalence = sum(evaluation.targets) / len(evaluation.targets)
+                brier = brier_score(evaluation.targets, item.probabilities)
+                baseline_brier = prevalence * (1 - prevalence)
+                candidate_metrics[item.candidate] = {
+                    "roc_auc": roc_auc(evaluation.targets, item.probabilities),
+                    "average_precision": average_precision(
+                        evaluation.targets, item.probabilities,
+                    ),
+                    "prevalence": prevalence,
+                    "average_precision_lift": average_precision(
+                        evaluation.targets, item.probabilities,
+                    ) - prevalence,
+                    "brier_score": brier,
+                    "prevalence_brier": baseline_brier,
+                    "brier_skill": 1 - brier / baseline_brier,
+                    "model_sha256": item.model_sha256,
+                    "authorization_sha256": item.authorization_sha256,
+                    "prediction_sha256": item.prediction_sha256,
+                }
+            folds.append({
+                "fold": fold.name,
+                "observations": len(evaluation.targets),
+                "policies": len(set(evaluation.policy_ids)),
+                "positive": sum(evaluation.targets),
+                "negative": len(evaluation.targets) - sum(evaluation.targets),
+                "membership_sha256": sha256(("\n".join(evaluation.observation_ids) + "\n").encode()).hexdigest(),
+                "candidates": candidate_metrics,
+            })
+        variants[scenario] = {
+            "artifact_id": corpus.provenance["artifact_id"],
+            "stream_set_id": corpus.provenance["stream_set_id"],
+            "folds": folds,
+        }
+    matched = variants["stable"]["stream_set_id"] == variants["null_signal"]["stream_set_id"]
+    if not matched:
+        raise ValueError("primary execution lost matched stream identity")
+    signal_aucs = [fold["candidates"]["xgboost"]["roc_auc"]
+                   for fold in variants["stable"]["folds"]]
+    null_aucs = [fold["candidates"]["xgboost"]["roc_auc"]
+                 for fold in variants["null_signal"]["folds"]]
+    return {
+        "seed": seed,
+        "status": "complete",
+        "matched_stream_set": True,
+        "stable": variants["stable"],
+        "null_signal": variants["null_signal"],
+        "median_fold_signal_auc": _median(signal_aucs),
+        "median_fold_null_auc": _median(null_aucs),
+        "median_fold_matched_null_improvement": _median(
+            [signal - null for signal, null in zip(signal_aucs, null_aucs, strict=True)]
+        ),
+        "row_level_predictions_committed": False,
+        "final_holdout_status": FINAL_HOLDOUT_STATUS,
+    }
+
+
+def _median(values: Sequence[float]) -> float:
+    ordered = sorted(values)
+    middle = len(ordered) // 2
+    return ordered[middle] if len(ordered) % 2 else (
+        ordered[middle - 1] + ordered[middle]
+    ) / 2
 
 
 def fit_authorized_candidates(train: V3Matrix, evaluation: V3Matrix,
