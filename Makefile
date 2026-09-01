@@ -9,7 +9,7 @@ v3-evaluation-check:
 
 v3-corpus-check:
 	python3 scripts/build_v3_modeling_corpus.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v3_*.py' -v
+	python3 -m unittest simulator.tests.test_v3_config simulator.tests.test_v3_corpus simulator.tests.test_v3_1_corpus -v
 
 r2-08-design-check:
 	python3 scripts/check_r2_08_design.py

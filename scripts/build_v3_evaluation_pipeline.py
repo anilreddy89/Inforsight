@@ -144,6 +144,7 @@ def build_artifacts() -> dict[str, bytes]:
         "materialization": _materialization(),
         "final_holdout_status": V3_FINAL_HOLDOUT_STATUS,
     }
+    feature = _portable(feature)
     diagnostic.update({
         "phase": "R2-10", "artifact_version": V3_DIAGNOSTIC_VERSION,
         "artifact_id": corpus.provenance["artifact_id"],
