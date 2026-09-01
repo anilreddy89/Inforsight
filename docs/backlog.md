@@ -308,7 +308,7 @@ Build governed v3 folds, feature/preprocessing state, diagnostics, authorization
 
 ### R2-11 - Run replacement statistical acceptance protocol 2.2.0
 
-**Status:** Ready to open after R2-10 merge; execute protocol `2.2.0` as one focused dependency-gated increment.
+**Status:** In progress since 2026-09-01 through [issue #64](https://github.com/anilreddy89/Inforsight/issues/64) on branch `test/64-r2-11-v3-statistical-acceptance`.
 
 Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
 
