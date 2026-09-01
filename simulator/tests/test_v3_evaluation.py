@@ -145,6 +145,12 @@ class V3EvaluationTests(unittest.TestCase):
                 preprocessor_sha256=preprocessor_digest(self.fitted),
                 model_sha256="0" * 64,
             )
+        changed_values = replace(
+            self.selection,
+            values=((self.selection.values[0][0] + 1e-8,) + self.selection.values[0][1:],)
+            + self.selection.values[1:],
+        )
+        self.assertNotEqual(matrix_digest(changed_values), matrix_digest(self.selection))
 
     def test_candidates_and_diagnostics_are_frozen_before_acceptance(self) -> None:
         self.assertIn(self.candidates["selection"]["selected_candidate"], {"logistic", "xgboost"})

@@ -39,6 +39,7 @@ V3_STRUCTURAL_SUPPORT_VERSION = "1.1.0"
 UNKNOWN_CATEGORY = "__unknown__"
 RANDOM_SEED = 20260817
 PORTABLE_ARTIFACT_DECIMALS = 4
+MATRIX_DIGEST_DECIMALS = 12
 
 MIN_ELIGIBLE_OBSERVATIONS = 500
 MIN_CLASS_OBSERVATIONS = 50
@@ -641,7 +642,12 @@ def diagnostics(train: V3Matrix, selection: V3Matrix, fitted: V3Preprocessor) ->
 
 
 def matrix_digest(matrix: V3Matrix) -> str:
-    return _digest(asdict(matrix))
+    payload = asdict(matrix)
+    payload["values"] = [
+        [round(value, MATRIX_DIGEST_DECIMALS) for value in row]
+        for row in matrix.values
+    ]
+    return _digest(payload)
 
 
 def target_digest(targets: tuple[int, ...]) -> str:
