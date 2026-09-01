@@ -41,9 +41,9 @@ Phase 2R is a required remediation gate between Phase 2.07 and performance-depen
 
 ### Pause boundary
 
-- **P2-08 probability calibration and threshold evaluation is paused.** Calibration plumbing may be unit-tested only inside a separately approved remediation issue; no Phase 2.08 experiment artifact or performance conclusion may be published before R2-11 records `proceed`.
+- **P2-08 probability calibration and threshold evaluation is paused.** Calibration plumbing may be unit-tested only inside a separately approved remediation issue; no Phase 2.08 experiment artifact or performance conclusion may be published before a merged replacement acceptance decision records `proceed`.
 - **P2-09 SHAP or equivalent attribution is paused.** Explanation plumbing may be unit-tested only with clearly marked fixtures; no v1 feature importance may be interpreted as a substantive risk mechanism.
-- P2-10 through P2-12 remain pending. Model-specific artifact freezing, a final evaluation, a model decision, and a release marker cannot proceed before R2-11 records `proceed`.
+- P2-10 through P2-12 remain pending. Model-specific artifact freezing, a final evaluation, a model decision, and a release marker cannot proceed before a merged replacement acceptance decision records `proceed`.
 - The v1 generator, observations, splits, and model artifacts remain immutable historical evidence. Phase 2R adds separately versioned contracts and artifacts rather than rewriting prior evidence.
 - No new final release holdout may be materialized, inspected, transformed, or scored until a later dedicated one-shot release issue authorizes it after the replacement candidate is frozen.
 
@@ -308,7 +308,7 @@ Build governed v3 folds, feature/preprocessing state, diagnostics, authorization
 
 ### R2-11 - Run replacement statistical acceptance protocol 2.2.0
 
-**Status:** Implemented locally through [issue #64](https://github.com/anilreddy89/Inforsight/issues/64) on branch `test/64-r2-11-v3-statistical-acceptance`; mechanical decision `redesign`, with review, hosted CI, and merge pending.
+**Status:** Completed on 2026-09-01 through [issue #64](https://github.com/anilreddy89/Inforsight/issues/64) and [PR #65](https://github.com/anilreddy89/Inforsight/pull/65), merge commit `76c8cd3`. The mechanical decision is `redesign`; P2-08/P2-09 remain paused and the final holdout remains `not_materialized`.
 
 Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
 
@@ -318,11 +318,46 @@ All 20 signal/null pairs pass structural readiness. Authorized primary scoring r
 
 ### Phase 2R completion gate
 
-Phase 2R completes only when R2-00 through R2-11 are merged in order and the R2-11 decision is `proceed`. A favorable single seed, a passing unit-test suite, or a manually accepted limitation is not sufficient. If R2-11 decides `redesign` or `stop`, P2-08 and P2-09 remain paused and a new focused backlog item must own the next action.
+The original Phase 2R sequence could complete only when R2-00 through R2-11 were
+merged in order and the R2-11 decision was `proceed`. R2-11 instead decided
+`redesign`, so the gate remains open until a reviewed replacement sequence records
+a merged `proceed`. A favorable single seed, a passing unit-test suite, or a
+manually accepted limitation is not sufficient. P2-08 and P2-09 remain paused and
+P2-10 through P2-12 remain blocked.
+
+### Phase 2R v4 redesign extension (triggered by R2-11)
+
+R2-11 decided `redesign`, so the completion gate remains closed. The proposed
+replacement sequence is R2-12 through R2-16: authorize bounded diagnostics on a
+separate development seed block, diagnose and approve a versioned v4 design,
+implement and qualify the substrate, freeze evaluation and one candidate, and run
+a fresh acceptance seed block exactly once. The detailed scope, boundaries,
+hypotheses, and acceptance checks are defined in the
+[v4 signal-recovery redesign plan](modeling/phase-02r-12-v4-redesign-plan.md).
+
+```text
+merge R2-11 -> R2-12 -> R2-13 -> R2-14 -> R2-15 -> R2-16
+             diagnostics   design/implementation   fresh acceptance
+```
+
+- [ ] **R2-12 - Close out v3 and approve redesign diagnostics ([issue #66](https://github.com/anilreddy89/Inforsight/issues/66), in progress):** preserve the
+  R2-11 block as spent acceptance evidence and freeze a disjoint development
+  diagnostic boundary before changing the substrate.
+- [ ] **R2-13 - Diagnose signal recovery and approve v4:** distinguish oracle
+  separability, driver support, transform parity, episode dilution, candidate
+  learning, and temporal instability; then freeze a reviewed v4 design.
+- [ ] **R2-14 - Implement and qualify v4:** implement separate versioned paths and
+  pass predeclared development qualification without touching acceptance seeds.
+- [ ] **R2-15 - Freeze v4 evaluation and candidate:** prove structural support,
+  authorize comparison, select once, and freeze memberships and fitted-state
+  digests before acceptance access.
+- [ ] **R2-16 - Run fresh v4 statistical acceptance:** execute the complete frozen
+  protocol and publish one mechanical decision. Only merged `proceed` resumes
+  governed Phase 2 work.
 
 ## Phase 2 - Baseline ML resumed after Phase 2R
 
-- [ ] **P2-08 - Probability calibration and operational thresholds (PAUSED):** After R2-11 records a merged `proceed`, fit calibration using the separately designated non-test calibration data and report discrimination, calibration, precision at operational review capacity, recall in high-risk bands, threshold tradeoffs, uncertainty, and explicit false-positive cost assumptions. Do not access the final release holdout for model or threshold selection.
+- [ ] **P2-08 - Probability calibration and operational thresholds (PAUSED):** After a replacement acceptance gate records a merged `proceed`, fit calibration using the separately designated non-test calibration data and report discrimination, calibration, precision at operational review capacity, recall in high-risk bands, threshold tradeoffs, uncertainty, and explicit false-positive cost assumptions. Do not access the final release holdout for model or threshold selection.
 - [ ] **P2-09 - Model-behavior explanations (PAUSED):** After the calibrated candidate and feature contract are frozen, publish SHAP or equivalent attribution examples with feature sanity checks and clear boundaries that explanations describe model behavior rather than authorize conservation actions. Use only approved non-final data for explanation development.
 - [ ] **P2-10 - Artifact and environment reproducibility:** Version the training configuration, dependencies, feature contract, split manifest, fitted preprocessing and calibration pipelines, metrics, and model artifacts; bundle compatible objects or bind them through verified metadata, and prove that reloading the frozen release candidate reproduces authorized predictions from documented commands.
 - [ ] **P2-11 - Final evaluation, model card, and decision note:** Freeze the release candidate and evaluation protocol before one access-controlled final test; then publish `MODEL_CARD.md`, the final experiment report, and a Phase 2 decision note that disclose limitations, uncertainty, synthetic-data boundaries, the absence of a meaningful subgroup-fairness assessment, and the release decision.
