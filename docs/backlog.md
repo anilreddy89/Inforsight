@@ -300,7 +300,7 @@ Implement contract `3.0.0`, including event-first generation, dual-time reconstr
 
 ### R2-10 - Rebuild v3 evaluation, features, candidates, and selection
 
-**Status:** Local implementation and deterministic evidence complete; PR merge pending. Issues #60 and #61 establish simulator contract `3.1.0`, evaluation/candidate membership `3.2.0`, and effective protocol `2.2.0` while retaining all historical failed evidence.
+**Status:** Completed on 2026-09-01 through issues #59–#61 and [PR #62](https://github.com/anilreddy89/Inforsight/pull/62), merge commit `36c17b7`. Both hosted CI runs passed. Historical failed evidence remains immutable and the final holdout remains `not_materialized`.
 
 Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. The authoritative structural gate passes with 1,498 episodes from 787 selection policies; repeated episodes are not new independent-policy capacity, and policy remains the resampling cluster. Diagnostics return `allow` and the frozen rule selects XGBoost. Produce no acceptance metric or final holdout, and limit claims to synthetic candidate selection rather than prospective real-world validation.
 
@@ -308,7 +308,7 @@ Build governed v3 folds, feature/preprocessing state, diagnostics, authorization
 
 ### R2-11 - Run replacement statistical acceptance protocol 2.2.0
 
-**Status:** Pending R2-10 merge; execute protocol `2.2.0` only after the dependency closes.
+**Status:** Ready to open after R2-10 merge; execute protocol `2.2.0` as one focused dependency-gated increment.
 
 Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
 

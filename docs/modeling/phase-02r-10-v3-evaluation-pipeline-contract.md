@@ -13,7 +13,7 @@
 | Feature dictionary, feature pipeline, candidates, authorization | `3.0.0` |
 | Acceptance protocol | `2.2.0`; execution remains R2-11 work |
 | Final release holdout | `not_materialized` |
-| Status | R2-10 implementation evidence complete; merge pending |
+| Status | Completed through PR #62, merge `36c17b7`, with two successful hosted CI runs |
 
 This contract implements the engineering boundary assigned to R2-10. The issue-#61 amendment is documented in `phase-02r-10-v3-arrears-remediation-contract-3.1.0.md`. Historical simulator contract `3.0.0`, R2-09 identity, the original 467-row support failure, and the invalidated first `3.1.0` attempt remain immutable.
 
