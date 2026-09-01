@@ -1,0 +1,286 @@
+{
+  "artifact_id": "6709dd4613ce04d26f27614cb994f155bede1f2370c84fd0b5f9862a9f84683e",
+  "artifact_version": "1.0.0",
+  "claim_boundary": "structural_support_only_no_modeling_or_metrics",
+  "final_holdout_status": "not_materialized",
+  "issue": 59,
+  "lineage": {
+    "command_sha256": "a3653a1e18aaf935c6bc586d53ac180bd90a3d461d93f01076dc32d4feda4ffe",
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "r2_09_manifest_sha256": "62925284b50e246de51be3f8560ac79dc81265c678ddeb1ef9736f625746ccae",
+    "source_sha256": "202f5ec98b3d1dd97e9e4e5f1e538a8367788f905c36436b5ed4f20afcdba12d"
+  },
+  "materialization": {
+    "feature_matrices": "not_created",
+    "final_holdout": "not_materialized",
+    "model_metrics": "not_created",
+    "oracle_sidecars": "not_accessed",
+    "predictions": "not_created",
+    "raw_observations": "regenerated_not_committed"
+  },
+  "memberships": [
+    {
+      "boundaries": {
+        "earliest_evaluation_cutoff": "2023-07-01T00:00:00Z",
+        "full_90_day_embargo": true,
+        "latest_fit_cutoff": "2023-03-31T00:00:00Z",
+        "latest_fit_horizon": "2023-06-29T00:00:00Z",
+        "outcome_episode_overlap": 0,
+        "policy_overlap": 0,
+        "strict_cutoff_chronology": true
+      },
+      "evaluation": {
+        "billing_frequency": {
+          "annual": 363,
+          "monthly": 381,
+          "quarterly": 387,
+          "semiannual": 360
+        },
+        "earliest_cutoff": "2023-07-01T00:00:00Z",
+        "eligible_uncensored_observations": 1491,
+        "label_status": {
+          "observed_negative": 1243,
+          "observed_positive": 248
+        },
+        "latest_cutoff": "2023-09-29T00:00:00Z",
+        "membership_sha256": "9e9a3bd63728d04e01e4133c5c418aebfaf12a0487efe14eee691e1ba9788bcf",
+        "negative": 1243,
+        "positive": 248,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 1392,
+        "window_observations": 1491
+      },
+      "evaluation_end": "2023-09-30T23:59:59Z",
+      "evaluation_role": "acceptance",
+      "evaluation_start": "2023-07-01T00:00:00Z",
+      "fit": {
+        "billing_frequency": {
+          "annual": 2652,
+          "monthly": 2632,
+          "quarterly": 2626,
+          "semiannual": 2579
+        },
+        "earliest_cutoff": "2022-01-31T00:00:00Z",
+        "eligible_uncensored_observations": 10489,
+        "label_status": {
+          "observed_negative": 8479,
+          "observed_positive": 2010
+        },
+        "latest_cutoff": "2023-03-31T00:00:00Z",
+        "membership_sha256": "085f5aeac018e0bca569b246ce54a2eba9685bebf05543815504768c6f2b136d",
+        "negative": 8479,
+        "positive": 2010,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 4500,
+        "window_observations": 10489
+      },
+      "fit_through": "2023-03-31T23:59:59Z",
+      "name": "fold_1",
+      "support_failures": [],
+      "support_status": "pass"
+    },
+    {
+      "boundaries": {
+        "earliest_evaluation_cutoff": "2024-01-21T00:00:00Z",
+        "full_90_day_embargo": true,
+        "latest_fit_cutoff": "2023-09-29T00:00:00Z",
+        "latest_fit_horizon": "2023-12-28T00:00:00Z",
+        "outcome_episode_overlap": 0,
+        "policy_overlap": 0,
+        "strict_cutoff_chronology": true
+      },
+      "evaluation": {
+        "billing_frequency": {
+          "annual": 303,
+          "monthly": 354,
+          "quarterly": 331,
+          "semiannual": 313
+        },
+        "earliest_cutoff": "2024-01-21T00:00:00Z",
+        "eligible_uncensored_observations": 1301,
+        "label_status": {
+          "observed_negative": 1086,
+          "observed_positive": 215
+        },
+        "latest_cutoff": "2024-03-30T00:00:00Z",
+        "membership_sha256": "9d0674a3f97fdfb7c83a55ba33e6230979d9ba541b34c4dbe5e706999d7b3756",
+        "negative": 1086,
+        "positive": 215,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 1301,
+        "window_observations": 1301
+      },
+      "evaluation_end": "2024-03-31T23:59:59Z",
+      "evaluation_role": "acceptance",
+      "evaluation_start": "2024-01-01T00:00:00Z",
+      "fit": {
+        "billing_frequency": {
+          "annual": 4352,
+          "monthly": 4355,
+          "quarterly": 4334,
+          "semiannual": 4207
+        },
+        "earliest_cutoff": "2022-01-31T00:00:00Z",
+        "eligible_uncensored_observations": 17248,
+        "label_status": {
+          "observed_negative": 14000,
+          "observed_positive": 3248
+        },
+        "latest_cutoff": "2023-09-29T00:00:00Z",
+        "membership_sha256": "ff6927a335db5cb25187a66ee8cbfc9bf1fd3c3162da8b4c87f58faebdb5c67a",
+        "negative": 14000,
+        "positive": 3248,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 6000,
+        "window_observations": 17248
+      },
+      "fit_through": "2023-09-30T23:59:59Z",
+      "name": "fold_2",
+      "support_failures": [],
+      "support_status": "pass"
+    },
+    {
+      "boundaries": {
+        "earliest_evaluation_cutoff": "2024-07-19T00:00:00Z",
+        "full_90_day_embargo": true,
+        "latest_fit_cutoff": "2024-03-30T00:00:00Z",
+        "latest_fit_horizon": "2024-06-28T00:00:00Z",
+        "outcome_episode_overlap": 0,
+        "policy_overlap": 0,
+        "strict_cutoff_chronology": true
+      },
+      "evaluation": {
+        "billing_frequency": {
+          "annual": 210,
+          "monthly": 252,
+          "quarterly": 225,
+          "semiannual": 213
+        },
+        "earliest_cutoff": "2024-07-19T00:00:00Z",
+        "eligible_uncensored_observations": 900,
+        "label_status": {
+          "observed_negative": 737,
+          "observed_positive": 163
+        },
+        "latest_cutoff": "2024-09-26T00:00:00Z",
+        "membership_sha256": "584d545cfad805f517422de65af29ea10c5035addbce60d7e66815fc86c7777b",
+        "negative": 737,
+        "positive": 163,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 900,
+        "window_observations": 900
+      },
+      "evaluation_end": "2024-09-30T23:59:59Z",
+      "evaluation_role": "acceptance",
+      "evaluation_start": "2024-07-01T00:00:00Z",
+      "fit": {
+        "billing_frequency": {
+          "annual": 6149,
+          "monthly": 6301,
+          "quarterly": 6203,
+          "semiannual": 5974
+        },
+        "earliest_cutoff": "2022-01-31T00:00:00Z",
+        "eligible_uncensored_observations": 24627,
+        "label_status": {
+          "observed_negative": 20082,
+          "observed_positive": 4545
+        },
+        "latest_cutoff": "2024-03-30T00:00:00Z",
+        "membership_sha256": "fa5808b86552602d5f2ccc7fc5967ea70c95f9eb6496505258872f3aa7f34699",
+        "negative": 20082,
+        "positive": 4545,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 7200,
+        "window_observations": 24627
+      },
+      "fit_through": "2024-03-31T23:59:59Z",
+      "name": "fold_3",
+      "support_failures": [],
+      "support_status": "pass"
+    },
+    {
+      "boundaries": {
+        "earliest_evaluation_cutoff": "2024-07-19T00:00:00Z",
+        "full_90_day_embargo": true,
+        "latest_fit_cutoff": "2024-03-30T00:00:00Z",
+        "latest_fit_horizon": "2024-06-28T00:00:00Z",
+        "outcome_episode_overlap": 0,
+        "policy_overlap": 0,
+        "strict_cutoff_chronology": true
+      },
+      "evaluation": {
+        "billing_frequency": {
+          "annual": 120,
+          "monthly": 117,
+          "quarterly": 110,
+          "semiannual": 120
+        },
+        "earliest_cutoff": "2024-07-19T00:00:00Z",
+        "eligible_uncensored_observations": 467,
+        "label_status": {
+          "observed_negative": 387,
+          "observed_positive": 80
+        },
+        "latest_cutoff": "2024-09-26T00:00:00Z",
+        "membership_sha256": "74070d9ecd14e80c2379e365e542f72c8c4b6a31053d206a6d67f90a73a51122",
+        "negative": 387,
+        "positive": 80,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 467,
+        "window_observations": 467
+      },
+      "evaluation_end": "2024-09-30T23:59:59Z",
+      "evaluation_role": "selection",
+      "evaluation_start": "2024-07-01T00:00:00Z",
+      "fit": {
+        "billing_frequency": {
+          "annual": 6149,
+          "monthly": 6301,
+          "quarterly": 6203,
+          "semiannual": 5974
+        },
+        "earliest_cutoff": "2022-01-31T00:00:00Z",
+        "eligible_uncensored_observations": 24627,
+        "label_status": {
+          "observed_negative": 20082,
+          "observed_positive": 4545
+        },
+        "latest_cutoff": "2024-03-30T00:00:00Z",
+        "membership_sha256": "fa5808b86552602d5f2ccc7fc5967ea70c95f9eb6496505258872f3aa7f34699",
+        "negative": 20082,
+        "positive": 4545,
+        "right_censored_observations": 0,
+        "right_censoring_fraction": 0.0,
+        "unique_policies": 7200,
+        "window_observations": 24627
+      },
+      "fit_through": "2024-03-31T23:59:59Z",
+      "name": "selection",
+      "support_failures": [
+        "selection membership has fewer than 500 eligible observations"
+      ],
+      "support_status": "fail"
+    }
+  ],
+  "minimums": {
+    "eligible_observations": 500,
+    "observations_per_class": 50,
+    "required_billing_frequencies": [
+      "monthly",
+      "quarterly",
+      "semiannual",
+      "annual"
+    ]
+  },
+  "overall_status": "fail",
+  "phase": "R2-10",
+  "split_contract_version": "3.0.0"
+}

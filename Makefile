@@ -1,10 +1,14 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-corpus-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-corpus-check v3-evaluation-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check r2-08-design-check v3-corpus-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check r2-08-design-check v3-corpus-check v3-evaluation-check test
+
+v3-evaluation-check:
+	python3 scripts/check_v3_evaluation_support.py --check
+	python3 scripts/build_v3_evaluation_pipeline.py --check
 
 v3-corpus-check:
 	python3 scripts/build_v3_modeling_corpus.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v3_*.py' -v
+	python3 -m unittest simulator.tests.test_v3_config simulator.tests.test_v3_corpus simulator.tests.test_v3_1_corpus -v
 
 r2-08-design-check:
 	python3 scripts/check_r2_08_design.py

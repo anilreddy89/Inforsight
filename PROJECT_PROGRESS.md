@@ -3,7 +3,7 @@
 Personal review document. This file is intentionally excluded from version control and is not an official project status record.
 
 Last reviewed: 2026-08-29
-Current branch: `docs/53-r2-08-v3-statistical-design`
+Current branch: `feat/59-r2-10-v3-evaluation-pipeline`
 
 ## How progress is tracked
 
@@ -67,15 +67,15 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-07 | Phase 2R | Run the predeclared multi-seed statistical acceptance gate | Completed | Issue #51 and PR #52 merged as `66ae092`; deterministic readiness evidence records `stop` before model fitting and preserves all redesign findings. |
 | R2-08 | Phase 2R | Approve the event-first, dual-time, matched-control v3 substrate and acceptance protocol `2.0.0` | Completed | Issue #53 and PR #54 merged as `09f678a`; ADR 0005 and normative contracts freeze identities, streams, coefficients/groups, selection, resampling, robustness, support, and decisions before v3 output. |
 | R2-09 | Phase 2R | Implement the v3 corpus and recurring observations | Completed | Issue #56 and PR #57 merged as `89c2291`; 14,400-policy manifest, 76,545 observations, 17 focused v3 tests, 12 contract tests, and 258 simulator tests pass. |
-| R2-10 | Phase 2R | Rebuild v3 evaluation, features, candidates, selection, and authorization | Pending | Ready after R2-09 merge; create a focused issue and branch from updated `main`. |
-| R2-11 | Phase 2R | Run replacement statistical acceptance protocol `2.0.0` | Pending | Blocked until R2-10 merges; only merged `proceed` resumes performance-dependent work. |
+| R2-10 | Phase 2R | Rebuild v3 evaluation, features, candidates, selection, and authorization | Merge pending | Issues [#60](https://github.com/anilreddy89/Inforsight/issues/60) and [#61](https://github.com/anilreddy89/Inforsight/issues/61) establish simulator `3.1.0`, evaluation `3.2.0`, and protocol `2.2.0`. All folds pass; diagnostics allow comparison; XGBoost is frozen from 1,498 selection episodes across 787 policies. Historical failed evidence remains immutable. |
+| R2-11 | Phase 2R | Run replacement statistical acceptance protocol `2.2.0` | Pending | Blocked until R2-10 merges; only merged `proceed` resumes performance-dependent work. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until R2-11 records a merged `proceed` decision; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 completed through issue #53 and PR #54, merge commit `09f678a`, approving the v3 design and protocol `2.0.0`. R2-09 completed through issue #56 and PR #57, merge commit `89c2291`, implementing the event-first v3 corpus without generating model or final-holdout results. R2-10 is ready, R2-11 remains dependency-gated, and P2-08/P2-09 remain paused.
+R2-08 and R2-09 remain complete through merges `09f678a` and `89c2291`. R2-10 local evidence is complete under issues #59–#61: the remediated simulator preserves historical evidence, every governed fold passes, diagnostics allow candidate comparison, and the deterministic rule selects XGBoost. Merge and hosted CI are still required before R2-10 closes or R2-11 begins. P2-08/P2-09 remain paused, and the final holdout remains `not_materialized`.
 
 | Measure | Value |
 | --- | ---: |
@@ -90,7 +90,7 @@ R2-08 completed through issue #53 and PR #54, merge commit `09f678a`, approving 
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
 | Completed Phase 2R increments | 10 of 12 |
 | Planned Phase 2R increments | 2 of 12 |
-| Next implementation increment | R2-10 v3 evaluation, features, candidates, selection, and authorization |
+| Next implementation increment | Merge R2-10, then open R2-11 acceptance-protocol execution |
 
 ## Active limitation gates
 

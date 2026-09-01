@@ -1,0 +1,97 @@
+{
+  "acceptance_protocol_version": "2.1.0",
+  "artifact_id": "6709dd4613ce04d26f27614cb994f155bede1f2370c84fd0b5f9862a9f84683e",
+  "artifact_version": "3.0.0",
+  "claim_boundary": "synthetic_candidate_selection_only",
+  "explicit_state_reload_verified": true,
+  "final_holdout_status": "not_materialized",
+  "fit_matrix_sha256": "013daea23d428445f7aa287ca26405c81abcbbe67f3a7d611db47ece476f633b",
+  "lineage": {
+    "command_sha256": "a67c27497c0147d68737ed02f1dd89a0128bb80144dbcc916e62aed5e0ec4db6",
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "diagnostic_manifest_sha256": "c008f59555e7bd52368dbd5b7ba87c2c17524760885b316638166da00ce72892",
+    "feature_dictionary_sha256": "9379c725410bb387591dab571bf8750601024e5ac2308bb28b528f21fd11ab50",
+    "feature_manifest_sha256": "6398707e503f597aa2923774c10dac608ca5296a2d5cc731da8ee9fa85e81fbc",
+    "pre_amendment_failure_sha256": "611406e6eb3057217d305c3fd6b36832dc7e2b74017202db33874bd626ab1636",
+    "r2_09_manifest_sha256": "62925284b50e246de51be3f8560ac79dc81265c678ddeb1ef9736f625746ccae",
+    "source_sha256": "831d91cc30bda54fc34e079cd5ce3b6173e05c4e1354169d1aea0b1dcd54a777"
+  },
+  "logistic": {
+    "metrics": {
+      "average_predicted_probability": 0.1595,
+      "brier_score": 0.1447,
+      "log_loss": 0.4656,
+      "negative": 705,
+      "observed_positive_fraction": 0.1745,
+      "positive": 149,
+      "records": 854,
+      "roc_auc": 0.5075
+    },
+    "portable_fit_evidence": {
+      "committed_executable_state": false,
+      "feature_count": 31,
+      "runtime_prediction_reload_verified": true,
+      "state_sha256": "44fefdee8d02905207664e9373c402991b74be2c13449f47d952d3bc89f39e19"
+    }
+  },
+  "phase": "R2-10",
+  "prediction_boundary": {
+    "row_level_predictions_committed": false,
+    "runtime_verified": true
+  },
+  "preprocessor_sha256": "ae6eb0a0f59a34bcd5c3f7b264b5a0a862d10650c00827cd5362a62baee01a11",
+  "selection": {
+    "auc_tolerance": 0.0,
+    "authorization_sha256": "afd7fc80354681a16c6ecc9e30094b17184e27b318de8591553c78ca3a877647",
+    "brier_tolerance": 0.0,
+    "reason": "higher_roc_auc",
+    "selected_candidate": "logistic",
+    "selected_model_sha256": "44fefdee8d02905207664e9373c402991b74be2c13449f47d952d3bc89f39e19"
+  },
+  "selection_matrix_sha256": "f8a19089ef008463592e34ea38fb44c2d4c867729e5f8c5ff755110463dc83f8",
+  "specifications": {
+    "logistic": {
+      "C": 1.0,
+      "max_iter": 1000,
+      "penalty": "l2",
+      "random_seed": 20260817,
+      "solver": "liblinear",
+      "tol": 0.0
+    },
+    "xgboost": {
+      "early_stopping": false,
+      "learning_rate": 0.1,
+      "max_depth": 2,
+      "min_child_weight": 2.0,
+      "n_estimators": 25,
+      "n_jobs": 1,
+      "random_seed": 20260817,
+      "tree_method": "exact"
+    }
+  },
+  "split_version": "3.1.0",
+  "versions": {
+    "candidate": "3.0.0",
+    "scikit_learn": "1.7.2",
+    "selection_membership": "3.1.0",
+    "xgboost": "3.3.0"
+  },
+  "xgboost": {
+    "metrics": {
+      "average_predicted_probability": 0.1963,
+      "brier_score": 0.1451,
+      "log_loss": 0.4664,
+      "negative": 705,
+      "observed_positive_fraction": 0.1745,
+      "positive": 149,
+      "records": 854,
+      "roc_auc": 0.4511
+    },
+    "portable_fit_evidence": {
+      "committed_executable_state": false,
+      "feature_count": 31,
+      "runtime_prediction_reload_verified": true,
+      "state_sha256": "3d5844e5e5259be657fbd3bacafc057cd62a980e984b19b63da984cbf6110e46"
+    }
+  }
+}

@@ -300,15 +300,15 @@ Implement contract `3.0.0`, including event-first generation, dual-time reconstr
 
 ### R2-10 - Rebuild v3 evaluation, features, candidates, and selection
 
-**Status:** Ready; R2-09 merged as `89c2291`. Create a focused implementation issue and branch from updated `main`.
+**Status:** Local implementation and deterministic evidence complete; PR merge pending. Issues #60 and #61 establish simulator contract `3.1.0`, evaluation/candidate membership `3.2.0`, and effective protocol `2.2.0` while retaining all historical failed evidence.
 
-Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. Produce no acceptance metric or final holdout.
+Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. The authoritative structural gate passes with 1,498 episodes from 787 selection policies; repeated episodes are not new independent-policy capacity, and policy remains the resampling cluster. Diagnostics return `allow` and the frozen rule selects XGBoost. Produce no acceptance metric or final holdout, and limit claims to synthetic candidate selection rather than prospective real-world validation.
 
 **Depends on:** R2-09. **Blocks:** R2-11.
 
-### R2-11 - Run replacement statistical acceptance protocol 2.0.0
+### R2-11 - Run replacement statistical acceptance protocol 2.2.0
 
-**Status:** Pending R2-10 merge.
+**Status:** Pending R2-10 merge; execute protocol `2.2.0` only after the dependency closes.
 
 Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
 

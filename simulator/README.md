@@ -20,7 +20,14 @@ Verify the deterministic non-final evidence with:
 python3 scripts/build_v3_modeling_corpus.py --check
 ```
 
-V3 creates no fold, feature matrix, model, prediction, acceptance result, or final holdout. The final release holdout remains `not_materialized`, and R2-10 remains blocked until R2-09 merges.
+R2-10 adds a separate v3.1 arrears-remediation namespace and the governed v3 evaluation pipeline. Verify its immutable historical failure and authoritative aggregate `3.2.0` evidence with:
+
+```bash
+python3 scripts/check_v3_evaluation_support.py --check
+python3 scripts/build_v3_evaluation_pipeline.py --check
+```
+
+The pipeline regenerates public observations and matrices at runtime but commits only aggregate evidence and portable digests. It selects XGBoost from the selection role and creates no acceptance prediction, acceptance metric, oracle access, executable fitted object, or final holdout. R2-11 remains blocked until R2-10 merges.
 
 ## Current event boundary
 

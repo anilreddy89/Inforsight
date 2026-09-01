@@ -760,7 +760,7 @@ R2-07 immutable stop evidence
   -> matched primitive streams and atomic interventions
   -> frozen coefficients, driver groups, candidates, and selection
   -> executable bootstrap, shuffle, learning, robustness, and decision rules
-  -> R2-09 implementation -> R2-10 evaluation rebuild -> R2-11 protocol 2.0.0
+  -> R2-09 historical implementation -> R2-10 versioned remediation/evaluation -> R2-11 protocol 2.2.0
 ```
 
 R2-08 generates no corpus, model, prediction, metric, or holdout. Protocol `1.0.0` and the R2-07
