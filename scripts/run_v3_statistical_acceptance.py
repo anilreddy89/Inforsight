@@ -62,12 +62,18 @@ def main() -> int:
         print(f"Wrote {output.relative_to(ROOT)}: complete")
         return 0
     if args.write or args.check:
-        artifacts = _build_final_artifacts(args.output_dir, args.primary_output_dir)
         destinations = {
             "manifest": ROOT / "docs/experiments/phase-02r-11-v3-statistical-acceptance-manifest.json",
             "report": ROOT / "docs/experiments/phase-02r-11-v3-statistical-acceptance-report.md",
             "decision": ROOT / "docs/experiments/phase-02r-11-v3-statistical-acceptance-decision.md",
         }
+        has_intermediates = ((args.output_dir / "aggregate.json").is_file()
+                             and all((args.primary_output_dir / f"seed-{seed}.json").is_file()
+                                     for seed in range(20261001, 20261021)))
+        if args.check and not has_intermediates:
+            artifacts = _artifacts_from_committed_manifest(destinations["manifest"])
+        else:
+            artifacts = _build_final_artifacts(args.output_dir, args.primary_output_dir)
         if args.check:
             stale = [name for name, path in destinations.items()
                      if not path.is_file() or path.read_bytes() != artifacts[name]]
@@ -228,18 +234,38 @@ def _build_final_artifacts(readiness_dir: Path, primary_dir: Path) -> dict[str, 
     manifest_bytes = (json.dumps(manifest, allow_nan=False, sort_keys=True,
                                  indent=2) + "\n").encode("utf-8")
     failed = [rule for rule in rules if rule["status"] == "fail"]
-    report = "\n".join([
+    return {
+        "manifest": manifest_bytes,
+        "report": _render_report(manifest),
+        "decision": _render_decision(manifest),
+    }
+
+
+def _rule_by_id(manifest, rule_id):
+    return next(rule for rule in manifest["rules"] if rule["rule_id"] == rule_id)
+
+
+def _render_report(manifest) -> bytes:
+    signal_count = _rule_by_id(manifest, "SIGNAL-SEED-AUC-PASSCOUNT")["observed"]
+    signal_auc = _rule_by_id(manifest, "SIGNAL-MEDIAN-AUC")["observed"]
+    improvement_count = _rule_by_id(manifest, "SIGNAL-MATCHED-NULL-PASSCOUNT")["observed"]
+    improvements = [item["median_fold_matched_null_improvement"]
+                    for item in manifest["primary_seed_evidence"]]
+    ap_lift = _rule_by_id(manifest, "SIGNAL-MEDIAN-AP-LIFT")["observed"]
+    brier_skill = _rule_by_id(manifest, "SIGNAL-MEDIAN-BRIER-SKILL")["observed"]
+    failed = [rule for rule in manifest["rules"] if rule["status"] == "fail"]
+    return "\n".join([
         "# Phase 2R.11 v3 Statistical Acceptance Report", "",
         "Decision: `redesign`.", "",
         "All 20 signal/null pairs passed readiness across all three governed folds. "
         "Authorized primary scoring then failed the frozen signal-recovery rules.", "",
         "## Primary results", "",
-        f"- Seeds meeting median-fold AUC `>= 0.65`: `{sum(v >= .65 for v in signal_auc)}/20` (required `16/20`).",
-        f"- Across-seed median signal AUC: `{_median(signal_auc):.6f}` (required `>= 0.68`).",
-        f"- Seeds meeting matched-null improvement `>= 0.10`: `{sum(v >= .10 for v in improvements)}/20` (required `16/20`).",
+        f"- Seeds meeting median-fold AUC `>= 0.65`: `{signal_count}/20` (required `16/20`).",
+        f"- Across-seed median signal AUC: `{signal_auc:.6f}` (required `>= 0.68`).",
+        f"- Seeds meeting matched-null improvement `>= 0.10`: `{improvement_count}/20` (required `16/20`).",
         f"- Median matched-null improvement: `{_median(improvements):.6f}`.",
-        f"- Median average-precision lift: `{_median(ap_lifts):.6f}` (required `>= 0.10`).",
-        f"- Median Brier skill: `{_median(brier_skills):.6f}` (required positive).", "",
+        f"- Median average-precision lift: `{ap_lift:.6f}` (required `>= 0.10`).",
+        f"- Median Brier skill: `{brier_skill:.6f}` (required positive).", "",
         "The XGBoost and logistic null-control median AUC rules pass, but interval coverage "
         "and later protocol families were not run after the decisive recovery failure. Those "
         "required items are explicitly failed as incomplete and independently require `redesign`.", "",
@@ -247,7 +273,12 @@ def _build_final_artifacts(readiness_dir: Path, primary_dir: Path) -> dict[str, 
         "No raw matrix, row-level prediction, oracle sidecar, bootstrap sample, executable fitted "
         "object, or final holdout was committed. P2-08 and P2-09 remain paused.", "",
     ]).encode("utf-8")
-    decision = "\n".join([
+
+
+def _render_decision(manifest) -> bytes:
+    if manifest["decision"] != "redesign":
+        raise ValueError("R2-11 committed decision must be redesign")
+    return "\n".join([
         "# Phase 2R.11 Decision", "", "Decision: `redesign`.", "",
         "The decision is mechanical under protocol `2.2.0`. Readiness passed for all 20 "
         "signal/null pairs, but zero signal replications met the required median-fold AUC "
@@ -259,7 +290,30 @@ def _build_final_artifacts(readiness_dir: Path, primary_dir: Path) -> dict[str, 
         "feature, candidate, or protocol change before another acceptance run. The final "
         "release holdout remains `not_materialized`.", "",
     ]).encode("utf-8")
-    return {"manifest": manifest_bytes, "report": report, "decision": decision}
+
+
+def _artifacts_from_committed_manifest(path: Path) -> dict[str, bytes]:
+    raw = path.read_bytes()
+    manifest = json.loads(raw)
+    canonical = (json.dumps(manifest, allow_nan=False, sort_keys=True,
+                            indent=2) + "\n").encode("utf-8")
+    if raw != canonical:
+        raise ValueError("R2-11 committed manifest is not canonical")
+    if manifest.get("acceptance_protocol_version") != "2.2.0":
+        raise ValueError("R2-11 protocol version mismatch")
+    if manifest.get("final_holdout_status") != "not_materialized":
+        raise ValueError("R2-11 final holdout boundary mismatch")
+    if manifest.get("readiness", {}).get("passing_seed_pairs") != 20:
+        raise ValueError("R2-11 committed readiness inventory is incomplete")
+    if len(manifest.get("primary_seed_evidence", [])) != 20:
+        raise ValueError("R2-11 committed primary inventory is incomplete")
+    if manifest.get("failed_stop_rules") != []:
+        raise ValueError("R2-11 committed stop-rule disposition mismatch")
+    return {
+        "manifest": canonical,
+        "report": _render_report(manifest),
+        "decision": _render_decision(manifest),
+    }
 
 
 if __name__ == "__main__":
