@@ -14,6 +14,13 @@ required_files=(
   data-contracts/v3/observation-record.schema.json
   data-contracts/v3/oracle-sidecar.schema.json
   docs/experiments/phase-02r-09-v3-corpus-manifest.json
+  docs/experiments/phase-02r-10-v3.1-pre-remediation-disposition.json
+  docs/experiments/phase-02r-10-v3-structural-support-3.2.0.json
+  docs/experiments/phase-02r-10-v3-split-manifest-3.2.0.json
+  docs/experiments/phase-02r-10-v3-feature-pipeline-manifest-3.2.0.json
+  docs/experiments/phase-02r-10-v3-feature-diagnostics-manifest-3.2.0.json
+  docs/experiments/phase-02r-10-v3-candidate-selection-manifest-3.2.0.json
+  docs/modeling/phase-02r-10-v3-feature-dictionary.json
   datasets/v3/DATA_CARD.md
 )
 
@@ -24,6 +31,15 @@ for file in "${required_files[@]}"; do
     exit 1
   fi
 done
+
+# R2-10 commits only aggregate evidence and portable digests.
+while IFS= read -r forbidden; do
+  echo "Forbidden R2-10 materialization detected: $forbidden" >&2
+  exit 1
+done < <(find docs datasets -type f \( \
+  -iname '*v3*matrix*' -o -iname '*v3*prediction*' -o \
+  -iname '*v3*oracle*sidecar*' -o -iname '*v3*fitted*.pkl' -o \
+  -iname '*v3*fitted*.pickle' \) -print)
 
 # Secret-Bearing Filename Check
 while IFS= read -r -d '' file; do

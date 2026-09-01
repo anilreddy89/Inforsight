@@ -1,0 +1,25 @@
+{
+  "artifact_version": "1.0.0",
+  "decision": "invalidated_and_retained",
+  "decision_issue": 61,
+  "final_holdout_status": "not_materialized",
+  "phase": "R2-10",
+  "reason": [
+    "arrears_duration_days was constant zero despite a frozen nonzero strongest-group coefficient",
+    "the initial diagnostic implementation incorrectly assigned allow to every mechanical flag",
+    "the initial matrix implementation had not yet applied every frozen coefficient transform"
+  ],
+  "retained_artifacts": {
+    "phase-02r-10-v3-candidate-selection-manifest-3.1.0.json": "bd582a0c77031be98544e5e0409466a86a810241dec7908b81fac4384a8e5910",
+    "phase-02r-10-v3-candidate-selection-report-3.1.0.md": "52003733786b3d7aab39ff528bc16cf96bff02e1d9378c5d8dad31dcf38f103f",
+    "phase-02r-10-v3-feature-diagnostics-manifest-3.1.0.json": "c008f59555e7bd52368dbd5b7ba87c2c17524760885b316638166da00ce72892",
+    "phase-02r-10-v3-feature-diagnostics-report-3.1.0.md": "dfc59093753532ca831997b700bb0cbec0e650402698a663c7b9bac7beef19d1",
+    "phase-02r-10-v3-feature-pipeline-manifest-3.1.0.json": "6398707e503f597aa2923774c10dac608ca5296a2d5cc731da8ee9fa85e81fbc",
+    "phase-02r-10-v3-split-manifest-3.1.0.json": "e5afb3e69aac22a77f8612218a5f267fd91241660a36cabd826e99903e6f1be5",
+    "phase-02r-10-v3-structural-support-3.1.0.json": "f0b7206a6d77bde0f03469cc3a7526bd8346500bf22ce2aad513246c471ca394",
+    "phase-02r-10-v3-structural-support-3.1.0.md": "3eff259d2f590d366aabe5650dd8791c7df6b347ae92f65431bbf7889fb178ef"
+  },
+  "r2_11_authorized": false,
+  "status": "historical_failed_attempt",
+  "supersession_rule": "Only evidence generated from simulator contract 3.1.0, evaluation contract 3.2.0, and protocol 2.2.0 may authorize R2-11."
+}

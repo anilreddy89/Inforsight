@@ -1,0 +1,423 @@
+{
+  "artifact_id": "7a78f00c91f464669175e9cef03c4a28307f2dec5460dee7be316efa25d8307b",
+  "artifact_version": "3.0.0",
+  "claim_boundary": "non_final_feature_boundary_only",
+  "decision": "allow",
+  "designed_zero_group": "missingness",
+  "diagnostic_version": "3.0.0",
+  "dispositions": [
+    {
+      "decision": "allow",
+      "flag": "high_cardinality:recent_delay_days",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_near_constant:recent_failed_payment_count",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_near_constant:recent_retry_count",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_near_constant:recent_recovery_count",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_near_constant:arrears_duration_days",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_near_constant:payment_attribute_missing",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    },
+    {
+      "decision": "allow",
+      "flag": "fit_constant:contact_attribute_missing",
+      "rationale": "approved public v3 feature; full multi-seed control evidence remains R2-11 work"
+    }
+  ],
+  "driver_groups": {
+    "missingness": [
+      "payment_attribute_missing",
+      "contact_attribute_missing"
+    ],
+    "recent_payment": [
+      "recent_delay_days",
+      "recent_failed_payment_count",
+      "recent_retry_count",
+      "recent_recovery_count",
+      "arrears_duration_days"
+    ],
+    "rolling_history": [
+      "rolling_on_time_rate",
+      "rolling_payment_count"
+    ],
+    "service_notice": [
+      "recent_notice_count",
+      "notice_category",
+      "recent_contact_count",
+      "contact_category"
+    ],
+    "static": [
+      "tenure_days",
+      "premium_amount_cents",
+      "product_type",
+      "billing_frequency"
+    ]
+  },
+  "final_holdout_status": "not_materialized",
+  "flags": [
+    {
+      "id": "high_cardinality:recent_delay_days",
+      "kind": "high_cardinality",
+      "source": "recent_delay_days"
+    },
+    {
+      "id": "fit_near_constant:recent_failed_payment_count",
+      "kind": "fit_near_constant",
+      "source": "recent_failed_payment_count"
+    },
+    {
+      "id": "fit_near_constant:recent_retry_count",
+      "kind": "fit_near_constant",
+      "source": "recent_retry_count"
+    },
+    {
+      "id": "fit_near_constant:recent_recovery_count",
+      "kind": "fit_near_constant",
+      "source": "recent_recovery_count"
+    },
+    {
+      "id": "fit_near_constant:arrears_duration_days",
+      "kind": "fit_near_constant",
+      "source": "arrears_duration_days"
+    },
+    {
+      "id": "fit_near_constant:payment_attribute_missing",
+      "kind": "fit_near_constant",
+      "source": "payment_attribute_missing"
+    },
+    {
+      "id": "fit_constant:contact_attribute_missing",
+      "kind": "fit_constant",
+      "source": "contact_attribute_missing"
+    }
+  ],
+  "identifier_and_protected_screen": {
+    "hits": [],
+    "status": "passed"
+  },
+  "lineage": {
+    "command_sha256": "a67c27497c0147d68737ed02f1dd89a0128bb80144dbcc916e62aed5e0ec4db6",
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "feature_dictionary_sha256": "9379c725410bb387591dab571bf8750601024e5ac2308bb28b528f21fd11ab50",
+    "feature_manifest_sha256": "216ca8b5733959ee2331aff5f2a1edacd6c136ba4fbacbfdd3fae055e5c4cea9",
+    "invalidated_v3_1_disposition_sha256": "d34b94914bf5c33d47dbd88b3e9d238a325b94ff62771847e1a7744ccef7e6a2",
+    "pre_amendment_failure_json_sha256": "611406e6eb3057217d305c3fd6b36832dc7e2b74017202db33874bd626ab1636",
+    "pre_amendment_failure_markdown_sha256": "f94250ec0acdb49e85cf185987465ca3dceccd40da1ab7f4cc8619239cf13f0a",
+    "r2_09_manifest_sha256": "62925284b50e246de51be3f8560ac79dc81265c678ddeb1ef9736f625746ccae",
+    "source_sha256": "aa55ed05001b8f8856960ea997bf4016db0be622728cdfec92913dc68106b70a"
+  },
+  "phase": "R2-10",
+  "selection_unknown_counts": {
+    "billing_frequency": 0,
+    "contact_category": 0,
+    "notice_category": 0,
+    "product_type": 0
+  },
+  "source_results": [
+    {
+      "driver_group": "static",
+      "fit_majority_fraction": 0.2385,
+      "fit_unique_patterns": 9,
+      "fit_uniqueness_ratio": 0.0003,
+      "flags": [],
+      "mutual_information_max": 0.0018,
+      "output_width": 1,
+      "selection_unique_patterns": 9,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.321,
+        "roc_auc": 0.5
+      },
+      "source": "tenure_days"
+    },
+    {
+      "driver_group": "static",
+      "fit_majority_fraction": 0.0008,
+      "fit_unique_patterns": 5649,
+      "fit_uniqueness_ratio": 0.1871,
+      "flags": [],
+      "mutual_information_max": 0.0141,
+      "output_width": 1,
+      "selection_unique_patterns": 768,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3211,
+        "roc_auc": 0.4993
+      },
+      "source": "premium_amount_cents"
+    },
+    {
+      "driver_group": "recent_payment",
+      "fit_majority_fraction": 0.0579,
+      "fit_unique_patterns": 28424,
+      "fit_uniqueness_ratio": 0.9414,
+      "flags": [
+        "high_cardinality"
+      ],
+      "mutual_information_max": 0.0004,
+      "output_width": 1,
+      "selection_unique_patterns": 1406,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3211,
+        "roc_auc": 0.5017
+      },
+      "source": "recent_delay_days"
+    },
+    {
+      "driver_group": "recent_payment",
+      "fit_majority_fraction": 0.9511,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [
+        "fit_near_constant"
+      ],
+      "mutual_information_max": 0.0003,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0883,
+        "log_loss": 0.3201,
+        "roc_auc": 0.5205
+      },
+      "source": "recent_failed_payment_count"
+    },
+    {
+      "driver_group": "recent_payment",
+      "fit_majority_fraction": 0.9606,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [
+        "fit_near_constant"
+      ],
+      "mutual_information_max": 0.0007,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0883,
+        "log_loss": 0.32,
+        "roc_auc": 0.5211
+      },
+      "source": "recent_retry_count"
+    },
+    {
+      "driver_group": "recent_payment",
+      "fit_majority_fraction": 0.9708,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [
+        "fit_near_constant"
+      ],
+      "mutual_information_max": 0.0011,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0884,
+        "log_loss": 0.3204,
+        "roc_auc": 0.512
+      },
+      "source": "recent_recovery_count"
+    },
+    {
+      "driver_group": "recent_payment",
+      "fit_majority_fraction": 0.9511,
+      "fit_unique_patterns": 61,
+      "fit_uniqueness_ratio": 0.002,
+      "flags": [
+        "fit_near_constant"
+      ],
+      "mutual_information_max": 0.0006,
+      "output_width": 1,
+      "selection_unique_patterns": 40,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0883,
+        "log_loss": 0.3202,
+        "roc_auc": 0.515
+      },
+      "source": "arrears_duration_days"
+    },
+    {
+      "driver_group": "rolling_history",
+      "fit_majority_fraction": 0.8389,
+      "fit_unique_patterns": 7,
+      "fit_uniqueness_ratio": 0.0002,
+      "flags": [],
+      "mutual_information_max": 0.0007,
+      "output_width": 1,
+      "selection_unique_patterns": 5,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.321,
+        "roc_auc": 0.5004
+      },
+      "source": "rolling_on_time_rate"
+    },
+    {
+      "driver_group": "rolling_history",
+      "fit_majority_fraction": 0.3758,
+      "fit_unique_patterns": 5,
+      "fit_uniqueness_ratio": 0.0002,
+      "flags": [],
+      "mutual_information_max": 0.0015,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3211,
+        "roc_auc": 0.499
+      },
+      "source": "rolling_payment_count"
+    },
+    {
+      "driver_group": "service_notice",
+      "fit_majority_fraction": 0.6505,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [],
+      "mutual_information_max": 0.0042,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3209,
+        "roc_auc": 0.5154
+      },
+      "source": "recent_notice_count"
+    },
+    {
+      "driver_group": "service_notice",
+      "fit_majority_fraction": 0.7007,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [],
+      "mutual_information_max": 0.0012,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3209,
+        "roc_auc": 0.52
+      },
+      "source": "recent_contact_count"
+    },
+    {
+      "driver_group": "missingness",
+      "fit_majority_fraction": 0.9506,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [
+        "fit_near_constant"
+      ],
+      "mutual_information_max": 0.0,
+      "output_width": 1,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0884,
+        "log_loss": 0.3206,
+        "roc_auc": 0.5145
+      },
+      "source": "payment_attribute_missing"
+    },
+    {
+      "driver_group": "missingness",
+      "fit_majority_fraction": 1.0,
+      "fit_unique_patterns": 1,
+      "fit_uniqueness_ratio": 0.0,
+      "flags": [
+        "fit_constant"
+      ],
+      "mutual_information_max": 0.0,
+      "output_width": 1,
+      "selection_unique_patterns": 1,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.321,
+        "roc_auc": 0.5
+      },
+      "source": "contact_attribute_missing"
+    },
+    {
+      "driver_group": "static",
+      "fit_majority_fraction": 0.517,
+      "fit_unique_patterns": 2,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [],
+      "mutual_information_max": 0.0,
+      "output_width": 3,
+      "selection_unique_patterns": 2,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3209,
+        "roc_auc": 0.5091
+      },
+      "source": "product_type"
+    },
+    {
+      "driver_group": "static",
+      "fit_majority_fraction": 0.2553,
+      "fit_unique_patterns": 4,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [],
+      "mutual_information_max": 0.0002,
+      "output_width": 5,
+      "selection_unique_patterns": 4,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3207,
+        "roc_auc": 0.5201
+      },
+      "source": "billing_frequency"
+    },
+    {
+      "driver_group": "service_notice",
+      "fit_majority_fraction": 0.6505,
+      "fit_unique_patterns": 4,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [],
+      "mutual_information_max": 0.0,
+      "output_width": 5,
+      "selection_unique_patterns": 4,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3208,
+        "roc_auc": 0.5204
+      },
+      "source": "notice_category"
+    },
+    {
+      "driver_group": "service_notice",
+      "fit_majority_fraction": 0.7007,
+      "fit_unique_patterns": 4,
+      "fit_uniqueness_ratio": 0.0001,
+      "flags": [],
+      "mutual_information_max": 0.0,
+      "output_width": 5,
+      "selection_unique_patterns": 4,
+      "shallow_selection_metrics": {
+        "brier_score": 0.0885,
+        "log_loss": 0.3209,
+        "roc_auc": 0.5178
+      },
+      "source": "contact_category"
+    }
+  ],
+  "strongest_group": "recent_payment"
+}

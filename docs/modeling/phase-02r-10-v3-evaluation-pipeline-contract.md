@@ -5,57 +5,58 @@
 | Field | Value |
 | --- | --- |
 | Phase | R2-10 |
-| Issue | [#59](https://github.com/anilreddy89/Inforsight/issues/59) |
-| Evaluation split contract | `3.0.0` |
-| Feature dictionary contract | `3.0.0` |
-| Feature pipeline contract | `3.0.0` |
-| Candidate selection contract | `3.0.0` |
-| Scoring authorization contract | `3.0.0` |
-| Governing substrate | `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md` |
-| Acceptance protocol | `2.0.0`; execution remains R2-11 work |
+| Implementation issue | [#59](https://github.com/anilreddy89/Inforsight/issues/59) |
+| Membership decision | [#60](https://github.com/anilreddy89/Inforsight/issues/60) |
+| Remediation decision | [#61](https://github.com/anilreddy89/Inforsight/issues/61) |
+| Simulator contract | `3.1.0` |
+| Evaluation and candidate-selection membership | `3.2.0` |
+| Feature dictionary, feature pipeline, candidates, authorization | `3.0.0` |
+| Acceptance protocol | `2.2.0`; execution remains R2-11 work |
 | Final release holdout | `not_materialized` |
-| Status | Implementation started; folds and feature registry are the first implemented slice |
+| Status | R2-10 implementation evidence complete; merge pending |
 
-This implementation contract closes only engineering details already assigned to R2-10. It does not amend any frozen statistical choice in ADR 0005, substrate contract `3.0.0`, or acceptance protocol `2.0.0`.
+This contract implements the engineering boundary assigned to R2-10. The issue-#61 amendment is documented in `phase-02r-10-v3-arrears-remediation-contract-3.1.0.md`. Historical simulator contract `3.0.0`, R2-09 identity, the original 467-row support failure, and the invalidated first `3.1.0` attempt remain immutable.
 
-## Implemented first slice
+## Frozen implementation
 
-The first R2-10 slice is separately namespaced in `inforsight_simulator.v3_evaluation` and freezes:
+The `inforsight_simulator.v3_evaluation` namespace provides:
 
-- the three rolling-origin acceptance folds and the selection fold;
-- canonical caller-order normalization by `(as_of, policy_id, observation_id)`;
-- fit/evaluation role isolation, policy isolation, episode isolation, strict cutoff chronology, and the 90-day outcome embargo;
-- fail-closed support of at least 500 eligible uncensored observations, 50 positives, 50 negatives, and all four billing frequencies per governed membership;
-- exclusion of censored observations from fitting and metric memberships;
-- contract-version and public-feature validation before modeling; and
-- a closed, exactly-once mapping of all `V3Features` fields to the five approved driver groups.
+- three rolling-origin acceptance folds and the amended July–December selection fold;
+- canonical ordering, strict cutoff chronology, full 90-day outcome embargo, and role, policy, and episode isolation;
+- fail-closed structural support of at least 500 eligible observations, 50 positives, 50 negatives, all billing frequencies, and zero censoring;
+- an exactly-once 17-feature registry, visible-event lineage checks, recursive protected-concept rejection, coefficient transforms, fit-only preprocessing, and frozen unknown-category columns;
+- deterministic logistic and XGBoost candidates using identical fit and selection memberships;
+- exact AUC, Brier, then logistic tie-breaking and portable fitted-state reload verification; and
+- scoring authorization bound to purpose, fold, role, membership, feature names, matrix, target, fit matrix, preprocessing, model, artifact, and contract digests.
 
-Aggregate class counts may be inspected only for the predeclared structural support gate. Acceptance-role rows may not enter preprocessing, diagnostics, candidate fitting, selection, prediction, or metrics until R2-11 authorizes its governed execution.
+Acceptance rows are inspected only for predeclared aggregate support. They do not enter preprocessing, diagnostics, candidate fitting, selection, predictions, or metrics in R2-10.
 
-## Initial structural finding
+## Evidence
 
-The deterministic structural-support evidence confirms that all three frozen acceptance folds pass the implemented chronology, isolation, frequency, and minimum-count checks. The separately frozen selection interval fails closed with 467 eligible observations: 80 positive, 387 negative, zero right-censored, and all four billing frequencies represented. The only recorded selection failure is the frozen minimum of 500 eligible observations.
-
-Machine-readable and human-readable evidence is published at:
+The authoritative `3.2.0` artifacts are:
 
 ```text
-docs/experiments/phase-02r-10-v3-structural-support.json
-docs/experiments/phase-02r-10-v3-structural-support.md
+docs/experiments/phase-02r-10-v3-structural-support-3.2.0.json
+docs/experiments/phase-02r-10-v3-structural-support-3.2.0.md
+docs/experiments/phase-02r-10-v3-split-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-feature-pipeline-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-feature-diagnostics-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-feature-diagnostics-report-3.2.0.md
+docs/experiments/phase-02r-10-v3-candidate-selection-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-candidate-selection-report-3.2.0.md
 ```
 
-It regenerates through `scripts/check_v3_evaluation_support.py --write` and verifies byte-for-byte through `--check`.
+All governed memberships pass. The selection membership contains 1,498 eligible episodes from 787 unique policies, including 147 positives and 1,351 negatives. Repeated episodes do not increase independent-policy capacity; policy remains the R2-11 resampling cluster. Diagnostics return `allow`, retain `recent_payment` as the strongest group and `missingness` as the designed-zero group, and give every mechanical flag an explicit disposition. XGBoost is selected by higher ROC AUC (`0.5415` versus `0.5293`); this is synthetic candidate-selection evidence, not acceptance or real-world performance evidence.
 
-This is a pre-model structural finding. R2-10 must not widen the selection interval, lower the minimum, reassign policies, replace the seed, or otherwise repair the result inside implementation code. Candidate fitting and selection remain blocked until the governing contract is reviewed and, if necessary, amended through its versioned change process.
+## Reproduction and boundaries
 
-## Remaining implementation slices
+```bash
+python3 scripts/check_v3_evaluation_support.py --check
+python3 scripts/build_v3_evaluation_pipeline.py --write
+python3 scripts/build_v3_evaluation_pipeline.py --check
+make v3-evaluation-check
+```
 
-The next slices must add, in order:
+The build commits only aggregate manifests, reports, portable state digests, and authorization digests. Raw observations, matrices, row-level predictions, executable fitted objects, oracle sidecars, acceptance results, and final-holdout material are not committed. `--check` must reproduce every authoritative byte, while the immutable-evidence check protects the original support failure.
 
-1. the machine-readable feature dictionary with lineage and protected-concept validation;
-2. fold-local fit-only preprocessing and frozen unknown-category behavior;
-3. deterministic non-final diagnostics and complete dispositions;
-4. the frozen logistic and boosted candidates plus exact AUC/Brier/logistic selection;
-5. scoring authorization `3.0.0` bound to artifact, matrix, target, fit, preprocessing, model, role, fold, purpose, and contract digests; and
-6. deterministic manifests, reports, write/check commands, repository integration, and historical-artifact checks.
-
-No remaining slice may materialize a final holdout, produce an acceptance-role prediction or metric, run protocol `2.0.0`, change a frozen statistical setting, or overwrite v1/v2 historical evidence.
+R2-10 enables only R2-11 after merge. It does not authorize calibration, thresholding, explanations, operational action, limitation closure, or any real-world, actuarial, temporal-validation, or release claim.

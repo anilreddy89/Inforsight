@@ -20,7 +20,9 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-06-v2-*.json` and `phase-02r-06-v2-*.md` — governed chronological folds, fit-only v2 preprocessing, diagnostics, frozen baseline comparison, complete lineage, and `not_materialized` final-holdout evidence.
 - `phase-02r-07-v2-statistical-acceptance-*` — fail-closed readiness evidence, complete planned seed/fold accounting, a mechanical `stop` decision for post-cutoff ingestion leakage, independent redesign findings, and confirmation that no statistical run or final-holdout access occurred.
 - `phase-02r-09-v3-corpus-manifest.json` — deterministic non-final v3 event-first corpus provenance, structural counts, dual-time/lineage invariants, protected-sidecar digests, random-stream registry identity, and `not_materialized` final-holdout evidence.
-- `phase-02r-10-v3-structural-support.json` and `.md` — read-only governed fold support, chronology, embargo, isolation, censoring, class/frequency counts, and the retained selection-support failure without preprocessing, fitting, prediction, model metrics, oracle access, or final-holdout materialization.
+- `phase-02r-10-v3-structural-support.json` and `.md` — immutable pre-amendment `3.0.0` evidence of governed fold support and the retained 467-row selection-support failure. Their bytes and digests remain fixed under issue #60.
+- `phase-02r-10-v3.1-pre-remediation-disposition.json` and `phase-02r-10-v3-*-3.1.0.*` — retained, digest-bound evidence of the invalidated first attempt; these files cannot authorize R2-11.
+- `phase-02r-10-v3-*-3.2.0.*` — authoritative issue-#61 structural, split, fit-only preprocessing, diagnostic, candidate-selection, portable-state, and scoring-authorization evidence under simulator contract `3.1.0`, evaluation membership `3.2.0`, and protocol `2.2.0`.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -92,13 +94,21 @@ python3 scripts/build_v3_modeling_corpus.py --write
 python3 scripts/build_v3_modeling_corpus.py --check
 ```
 
-The R2-09 command verifies event-first generation and dual-time observations only. It does not build R2-10 evaluation data, run protocol `2.0.0`, or materialize a final release holdout.
+The R2-09 command verifies event-first generation and dual-time observations only. It does not build R2-10 evaluation data, run an acceptance protocol, or materialize a final release holdout.
 
-Generate or verify the R2-10 structural-support evidence with:
+Verify the immutable pre-amendment R2-10 structural-support evidence with:
 
 ```bash
-python3 scripts/check_v3_evaluation_support.py --write
 python3 scripts/check_v3_evaluation_support.py --check
 ```
 
-The R2-10 command is a read-only structural audit over regenerated public observations. It records the frozen selection-support failure without fitting preprocessing or models, producing predictions or model metrics, accessing protected oracle sidecars, or materializing a final release holdout.
+The check hashes the retained `3.0.0` JSON and Markdown; it does not regenerate or overwrite them.
+
+Generate or verify the amended R2-10 evaluation evidence with:
+
+```bash
+python3 scripts/build_v3_evaluation_pipeline.py --write
+python3 scripts/build_v3_evaluation_pipeline.py --check
+```
+
+The command consumes the separately versioned v3.1 arrears remediation and writes only authoritative `3.2.0` aggregate evidence. It keeps acceptance roles out of prediction and metrics, does not access protected oracle sidecars, and leaves the final release holdout `not_materialized`. The Jul–Dec selection membership contains 1,498 episodes from 787 unique policies; repeated episodes do not add independent-policy capacity. Diagnostics authorize comparison and the frozen rule selects XGBoost, but no R2-11 acceptance result exists. Results are limited to synthetic candidate selection and are not a prospective real-world backtest, operational claim, actuarial claim, or release claim.

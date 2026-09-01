@@ -300,15 +300,15 @@ Implement contract `3.0.0`, including event-first generation, dual-time reconstr
 
 ### R2-10 - Rebuild v3 evaluation, features, candidates, and selection
 
-**Status:** In progress through focused implementation issue [#59](https://github.com/anilreddy89/Inforsight/issues/59). Decision issue [#60](https://github.com/anilreddy89/Inforsight/issues/60) approved downstream evaluation/candidate membership `3.1.0` and protocol `2.1.0`: selection now spans `2024-07-01T00:00:00Z` through `2024-12-31T23:59:59Z`, while R2-09 merge `89c2291`, its recorded identities, and the original 467-row failure evidence remain immutable.
+**Status:** Local implementation and deterministic evidence complete; PR merge pending. Issues #60 and #61 establish simulator contract `3.1.0`, evaluation/candidate membership `3.2.0`, and effective protocol `2.2.0` while retaining all historical failed evidence.
 
-Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. The amended structural gate passes with 854 observations containing later non-overlapping episodes from the same 467 unique selection policies, not new independent policies; policy remains the resampling cluster. Diagnostic disposition and candidate authorization remain under review. Produce no acceptance metric or final holdout, and limit claims to role-isolated synthetic mechanism recovery rather than prospective real-world validation.
+Build governed v3 folds, feature/preprocessing state, diagnostics, authorization, both frozen candidates, deterministic selection evidence, and readiness inputs. The authoritative structural gate passes with 1,498 episodes from 787 selection policies; repeated episodes are not new independent-policy capacity, and policy remains the resampling cluster. Diagnostics return `allow` and the frozen rule selects XGBoost. Produce no acceptance metric or final holdout, and limit claims to synthetic candidate selection rather than prospective real-world validation.
 
 **Depends on:** R2-09. **Blocks:** R2-11.
 
-### R2-11 - Run replacement statistical acceptance protocol 2.1.0
+### R2-11 - Run replacement statistical acceptance protocol 2.2.0
 
-**Status:** Pending R2-10 merge.
+**Status:** Pending R2-10 merge; execute protocol `2.2.0` only after the dependency closes.
 
 Run readiness first, then all predeclared controls and statistical rules only if readiness passes. Publish exactly one `proceed`, `redesign`, or `stop` decision. The final holdout remains `not_materialized`.
 

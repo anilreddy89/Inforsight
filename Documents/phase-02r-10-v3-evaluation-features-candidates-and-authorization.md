@@ -11,26 +11,27 @@
 | Issue title | `[Implementation] R2-10: Rebuild v3 evaluation, features, candidates, selection, and authorization` |
 | Recommended branch | `feat/59-r2-10-v3-evaluation-pipeline` |
 | Pull request | TBD |
-| Status | In progress since 2026-08-30; initial folds and feature-registry slice implemented |
+| Status | In progress since 2026-08-30; amended structural support passes, while diagnostic disposition and candidate authorization remain under review |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
 | Classification | Modeling-foundation remediation / versioned capability |
 | Strict predecessor | R2-09, completed through issue #56 and PR #57, merge commit `89c2291` |
-| Blocks | R2-11 — execute statistical acceptance protocol `2.0.0` |
-| Governing decision | ADR 0005 |
-| Governing substrate | `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md`, contract `3.0.0` |
-| Governing acceptance protocol | `docs/modeling/phase-02r-08-statistical-acceptance-protocol.md`, version `2.0.0` |
-| Governing corpus | R2-09 v3 event-first corpus and observations |
+| Blocks | R2-11 — execute statistical acceptance protocol `2.1.0` |
+| Governing decision | ADR 0005 and [issue #60](https://github.com/anilreddy89/Inforsight/issues/60) |
+| Governing substrate | Historical contract `3.0.0`; remediated simulator contract `3.1.0` through issue #61 |
+| Governing evaluation amendment | Issue #60 amendment `3.1.0`, superseded for authoritative evidence by remediation-bound version `3.2.0` |
+| Governing acceptance protocol | Base `2.0.0`, issue-#60 amendment `2.1.0`, effective remediation-bound version `2.2.0` |
+| Governing corpus | Separately versioned v3.1 remediation; R2-09 v3.0 corpus remains immutable historical evidence |
 | Final holdout | Must remain `not_materialized` throughout R2-10 |
-| Last reviewed | 2026-08-30 |
+| Last reviewed | 2026-08-31 |
 
-Initial implementation evidence: the default corpus passes all three frozen acceptance-fold structural checks, while the frozen selection interval fails closed with 467 eligible observations (80 positive, 387 negative, zero right-censored, and all four billing frequencies represented) against the 500-row minimum. No interval, threshold, role, seed, or corpus setting has been changed in response. Candidate fitting and selection remain blocked pending contract review.
+Initial `3.0.0` implementation evidence remains immutable: the default corpus passes all three frozen acceptance-fold structural checks, while the original selection interval fails closed with 467 eligible observations (80 positive, 387 negative, zero right-censored, and all four billing frequencies represented) against the 500-row minimum. Issue #60 approved evaluation/candidate-membership amendment `3.1.0` and protocol `2.1.0`, extending selection through `2024-12-31T23:59:59Z` without changing a generated row, role, seed, threshold, or R2-09 identity. Distinct post-amendment structural evidence now passes with 854 eligible observations from 467 unique policies; later diagnostic and candidate artifacts remain non-final pending disposition review and do not yet authorize a selected candidate.
 
 ## Objective
 
 Build the deterministic, separately versioned v3 evaluation boundary between the merged R2-09 corpus and R2-11. R2-10 must construct governed chronological folds, a closed public feature dictionary and matrix pipeline, fit-only preprocessing, leakage-aware diagnostics, the two frozen model candidates, deterministic candidate selection, digest-bound scoring authorization, and reproducible non-final readiness evidence.
 
-R2-10 freezes the selected candidate and every input R2-11 needs before acceptance-role modeling access. It may inspect aggregate acceptance class counts only for the predeclared structural support gate. It does not execute protocol `2.0.0`, use acceptance rows for preprocessing, fitting, selection, prediction, or metrics, calibrate probabilities, choose operational thresholds, publish explanations, close limitations, materialize a final release holdout, or make a performance claim.
+R2-10 freezes the selected candidate and every input R2-11 needs before acceptance-role modeling access. It may inspect aggregate acceptance class counts only for the predeclared structural support gate. It does not execute protocol `2.2.0`, use acceptance rows for preprocessing, fitting, selection, prediction, or metrics, calibrate probabilities, choose operational thresholds, publish explanations, close limitations, materialize a final release holdout, or make a performance claim.
 
 ## Why this work is next
 
@@ -41,12 +42,14 @@ R2-10 is therefore the next strict increment. R2-11 cannot run readiness or stat
 ## Immutable boundaries
 
 - V1 and v2 source, contracts, artifacts, reports, and the R2-07 `stop` decision remain immutable historical evidence.
-- Every new public contract, runtime path, command, and artifact must be explicitly v3-namespaced and bind contract `3.0.0`.
+- Every new public contract, runtime path, command, and artifact must be explicitly v3-namespaced and preserve the immutable R2-09 `3.0.0` evidence separately from simulator contract `3.1.0`, evaluation/candidate-membership contract `3.2.0`, and protocol `2.2.0`.
+- R2-09 histories, observations, sidecars, roles, seeds, identities, and manifests remain governed by their recorded versions. `V3_ACCEPTANCE_PROTOCOL_VERSION` and other R2-09 identity inputs must not change for the downstream amendment.
 - Only validated R2-09 public observations may enter evaluation and feature construction. Oracle sidecars, latent values, protected draws, generator working state, roles, scenarios, identifiers, future state, and labels are prohibited model inputs.
 - Feature visibility requires both `effective_at <= as_of` and `ingested_at <= as_of`; feature lineage and visible-event digests remain authoritative.
 - Roles were assigned before risk draws and are mutually exclusive. R2-10 must not reassign policies, replace seeds, force outcomes, weaken chronology, or repair support based on observed results.
 - Candidate specifications, metrics, and deterministic tie-breaking are frozen by contract `3.0.0`; no tuning, retry, or candidate proliferation is permitted.
 - Acceptance-role membership and aggregate class counts may be checked only for structural support; row-level labels must remain unavailable to preprocessing, diagnostics, fitting, selection, and scoring, while acceptance predictions and metrics remain R2-11 work.
+- The amended Jul–Dec selection capacity represents repeated non-overlapping observations from 467 unique policies, not additional independent policies. Policy remains the resampling cluster, and results are limited to role-isolated synthetic mechanism recovery rather than prospective real-world validation.
 - The final release holdout remains `not_materialized`: no seed, identity, membership, distribution, row, feature, fitted transform, prediction, or metric may be created or inspected.
 
 ## Required changes
@@ -65,6 +68,8 @@ Add a versioned R2-10 contract that freezes:
 
 The implementation contract must conform to the already approved substrate contract `3.0.0`; it may close implementation detail but must not change a frozen statistical choice after v3 output inspection.
 
+Issue #60 is the reviewed exception required by that amendment rule. It changes only downstream evaluation and candidate-selection membership to `3.1.0` and the corresponding acceptance protocol to `2.1.0`; it does not amend the R2-09 corpus contracts or rewrite the original `3.0.0` implementation contract.
+
 ### 2. Build governed roles, folds, and embargo evidence
 
 Consume validated, uncensored, model-eligible public v3 observations and preserve the preassigned role. Implement the three frozen acceptance folds:
@@ -74,6 +79,8 @@ Consume validated, uncensored, model-eligible public v3 observations and preserv
 | `fold_1` | Through `2023-03-31T23:59:59Z` | `2023-07-01T00:00:00Z` through `2023-09-30T23:59:59Z` |
 | `fold_2` | Through `2023-09-30T23:59:59Z` | `2024-01-01T00:00:00Z` through `2024-03-31T23:59:59Z` |
 | `fold_3` | Through `2024-03-31T23:59:59Z` | `2024-07-01T00:00:00Z` through `2024-09-30T23:59:59Z` |
+
+The three acceptance folds remain byte/membership identical under amendment `3.1.0`. Candidate selection uses fit cutoffs through `2024-03-31T23:59:59Z` and selection-role cutoffs from `2024-07-01T00:00:00Z` through `2024-12-31T23:59:59Z`, inclusive. The added quarter is frozen; failure of the amended structural gate must return for another reviewed version rather than another ad hoc extension.
 
 Every boundary must prove:
 
@@ -155,16 +162,24 @@ Expected artifacts are:
 
 ```text
 docs/modeling/phase-02r-10-v3-evaluation-pipeline-contract.md
+docs/modeling/phase-02r-10-v3-evaluation-candidate-membership-amendment-3.1.0.md
+docs/modeling/phase-02r-10-statistical-acceptance-protocol-amendment-2.1.0.md
+docs/modeling/phase-02r-10-v3-arrears-remediation-contract-3.1.0.md
 docs/modeling/phase-02r-10-v3-feature-dictionary.json
-docs/experiments/phase-02r-10-v3-split-manifest.json
-docs/experiments/phase-02r-10-v3-feature-pipeline-manifest.json
-docs/experiments/phase-02r-10-v3-feature-diagnostics-manifest.json
-docs/experiments/phase-02r-10-v3-feature-diagnostics-report.md
-docs/experiments/phase-02r-10-v3-candidate-selection-manifest.json
-docs/experiments/phase-02r-10-v3-candidate-selection-report.md
+docs/experiments/phase-02r-10-v3.1-pre-remediation-disposition.json
+docs/experiments/phase-02r-10-v3-structural-support-3.2.0.json
+docs/experiments/phase-02r-10-v3-structural-support-3.2.0.md
+docs/experiments/phase-02r-10-v3-split-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-feature-pipeline-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-feature-diagnostics-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-feature-diagnostics-report-3.2.0.md
+docs/experiments/phase-02r-10-v3-candidate-selection-manifest-3.2.0.json
+docs/experiments/phase-02r-10-v3-candidate-selection-report-3.2.0.md
 ```
 
-Exact filenames may be refined in the implementation contract before the first result-producing run. Every artifact must bind the R2-09 public-observation digest, stream-set/artifact/execution identities, split, feature, preprocessing, model, dependency, canonicalization, and contract versions.
+Every authoritative artifact binds the historical R2-09 manifest digest, the remediated simulator identity, evaluation contract `3.2.0`, protocol `2.2.0`, the invalidated-attempt disposition, and its split, feature, preprocessing, model, dependency, canonicalization, and source versions.
+
+The original structural-support files and all initial `3.1.0` artifacts are immutable failed evidence and must not be overwritten. The authoritative `3.2.0` evidence reports 1,498 episodes from 787 policies and must not describe repeated episodes as additional independent-policy capacity.
 
 Evidence must record counts and class support by role, fold, period, billing frequency, and censoring disposition without committing raw observations, full matrices, row-level predictions, protected sidecars, or executable fitted objects. The selected candidate may be frozen from the governed selection role; acceptance-role predictions and metrics must not exist.
 
@@ -199,22 +214,23 @@ The implementation issue must finalize the file plan before broad edits and must
 
 ## Acceptance checks
 
-- [ ] A versioned R2-10 implementation contract conforms to substrate contract `3.0.0` and freezes remaining implementation details before the first result-producing run.
-- [ ] Split evidence proves strict chronology, the full 90-day embargo, zero policy overlap, and zero outcome-episode overlap for every governed membership.
-- [ ] Every required role/fold meets frozen observation, class, billing-frequency, and censoring support without reassignment, seed replacement, or relaxed chronology.
-- [ ] Only validated public R2-09 observations enter feature construction; exact artifact identity, visible-event digest, and per-value lineage are verified.
-- [ ] The v3 feature dictionary maps every feature exactly once to the approved registry and recursively rejects protected, future, identifier, role, scenario, oracle, and outcome concepts.
-- [ ] Preprocessing is fitted only on approved fit rows; held-out roles cannot change learned state, category vocabulary, feature order, or matrix width.
-- [ ] The frozen unknown-category path works without refitting or width drift.
-- [ ] Every diagnostic finding has one documented disposition; required exclusions or redesigns fail closed and require versioned regeneration.
-- [ ] Logistic and boosted candidates retain frozen specifications, use identical fit/selection memberships, and are selected by the exact AUC/Brier/logistic tie-break rule.
-- [ ] Explicit non-executable fitted state reproduces identical authorized selection predictions without refitting.
-- [ ] The selected candidate, specification, memberships, metrics, and all upstream/model digests are frozen before acceptance-role access.
-- [ ] Authorization `3.0.0` binds purpose, fold, role, membership, names, matrix/target, fit, preprocessing, model, artifact, and contract identities; mutation bypasses fail before prediction.
-- [ ] No acceptance-role prediction or metric and no R2-11 readiness/acceptance result is created.
-- [ ] Every v3 artifact regenerates byte-for-byte through documented read-only checks without committing raw matrices, row-level predictions, oracle sidecars, or executable fitted objects.
-- [ ] Governed v1/v2 artifacts, R2-07 evidence, and R2-09 evidence remain unchanged.
-- [ ] The final release holdout remains `not_materialized`, with no seed, identity, membership, distribution, row, feature, transform, prediction, or metric created or inspected.
+- [x] A versioned R2-10 implementation and remediation contract freezes the effective `3.1.0`/`3.2.0`/`2.2.0` boundaries.
+- [x] Historical R2-09, original support-failure, and invalidated `3.1.0` evidence remain immutable and explicitly dispositioned.
+- [x] Split evidence proves strict chronology, the full 90-day embargo, zero policy overlap, and zero outcome-episode overlap for every governed membership.
+- [x] Every required role/fold meets frozen observation, class, billing-frequency, and censoring support without reassignment, seed replacement, or relaxed chronology.
+- [x] Only validated public v3 observations enter feature construction; artifact identity, visible-event digest, and per-value lineage are verified.
+- [x] The v3 feature dictionary maps every feature exactly once and protected concepts fail closed.
+- [x] Preprocessing is fit only on approved fit rows, with a frozen unknown-category path and matrix width.
+- [x] Every diagnostic finding has one documented disposition; disallowed findings fail closed.
+- [x] Logistic and boosted candidates use identical memberships and the exact frozen tie-break rule.
+- [x] Portable non-executable fitted state reproduces authorized selection predictions without refitting.
+- [x] The selected candidate, memberships, metrics, authorization, and all upstream/model digests are frozen before acceptance access.
+- [x] Authorization `3.0.0` binds purpose, fold, role, membership, names, matrix/target, fit, preprocessing, model, artifact, and contract identities; mutation bypasses fail before prediction.
+- [x] No acceptance-role prediction or metric and no R2-11 readiness/acceptance result is created.
+- [x] Every authoritative artifact regenerates byte-for-byte without committed raw matrices, row-level predictions, oracle sidecars, or executable fitted objects.
+- [x] Governed v1/v2 artifacts, R2-07 evidence, and R2-09 evidence remain unchanged.
+- [x] Evidence reports 787 unique selection policies and limits interpretation to role-isolated synthetic mechanism recovery.
+- [x] The final release holdout remains `not_materialized`, with no seed, identity, membership, distribution, row, feature, transform, prediction, or metric created or inspected.
 - [ ] Focused tests, full repository checks, artifact checks, boundary checks, `make check`, and `git diff --check` pass locally and in hosted CI.
 - [ ] The implementation PR merges to `main`, closes the R2-10 issue, records completion evidence, and leaves R2-11 as the only newly enabled increment.
 
@@ -235,7 +251,7 @@ The implementation issue must finalize the file plan before broad edits and must
 
 ## Explicitly out of scope
 
-- Executing R2-11 readiness or any null, shuffle, signal-recovery, oracle, calibration, learning, ablation, robustness, bootstrap, uncertainty, temporal-stability, or decision rule from protocol `2.0.0`.
+- Executing R2-11 readiness or any null, shuffle, signal-recovery, oracle, calibration, learning, ablation, robustness, bootstrap, uncertainty, temporal-stability, or decision rule from protocol `2.1.0`.
 - Accessing acceptance-role labels for fitting, selection, diagnostics, prediction, or metrics; only structural membership/support validation is allowed.
 - Changing frozen coefficients, transforms, seeds, folds, roles, scenarios, candidates, metrics, tie breakers, thresholds, resampling, or decision rules after v3 output inspection.
 - Materializing or accessing any final-release-holdout seed, identity, membership, distribution, event, observation, feature, matrix, transform, prediction, or metric.
@@ -280,7 +296,7 @@ A deterministic, separately versioned v3 evaluation pipeline constructs governed
 ### Context
 
 ```text
-R2-09 completed through issue #56 and PR #57, merged as 89c2291, implementing the event-first dual-time v3 corpus and recurring observations without producing a model or final-holdout result. R2-10 is the next strict Phase 2R increment and implements the evaluation boundary assigned by ADR 0005, substrate contract 3.0.0, and acceptance protocol 2.0.0. The complete scope and test inventory are in Documents/phase-02r-10-v3-evaluation-features-candidates-and-authorization.md. R2-11, P2-08, and P2-09 remain blocked.
+R2-09 completed through issue #56 and PR #57, merged as 89c2291, implementing the event-first dual-time v3 corpus and recurring observations without producing a model or final-holdout result. R2-10 is the next strict Phase 2R increment and implements the evaluation boundary assigned by ADR 0005 and substrate contract 3.0.0, as amended downstream by issue #60 through evaluation/candidate membership 3.1.0 and acceptance protocol 2.1.0. The complete scope and test inventory are in Documents/phase-02r-10-v3-evaluation-features-candidates-and-authorization.md. R2-11, P2-08, and P2-09 remain blocked.
 ```
 
 ### In scope and out of scope
@@ -291,10 +307,10 @@ In scope:
 - Closed v3 feature dictionary, dual-time/lineage validation, recursive protected-concept rejection, fit-only preprocessing, and frozen unknown-category handling.
 - Leakage-aware non-final diagnostics with complete driver-group mapping and dispositions.
 - Frozen logistic and boosted candidates on identical fit/selection memberships, exact deterministic selection, safe state reload, and candidate freezing.
-- Scoring authorization 3.0.0, deterministic non-final artifacts, tests, commands, repository checks, compatibility evidence, and documentation.
+- Scoring authorization 3.0.0 bound separately to immutable R2-09 identity, evaluation/candidate membership 3.1.0, and protocol 2.1.0; deterministic non-final artifacts, tests, commands, repository checks, compatibility evidence, and documentation.
 
 Out of scope:
-- R2-11 readiness/acceptance execution, acceptance-role predictions or metrics, and any protocol 2.0.0 decision.
+- R2-11 readiness/acceptance execution, acceptance-role predictions or metrics, and any protocol 2.1.0 decision.
 - Calibration, operational thresholds, explanations, limitation closure, or release/performance claims.
 - Any frozen statistical-design change, final-release-holdout access, or rewrite of historical v1/v2/R2-07/R2-09 evidence.
 ```
@@ -306,7 +322,7 @@ Allowed while open: Inspect governed fit and selection outputs needed to verify 
 Blocked while open: Acceptance-role labels for modeling or metrics; R2-11 execution/decision; calibration; explanations; limitation closure; release/performance claims; all final-holdout access.
 Limitations affected: Supplies evaluation-boundary evidence for LIM-002-001, LIM-002-002, and LIM-002-004 without closing them. LIM-002-003 and the one-shot final-holdout obligation remain open.
 Downstream work resumed at closure: R2-11 only.
-Contract or version change: Implement separately namespaced v3 evaluation split, feature, preprocessing, candidate-selection, and scoring-authorization contracts 3.0.0. Do not alter v1/v2 semantics in place or amend frozen protocol 2.0.0.
+Contract or version change: Preserve the R2-09 corpus, feature, preprocessing, candidate-specification, and scoring-authorization contracts at their recorded 3.0.0 identities; implement issue-#60 evaluation/candidate membership 3.1.0 and acceptance protocol 2.1.0 as separate downstream bindings. Do not alter v1/v2 semantics or historical evidence.
 Artifact migration or compatibility: Add deterministic non-final v3 split, feature, diagnostic, and candidate-selection evidence. Raw matrices, row-level predictions, protected sidecars, and executable fitted objects remain uncommitted. Historical artifacts remain byte-identical; final holdout remains not_materialized.
 ```
 
@@ -331,7 +347,7 @@ Copy the checklist from this document's **Acceptance checks** section into the i
 ```text
 Must merge first: R2-09 — issue #56 and PR #57, merged as 89c2291 (complete).
 Blocks: R2-11. P2-08 and P2-09 remain transitively blocked.
-Related decisions or limitations: ADR 0005; v3 substrate contract 3.0.0; acceptance protocol 2.0.0; R2-07 stop decision; LIM-002-001 through LIM-002-004.
+Related decisions or limitations: ADR 0005; issue #60; v3 substrate contract 3.0.0; evaluation/candidate-membership amendment 3.1.0; acceptance protocol 2.1.0; R2-07 stop decision; LIM-002-001 through LIM-002-004.
 ```
 
 Select every required boundary checkbox in the implementation template. R2-10 uses fictional clean-room data, preserves point-in-time and authority boundaries, has an explicit version/compatibility plan, and must not access or materialize a final holdout.

@@ -45,7 +45,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | Historical v2 work completed through R2-07; replacement design completed through R2-08 issue [#53](https://github.com/anilreddy89/Inforsight/issues/53), v3 corpus implementation completed through R2-09 issue [#56](https://github.com/anilreddy89/Inforsight/issues/56), and evaluation/acceptance evidence remains scheduled for R2-10/R2-11 |
+| Owner | Historical v2 work completed through R2-07; v3 design/corpus completed through R2-09 issue [#56](https://github.com/anilreddy89/Inforsight/issues/56); R2-10 evaluation evidence is locally complete under issues #59–#61 with merge pending; acceptance evidence remains R2-11 work |
 | Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
@@ -105,7 +105,7 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | Historical v2 work completed through R2-07; replacement design completed through R2-08 issue [#53](https://github.com/anilreddy89/Inforsight/issues/53), v3 corpus implementation completed through R2-09 issue [#56](https://github.com/anilreddy89/Inforsight/issues/56), and evaluation/acceptance evidence remains scheduled for R2-10/R2-11 |
+| Owner | Historical v2 work completed through R2-07; v3 design/corpus completed through R2-09; R2-10 evaluation evidence is locally complete under issues #59–#61 with merge pending; acceptance evidence remains R2-11 work |
 | Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json` |
 | Detailed plan | Historical v2 design remains in ADR 0004 and protocol `1.0.0`; replacement design is ADR 0005, `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md`, protocol `2.0.0`, and backlog R2-08 through R2-11 |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
@@ -201,7 +201,7 @@ The limitation remains `Scheduled` because the future v2 final-holdout protocol 
 | Status | Scheduled |
 | Severity | Blocking |
 | Discovered in | R2-07 readiness audit under issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
-| Owner | R2-08 design through issue [#53](https://github.com/anilreddy89/Inforsight/issues/53); R2-09 implementation completed through issue [#56](https://github.com/anilreddy89/Inforsight/issues/56) and PR [#57](https://github.com/anilreddy89/Inforsight/pull/57); R2-10 evaluation construction and R2-11 replacement acceptance evidence remain pending |
+| Owner | R2-08/R2-09 design and corpus are merged; R2-10 governed evaluation is locally complete under issues #59–#61 with merge pending; R2-11 replacement acceptance evidence remains pending |
 | Evidence | `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`, report, and decision; `simulator/tests/test_v2_acceptance.py`; R2-09 implementation evidence in `docs/experiments/phase-02r-09-v3-corpus-manifest.json` and `simulator/tests/test_v3_*.py` |
 | Detailed contract | Historical finding: `docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md`; replacement: `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md` and protocol `2.0.0` |
 | Resolution trigger | Before any replacement acceptance model fit, prediction, bootstrap, metric, limitation closure, or downstream performance-dependent work |
