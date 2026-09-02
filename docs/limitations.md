@@ -45,7 +45,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | Historical v2 work completed through R2-07; v3 corpus issue [#56](https://github.com/anilreddy89/Inforsight/issues/56) and later work completed through the R2-11 `redesign` decision; R2-12 diagnostic authorization merged through [PR #67](https://github.com/anilreddy89/Inforsight/pull/67); R2-13 diagnostics and v4 design merged through [PR #70](https://github.com/anilreddy89/Inforsight/pull/70) as `7c4a1a7`; R2-14 owns v4 implementation and development qualification |
+| Owner | Historical v2 corpus issue [#56](https://github.com/anilreddy89/Inforsight/issues/56) and later work are complete through merged R2-13; R2-14 [issue #72](https://github.com/anilreddy89/Inforsight/issues/72) is implemented locally and records `redesign`; a reviewed successor design is required before R2-15 |
 | Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
 | Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
@@ -105,7 +105,7 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | Historical v2 work completed through R2-07; v3 work completed through the R2-11 `redesign` decision; R2-12 diagnostic authorization merged through [PR #67](https://github.com/anilreddy89/Inforsight/pull/67); R2-13 diagnostics and v4 design merged through [PR #70](https://github.com/anilreddy89/Inforsight/pull/70) as `7c4a1a7`; R2-14 owns v4 implementation and development qualification |
+| Owner | Historical work is complete through merged R2-13; R2-14 [issue #72](https://github.com/anilreddy89/Inforsight/issues/72) is implemented locally and records `redesign`; a reviewed successor design is required before R2-15 |
 | Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json` |
 | Detailed plan | Historical v2 design remains in ADR 0004 and protocol `1.0.0`; v3 design and failed acceptance remain in ADR 0005 and R2-08 through R2-11; ADR 0006, issue #66, and backlog R2-12 through R2-16 own the replacement diagnostic and redesign sequence |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
@@ -201,7 +201,7 @@ The limitation remains `Scheduled` because the future v2 final-holdout protocol 
 | Status | Scheduled |
 | Severity | Blocking |
 | Discovered in | R2-07 readiness audit under issue [#51](https://github.com/anilreddy89/Inforsight/issues/51) |
-| Owner | R2-08 through R2-11 are merged; R2-11 [PR #65](https://github.com/anilreddy89/Inforsight/pull/65) records `redesign`; R2-12 diagnostic authorization merged through [PR #67](https://github.com/anilreddy89/Inforsight/pull/67); R2-13 diagnostics and v4 design merged through [PR #70](https://github.com/anilreddy89/Inforsight/pull/70) as `7c4a1a7`; R2-14 owns v4 implementation and development qualification |
+| Owner | Historical work is complete through merged R2-13; R2-14 [issue #72](https://github.com/anilreddy89/Inforsight/issues/72) is implemented locally and records `redesign`; a reviewed successor design is required before R2-15 |
 | Evidence | Historical R2-07 manifest/report/decision; R2-09/R2-10 v3 evidence; `docs/experiments/phase-02r-11-v3-statistical-acceptance-*`; `simulator/tests/test_v3_acceptance.py` |
 | Detailed contract | Historical finding: `docs/modeling/phase-02r-07-v2-statistical-acceptance-execution-contract.md`; replacement: `docs/modeling/phase-02r-08-v3-statistical-substrate-contract.md` and protocol `2.0.0` |
 | Resolution trigger | Before any replacement acceptance model fit, prediction, bootstrap, metric, limitation closure, or downstream performance-dependent work |

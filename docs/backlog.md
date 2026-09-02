@@ -344,8 +344,12 @@ merge R2-11 -> R2-12 -> R2-13 -> R2-14 -> R2-15 -> R2-16
   R2-11 block as spent acceptance evidence and freeze a disjoint development
   diagnostic boundary before changing the substrate.
 - [x] **R2-13 - Diagnose signal recovery and approve v4:** Completed on 2026-09-02 through [issue #69](https://github.com/anilreddy89/Inforsight/issues/69) and [PR #70](https://github.com/anilreddy89/Inforsight/pull/70), merge `7c4a1a7`. All 20 development seeds diagnose H1/H2 as supported, H3/H4/H6 as rejected, and H5 as unresolved. ADR 0007, substrate `4.0.0`, and protocol `3.0.0` freeze the reviewed v4 design under the [phase document](../Documents/phase_docs/phase-02r-13-v4-signal-recovery-diagnostics-and-design.md).
-- [ ] **R2-14 - Implement and qualify v4:** implement separate versioned paths and
-  pass predeclared development qualification without touching acceptance seeds.
+- [ ] **R2-14 - Implement and qualify v4:** Implemented locally through
+  [issue #72](https://github.com/anilreddy89/Inforsight/issues/72). Separate v4
+  paths and all 20 development seeds complete, but the mechanical decision is
+  `redesign`: observable-oracle recovery, probability quality, reference recovery,
+  and hazard validity fail. R2-15 remains blocked; future acceptance and the final
+  holdout remain `not_materialized`.
 - [ ] **R2-15 - Freeze v4 evaluation and candidate:** prove structural support,
   authorize comparison, select once, and freeze memberships and fitted-state
   digests before acceptance access.

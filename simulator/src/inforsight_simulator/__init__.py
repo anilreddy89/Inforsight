@@ -183,6 +183,21 @@ from .v3_1_config import (
     V31CorpusConfig,
 )
 from .v3_1_corpus import generate_v3_corpus as generate_v31_corpus
+from .v4_config import (
+    V4_ACCEPTANCE_PROTOCOL_VERSION, V4_COEFFICIENT_REGISTRY_VERSION,
+    V4_RANDOM_DOMAINS, V4_SIMULATOR_CONTRACT_VERSION,
+    V4_STREAM_REGISTRY_VERSION, V4CorpusConfig,
+    artifact_id as v4_artifact_id, complete_configuration as v4_complete_configuration,
+    execution_id as v4_execution_id, stream_set_id as v4_stream_set_id,
+)
+from .v4_corpus import (
+    V4_ARTIFACT_VERSION, V4_EVENT_SCHEMA_VERSION, V4_OBSERVATION_SCHEMA_VERSION,
+    V4_ORACLE_SIDECAR_VERSION, V4_QUADRATURE_VERSION, V4Corpus, V4Features,
+    V4Observation, V4OracleRecord, competing_hazards as v4_competing_hazards,
+    corpus_digest as v4_corpus_digest, cumulative_incidence as v4_cumulative_incidence,
+    generate_v4_corpus, observable_oracle as v4_observable_oracle,
+    public_mechanism_terms, reconstruct_v4_features, validate_v4_corpus,
+)
 from .v3_evaluation import (
     FEATURE_GROUPS as V3_FEATURE_GROUPS, FOLDS as V3_EVALUATION_FOLDS,
     V3_CANDIDATE_SELECTION_MEMBERSHIP_VERSION, V3_CANDIDATE_VERSION,
@@ -226,6 +241,17 @@ __all__ = [
     "visible_events",
     "V31_ACCEPTANCE_PROTOCOL_VERSION", "V31_SIMULATOR_CONTRACT_VERSION",
     "V31CorpusConfig", "generate_v31_corpus",
+    "V4_ACCEPTANCE_PROTOCOL_VERSION", "V4_ARTIFACT_VERSION",
+    "V4_COEFFICIENT_REGISTRY_VERSION", "V4_EVENT_SCHEMA_VERSION",
+    "V4_OBSERVATION_SCHEMA_VERSION", "V4_ORACLE_SIDECAR_VERSION",
+    "V4_QUADRATURE_VERSION", "V4_RANDOM_DOMAINS",
+    "V4_SIMULATOR_CONTRACT_VERSION", "V4_STREAM_REGISTRY_VERSION",
+    "V4CorpusConfig", "V4Corpus", "V4Features", "V4Observation",
+    "V4OracleRecord", "generate_v4_corpus", "public_mechanism_terms",
+    "reconstruct_v4_features", "v4_artifact_id", "v4_competing_hazards",
+    "v4_complete_configuration", "v4_corpus_digest", "v4_cumulative_incidence",
+    "v4_execution_id", "v4_observable_oracle", "v4_stream_set_id",
+    "validate_v4_corpus",
     "V3_EVALUATION_FOLDS", "V3_FEATURE_DICTIONARY_VERSION",
     "V3_FEATURE_GROUPS", "V3_FEATURE_PIPELINE_VERSION",
     "V3_CANDIDATE_SELECTION_MEMBERSHIP_VERSION", "V3_CANDIDATE_VERSION",

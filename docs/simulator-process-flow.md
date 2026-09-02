@@ -767,6 +767,24 @@ R2-08 generates no corpus, model, prediction, metric, or holdout. Protocol `1.0.
 decision remain unchanged. The final holdout remains `not_materialized`, and only a later merged
 R2-11 `proceed` decision can resume P2-08 and P2-09.
 
+### Phase 2R v4 implementation and qualification path
+
+```text
+R2-13 ADR 0007 + substrate 4.0.0
+  -> separate v4 configuration, identities, schemas, events, observations, and oracle
+  -> billing-frequency scheduled payment opportunities
+  -> matched signal/null stream set with atomic signal-scale intervention
+  -> readiness over 20 development seeds x 2 scenarios x 3 folds
+  -> aggregate-only nine-gate qualification evidence
+  -> mechanical redesign (R2-15 remains blocked)
+```
+
+R2-14 issue #72 runs only seeds `20271101..20271120`. Exact feature/mechanism
+parity, driver support, null behavior, and structural controls pass. Observable
+recovery, AP/Brier quality, reference recovery, and the monthly hazard bound fail,
+so no candidate freeze or future acceptance is authorized. Seeds
+`20271201..20271220` and the final holdout remain `not_materialized`.
+
 ## Test map
 
 | Test module | Process boundary protected |
@@ -786,6 +804,9 @@ R2-11 `proceed` decision can resume P2-08 and P2-09.
 | `test_feature_diagnostics.py` | Train-only diagnostics, source grouping, identifier/cardinality screens, deterministic perturbation, dispositions, artifact safety, and sealed test |
 | `test_v2_evaluation.py` | v2 folds, both embargoes, role/policy/episode isolation, fit-only preprocessing, unknown categories, authorization mutations, diagnostics, lineage, explicit-state reload, and final-holdout absence |
 | `test_v2_acceptance.py` | R2-07 readiness rules, matched-stream failures, dual-time leakage detection, decision precedence, seed/fold accounting, artifact lineage, payload safety, and final-holdout absence |
+| `test_v4_config.py` | v4 registry versions, event-support contract, matched-stream identity, and scheduled-opportunity domain |
+| `test_v4_corpus.py` | separate v4 types, scheduled cadence, exact reconstruction, frozen hazards, oracle, and holdout absence |
+| `test_v4_qualification.py` | development/future domain separation, complete inventory, readiness, and nine frozen gates |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
