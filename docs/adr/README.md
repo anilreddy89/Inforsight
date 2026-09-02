@@ -10,3 +10,4 @@ ADRs capture decisions that are costly or confusing to rediscover. Use the next 
 - [0004 — Introduce a versioned statistical simulator and predeclared evaluation gate](0004-versioned-v2-statistical-simulator-and-evaluation-design.md) — accepted through issue #42 and PR #43
 - [0005 — Replace v2 with a dual-time, matched-control v3 statistical substrate](0005-replace-v2-with-a-dual-time-matched-control-v3-statistical-substrate.md) — accepted through issue #53 and PR #54
 - [0006 — Approve the v4 signal-recovery diagnostic boundary](0006-approve-v4-signal-recovery-diagnostic-boundary.md) — accepted through issue #66 and PR #67
+- [0007 — Approve the v4 signal-recovery design](0007-approve-v4-signal-recovery-design.md) — accepted through R2-13 issue #69; PR review pending

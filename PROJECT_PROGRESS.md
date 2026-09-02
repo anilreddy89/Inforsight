@@ -70,28 +70,29 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-10 | Phase 2R | Rebuild v3 evaluation, features, candidates, selection, and authorization | Completed | Issues #59–#61 and PR #62 merged as `36c17b7`; all folds pass and XGBoost is frozen from 1,498 selection episodes across 787 policies. |
 | R2-11 | Phase 2R | Run replacement statistical acceptance protocol `2.2.0` | Completed | Issue #64 and PR #65 merged as `76c8cd3`; readiness passes for all 20 pairs and the mechanical decision is `redesign` after decisive signal-recovery failure. |
 | R2-12 | Phase 2R v4 extension | Approve the v4 signal-recovery diagnostic boundary | Completed | Issue #66 and PR #67 merged as `ea9cf1f`; ADR 0006 and contract `1.0.0` freeze bounded diagnostics and disjoint seed domains without producing a new statistical result. |
+| R2-13 | Phase 2R v4 extension | Execute bounded signal-recovery diagnostics and freeze the reviewed v4 design | Implemented locally | All 20 development seeds completed; H1/H2 are supported; ADR 0007, substrate `4.0.0`, and protocol `3.0.0` are frozen through [issue #69](https://github.com/anilreddy89/Inforsight/issues/69). PR and hosted CI are pending. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until a replacement acceptance gate records merged `proceed`; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 through R2-12 are complete. R2-11 merge `76c8cd3` records `redesign`; R2-12 merge `ea9cf1f` freezes bounded diagnostics and disjoint development/future-acceptance seed domains. R2-13 bounded diagnostic execution is next. P2-08/P2-09 remain paused, downstream performance-dependent work remains blocked, and the final holdout remains `not_materialized`.
+R2-08 through R2-12 are complete. R2-13 is implemented locally through issue #69: observable-oracle separation and rolling-payment support are diagnosed, and the versioned v4 design is frozen. Formal completion awaits PR review, hosted CI, merge, and issue closeout. P2-08/P2-09 remain paused, downstream performance-dependent work remains blocked, and the final holdout remains `not_materialized`.
 
 | Measure | Value |
 | --- | ---: |
 | Completed tracked changes | 27 |
-| Planned changes | 5 |
+| Planned changes | 4 |
 | In-progress changes | 1 |
-| Implemented-locally changes | 0 |
+| Implemented-locally changes | 1 |
 | Changes needing confirmation | 1 |
 | Paused changes | 2 |
 | Pending changes | 5 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
 | Completed Phase 2R increments | 13 of 17 |
-| Planned Phase 2R increments | 4 of 17 |
-| Next implementation increment | Open R2-13 bounded diagnostic execution from updated `main` |
+| Planned Phase 2R increments | 3 of 17 |
+| Next implementation increment | Open the R2-13 pull request and complete hosted review/CI |
 
 ## Active limitation gates
 
