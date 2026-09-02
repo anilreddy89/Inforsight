@@ -7,7 +7,7 @@
 | Phase | R2-13 |
 | Issue | [#69](https://github.com/anilreddy89/Inforsight/issues/69) |
 | Amendment version | `1.1.0` |
-| Status | Accepted through user review on issue #69 before development diagnostic output |
+| Status | Accepted before development output and merged through PR #70 as `7c4a1a7` |
 | Amends | R2-12 diagnostic authorization contract `1.0.0` |
 | Governing decision | ADR 0006 |
 | Result access | Authorized within contract `1.0.0` as amended by `1.1.0` |

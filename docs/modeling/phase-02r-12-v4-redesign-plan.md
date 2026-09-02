@@ -1,7 +1,7 @@
 # Phase 2R v4 Signal-Recovery Redesign Plan
 
-Status: R2-12 accepted through issue #66 and PR #67, merge commit `ea9cf1f`;
-R2-13 bounded diagnostic execution is the next authorized increment.
+Status: R2-13 completed through issue #69 and PR #70, merge commit `7c4a1a7`;
+R2-14 v4 implementation and development qualification are next.
 
 ## Trigger and objective
 
@@ -170,7 +170,6 @@ R2-11 merged as 76c8cd3
 
 ## Recommended immediate issue
 
-Open R2-13 from updated `main` after the R2-12 merge. Its outcome is the bounded
-diagnostic evidence and hypothesis disposition authorized by contract `1.0.0`,
-not an immediate simulator fix. R2-13 must not access the future acceptance seed
-block or implement v4 before a reviewed superseding design is approved.
+Open R2-14 from updated `main` after the R2-13 merge. Implement substrate `4.0.0`
+and run only the frozen development qualification gates. R2-14 must not access the
+future acceptance seed block; any failed qualification returns to reviewed design.
