@@ -1,6 +1,11 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check r2-08-design-check v3-corpus-check v3-evaluation-check v3-acceptance-check r2-12-diagnostic-contract-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check r2-08-design-check v3-corpus-check v3-evaluation-check v3-acceptance-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check test
+
+r2-13-diagnostic-readiness-check:
+	python3 scripts/run_v4_redesign_diagnostics.py --readiness-check >/dev/null
+	python3 scripts/run_v4_redesign_diagnostics.py --check
+	python3 -m unittest discover -s simulator/tests -p 'test_v4_diagnostics.py' -v
 
 r2-12-diagnostic-contract-check:
 	python3 scripts/check_r2_12_diagnostic_contract.py

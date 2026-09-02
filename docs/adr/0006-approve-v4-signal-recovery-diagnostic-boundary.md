@@ -1,5 +1,10 @@
 # ADR 0006: Approve the v4 signal-recovery diagnostic boundary
 
+> R2-13 issue #69 adds accepted pre-result interpretation amendment `1.1.0` at
+> `docs/modeling/phase-02r-13-v4-diagnostic-interpretation-amendment.md`. It
+> freezes the algorithms, thresholds, and precedence needed to derive the six
+> hypothesis dispositions before development diagnostic output is accessed.
+
 - Status: Accepted through [issue #66](https://github.com/anilreddy89/Inforsight/issues/66) and [PR #67](https://github.com/anilreddy89/Inforsight/pull/67), merge commit `ea9cf1f`
 - Date: 2026-09-01
 - Decision owner: Anil Jonnala

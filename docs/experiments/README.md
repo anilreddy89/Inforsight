@@ -25,6 +25,8 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-10-v3-*-3.2.0.*` — authoritative issue-#61 structural, split, fit-only preprocessing, diagnostic, candidate-selection, portable-state, and scoring-authorization evidence under simulator contract `3.1.0`, evaluation membership `3.2.0`, and protocol `2.2.0`.
 - `phase-02r-11-v3-statistical-acceptance-*` — issue-#64 readiness and authorized 20-seed primary evidence plus the mechanical `redesign` decision. All seed pairs pass structural readiness, but `0/20` pass the signal-AUC and matched-null-improvement recovery counts. Required later families not run after the decisive recovery failure are explicitly failed as incomplete rather than waived.
 
+- `phase-02r-13-v4-redesign-diagnostic-*` — complete issue-#69 aggregate evidence for all 20 development seeds. Observable-oracle separation and rolling-payment support are supported failure mechanisms; parity, episode dilution, and temporal instability are rejected; candidate learning remains unresolved. Future acceptance and the final holdout remain `not_materialized`.
+
 Regenerate or verify the Phase 2R.06 evidence with:
 
 ```bash
