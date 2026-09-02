@@ -227,38 +227,61 @@ body {
   max-width: 1280px;
   margin: 0 auto;
   display: flex;
-  gap: 0.25rem;
-  padding: 0 1.5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-cyan) var(--bg-card);
-}
-
-.nav-tabs::-webkit-scrollbar {
-  height: 4px;
-}
-
-.nav-tabs::-webkit-scrollbar-thumb {
-  background: var(--accent-cyan);
-  border-radius: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.5rem 0.75rem;
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .nav-tab {
-  background: transparent;
-  border: none;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.85rem 1.1rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
   white-space: nowrap;
-  flex-shrink: 0;
+}
+
+.nav-tab:hover {
+  background: rgba(51, 65, 85, 0.7);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.nav-tab.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.nav-tab.highlight-tab {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.45);
+  font-weight: 700;
+}
+
+.nav-tab.highlight-tab:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: var(--accent-amber);
+}
+
+.nav-tab.highlight-tab.active {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: var(--accent-amber);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
 }
 
 /* Quick Nav Launchpad */
