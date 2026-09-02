@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import replace
 from pathlib import Path
 import json
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from inforsight_simulator.v4_diagnostics import (
@@ -96,6 +99,16 @@ class V4DiagnosticReadinessTests(unittest.TestCase):
         for prohibited in ("outcome_uniforms", "latent_frailty", "probabilities",
                            "matrix_values", "final_holdout_seed"):
             self.assertNotIn(prohibited, rendered)
+
+    def test_clean_ci_check_reproduces_from_committed_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run(
+                [sys.executable, str(ROOT / "scripts/run_v4_redesign_diagnostics.py"),
+                 "--check", "--output-dir", directory],
+                cwd=ROOT, capture_output=True, check=False, text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("artifacts reproduce", result.stderr)
 
 
 if __name__ == "__main__":

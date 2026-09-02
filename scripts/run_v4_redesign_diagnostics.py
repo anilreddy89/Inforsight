@@ -120,8 +120,22 @@ def _render_artifacts(aggregate: dict) -> dict[str, bytes]:
         "Issue: #69", "", "## Aggregate results", "",
         "| Measure | Observed |", "| --- | ---: |",
     ]
+    summary_order = (
+        "observable_oracle_auc_pass_count",
+        "median_observable_oracle_auc",
+        "median_observable_oracle_ap_lift",
+        "median_observable_oracle_brier_skill",
+        "median_xgboost_auc",
+        "median_logistic_auc",
+        "median_policy_episode_auc_difference",
+        "median_oracle_fold_spread",
+        "parity_mismatch_count",
+        "near_constant_public_terms",
+    )
+    if set(summary) != set(summary_order):
+        raise ValueError("R2-13 report summary schema changed")
     report_lines.extend(
-        f"| `{key}` | `{value}` |" for key, value in summary.items()
+        f"| `{key}` | `{summary[key]}` |" for key in summary_order
     )
     report_lines.extend([
         "", "## Hypothesis dispositions", "",
