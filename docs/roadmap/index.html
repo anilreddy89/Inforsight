@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inforsight — Journey & Technical Roadmap</title>
   <meta name="description" content="Visual, beginner-friendly roadmap, architecture decision records, fail-closed validation metrics, and threshold explanations for Inforsight.">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -103,6 +103,17 @@
             <div class="stat-label">Simulated Customers</div>
             <div class="stat-sub">76,545 historical point-in-time check-ins</div>
           </div>
+        </div>
+
+        <!-- Quick Jump Launchpad Bar -->
+        <div class="quick-nav-launchpad">
+          <span class="launchpad-title">🚀 Direct Page Jump:</span>
+          <button class="launchpad-btn" onclick="document.querySelector('[data-tab=timeline]').click()">⏳ Timeline</button>
+          <button class="launchpad-btn" onclick="document.querySelector('[data-tab=roadblocks]').click()">🛡️ Roadblocks &amp; Pivots</button>
+          <button class="launchpad-btn" onclick="document.querySelector('[data-tab=thresholds]').click()">🎯 Why These Thresholds?</button>
+          <button class="launchpad-btn" onclick="document.querySelector('[data-tab=observatory]').click()">📊 Metrics &amp; Validation</button>
+          <button class="launchpad-btn" onclick="document.querySelector('[data-tab=architecture]').click()">🏛️ Authority Model</button>
+          <button class="launchpad-btn btn-highlight-launch" onclick="document.querySelector('[data-tab=pipeline]').click()">⚡ Live Pipeline Simulator</button>
         </div>
       </div>
 
