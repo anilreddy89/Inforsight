@@ -57,7 +57,10 @@
         <span class="tab-icon">📊</span> Metrics &amp; Validation
       </button>
       <button class="nav-tab" data-tab="architecture">
-        <span class="tab-icon">🏛️</span> Authority &amp; System Safety
+        <span class="tab-icon">🏛️</span> Authority &amp; Safety
+      </button>
+      <button class="nav-tab highlight-tab" data-tab="pipeline">
+        <span class="tab-icon">⚡</span> Interactive Pipeline Simulator
       </button>
     </nav>
   </header>
@@ -787,6 +790,162 @@
           </div>
           <div class="code-box">
             <code>./scripts/check_repository_boundaries.sh<br># Status: Passed (0 violations)</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TAB 7: ANIMATED WORKFLOW & TEST PIPELINE SIMULATOR
+         ============================================================ -->
+    <section id="tab-pipeline" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Interactive Pipeline Simulator</h2>
+          <p class="panel-desc text-dynamic"
+             data-simple="Watch what happens under the hood when we run our test suite from scratch. Click any scenario to run a live animated simulation!"
+             data-tech="Interactive visualization of the end-to-end execution pipeline from repository boundary preflights through synthetic generation, point-in-time checks, model fitting, and fail-closed gates.">
+          </p>
+        </div>
+        
+        <!-- Controls -->
+        <div class="sim-controls-bar">
+          <div class="sim-scenario-selector">
+            <label for="simScenarioSelect">Scenario to Run:</label>
+            <select id="simScenarioSelect" class="filter-select">
+              <option value="happy_v4">🟢 Normal Pass (v4 Pipeline with Signal)</option>
+              <option value="leakage_stop">🔴 Fail-Closed STOP (Tomorrow's Event Leaks Into Today)</option>
+              <option value="weak_redesign">🟠 Fail-Closed REDESIGN (AI Fails to Beat Placebo)</option>
+            </select>
+          </div>
+          <button id="btnRunSimulation" class="btn-primary-sim">
+            <span class="btn-icon">▶</span> Run Pipeline Simulation
+          </button>
+          <button id="btnResetSimulation" class="btn-secondary-sim">Reset</button>
+        </div>
+      </div>
+
+      <!-- Animated Stage Pipeline Tracker -->
+      <div class="pipeline-tracker-card">
+        <div class="pipeline-progress-bar-container">
+          <div class="pipeline-progress-bar" id="pipelineProgressLine"></div>
+        </div>
+
+        <div class="pipeline-stages-flow" id="pipelineStagesFlow">
+          <!-- Stage 1 -->
+          <div class="pipeline-stage-node" data-stage="1" id="stageNode1">
+            <div class="stage-circle">
+              <span class="stage-num">1</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Boundary Audit</div>
+            <div class="stage-subtitle">Zero Secrets &amp; IP</div>
+          </div>
+
+          <!-- Stage 2 -->
+          <div class="pipeline-stage-node" data-stage="2" id="stageNode2">
+            <div class="stage-circle">
+              <span class="stage-num">2</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Synthetic Gen</div>
+            <div class="stage-subtitle">Fictional Events</div>
+          </div>
+
+          <!-- Stage 3 -->
+          <div class="pipeline-stage-node" data-stage="3" id="stageNode3">
+            <div class="stage-circle">
+              <span class="stage-num">3</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Dual-Time Filter</div>
+            <div class="stage-subtitle">Point-in-Time Lock</div>
+          </div>
+
+          <!-- Stage 4 -->
+          <div class="pipeline-stage-node" data-stage="4" id="stageNode4">
+            <div class="stage-circle">
+              <span class="stage-num">4</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Auth Scoring</div>
+            <div class="stage-subtitle">Tamper Digest Seal</div>
+          </div>
+
+          <!-- Stage 5 -->
+          <div class="pipeline-stage-node" data-stage="5" id="stageNode5">
+            <div class="stage-circle">
+              <span class="stage-num">5</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Model Fitting</div>
+            <div class="stage-subtitle">Train on Past Only</div>
+          </div>
+
+          <!-- Stage 6 -->
+          <div class="pipeline-stage-node" data-stage="6" id="stageNode6">
+            <div class="stage-circle">
+              <span class="stage-num">6</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Placebo Gate</div>
+            <div class="stage-subtitle">Matched Null Test</div>
+          </div>
+
+          <!-- Stage 7 -->
+          <div class="pipeline-stage-node" data-stage="7" id="stageNode7">
+            <div class="stage-circle">
+              <span class="stage-num">7</span>
+              <span class="stage-status-icon">⏳</span>
+            </div>
+            <div class="stage-title">Final Decision</div>
+            <div class="stage-subtitle">Proceed / Stop</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Interactive Stage Inspection & Terminal Output -->
+      <div class="sim-inspection-grid">
+        <!-- Stage Visual Card -->
+        <div class="sim-stage-detail-card" id="simStageDetail">
+          <div class="detail-header">
+            <span class="badge badge-version" id="simStageBadge">Stage 1 of 7</span>
+            <h3 id="simStageTitle">Ready to Begin</h3>
+          </div>
+          
+          <div class="sim-stage-body">
+            <div class="sim-anim-graphic" id="simGraphic">
+              <!-- Rendered via JS -->
+              <div class="anim-pulse-box">
+                <div class="graphic-icon">🧪</div>
+                <div class="graphic-label">Select a scenario above and click "Run Pipeline Simulation" to watch the animated process step-by-step.</div>
+              </div>
+            </div>
+
+            <div class="sim-stage-desc">
+              <h4>What happens here:</h4>
+              <p id="simStageExplanation" class="text-dynamic"
+                 data-simple="Click 'Run Pipeline Simulation' to see how the system verifies every step before letting any code pass."
+                 data-tech="Initial test execution harness awaiting trigger.">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Terminal Stream -->
+        <div class="sim-terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="tdot tdot-red"></span>
+              <span class="tdot tdot-yellow"></span>
+              <span class="tdot tdot-green"></span>
+            </div>
+            <div class="terminal-title">bash — Inforsight Automated Test Harness</div>
+            <button id="btnClearTerminal" class="btn-term-clear">Clear</button>
+          </div>
+          <div class="terminal-body" id="simTerminalLog">
+            <div class="term-line info-line">$ make check</div>
+            <div class="term-line muted-line">Awaiting execution trigger...</div>
           </div>
         </div>
       </div>

@@ -491,6 +491,407 @@ function renderRoadblocks() {
   `).join('');
 }
 
+// ============================================================
+// PIPELINE SIMULATOR STATE & SCENARIOS
+// ============================================================
+
+const pipelineScenarios = {
+  happy_v4: {
+    name: "Normal Pass (v4 Pipeline with Signal)",
+    stages: [
+      {
+        stage: 1,
+        title: "Stage 1: Repository Boundary Audit",
+        badge: "Passed",
+        icon: "🛡️",
+        command: "./scripts/check_repository_boundaries.sh",
+        log: "Scanning 100% of tracked files for private keys, tokens, and forbidden datasets...\n[PASS] No secret patterns found.\n[PASS] Clean-room synthetic policy contracts validated.\n[PASS] Final release holdout confirmed: not_materialized.",
+        explanation: {
+          simple: "First, the system scans every file to make sure no passwords, private customer data, or forbidden files were accidentally checked in.",
+          tech: "Executes check_repository_boundaries.sh, asserting clean-room compliance (ADR 0001) and ensuring test holdouts remain unmaterialized."
+        },
+        status: "success"
+      },
+      {
+        stage: 2,
+        title: "Stage 2: Deterministic Synthetic Generation",
+        badge: "Passed",
+        icon: "⚙️",
+        command: "python3 scripts/build_v4_modeling_corpus.py",
+        log: "Seeding random engine with 20261001...\nGenerating 14,400 fictional policies across staggered issuance cohorts...\nSimulating scheduled premium notices, payments, grace periods, and outcomes.\n[PASS] 76,545 point-in-time observations generated with exact SHA-256 manifest.",
+        explanation: {
+          simple: "The simulator creates 14,400 fictional customers. Because it uses a mathematical seed, running this code 10 years from now will produce the exact same customers down to the second.",
+          tech: "Constructs 14,400-policy v4 corpus under contract 4.0.0 with scheduled billing variations and invariant random stream sets."
+        },
+        status: "success"
+      },
+      {
+        stage: 3,
+        title: "Stage 3: Dual-Time Point-in-Time Filtering",
+        badge: "Passed",
+        icon: "⏳",
+        command: "python3 -m unittest discover -p 'test_leakage_guards.py'",
+        log: "Auditing point-in-time visibility across all 76,545 observations...\nChecking invariant: effective_at <= as_of AND ingested_at <= as_of.\nSimulating 500 delayed paperwork events...\n[PASS] Zero future events leaked into cutoff feature vectors.",
+        explanation: {
+          simple: "The 'Paperwork Delay' test. The system tests events entered into the computer days after they happened, verifying that the AI never cheats by peeking at future paperwork.",
+          tech: "Asserts dual-time point-in-time invariant (ADR 0005). Events with ingested_at > as_of are strictly hidden from cutoff feature extraction."
+        },
+        status: "success"
+      },
+      {
+        stage: 4,
+        title: "Stage 4: Cryptographic Scoring Authorization",
+        badge: "Passed",
+        icon: "🔒",
+        command: "python3 -m unittest discover -p 'test_scoring_authorization.py'",
+        log: "Generating tamper-evident digest seals for feature matrix...\nSHA-256: 7a78f00c91f464669175e9cef03c4a28...\nTesting partition relabeling attack: Matrix labeled 'validation' checked...\n[PASS] Target and matrix digests verified. Scoring authorized for validation only.",
+        explanation: {
+          simple: "Digital tamper seal. If someone tries to rename the test set or sneak a peek at the answers, the scoring engine locks down and refuses to run.",
+          tech: "Scoring authorization contract binds row count, row order, preprocessor ID, purpose, and SHA-256 matrix digests (ADR 0004)."
+        },
+        status: "success"
+      },
+      {
+        stage: 5,
+        title: "Stage 5: Train-Only Preprocessing & Model Fit",
+        badge: "Passed",
+        icon: "🤖",
+        command: "python3 scripts/build_v4_evaluation_pipeline.py",
+        log: "Fitting numerical scalers and one-hot encoders strictly on Train partition...\nFitting XGBoost candidate on 1,498 selection episodes across 787 policies...\nNative JSON tree state exported and reload verified.\n[PASS] Training converged cleanly without target leakage.",
+        explanation: {
+          simple: "The AI learns exclusively from historical past policies. Future categories and test data are strictly sealed off during learning.",
+          tech: "Transforms training matrix, reserves unknown categorical buckets, and fits frozen tree candidate with reproducible native JSON state."
+        },
+        status: "success"
+      },
+      {
+        stage: 6,
+        title: "Stage 6: Placebo & Matched Null Control Evaluation",
+        badge: "Passed",
+        icon: "🧪",
+        command: "python3 scripts/run_v4_statistical_acceptance.py",
+        log: "Evaluating XGBoost against paired Null stream (pure random noise)...\nEvaluating 20 distinct random seed blocks across 3 chronological folds...\nObserved Signal AUC: 0.672 (Threshold >= 0.65) -> PASS\nObserved Matched-Null Improvement: +0.165 (Threshold >= 0.10) -> PASS\nSeed consistency: 18/20 seeds passed (Threshold >= 16/20) -> PASS",
+        explanation: {
+          simple: "The Placebo Test: The AI is tested against pure random noise. In this v4 scenario, it scored 67% accuracy and beat the placebo by +16%, proving it found real customer signals!",
+          tech: "Acceptance protocol 3.0.0 passes: signal AUC exceeds 0.65, matched-null improvement exceeds 0.10, and 18/20 seeds satisfy frozen binomial bounds."
+        },
+        status: "success"
+      },
+      {
+        stage: 7,
+        title: "Stage 7: Final Mechanical Gate Decision",
+        badge: "PROCEED",
+        icon: "🏆",
+        command: "Decision Log: PROCEED",
+        log: "=======================================================\nDECISION: PROCEED\n=======================================================\nAll 7 automated gates passed.\nSignal recovered with high statistical confidence (p < 0.01).\nNo leakage, no moving goalposts, no holdout exposure.\nRepository state is certified for release qualification.",
+        explanation: {
+          simple: "SUCCESS! All automated safety gates passed. The AI is proven to work honestly on real signals, and code is ready for release review.",
+          tech: "Mechanical decision is PROCEED under protocol 3.0.0. Enables probability calibration (P2-08) and authorized release workflow."
+        },
+        status: "success"
+      }
+    ]
+  },
+
+  leakage_stop: {
+    name: "Fail-Closed STOP (Tomorrow's Event Leaks Into Today)",
+    stages: [
+      {
+        stage: 1,
+        title: "Stage 1: Repository Boundary Audit",
+        badge: "Passed",
+        icon: "🛡️",
+        command: "./scripts/check_repository_boundaries.sh",
+        log: "Scanning tracked files for secrets and boundary violations...\n[PASS] No secret credentials or proprietary code found.\n[PASS] Clean-room assertions satisfied.",
+        explanation: {
+          simple: "Code repository is clean and has no secret passwords.",
+          tech: "Boundary checks pass."
+        },
+        status: "success"
+      },
+      {
+        stage: 2,
+        title: "Stage 2: Synthetic Generator Run",
+        badge: "Passed",
+        icon: "⚙️",
+        command: "python3 scripts/build_v2_modeling_corpus.py",
+        log: "Generating synthetic policy corpus...\nWarning: An administrative event was logged with effective_at = 2024-02-01 but ingested_at = 2024-02-05.\nGenerated 42,795 observations.",
+        explanation: {
+          simple: "Generated customer histories, but one customer event had a 4-day paperwork delay.",
+          tech: "v2 corpus built with latent administrative lag."
+        },
+        status: "success"
+      },
+      {
+        stage: 3,
+        title: "Stage 3: Dual-Time Preflight Gate Audit",
+        badge: "FAIL-CLOSED STOP",
+        icon: "🛑",
+        command: "python3 scripts/run_v2_statistical_acceptance.py --check",
+        log: "CRITICAL AUDIT EXCEPTION: READINESS-DUAL-TIME-VISIBILITY FAILED!\nFound observation cutoff as_of = 2024-02-02 containing event payload from 2024-02-05!\nEvent occurred earlier but was NOT ingested by cutoff date.\n=======================================================\nMECHANICAL DECISION: STOP\n=======================================================\n[HALT] Preflight caught post-cutoff ingestion leakage.\n[SAFETY] Machine learning model fitting aborted immediately.\n[SAFETY] Zero models fitted. Zero predictions created. Holdout sealed untouched.",
+        explanation: {
+          simple: "EMERGENCY BRAKE! The automated audit caught an event recorded next week slipping into today's decision. Rather than generating fake 99% accuracy scores, the pipeline slammed on the brakes and stopped everything!",
+          tech: "Readiness rule READINESS-DUAL-TIME-VISIBILITY failed fail-closed. Protocol 1.0.0 enforces an unconditional STOP decision before model fitting."
+        },
+        status: "stop"
+      }
+    ]
+  },
+
+  weak_redesign: {
+    name: "Fail-Closed REDESIGN (AI Fails to Beat Placebo)",
+    stages: [
+      {
+        stage: 1,
+        title: "Stage 1: Repository Boundary Audit",
+        badge: "Passed",
+        icon: "🛡️",
+        command: "./scripts/check_repository_boundaries.sh",
+        log: "Boundary preflight checks passed.\nClean-room schemas verified.",
+        explanation: { simple: "Boundary checks pass.", tech: "Repository boundaries verified." },
+        status: "success"
+      },
+      {
+        stage: 2,
+        title: "Stage 2: Synthetic Data Generation",
+        badge: "Passed",
+        icon: "⚙️",
+        command: "python3 scripts/build_v3_modeling_corpus.py",
+        log: "Generated 14,400 policies under v3 event-first specifications.\nDual-time timestamps verified.",
+        explanation: { simple: "Generated 14,400 synthetic policies.", tech: "v3 corpus created." },
+        status: "success"
+      },
+      {
+        stage: 3,
+        title: "Stage 3: Dual-Time Integrity",
+        badge: "Passed",
+        icon: "⏳",
+        command: "Dual-time filter check",
+        log: "Ingestion and effective timestamps checked. Zero leakage detected.",
+        explanation: { simple: "No future paperwork leaks detected.", tech: "Dual-time invariant passes." },
+        status: "success"
+      },
+      {
+        stage: 4,
+        title: "Stage 4: Scoring Authorization",
+        badge: "Passed",
+        icon: "🔒",
+        command: "Matrix digest validation",
+        log: "Matrix digests verified. Authorized validation scoring enabled.",
+        explanation: { simple: "Tamper seals valid.", tech: "Scoring authorization passed." },
+        status: "success"
+      },
+      {
+        stage: 5,
+        title: "Stage 5: Train Candidate Model",
+        badge: "Passed",
+        icon: "🤖",
+        command: "Fit XGBoost candidate",
+        log: "Trained XGBoost model across selection folds.\nModel saved to native JSON state.",
+        explanation: { simple: "Model trained cleanly.", tech: "Candidate fit complete." },
+        status: "success"
+      },
+      {
+        stage: 6,
+        title: "Stage 6: Placebo & 20-Seed Gate Evaluation",
+        badge: "FAIL-CLOSED REDESIGN",
+        icon: "🟠",
+        command: "python3 scripts/run_v3_statistical_acceptance.py",
+        log: "Evaluating XGBoost against 20 matched-seed null placebo controls...\nObserved Across-Seed Median AUC: 0.518869 (Required >= 0.68) -> [FAIL]\nSeeds meeting AUC >= 0.65: 0/20 passed (Required >= 16/20) -> [FAIL]\nMedian Matched-Null Improvement: +0.016097 (Required >= +0.10) -> [FAIL]\n=======================================================\nMECHANICAL DECISION: REDESIGN\n=======================================================\nZero seeds recovered signal. Noise in generator drowned out signal.\nHypotheses locked for diagnostic review under ADR 0006.\nFinal holdout remains untouched: not_materialized.",
+        explanation: {
+          simple: "THE HONEST REDESIGN: The AI only scored 51.8% accuracy (barely above a coin flip) and beat the placebo by only 1.6%. We didn't tweak settings or hide results; the system declared REDESIGN to fix the noisy simulator!",
+          tech: "Protocol 2.2.0 records mechanical decision REDESIGN after decisive signal recovery failure. Prevents holdout tuning and mandates formal diagnostic study (R2-13)."
+        },
+        status: "redesign"
+      }
+    ]
+  }
+};
+
+let simCurrentScenario = "happy_v4";
+let simCurrentStep = 0;
+let simInterval = null;
+
+function initSimulator() {
+  const btnRun = document.getElementById('btnRunSimulation');
+  const btnReset = document.getElementById('btnResetSimulation');
+  const scenarioSelect = document.getElementById('simScenarioSelect');
+  const btnClearTerm = document.getElementById('btnClearTerminal');
+
+  if (btnRun) btnRun.addEventListener('click', startSimulation);
+  if (btnReset) btnReset.addEventListener('click', resetSimulation);
+  if (btnClearTerm) {
+    btnClearTerm.addEventListener('click', () => {
+      const logEl = document.getElementById('simTerminalLog');
+      if (logEl) logEl.innerHTML = '';
+    });
+  }
+  if (scenarioSelect) {
+    scenarioSelect.addEventListener('change', (e) => {
+      simCurrentScenario = e.target.value;
+      resetSimulation();
+    });
+  }
+}
+
+function resetSimulation() {
+  if (simInterval) clearInterval(simInterval);
+  simCurrentStep = 0;
+
+  const btnRun = document.getElementById('btnRunSimulation');
+  if (btnRun) btnRun.disabled = false;
+
+  // Reset Progress Bar
+  const progressBar = document.getElementById('pipelineProgressLine');
+  if (progressBar) {
+    progressBar.style.width = '0%';
+    progressBar.className = 'pipeline-progress-bar';
+  }
+
+  // Reset stage nodes
+  for (let i = 1; i <= 7; i++) {
+    const node = document.getElementById(`stageNode${i}`);
+    if (node) {
+      node.className = 'pipeline-stage-node';
+      const icon = node.querySelector('.stage-status-icon');
+      if (icon) icon.textContent = '⏳';
+    }
+  }
+
+  // Reset detail card
+  const badgeEl = document.getElementById('simStageBadge');
+  const titleEl = document.getElementById('simStageTitle');
+  const descEl = document.getElementById('simStageExplanation');
+  const graphicEl = document.getElementById('simGraphic');
+
+  if (badgeEl) badgeEl.textContent = 'Ready';
+  if (titleEl) titleEl.textContent = 'Ready to Run Simulation';
+  if (descEl) descEl.textContent = 'Select a scenario above and click "Run Pipeline Simulation" to observe how our automated gates execute.';
+  if (graphicEl) {
+    graphicEl.innerHTML = `
+      <div class="anim-pulse-box">
+        <div class="graphic-icon">🧪</div>
+        <div class="graphic-label">Select a scenario above and click "Run Pipeline Simulation" to watch the animated process step-by-step.</div>
+      </div>
+    `;
+  }
+
+  // Reset terminal
+  const logEl = document.getElementById('simTerminalLog');
+  if (logEl) {
+    logEl.innerHTML = `
+      <div class="term-line info-line">$ make check</div>
+      <div class="term-line muted-line">Scenario: ${pipelineScenarios[simCurrentScenario].name}</div>
+      <div class="term-line muted-line">Awaiting execution trigger...</div>
+    `;
+  }
+}
+
+function startSimulation() {
+  resetSimulation();
+  const btnRun = document.getElementById('btnRunSimulation');
+  if (btnRun) btnRun.disabled = true;
+
+  const scenario = pipelineScenarios[simCurrentScenario];
+  const stages = scenario.stages;
+
+  simInterval = setInterval(() => {
+    if (simCurrentStep < stages.length) {
+      executeStage(stages[simCurrentStep]);
+      simCurrentStep++;
+    } else {
+      clearInterval(simInterval);
+      if (btnRun) btnRun.disabled = false;
+    }
+  }, 1600);
+}
+
+function executeStage(stageData) {
+  // Update node classes
+  const node = document.getElementById(`stageNode${stageData.stage}`);
+  const progressBar = document.getElementById('pipelineProgressLine');
+
+  if (node) {
+    node.classList.add('active-stage');
+    const icon = node.querySelector('.stage-status-icon');
+
+    if (stageData.status === 'success') {
+      node.classList.add('completed-stage');
+      if (icon) icon.textContent = '✓';
+    } else if (stageData.status === 'stop') {
+      node.classList.add('stop-stage');
+      if (icon) icon.textContent = '🛑';
+      if (progressBar) progressBar.classList.add('stop-line');
+    } else if (stageData.status === 'redesign') {
+      node.classList.add('redesign-stage');
+      if (icon) icon.textContent = '🟠';
+      if (progressBar) progressBar.classList.add('redesign-line');
+    }
+  }
+
+  // Update progress line percentage
+  if (progressBar) {
+    const totalSteps = pipelineScenarios[simCurrentScenario].stages.length;
+    const pct = Math.min(100, Math.round((stageData.stage / 7) * 100));
+    progressBar.style.width = `${pct}%`;
+  }
+
+  // Update Detail View
+  const badgeEl = document.getElementById('simStageBadge');
+  const titleEl = document.getElementById('simStageTitle');
+  const descEl = document.getElementById('simStageExplanation');
+  const graphicEl = document.getElementById('simGraphic');
+
+  if (badgeEl) {
+    badgeEl.textContent = stageData.badge;
+    badgeEl.className = `badge badge-${stageData.status}`;
+  }
+  if (titleEl) titleEl.textContent = stageData.title;
+  if (descEl) {
+    descEl.textContent = state.explainerMode === 'simple' ? stageData.explanation.simple : stageData.explanation.tech;
+  }
+
+  if (graphicEl) {
+    let animColor = stageData.status === 'stop' ? '#ef4444' : stageData.status === 'redesign' ? '#f59e0b' : '#38bdf8';
+    graphicEl.innerHTML = `
+      <div class="anim-pulse-box" style="color: ${animColor};">
+        <div class="graphic-icon">${stageData.icon}</div>
+        <div class="graphic-label" style="color: #f8fafc; font-weight: 700; font-size: 1rem;">${stageData.title}</div>
+        <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Command: <code>${stageData.command}</code></div>
+      </div>
+    `;
+  }
+
+  // Append to Terminal Log
+  const logEl = document.getElementById('simTerminalLog');
+  if (logEl) {
+    const cmdLine = document.createElement('div');
+    cmdLine.className = 'term-line info-line';
+    cmdLine.textContent = `> ${stageData.command}`;
+    logEl.appendChild(cmdLine);
+
+    const outLine = document.createElement('div');
+    if (stageData.status === 'stop') {
+      outLine.className = 'term-line error-line';
+    } else if (stageData.status === 'redesign') {
+      outLine.className = 'term-line warn-line';
+    } else {
+      outLine.className = 'term-line success-line';
+    }
+    outLine.textContent = stageData.log;
+    logEl.appendChild(outLine);
+
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+}
+
+// Hook simulator into initApp
+const origInitApp = initApp;
+initApp = function() {
+  origInitApp();
+  initSimulator();
+};
+
 // Boot application
 document.addEventListener('DOMContentLoaded', initApp);
 
