@@ -1,7 +1,7 @@
 # ADR 0007: Approve the v4 signal-recovery design
 
-- Status: Accepted through R2-13 issue #69; pull-request review pending
-- Date: 2026-09-01
+- Status: Accepted through R2-13 issue #69 and PR #70, merge commit `7c4a1a7`
+- Date: 2026-09-02
 - Decision owner: Anil Jonnala
 - Evidence: R2-13 diagnostic manifest and interpretation amendment `1.1.0`
 - Supersedes for new development: ADR 0005 mechanism design
