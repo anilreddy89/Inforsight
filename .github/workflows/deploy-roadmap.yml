@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/roadmap-web-ui-v2
     paths:
       - 'docs/roadmap/**'
       - '.github/workflows/deploy-roadmap.yml'
