@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "simulator" / "src"))
 
 from inforsight_simulator.v4_qualification import (  # noqa: E402
-    DEVELOPMENT_SEEDS, aggregate_qualification, build_readiness_manifest,
+    DEVELOPMENT_SEEDS, GATE_IDS, aggregate_qualification, build_readiness_manifest,
     execute_qualification_seed,
 )
 
@@ -37,8 +37,11 @@ def render(aggregate: dict) -> dict[str, bytes]:
                 "maximum_monthly_terminal_hazard"):
         report.append(f"| `{key}` | `{summary[key]}` |")
     report.extend(["", "## Gates", "", "| Gate | Status |", "| --- | --- |"])
+    if set(aggregate["gates"]) != set(GATE_IDS):
+        raise ValueError("R2-14 report gate schema changed")
     report.extend(f"| `{gate}` | `{result['status']}` |"
-                  for gate, result in aggregate["gates"].items())
+                  for gate in GATE_IDS
+                  for result in (aggregate["gates"][gate],))
     report.extend(["", "This is development qualification of a fictional synthetic mechanism only.",
                    "Future acceptance and the final holdout remain `not_materialized`.", ""])
     decision = ["# Phase 2R.14 v4 Qualification Decision", "",
