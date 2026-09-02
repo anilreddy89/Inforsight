@@ -26,6 +26,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-11-v3-statistical-acceptance-*` — issue-#64 readiness and authorized 20-seed primary evidence plus the mechanical `redesign` decision. All seed pairs pass structural readiness, but `0/20` pass the signal-AUC and matched-null-improvement recovery counts. Required later families not run after the decisive recovery failure are explicitly failed as incomplete rather than waived.
 
 - `phase-02r-13-v4-redesign-diagnostic-*` — merged issue-#69/PR-#70 aggregate evidence for all 20 development seeds. Observable-oracle separation and rolling-payment support are supported failure mechanisms; parity, episode dilution, and temporal instability are rejected; candidate learning remains unresolved. Future acceptance and the final holdout remain `not_materialized`.
+- `phase-02r-14-v4-qualification-*` — issue-#72 aggregate development evidence for all 20 frozen v4 seeds. Driver support, exact parity, matched-null behavior, and structural controls pass, while observable recovery, probability quality, reference recovery, and the `<0.20` hazard bound fail. The mechanical decision is `redesign`; R2-15 and acceptance remain blocked.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -125,3 +126,15 @@ make v3-acceptance-check
 ```
 
 The non-committed `tmp/r2-11-readiness` and `tmp/r2-11-primary` intermediates are regenerated through the documented per-seed commands and digest-bound in the committed manifest. The mechanical decision is `redesign`: all 20 pairs pass readiness, but the frozen signal-recovery thresholds fail. P2-08/P2-09 remain paused and the final holdout remains `not_materialized`.
+
+Run or verify R2-14 qualification evidence with:
+
+```bash
+python3 scripts/run_v4_qualification.py --readiness-check
+python3 scripts/run_v4_qualification.py --check
+make r2-14-qualification-check
+```
+
+The committed evidence is aggregate-only. Per-seed histories, observations,
+oracles, targets, and predictions remain non-committed. The mechanical `redesign`
+decision blocks R2-15 and does not authorize future-acceptance access.

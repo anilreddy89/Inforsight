@@ -1,6 +1,11 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check
 
-check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check r2-08-design-check v3-corpus-check v3-evaluation-check v3-acceptance-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check test
+check: boundary-check dataset-check assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check r2-08-design-check v3-corpus-check v3-evaluation-check v3-acceptance-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check test
+
+r2-14-qualification-check:
+	python3 scripts/run_v4_qualification.py --readiness-check >/dev/null
+	python3 scripts/run_v4_qualification.py --check
+	python3 -m unittest simulator.tests.test_v4_config simulator.tests.test_v4_corpus simulator.tests.test_v4_qualification -v
 
 r2-13-diagnostic-readiness-check:
 	python3 scripts/run_v4_redesign_diagnostics.py --readiness-check >/dev/null
