@@ -1,6 +1,6 @@
 # ADR 0006: Approve the v4 signal-recovery diagnostic boundary
 
-- Status: Proposed through [issue #66](https://github.com/anilreddy89/Inforsight/issues/66)
+- Status: Accepted through [issue #66](https://github.com/anilreddy89/Inforsight/issues/66) and [PR #67](https://github.com/anilreddy89/Inforsight/pull/67), merge commit `ea9cf1f`
 - Date: 2026-09-01
 - Decision owner: Anil Jonnala
 - Trigger: R2-11 mechanical `redesign` decision under protocol `2.2.0`

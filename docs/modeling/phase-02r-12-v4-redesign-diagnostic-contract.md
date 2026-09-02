@@ -7,7 +7,7 @@
 | Phase | R2-12 |
 | Issue | [#66](https://github.com/anilreddy89/Inforsight/issues/66) |
 | Contract version | `1.0.0` |
-| Status | Proposed; result-producing execution is prohibited until merge |
+| Status | Accepted through PR #67, merge commit `ea9cf1f`; R2-13 diagnostic execution is authorized within this contract only |
 | Governing decision | ADR 0006 |
 | Trigger evidence | R2-11 decision `redesign`, protocol `2.2.0` |
 | Final holdout | `not_materialized` |

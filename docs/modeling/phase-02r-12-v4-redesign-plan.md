@@ -1,6 +1,7 @@
 # Phase 2R v4 Signal-Recovery Redesign Plan
 
-Status: proposed after R2-11 merged as `76c8cd3`; implementation is not authorized.
+Status: R2-12 accepted through issue #66 and PR #67, merge commit `ea9cf1f`;
+R2-13 bounded diagnostic execution is the next authorized increment.
 
 ## Trigger and objective
 
@@ -169,7 +170,7 @@ R2-11 merged as 76c8cd3
 
 ## Recommended immediate issue
 
-Open R2-12 as a documentation/governance issue after R2-11 merges. Its outcome is
-an auditable diagnostic boundary, not a simulator fix. This prevents the observed
-v3 acceptance block from becoming an informal tuning set and makes the eventual
-v4 acceptance result interpretable.
+Open R2-13 from updated `main` after the R2-12 merge. Its outcome is the bounded
+diagnostic evidence and hypothesis disposition authorized by contract `1.0.0`,
+not an immediate simulator fix. R2-13 must not access the future acceptance seed
+block or implement v4 before a reviewed superseding design is approved.
