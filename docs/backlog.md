@@ -340,7 +340,7 @@ merge R2-11 -> R2-12 -> R2-13 -> R2-14 -> R2-15 -> R2-16
              diagnostics   design/implementation   fresh acceptance
 ```
 
-- [ ] **R2-12 - Close out v3 and approve redesign diagnostics ([issue #66](https://github.com/anilreddy89/Inforsight/issues/66), in progress):** preserve the
+- [x] **R2-12 - Close out v3 and approve redesign diagnostics:** Completed on 2026-09-01 through [issue #66](https://github.com/anilreddy89/Inforsight/issues/66) and [PR #67](https://github.com/anilreddy89/Inforsight/pull/67), merge commit `ea9cf1f`. Preserve the
   R2-11 block as spent acceptance evidence and freeze a disjoint development
   diagnostic boundary before changing the substrate.
 - [ ] **R2-13 - Diagnose signal recovery and approve v4:** distinguish oracle
