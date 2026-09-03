@@ -785,6 +785,14 @@ recovery, AP/Brier quality, reference recovery, and the monthly hazard bound fai
 so no candidate freeze or future acceptance is authorized. Seeds
 `20271201..20271220` and the final holdout remain `not_materialized`.
 
+R2-14A issue #76 is a documentation-only boundary after that failure. ADR 0008
+and contract `1.0.0` freeze seeds `20280101..20280120` for later R2-14B
+development diagnostics, preserve `20271201..20271220` as unassigned and
+unmaterialized, and predeclare 17 diagnostics plus a non-selective 320-cell
+feasibility surface. R2-14A imports no simulator runtime and produces no result.
+R2-14B, R2-14C, R2-15, R2-16, and resumed Phase 2 remain blocked until their
+predecessor decisions merge.
+
 ## Test map
 
 | Test module | Process boundary protected |
@@ -807,6 +815,7 @@ so no candidate freeze or future acceptance is authorized. Seeds
 | `test_v4_config.py` | v4 registry versions, event-support contract, matched-stream identity, and scheduled-opportunity domain |
 | `test_v4_corpus.py` | separate v4 types, scheduled cadence, exact reconstruction, frozen hazards, oracle, and holdout absence |
 | `test_v4_qualification.py` | development/future domain separation, complete inventory, readiness, and nine frozen gates |
+| `test_v5_diagnostic_contract.py` | R2-14A seed-domain separation, inventory completeness, frozen feasibility surface, and holdout boundary |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 

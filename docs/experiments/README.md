@@ -138,3 +138,15 @@ make r2-14-qualification-check
 The committed evidence is aggregate-only. Per-seed histories, observations,
 oracles, targets, and predictions remain non-committed. The mechanical `redesign`
 decision blocks R2-15 and does not authorize future-acceptance access.
+
+R2-14A issue #76 is documentation-only. Validate its post-v4 diagnostic
+authorization boundary without importing a simulator or producing results:
+
+```bash
+python3 scripts/check_r2_14a_diagnostic_contract.py
+make r2-14a-diagnostic-contract-check
+```
+
+The check binds ADR 0008, contract `1.0.0`, four disjoint information domains,
+the 17-diagnostic inventory, the fixed 320-cell feasibility surface, and continued
+absence of reserved acceptance and final-holdout material.
