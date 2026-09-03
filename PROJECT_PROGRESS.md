@@ -3,7 +3,7 @@
 Personal review document. This file is intentionally excluded from version control and is not an official project status record.
 
 Last reviewed: 2026-09-03
-Current branch: `feat/78-r2-14b-v5-redesign-diagnostics`
+Current branch: `docs/80-r2-14ba-contract-amendment`
 
 ## How progress is tracked
 
@@ -73,26 +73,29 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-13 | Phase 2R v4 extension | Execute bounded signal-recovery diagnostics and freeze the reviewed v4 design | Completed | Issue #69 and [PR #70](https://github.com/anilreddy89/Inforsight/pull/70) merged as `7c4a1a7`; all 20 development seeds completed, H1/H2 are supported, and ADR 0007 freezes substrate `4.0.0` and protocol `3.0.0`. |
 | R2-14 | Phase 2R v4 extension | Implement and qualify the frozen v4 substrate | Completed | Issue #72 and PR #73 merged as `4b234bf`; all 20 development seeds complete and record mechanical `redesign`. |
 | R2-14A | Phase 2R post-v4 extension | Close out v4 and authorize bounded v5 diagnostics | Completed | Issue #76 and PR #77 merged as `52c03c8`; ADR 0008 and contract `1.0.0` freeze the 17-diagnostic inventory and disjoint seed domains. |
-| R2-14B | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Stopped locally | Issue #78; readiness found contract `1.0.0` lacks mechanical H1-H5 disposition thresholds. Zero result units and D16 cells are authorized, all hypotheses remain unresolved, and proposed ADR 0009 records `stop_contract_not_executable`; R2-14C is blocked. |
+| R2-14B | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Completed — readiness stop | Issue #78 and PR #79 merged as `3088c4c`; readiness stopped with `stop_contract_not_executable` under accepted ADR 0009; zero units executed, hypotheses unresolved, seeds 20280101..20280120 unspent. |
+| R2-14BA | Phase 2R post-v4 extension | Close out R2-14B readiness stop and approve amended diagnostic authorization contract | In progress | Issue #80; ADR 0010 and contract `1.1.0` freeze mechanical H1-H5 disposition truth tables before result-producing execution. |
+| R2-14BB | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Planned | Successor execution on unspent seeds `20280101..20280120` without caller discretion. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until a replacement acceptance gate records merged `proceed`; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 through R2-14A are merged. R2-14B issue #78 stops at readiness because contract `1.0.0` does not freeze H1-H5 disposition thresholds before result access. The governed record has zero executed units, leaves all hypotheses unresolved, and selects `stop_contract_not_executable`. Proposed ADR 0009 records the stop; R2-14C and downstream performance work remain blocked. P2-08/P2-09 remain paused, and the final holdout remains `not_materialized`.
+R2-08 through R2-14B are merged. R2-14B issue #78 recorded the governed readiness stop `stop_contract_not_executable` under accepted ADR 0009 because contract `1.0.0` lacked mechanical H1-H5 disposition thresholds. Phase 2R.14BA issue #80 approves amended contract `1.1.0` and ADR 0010, freezing complete quantitative truth tables before successor increment Phase 2R.14BB executes diagnostics on unspent seeds `20280101..20280120`. R2-14C and downstream work remain blocked; reserved acceptance and the final holdout remain `not_materialized`.
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 30 |
+| Completed tracked changes | 31 |
 | In-progress changes | 1 |
-| Stopped-local changes | 1 |
+| Planned changes | 1 |
 | Changes needing confirmation | 1 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
-| Completed Phase 2R increments | 16 of 18 |
-| Planned Phase 2R increments | 2 of 18 |
-| Next implementation increment | Review the R2-14B readiness stop under issue #78; R2-14C remains blocked |
+| Completed Phase 2R increments | 17 of 20 |
+| In-progress Phase 2R increments | 1 of 20 (R2-14BA) |
+| Planned Phase 2R increments | 2 of 20 (R2-14BB, R2-14C) |
+| Next implementation increment | Approve R2-14BA contract amendment under issue #80, then execute R2-14BB |
 
 
 | ID | Status | Impact | Resolution trigger |

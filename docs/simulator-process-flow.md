@@ -791,12 +791,16 @@ development diagnostics, preserve `20271201..20271220` as unassigned and
 unmaterialized, and predeclare 17 diagnostics plus a non-selective 320-cell
 feasibility surface.
 
-R2-14B issue #78 stops at readiness because contract `1.0.0` does not freeze
-mechanical H1-H5 disposition thresholds. The governed evidence records zero
-executed inventory units, zero D16 cells, and all six hypotheses as unresolved.
-Proposed ADR 0009 records `stop_contract_not_executable`; R2-14C, R2-15, R2-16,
-and resumed Phase 2 remain blocked. Reserved acceptance seeds and the final
-holdout remain `not_materialized`.
+R2-14B issue #78 stopped at readiness because contract `1.0.0` did not freeze
+mechanical H1-H5 disposition thresholds. PR #79 merged commit `3088c4c`,
+recording the governed readiness stop `stop_contract_not_executable` under accepted
+ADR 0009 with zero executed units and all hypotheses unresolved.
+
+Phase 2R.14BA issue #80 establishes ADR 0010 and amended contract `1.1.0`, freezing
+complete quantitative disposition truth tables before successor increment Phase 2R.14BB
+executes the 17 diagnostics on unspent seeds `20280101..20280120`. R2-14C, R2-15, R2-16,
+and resumed Phase 2 remain blocked. Reserved acceptance seeds and the final holdout
+remain `not_materialized`.
 
 ## Test map
 
