@@ -344,16 +344,25 @@ merge R2-11 -> R2-12 -> R2-13 -> R2-14 -> R2-15 -> R2-16
   R2-11 block as spent acceptance evidence and freeze a disjoint development
   diagnostic boundary before changing the substrate.
 - [x] **R2-13 - Diagnose signal recovery and approve v4:** Completed on 2026-09-02 through [issue #69](https://github.com/anilreddy89/Inforsight/issues/69) and [PR #70](https://github.com/anilreddy89/Inforsight/pull/70), merge `7c4a1a7`. All 20 development seeds diagnose H1/H2 as supported, H3/H4/H6 as rejected, and H5 as unresolved. ADR 0007, substrate `4.0.0`, and protocol `3.0.0` freeze the reviewed v4 design under the [phase document](../Documents/phase_docs/phase-02r-13-v4-signal-recovery-diagnostics-and-design.md).
-- [ ] **R2-14 - Implement and qualify v4:** Implemented locally through
-  [issue #72](https://github.com/anilreddy89/Inforsight/issues/72). Separate v4
-  paths and all 20 development seeds complete, but the mechanical decision is
-  `redesign`: observable-oracle recovery, probability quality, reference recovery,
-  and hazard validity fail. R2-15 remains blocked; future acceptance and the final
-  holdout remain `not_materialized`.
-- [ ] **R2-15 - Freeze v4 evaluation and candidate:** prove structural support,
+- [x] **R2-14 - Implement and qualify v4:** Completed on 2026-09-02 through
+  [issue #72](https://github.com/anilreddy89/Inforsight/issues/72) and
+  [PR #73](https://github.com/anilreddy89/Inforsight/pull/73), merge
+  `4b234bf`. Separate v4 paths and all 20 development seeds complete, but the
+  mechanical decision is `redesign`: observable-oracle recovery, probability
+  quality, reference recovery, and hazard validity fail. R2-15 remains blocked;
+  future acceptance and the final holdout remain `not_materialized`.
+- [ ] **R2-14A through R2-14C - Govern the post-v4 redesign:** R2-14A is active
+  through [issue #76](https://github.com/anilreddy89/Inforsight/issues/76). The
+  [post-v4 qualification redesign plan](modeling/phase-02r-v5-redesign-plan.md)
+  first closes out v4 and freezes a new diagnostic boundary, then executes bounded
+  diagnostics and approves a separately versioned v5 design, and finally
+  implements and qualifies v5 on development-only data. R2-15 remains blocked
+  unless every frozen v5 development qualification gate passes. Seeds
+  `20271201..20271220` and the final holdout remain `not_materialized`.
+- [ ] **R2-15 - Freeze replacement evaluation and candidate:** prove structural support,
   authorize comparison, select once, and freeze memberships and fitted-state
   digests before acceptance access.
-- [ ] **R2-16 - Run fresh v4 statistical acceptance:** execute the complete frozen
+- [ ] **R2-16 - Run fresh replacement statistical acceptance:** execute the complete frozen
   protocol and publish one mechanical decision. Only merged `proceed` resumes
   governed Phase 2 work.
 
