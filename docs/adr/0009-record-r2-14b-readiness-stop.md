@@ -1,6 +1,6 @@
 # ADR 0009: Record R2-14B readiness stop
 
-- Status: Proposed through [issue #78](https://github.com/anilreddy89/Inforsight/issues/78)
+- Status: Accepted through [issue #78](https://github.com/anilreddy89/Inforsight/issues/78) and [PR #79](https://github.com/anilreddy89/Inforsight/pull/79), merge commit `3088c4c`
 - Date: 2026-09-03
 - Decision owner: Anil Jonnala
 - Trigger: R2-14B readiness failure under ADR 0008 and contract `1.0.0`

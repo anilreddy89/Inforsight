@@ -10,8 +10,7 @@
 | GitHub issue | [#78](https://github.com/anilreddy89/Inforsight/issues/78) |
 | Issue title | `[Implementation] R2-14B: Execute bounded post-v4 redesign diagnostics and approve the v5 design` |
 | Branch | `feat/78-r2-14b-v5-redesign-diagnostics` |
-| Status | Implemented locally with a governed readiness `stop`; PR review pending and R2-14C blocked |
-| Milestone | `v0.2.0-risk-model` |
+| Pull request | [#79](https://github.com/anilreddy89/Inforsight/pull/79) |
 | Priority | Release blocking |
 | Classification | Remediation diagnostic execution and successor design |
 | Strict predecessor | R2-14A, merged through issue #76 and PR #77 as merge commit `52c03c8` on 2026-09-03 |
@@ -276,13 +275,10 @@ Complete only after merge:
 | Field | Value |
 | --- | --- |
 | Issue | [#78](https://github.com/anilreddy89/Inforsight/issues/78) |
-| Pull request | TBD |
-| Merge commit | TBD |
-| Merge date | TBD |
+| Pull request | [#79](https://github.com/anilreddy89/Inforsight/pull/79) |
+| Merge commit | `3088c4c` |
+| Merge date | 2026-09-03 |
 | Diagnostic manifest digest | `70db5fd3a39d4f0486471ac15a8d74cee53b2543de2fc4622dbcfc6724962b77` |
-| Hypothesis dispositions | H1-H6: `unresolved` |
-| Feasibility decision | `unresolved`; zero D16 cells authorized or executed |
-| ADR 0009 decision | Proposed `stop` (`stop_contract_not_executable`) |
 | V5 specification version | No v5 specification; readiness stop prohibits successor design |
 | R2-14C status | Blocked pending a separately reviewed pre-result contract and authority decision |
 | Reserved acceptance | `not_materialized` |
