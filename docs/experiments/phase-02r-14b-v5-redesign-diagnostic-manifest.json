@@ -1,0 +1,335 @@
+{
+  "contract_version": "1.0.0",
+  "diagnostic_version": "1.0.0",
+  "executed_inventory": {
+    "diagnostics": 0,
+    "feasibility_cells": 0,
+    "folds": 0,
+    "scenarios": 0,
+    "seeds": 0,
+    "units": 0
+  },
+  "execution_decision": "stop",
+  "final_holdout_status": "not_materialized",
+  "governed_failures": [
+    {
+      "diagnostic_id": "D1_LINEAR_PREDICTOR_DISTRIBUTION",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D2_TERM_CONTRIBUTION_COVARIANCE",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D3_SIGNAL_VARIANCE_RATIO",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D4_CUMULATIVE_INCIDENCE_DECOMPOSITION",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D5_CAUSE_UNION_ORDERING",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D6_ATTENUATION_BY_FOLD",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D7_ORACLE_METRIC_DECOMPOSITION",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D8_RELIABILITY_SUMMARY",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D9_ORACLE_ORDERING",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D10_EXACT_SCORE_RECOVERY",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D11_EXACT_HAZARD_REFERENCE",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D12_CURRENT_REFERENCE_COMPARISON",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D13_HAZARD_QUANTILES",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D14_EXCEEDANCE_ATTRIBUTION",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D15_TAIL_SUPPORT",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D16_FROZEN_FEASIBILITY_SURFACE",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    },
+    {
+      "diagnostic_id": "D17_SIMULTANEOUS_CONSTRAINT_STATUS",
+      "reason": "readiness_stop_before_result_access",
+      "status": "not_executed"
+    }
+  ],
+  "hypothesis_dispositions": {
+    "H1_LOG_HAZARD_SPREAD": "unresolved",
+    "H2_HORIZON_ATTENUATION": "unresolved",
+    "H3_PROBABILITY_SCALE": "unresolved",
+    "H4_REFERENCE_SPECIFICATION": "unresolved",
+    "H5_HAZARD_TAIL": "unresolved",
+    "H6_DESIGN_FEASIBILITY": "unresolved"
+  },
+  "issue": 78,
+  "phase": "R2-14B",
+  "planned_inventory": {
+    "development_seeds": [
+      20280101,
+      20280102,
+      20280103,
+      20280104,
+      20280105,
+      20280106,
+      20280107,
+      20280108,
+      20280109,
+      20280110,
+      20280111,
+      20280112,
+      20280113,
+      20280114,
+      20280115,
+      20280116,
+      20280117,
+      20280118,
+      20280119,
+      20280120
+    ],
+    "folds": [
+      "fold_1",
+      "fold_2",
+      "fold_3"
+    ],
+    "scenarios": [
+      "signal",
+      "matched_null"
+    ],
+    "sha256": "f2f8b912ffabe5d9af0b022d59ea080cf108bd4809fb837d14cf67d25484cefa",
+    "units": 120
+  },
+  "predecessor_merge": "52c03c8",
+  "protected_intermediates_committed": false,
+  "r2_14c_authorized": false,
+  "readiness": {
+    "checks": [
+      {
+        "check_id": "immutable_inputs",
+        "evidence_sha256": "599132828a00d32e4b86d143e83f78aaa3a121b8660e022da4d61852dfed5d5b",
+        "expected": [],
+        "failure_classification": "stop",
+        "observed": [],
+        "status": "pass"
+      },
+      {
+        "check_id": "seed_domain_separation",
+        "evidence_sha256": "599132828a00d32e4b86d143e83f78aaa3a121b8660e022da4d61852dfed5d5b",
+        "expected": "four_disjoint_20_seed_domains",
+        "failure_classification": "stop",
+        "observed": [
+          [
+            20261001,
+            20261020,
+            20
+          ],
+          [
+            20271101,
+            20271120,
+            20
+          ],
+          [
+            20271201,
+            20271220,
+            20
+          ],
+          [
+            20280101,
+            20280120,
+            20
+          ]
+        ],
+        "status": "pass"
+      },
+      {
+        "check_id": "complete_inventory",
+        "evidence_sha256": "f2f8b912ffabe5d9af0b022d59ea080cf108bd4809fb837d14cf67d25484cefa",
+        "expected": 120,
+        "failure_classification": "redesign_required",
+        "observed": 120,
+        "status": "pass"
+      },
+      {
+        "check_id": "contract_authority",
+        "evidence_sha256": "eff153f25f7d03b7a7c96b1d045976226b360d92c12a80aa6f9fc5c334774796",
+        "expected": [],
+        "failure_classification": "stop",
+        "observed": [],
+        "status": "pass"
+      },
+      {
+        "check_id": "mechanical_hypothesis_disposition_rules",
+        "evidence_sha256": "7137e77a702e5336ebcf075c17348f2a4ae59f189c25eba10f50dc68e9965e28",
+        "expected": [],
+        "failure_classification": "stop",
+        "observed": [
+          "H1_LOG_HAZARD_SPREAD supported when",
+          "H2_HORIZON_ATTENUATION supported when",
+          "H3_PROBABILITY_SCALE supported when",
+          "H4_REFERENCE_SPECIFICATION supported when",
+          "H5_HAZARD_TAIL supported when",
+          "H1_LOG_HAZARD_SPREAD rejected when",
+          "H2_HORIZON_ATTENUATION rejected when",
+          "H3_PROBABILITY_SCALE rejected when",
+          "H4_REFERENCE_SPECIFICATION rejected when",
+          "H5_HAZARD_TAIL rejected when"
+        ],
+        "status": "fail"
+      },
+      {
+        "check_id": "predecessor_merge_commit",
+        "evidence_sha256": "599132828a00d32e4b86d143e83f78aaa3a121b8660e022da4d61852dfed5d5b",
+        "expected": "52c03c8",
+        "failure_classification": "stop",
+        "observed": "52c03c8",
+        "status": "pass"
+      },
+      {
+        "check_id": "feasibility_grid_frozen",
+        "evidence_sha256": "700274fed086c56407f7aab3028bf76dadf5aa4fb564f90d8485ddaede53303b",
+        "expected": 320,
+        "failure_classification": "stop",
+        "observed": 320,
+        "status": "pass"
+      },
+      {
+        "check_id": "holdout_and_reserved_absence",
+        "evidence_sha256": "599132828a00d32e4b86d143e83f78aaa3a121b8660e022da4d61852dfed5d5b",
+        "expected": {
+          "final_holdout": "not_materialized",
+          "reserved_acceptance": "not_materialized"
+        },
+        "failure_classification": "stop",
+        "observed": {
+          "final_holdout": "not_materialized",
+          "reserved_acceptance": "not_materialized"
+        },
+        "status": "pass"
+      }
+    ],
+    "contract_version": "1.0.0",
+    "diagnostic_version": "1.0.0",
+    "feasibility_surface_size": 320,
+    "final_holdout_status": "not_materialized",
+    "issue": 78,
+    "phase": "R2-14B",
+    "planned_inventory": {
+      "development_seeds": [
+        20280101,
+        20280102,
+        20280103,
+        20280104,
+        20280105,
+        20280106,
+        20280107,
+        20280108,
+        20280109,
+        20280110,
+        20280111,
+        20280112,
+        20280113,
+        20280114,
+        20280115,
+        20280116,
+        20280117,
+        20280118,
+        20280119,
+        20280120
+      ],
+      "folds": [
+        "fold_1",
+        "fold_2",
+        "fold_3"
+      ],
+      "scenarios": [
+        "signal",
+        "matched_null"
+      ],
+      "sha256": "f2f8b912ffabe5d9af0b022d59ea080cf108bd4809fb837d14cf67d25484cefa",
+      "units": 120
+    },
+    "predecessor_merge": "52c03c8",
+    "readiness_decision": "stop",
+    "registered_diagnostics": [
+      "D1_LINEAR_PREDICTOR_DISTRIBUTION",
+      "D2_TERM_CONTRIBUTION_COVARIANCE",
+      "D3_SIGNAL_VARIANCE_RATIO",
+      "D4_CUMULATIVE_INCIDENCE_DECOMPOSITION",
+      "D5_CAUSE_UNION_ORDERING",
+      "D6_ATTENUATION_BY_FOLD",
+      "D7_ORACLE_METRIC_DECOMPOSITION",
+      "D8_RELIABILITY_SUMMARY",
+      "D9_ORACLE_ORDERING",
+      "D10_EXACT_SCORE_RECOVERY",
+      "D11_EXACT_HAZARD_REFERENCE",
+      "D12_CURRENT_REFERENCE_COMPARISON",
+      "D13_HAZARD_QUANTILES",
+      "D14_EXCEEDANCE_ATTRIBUTION",
+      "D15_TAIL_SUPPORT",
+      "D16_FROZEN_FEASIBILITY_SURFACE",
+      "D17_SIMULTANEOUS_CONSTRAINT_STATUS"
+    ],
+    "registered_hypotheses": [
+      "H1_LOG_HAZARD_SPREAD",
+      "H2_HORIZON_ATTENUATION",
+      "H3_PROBABILITY_SCALE",
+      "H4_REFERENCE_SPECIFICATION",
+      "H5_HAZARD_TAIL",
+      "H6_DESIGN_FEASIBILITY"
+    ],
+    "reserved_acceptance_status": "not_materialized",
+    "result_producing_execution_authorized": false
+  },
+  "reserved_acceptance_status": "not_materialized",
+  "result_producing_execution_authorized": false,
+  "selected_response": "stop_contract_not_executable",
+  "summary": {
+    "feasibility_status": "unresolved",
+    "feasibility_surface_cells_evaluated": 0,
+    "feasible_cell_count": 0
+  }
+}

@@ -11,4 +11,5 @@ ADRs capture decisions that are costly or confusing to rediscover. Use the next 
 - [0005 — Replace v2 with a dual-time, matched-control v3 statistical substrate](0005-replace-v2-with-a-dual-time-matched-control-v3-statistical-substrate.md) — accepted through issue #53 and PR #54
 - [0006 — Approve the v4 signal-recovery diagnostic boundary](0006-approve-v4-signal-recovery-diagnostic-boundary.md) — accepted through issue #66 and PR #67
 - [0007 — Approve the v4 signal-recovery design](0007-approve-v4-signal-recovery-design.md) — accepted through issue #69 and PR #70, merge `7c4a1a7`
-- [0008 — Authorize post-v4 redesign diagnostics](0008-authorize-post-v4-redesign-diagnostics.md) — proposed through issue #76
+- [0008 — Authorize post-v4 redesign diagnostics](0008-authorize-post-v4-redesign-diagnostics.md) — accepted through issue #76 and PR #77, merge `52c03c8`
+- [0009 — Record R2-14B readiness stop](0009-record-r2-14b-readiness-stop.md) — proposed through issue #78

@@ -75,6 +75,10 @@ while IFS= read -r -d '' file; do
     scripts/check_repository_boundaries.sh|*.pdf|*.docx|*.xlsx|*.png|*.zip) continue ;;
   esac
 
+  # A tracked skip-worktree file may intentionally be absent from a local
+  # checkout. Only scan materialized regular files.
+  [[ -f "$file" ]] || continue
+
   if grep -IqE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|gh[pousr]_[0-9A-Za-z]{30,})' "$file"; then
     echo "Potential credential material detected in: $file" >&2
     exit 1

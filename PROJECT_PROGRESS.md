@@ -3,7 +3,7 @@
 Personal review document. This file is intentionally excluded from version control and is not an official project status record.
 
 Last reviewed: 2026-09-03
-Current branch: `docs/76-r2-14a-v4-closeout-v5-diagnostics`
+Current branch: `feat/78-r2-14b-v5-redesign-diagnostics`
 
 ## How progress is tracked
 
@@ -72,26 +72,27 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-12 | Phase 2R v4 extension | Approve the v4 signal-recovery diagnostic boundary | Completed | Issue #66 and PR #67 merged as `ea9cf1f`; ADR 0006 and contract `1.0.0` freeze bounded diagnostics and disjoint seed domains without producing a new statistical result. |
 | R2-13 | Phase 2R v4 extension | Execute bounded signal-recovery diagnostics and freeze the reviewed v4 design | Completed | Issue #69 and [PR #70](https://github.com/anilreddy89/Inforsight/pull/70) merged as `7c4a1a7`; all 20 development seeds completed, H1/H2 are supported, and ADR 0007 freezes substrate `4.0.0` and protocol `3.0.0`. |
 | R2-14 | Phase 2R v4 extension | Implement and qualify the frozen v4 substrate | Completed | Issue #72 and PR #73 merged as `4b234bf`; all 20 development seeds complete and record mechanical `redesign`. |
-| R2-14A | Phase 2R post-v4 extension | Close out v4 and authorize bounded v5 diagnostics | In progress | Issue #76; documentation-only contract work on `docs/76-r2-14a-v4-closeout-v5-diagnostics`. |
+| R2-14A | Phase 2R post-v4 extension | Close out v4 and authorize bounded v5 diagnostics | Completed | Issue #76 and PR #77 merged as `52c03c8`; ADR 0008 and contract `1.0.0` freeze the 17-diagnostic inventory and disjoint seed domains. |
+| R2-14B | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Stopped locally | Issue #78; readiness found contract `1.0.0` lacks mechanical H1-H5 disposition thresholds. Zero result units and D16 cells are authorized, all hypotheses remain unresolved, and proposed ADR 0009 records `stop_contract_not_executable`; R2-14C is blocked. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until a replacement acceptance gate records merged `proceed`; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 through R2-14 are merged. R2-14 mechanically decides `redesign` after observable recovery, probability quality, reference recovery, and hazard validity fail. R2-14A issue #76 is active and authorizes diagnostics only; R2-15 remains blocked. P2-08/P2-09 remain paused, downstream performance-dependent work remains blocked, and the final holdout remains `not_materialized`.
+R2-08 through R2-14A are merged. R2-14B issue #78 stops at readiness because contract `1.0.0` does not freeze H1-H5 disposition thresholds before result access. The governed record has zero executed units, leaves all hypotheses unresolved, and selects `stop_contract_not_executable`. Proposed ADR 0009 records the stop; R2-14C and downstream performance work remain blocked. P2-08/P2-09 remain paused, and the final holdout remains `not_materialized`.
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 29 |
-| In-progress changes | 2 |
-| Implemented-locally changes | 0 |
+| Completed tracked changes | 30 |
+| In-progress changes | 1 |
+| Stopped-local changes | 1 |
 | Changes needing confirmation | 1 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
-| Completed Phase 2R increments | 15 of 17 |
-| Planned Phase 2R increments | 2 of 17 |
-| Next implementation increment | Complete R2-14A diagnostic authorization under issue #76; R2-15 remains blocked |
+| Completed Phase 2R increments | 16 of 18 |
+| Planned Phase 2R increments | 2 of 18 |
+| Next implementation increment | Review the R2-14B readiness stop under issue #78; R2-14C remains blocked |
 
 
 | ID | Status | Impact | Resolution trigger |
