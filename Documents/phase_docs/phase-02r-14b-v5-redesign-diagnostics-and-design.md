@@ -10,7 +10,7 @@
 | GitHub issue | [#78](https://github.com/anilreddy89/Inforsight/issues/78) |
 | Issue title | `[Implementation] R2-14B: Execute bounded post-v4 redesign diagnostics and approve the v5 design` |
 | Branch | `feat/78-r2-14b-v5-redesign-diagnostics` |
-| Status | Implemented locally through issue #78; diagnostic manifest, report, hypothesis disposition, and proposed ADR 0009 stop recorded; R2-14C blocked |
+| Status | Implemented locally with a governed readiness `stop`; PR review pending and R2-14C blocked |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
 | Classification | Remediation diagnostic execution and successor design |
@@ -254,6 +254,21 @@ inventory denominators cannot be preserved, cleanup or suppression fails, D16
 cannot complete all 320 cells, a disposition is ambiguous, the causal table does
 not authorize a coherent response, or reserved/final-holdout data is discovered.
 
+## Local implementation result
+
+The fail-closed readiness implementation found that merged contract `1.0.0`
+does not freeze quantitative `supported` and `rejected` rules for H1 through H5.
+ADR 0008 prohibits choosing those material thresholds in implementation or after
+result access. R2-14B therefore records `stop_contract_not_executable` before any
+authorized diagnostic execution.
+
+The deterministic evidence package records 120 planned inventory units, zero
+executed units, 17 governed `not_executed` diagnostic records, zero D16 cells,
+and six `unresolved` hypothesis dispositions. Proposed ADR 0009 preserves the
+historical evidence and keeps R2-14C blocked. Focused checks and the complete
+317-test simulator suite pass locally; reserved acceptance and final holdout
+remain `not_materialized`.
+
 ## Completion record
 
 Complete only after merge:
@@ -264,11 +279,11 @@ Complete only after merge:
 | Pull request | TBD |
 | Merge commit | TBD |
 | Merge date | TBD |
-| Diagnostic manifest digest | `fe6fb12d4eea65542fd5a6f82e1d086181dbdf448c96042ecfc085138c291b13` |
-| Hypothesis dispositions | H1: supported, H2: rejected, H3: supported, H4: rejected, H5: rejected, H6: supported |
-| Feasibility decision | `infeasible` (0/320 cells meet simultaneous constraints) |
-| ADR 0009 decision | `stop` (`stop_infeasible_foundation`) |
-| V5 specification version | No v5 specification drafted; stop recorded in ADR 0009 |
-| R2-14C status | Blocked until an independent foundational review is approved |
+| Diagnostic manifest digest | `70db5fd3a39d4f0486471ac15a8d74cee53b2543de2fc4622dbcfc6724962b77` |
+| Hypothesis dispositions | H1-H6: `unresolved` |
+| Feasibility decision | `unresolved`; zero D16 cells authorized or executed |
+| ADR 0009 decision | Proposed `stop` (`stop_contract_not_executable`) |
+| V5 specification version | No v5 specification; readiness stop prohibits successor design |
+| R2-14C status | Blocked pending a separately reviewed pre-result contract and authority decision |
 | Reserved acceptance | `not_materialized` |
 | Final holdout | Undefined and `not_materialized` |

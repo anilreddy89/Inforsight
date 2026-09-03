@@ -351,14 +351,9 @@ merge R2-11 -> R2-12 -> R2-13 -> R2-14 -> R2-15 -> R2-16
   mechanical decision is `redesign`: observable-oracle recovery, probability
   quality, reference recovery, and hazard validity fail. R2-15 remains blocked;
   future acceptance and the final holdout remain `not_materialized`.
-- [ ] **R2-14A through R2-14C - Govern the post-v4 redesign:** R2-14A is active
-  through [issue #76](https://github.com/anilreddy89/Inforsight/issues/76). The
-  [post-v4 qualification redesign plan](modeling/phase-02r-v5-redesign-plan.md)
-  first closes out v4 and freezes a new diagnostic boundary, then executes bounded
-  diagnostics and approves a separately versioned v5 design, and finally
-  implements and qualifies v5 on development-only data. R2-15 remains blocked
-  unless every frozen v5 development qualification gate passes. Seeds
-  `20271201..20271220` and the final holdout remain `not_materialized`.
+- [x] **R2-14A - Close out v4 and authorize post-v4 redesign diagnostics:** Completed on 2026-09-03 through [issue #76](https://github.com/anilreddy89/Inforsight/issues/76) and [PR #77](https://github.com/anilreddy89/Inforsight/pull/77), merge `52c03c8`. ADR 0008 and contract `1.0.0` freeze the 17-diagnostic inventory and disjoint seed domains without producing replacement results.
+- [ ] **R2-14B - Execute post-v4 diagnostics and evaluate feasibility surface (STOPPED LOCALLY):** [Issue #78](https://github.com/anilreddy89/Inforsight/issues/78) fails readiness because contract `1.0.0` does not freeze the mechanical H1-H5 disposition thresholds required by ADR 0008. The governed record contains zero executed units and zero D16 cells, leaves every hypothesis unresolved, and selects `stop_contract_not_executable`. Proposed ADR 0009 records the stop; merge review remains pending.
+- [ ] **R2-14C - v5 substrate implementation and qualification (BLOCKED):** Blocked by the proposed ADR 0009 readiness stop. Requires a separately reviewed pre-result contract and authority decision before any successor diagnostic or substrate proposal.
 - [ ] **R2-15 - Freeze replacement evaluation and candidate:** prove structural support,
   authorize comparison, select once, and freeze memberships and fitted-state
   digests before acceptance access.

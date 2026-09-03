@@ -789,9 +789,14 @@ R2-14A issue #76 is a documentation-only boundary after that failure. ADR 0008
 and contract `1.0.0` freeze seeds `20280101..20280120` for later R2-14B
 development diagnostics, preserve `20271201..20271220` as unassigned and
 unmaterialized, and predeclare 17 diagnostics plus a non-selective 320-cell
-feasibility surface. R2-14A imports no simulator runtime and produces no result.
-R2-14B, R2-14C, R2-15, R2-16, and resumed Phase 2 remain blocked until their
-predecessor decisions merge.
+feasibility surface.
+
+R2-14B issue #78 stops at readiness because contract `1.0.0` does not freeze
+mechanical H1-H5 disposition thresholds. The governed evidence records zero
+executed inventory units, zero D16 cells, and all six hypotheses as unresolved.
+Proposed ADR 0009 records `stop_contract_not_executable`; R2-14C, R2-15, R2-16,
+and resumed Phase 2 remain blocked. Reserved acceptance seeds and the final
+holdout remain `not_materialized`.
 
 ## Test map
 
@@ -816,6 +821,7 @@ predecessor decisions merge.
 | `test_v4_corpus.py` | separate v4 types, scheduled cadence, exact reconstruction, frozen hazards, oracle, and holdout absence |
 | `test_v4_qualification.py` | development/future domain separation, complete inventory, readiness, and nine frozen gates |
 | `test_v5_diagnostic_contract.py` | R2-14A seed-domain separation, inventory completeness, frozen feasibility surface, and holdout boundary |
+| `test_v5_diagnostics.py` | R2-14B readiness rules, inventory completeness, domain disjointness, 320-cell grid exactness, suppression, and artifact reproduction |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 
