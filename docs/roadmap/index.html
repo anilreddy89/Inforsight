@@ -91,7 +91,7 @@
             <div class="stat-sub">100% verified with automated tests</div>
           </div>
           <div class="stat-card">
-            <div class="stat-num highlight-green">384</div>
+            <div class="stat-num highlight-green">392</div>
             <div class="stat-label">Automated Safety Tests</div>
             <div class="stat-sub">Zero future data leaks tolerated</div>
           </div>
@@ -822,8 +822,8 @@
         </div>
 
         <div class="chart-caption text-dynamic"
-             data-simple="Key Takeaway: In Generation v6 Acceptance (Phase 2R.16A), the frozen model cleared our 0.65 target across all 20 blind test seeds (0.7031 median AUC). In Phase 2.08, Platt scaling calibrated raw predictions into reliable real-world probabilities (0.0115 ECE) while preserving 100% of ranking accuracy (0.6998 AUC) and establishing operational triage tiers!"
-             data-tech="Key Takeaway: Generation v6 Statistical Acceptance (Phase 2R.16A) achieves 0.7031 median ROC-AUC with Logistic Regression across 20 reserved acceptance seeds under Protocol 3.1.0 (ADR 0013). Phase 2.08 successfully fit Platt calibration on designated calibration data (ECE 0.0115 <= 0.0300, slope 0.9498, AUC 0.6998 exact preservation), establishing operational review queues and risk tiers.">
+             data-simple="Key Takeaway: In Generation v6 Acceptance (Phase 2R.16A), the frozen model cleared our 0.65 target across all 20 blind test seeds (0.7031 median AUC). In Phase 2.08, Platt scaling calibrated raw predictions into reliable real-world probabilities (0.0115 ECE). In Phase 2.09, exact additive logit and centered SHAP attributions were audited 17/17 against actuarial rules. In Phase 2.10, the entire system was packaged into an immutable JSON release model bundle with bit-for-bit reload invariance across 8,782 out-of-sample policies!"
+             data-tech="Key Takeaway: Generation v6 Statistical Acceptance (Phase 2R.16A) achieves 0.7031 median ROC-AUC with Logistic Regression across 20 reserved acceptance seeds under Protocol 3.1.0 (ADR 0013). Phase 2.08 fit Platt calibration on designated calibration data (ECE 0.0115 <= 0.0300, slope 0.9498, AUC 0.6998 exact preservation). Phase 2.09 verified exact additive decomposition and ADR 0002 non-causal authority boundaries. Phase 2.10 unified the pipeline into an immutable, pure-JSON release model bundle with bit-for-bit reload invariance (max prob diff 2.22e-16 <= 1.00e-12, 100% tier concordance).">
         </div>
       </div>
 
@@ -832,7 +832,7 @@
         <h3>Engineering Rigor &amp; Test Suite Health</h3>
         <div class="test-grid">
           <div class="test-stat-box">
-            <span class="test-num">384</span>
+            <span class="test-num">392</span>
             <span class="test-label">Automated Safety Tests</span>
           </div>
           <div class="test-stat-box">
@@ -971,7 +971,8 @@
           <div class="sim-scenario-selector">
             <label for="simScenarioSelect">Scenario to Run:</label>
             <select id="simScenarioSelect" class="filter-select">
-              <option value="p2_09_model_explanations" selected>🟢 Phase 2.09: Model Explanations &amp; Action Boundaries (Exact Logit &amp; Centered SHAP)</option>
+              <option value="p2_10_model_bundle" selected>🟢 Phase 2.10: Release Model Bundle &amp; Bit-for-Bit Reproducibility</option>
+              <option value="p2_09_model_explanations">🟢 Phase 2.09: Model Explanations &amp; Action Boundaries (Exact Logit &amp; Centered SHAP)</option>
               <option value="p2_08_probability_calibration">🟢 Phase 2.08: Probability Calibration &amp; Operational Tiers (Platt Scaling)</option>
               <option value="v6_acceptance_proceed">🟢 Generation v6 Acceptance Gate (Protocol 3.1.0 Mechanical PROCEED)</option>
               <option value="v6_candidate_selection">🟢 Generation v6 Candidate Selection (R2-15 Model Freeze)</option>

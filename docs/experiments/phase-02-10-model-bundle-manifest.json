@@ -1,0 +1,107 @@
+{
+  "artifact_version": "1.0.0",
+  "bundle_id": "inforsight-v6-logistic-platt-20260817",
+  "claim_boundary": "model_bundle_and_environment_reproducibility_only",
+  "contract_version": "1.0.0",
+  "final_holdout_status": "not_materialized",
+  "issue": 100,
+  "lineage": {
+    "bundle_contract_sha256": "a81f5e5c8f32bdb2f5eac555cd663d225d89fbb56f53bd88e1b2ff3eeece8e35",
+    "bundle_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+    "command_sha256": "de532b5e9df5b90c3a313a0a611d8d26b5ab3f478c8226f60d57d58212b70208",
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "source_sha256": "c61915e35560efa8da246cefd9969913e42407f32a801abb4bc0869b2ecc43fa",
+    "upstream_calibration_manifest_sha256": "ff196d6b78e803eef6e51a2cb439070673d4150fa98ace5bb6f03696f933c06b",
+    "upstream_candidate_manifest_sha256": "5fc28797a47f1321ca141d814fc33b37018e05f99779053b6789ebef3dca7803",
+    "upstream_explanations_manifest_sha256": "d2c58d727632846130d30393a7f860c7c4e60f04516f2cb496b50d85bbb2f064"
+  },
+  "materialization": {
+    "acceptance_seeds": "isolated_not_accessed",
+    "executable_fitted_objects": "not_committed",
+    "feature_matrices": "regenerated_not_committed",
+    "final_holdout": "not_materialized",
+    "oracle_sidecars": "not_accessed",
+    "raw_observations": "regenerated_not_committed",
+    "row_level_predictions": "not_committed"
+  },
+  "milestone": "v0.2.0-risk-model",
+  "operational_policy": {
+    "authority_boundaries": {
+      "non_causal_boundary": "Attributions describe statistical correlations (P(y|x)), not causal levers (P(y|do(x))). Altering observed features manually does not guarantee customer risk reduction.",
+      "tier_1_perception_role": "Attributions quantify mathematical associations in the perception layer. They possess zero autonomous authority to trigger workflows, alter premiums, or send communications.",
+      "tier_2_deterministic_rules_required": "All candidate accounts must pass deterministic eligibility filters (grace period checks, cooling-off periods, communication caps) before any intervention.",
+      "tier_4_licensed_human_approval": "Final approval for all customer retention interventions remains with licensed human conservation officers."
+    },
+    "review_queues": [
+      {
+        "capacity_percentile": 1.0,
+        "cutoff_probability": 0.3409,
+        "expected_precision": 0.3409,
+        "expected_recall": 0.0242,
+        "lift": 2.23
+      },
+      {
+        "capacity_percentile": 5.0,
+        "cutoff_probability": 0.2289,
+        "expected_precision": 0.3531,
+        "expected_recall": 0.1157,
+        "lift": 2.31
+      },
+      {
+        "capacity_percentile": 20.0,
+        "cutoff_probability": 0.1654,
+        "expected_precision": 0.2797,
+        "expected_recall": 0.3664,
+        "lift": 1.83
+      }
+    ],
+    "risk_tiers": [
+      {
+        "action": "standard_passive_billing",
+        "max_prob": 0.1,
+        "min_prob": 0.0,
+        "name": "Tier 1: Low Risk"
+      },
+      {
+        "action": "digital_payment_reminder",
+        "max_prob": 0.25,
+        "min_prob": 0.1,
+        "name": "Tier 2: Moderate Risk"
+      },
+      {
+        "action": "proactive_conservation_triage",
+        "max_prob": 0.5,
+        "min_prob": 0.25,
+        "name": "Tier 3: High Risk"
+      },
+      {
+        "action": "immediate_grace_period_intervention",
+        "max_prob": 1.0,
+        "min_prob": 0.5,
+        "name": "Tier 4: Critical Risk"
+      }
+    ]
+  },
+  "phase": "P2-10",
+  "reproducibility_validation": {
+    "bit_for_bit_verified": true,
+    "max_logit_divergence": 8.881784197001252e-16,
+    "max_probability_divergence": 2.220446049250313e-16,
+    "max_reconstruction_divergence": 8.881784197001252e-16,
+    "reconstruction_verified": true,
+    "tier_concordance_count": 8782,
+    "tier_concordance_rate": 1.0,
+    "tolerance": 1e-12,
+    "total_evaluation_records": 8782
+  },
+  "runtime_environment": {
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "library_versions": {
+      "numpy": "2.5.2",
+      "scikit-learn": "1.7.2",
+      "scipy": "1.18.0"
+    },
+    "platform": "Darwin 25.6.0 (arm64)",
+    "python_version": "3.12.2"
+  }
+}

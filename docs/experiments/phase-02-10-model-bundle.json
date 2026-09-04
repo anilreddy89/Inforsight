@@ -1,0 +1,319 @@
+{
+  "base_model": {
+    "c_param": 1.0,
+    "family": "LogisticRegression",
+    "penalty": "l2",
+    "random_seed": 20260817,
+    "raw_coefficients": {
+      "arrears_duration_days": 0.0797158578839438,
+      "billing_frequency=__unknown__": 0.0,
+      "billing_frequency=annual": 0.1269108362115538,
+      "billing_frequency=monthly": -0.5152266594886703,
+      "billing_frequency=quarterly": -0.23032241359744846,
+      "billing_frequency=semiannual": -0.08863448697551343,
+      "contact_attribute_missing": 0.0,
+      "contact_category=__unknown__": 0.0,
+      "contact_category=none": -0.5127844304195425,
+      "contact_category=service_request": -0.1944882934305001,
+      "notice_category=__unknown__": 0.0,
+      "notice_category=billing_reminder": -0.16441205368586687,
+      "notice_category=grace_warning": -0.05552835395763424,
+      "notice_category=none": -0.487332316206688,
+      "payment_attribute_missing": -0.017659546377232736,
+      "premium_amount_cents": 0.05525158242450753,
+      "product_type=__unknown__": 0.0,
+      "product_type=fictional_term_life": -0.3851791357870266,
+      "product_type=fictional_whole_life": -0.3220935880631898,
+      "recent_contact_count": 0.037982421396760585,
+      "recent_delay_days": 0.29481812498825527,
+      "recent_failed_payment_count": 0.18198852776792013,
+      "recent_notice_count": 0.04865029409319162,
+      "recent_recovery_count": -0.0038820192868157383,
+      "recent_retry_count": 0.00461061396418293,
+      "rolling_on_time_rate": -0.6392616740613859,
+      "rolling_payment_count": -0.16194748349147797,
+      "tenure_days": -0.026019812732089646
+    },
+    "raw_intercept": -0.7072727238497322,
+    "solver": "liblinear"
+  },
+  "bundle_id": "inforsight-v6-logistic-platt-20260817",
+  "bundle_version": "1.0.0",
+  "calibrator": {
+    "calibrated_coefficients": {
+      "arrears_duration_days": 0.07666750057463548,
+      "billing_frequency=__unknown__": 0.0,
+      "billing_frequency=annual": 0.12205772937101583,
+      "billing_frequency=monthly": -0.4955242439957657,
+      "billing_frequency=quarterly": -0.22151481832563327,
+      "billing_frequency=semiannual": -0.08524507872725798,
+      "contact_attribute_missing": 0.0,
+      "contact_category=__unknown__": 0.0,
+      "contact_category=none": -0.4931754064679385,
+      "contact_category=service_request": -0.1870510052096682,
+      "notice_category=__unknown__": 0.0,
+      "notice_category=billing_reminder": -0.1581248895143244,
+      "notice_category=grace_warning": -0.05340493374798098,
+      "notice_category=none": -0.46869658841544226,
+      "payment_attribute_missing": -0.016984240249856175,
+      "premium_amount_cents": 0.05313874603780257,
+      "product_type=__unknown__": 0.0,
+      "product_type=fictional_term_life": -0.37044977496550885,
+      "product_type=fictional_whole_life": -0.3097766367122651,
+      "recent_contact_count": 0.03652996268950299,
+      "recent_delay_days": 0.28354419518205626,
+      "recent_failed_payment_count": 0.17502923417743696,
+      "recent_notice_count": 0.04678989286894724,
+      "recent_recovery_count": -0.003733569753912648,
+      "recent_retry_count": 0.0044343027614787206,
+      "rolling_on_time_rate": -0.6148161239736888,
+      "rolling_payment_count": -0.1557545651922851,
+      "tenure_days": -0.025024807617245678
+    },
+    "calibrated_intercept": -0.7136423372526729,
+    "method": "platt_scaling",
+    "param_a": 0.9617597126816808,
+    "param_b": -0.033415925575364776
+  },
+  "created_at_utc": "2026-09-04T19:30:00Z",
+  "explainer_reference": {
+    "background_column_means": {
+      "arrears_duration_days": 0.005328105120266757,
+      "billing_frequency=__unknown__": 0.0,
+      "billing_frequency=annual": 0.28159872466408564,
+      "billing_frequency=monthly": 0.28512867228421773,
+      "billing_frequency=quarterly": 0.1968799817809155,
+      "billing_frequency=semiannual": 0.23639262127078114,
+      "contact_attribute_missing": 0.0,
+      "contact_category=__unknown__": 0.0,
+      "contact_category=none": 0.7051924390799362,
+      "contact_category=service_request": 0.29480756092006377,
+      "notice_category=__unknown__": 0.0,
+      "notice_category=billing_reminder": 0.3312457299020724,
+      "notice_category=grace_warning": 0.015486221817353677,
+      "notice_category=none": 0.6532680482805739,
+      "payment_attribute_missing": 0.022490126161633605,
+      "premium_amount_cents": -0.03128274079934492,
+      "product_type=__unknown__": 0.0,
+      "product_type=fictional_term_life": 0.47540423593714415,
+      "product_type=fictional_whole_life": 0.5245957640628558,
+      "recent_contact_count": -0.01042569988384217,
+      "recent_delay_days": 0.12222527264299742,
+      "recent_failed_payment_count": 0.03863569040895612,
+      "recent_notice_count": 0.00651550892492452,
+      "recent_recovery_count": 0.029265391021568138,
+      "recent_retry_count": 0.021885864640482706,
+      "rolling_on_time_rate": -0.254063383372927,
+      "rolling_payment_count": 0.3765604369810241,
+      "tenure_days": 1.1331073209262525
+    },
+    "background_observation_count": 8782,
+    "base_value_logit": -1.8763705202768075,
+    "base_value_probability": 0.13280631957246414
+  },
+  "operational_policy": {
+    "authority_boundaries": {
+      "non_causal_boundary": "Attributions describe statistical correlations (P(y|x)), not causal levers (P(y|do(x))). Altering observed features manually does not guarantee customer risk reduction.",
+      "tier_1_perception_role": "Attributions quantify mathematical associations in the perception layer. They possess zero autonomous authority to trigger workflows, alter premiums, or send communications.",
+      "tier_2_deterministic_rules_required": "All candidate accounts must pass deterministic eligibility filters (grace period checks, cooling-off periods, communication caps) before any intervention.",
+      "tier_4_licensed_human_approval": "Final approval for all customer retention interventions remains with licensed human conservation officers."
+    },
+    "review_queues": [
+      {
+        "capacity_percentile": 1.0,
+        "cutoff_probability": 0.3409,
+        "expected_precision": 0.3409,
+        "expected_recall": 0.0242,
+        "lift": 2.23
+      },
+      {
+        "capacity_percentile": 5.0,
+        "cutoff_probability": 0.2289,
+        "expected_precision": 0.3531,
+        "expected_recall": 0.1157,
+        "lift": 2.31
+      },
+      {
+        "capacity_percentile": 20.0,
+        "cutoff_probability": 0.1654,
+        "expected_precision": 0.2797,
+        "expected_recall": 0.3664,
+        "lift": 1.83
+      }
+    ],
+    "risk_tiers": [
+      {
+        "action": "standard_passive_billing",
+        "max_prob": 0.1,
+        "min_prob": 0.0,
+        "name": "Tier 1: Low Risk"
+      },
+      {
+        "action": "digital_payment_reminder",
+        "max_prob": 0.25,
+        "min_prob": 0.1,
+        "name": "Tier 2: Moderate Risk"
+      },
+      {
+        "action": "proactive_conservation_triage",
+        "max_prob": 0.5,
+        "min_prob": 0.25,
+        "name": "Tier 3: High Risk"
+      },
+      {
+        "action": "immediate_grace_period_intervention",
+        "max_prob": 1.0,
+        "min_prob": 0.5,
+        "name": "Tier 4: Critical Risk"
+      }
+    ]
+  },
+  "preprocessor": {
+    "categorical": {
+      "billing_frequency": {
+        "categories": [
+          "annual",
+          "monthly",
+          "quarterly",
+          "semiannual",
+          "__unknown__"
+        ],
+        "name": "billing_frequency"
+      },
+      "contact_category": {
+        "categories": [
+          "none",
+          "service_request",
+          "__unknown__"
+        ],
+        "name": "contact_category"
+      },
+      "notice_category": {
+        "categories": [
+          "billing_reminder",
+          "grace_warning",
+          "none",
+          "__unknown__"
+        ],
+        "name": "notice_category"
+      },
+      "product_type": {
+        "categories": [
+          "fictional_term_life",
+          "fictional_whole_life",
+          "__unknown__"
+        ],
+        "name": "product_type"
+      }
+    },
+    "feature_count": 28,
+    "numeric": {
+      "arrears_duration_days": {
+        "mean": 0.012447024466683287,
+        "name": "arrears_duration_days",
+        "scale": 0.09133222593098551
+      },
+      "contact_attribute_missing": {
+        "mean": 0.0,
+        "name": "contact_attribute_missing",
+        "scale": 1.0
+      },
+      "payment_attribute_missing": {
+        "mean": 0.023255813953488372,
+        "name": "payment_attribute_missing",
+        "scale": 0.1507148999629735
+      },
+      "premium_amount_cents": {
+        "mean": 0.9638977147732227,
+        "name": "premium_amount_cents",
+        "scale": 0.06630079974287785
+      },
+      "recent_contact_count": {
+        "mean": 0.09986110616474946,
+        "name": "recent_contact_count",
+        "scale": 0.15269182972183695
+      },
+      "recent_delay_days": {
+        "mean": 0.11185409172928762,
+        "name": "recent_delay_days",
+        "scale": 0.15690349860244202
+      },
+      "recent_failed_payment_count": {
+        "mean": 0.013830027185203651,
+        "name": "recent_failed_payment_count",
+        "scale": 0.06840984801279695
+      },
+      "recent_notice_count": {
+        "mean": 0.11454586464380259,
+        "name": "recent_notice_count",
+        "scale": 0.1583072953918144
+      },
+      "recent_recovery_count": {
+        "mean": 0.008250531239241663,
+        "name": "recent_recovery_count",
+        "scale": 0.05269796919975734
+      },
+      "recent_retry_count": {
+        "mean": 0.011111506820043448,
+        "name": "recent_retry_count",
+        "scale": 0.06114453038338236
+      },
+      "rolling_on_time_rate": {
+        "mean": 0.267324901495456,
+        "name": "rolling_on_time_rate",
+        "scale": 0.25619438817589
+      },
+      "rolling_payment_count": {
+        "mean": 0.1635267162885668,
+        "name": "rolling_payment_count",
+        "scale": 0.2602319558449341
+      },
+      "tenure_days": {
+        "mean": 0.5684841252688719,
+        "name": "tenure_days",
+        "scale": 0.4597080689849733
+      }
+    },
+    "ordered_columns": [
+      "tenure_days",
+      "premium_amount_cents",
+      "recent_delay_days",
+      "recent_failed_payment_count",
+      "recent_retry_count",
+      "recent_recovery_count",
+      "arrears_duration_days",
+      "rolling_on_time_rate",
+      "rolling_payment_count",
+      "recent_notice_count",
+      "recent_contact_count",
+      "payment_attribute_missing",
+      "contact_attribute_missing",
+      "product_type=fictional_term_life",
+      "product_type=fictional_whole_life",
+      "product_type=__unknown__",
+      "billing_frequency=annual",
+      "billing_frequency=monthly",
+      "billing_frequency=quarterly",
+      "billing_frequency=semiannual",
+      "billing_frequency=__unknown__",
+      "notice_category=billing_reminder",
+      "notice_category=grace_warning",
+      "notice_category=none",
+      "notice_category=__unknown__",
+      "contact_category=none",
+      "contact_category=service_request",
+      "contact_category=__unknown__"
+    ],
+    "schema_version": "6.0.0"
+  },
+  "runtime_environment": {
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "library_versions": {
+      "numpy": "2.5.2",
+      "scikit-learn": "1.7.2",
+      "scipy": "1.18.0"
+    },
+    "platform": "Darwin 25.6.0 (arm64)",
+    "python_version": "3.12.2"
+  }
+}
