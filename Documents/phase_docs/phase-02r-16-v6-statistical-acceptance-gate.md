@@ -10,8 +10,8 @@
 | GitHub issue | [#92](https://github.com/anilreddy89/Inforsight/issues/92) |
 | Issue title | `[Implementation] R2-16: Execute Generation v6 statistical acceptance protocol` |
 | Branch | `feat/92-r2-16-v6-statistical-acceptance` |
-| Pull request | TBD |
-| Status | Implemented on branch feat/92-r2-16-v6-statistical-acceptance; mechanical decision: redesign |
+| Pull request | [#93](https://github.com/anilreddy89/Inforsight/pull/93) |
+| Status | Completed on 2026-09-04, merge commit `82e767f`; mechanical decision: redesign |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
 | Classification | Governed experiment and mechanical decision gate |

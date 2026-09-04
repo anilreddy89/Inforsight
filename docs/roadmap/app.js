@@ -348,12 +348,12 @@ const timelineData = [
         id: "R2-16",
         title: "Generation v6 Statistical Acceptance Protocol Execution",
         status: "Completed — Redesign",
-        commit: "Branch: feat/92-r2-16-v6-statistical-acceptance",
+        commit: "82e767f",
         summary: {
           tech: "Executed the complete frozen acceptance protocol across 20 reserved acceptance seeds (20271201..20271220) and 3 temporal folds (120 units). Primary signal recovery passed decisively (median ROC AUC 0.7031, 20/20 seed consistency, AP lift +0.1344). Four fine-grained secondary rules tripped thresholds, deriving mechanical decision 'redesign'.",
           simple: "Acceptance Gate Executed! Evaluated the frozen model across 20 unseen acceptance seeds. The core AI signal was confirmed (0.7031 AUC vs 0.50 placebo across all 20 seeds), but 4 strict secondary diagnostic tests fell slightly short of perfection, triggering a mechanical 'redesign' protocol decision."
         },
-        checks: "Issue #92 implemented; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: redesign."
+        checks: "Issue #92 & PR #93 merged; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: redesign."
       }
     ]
   }
