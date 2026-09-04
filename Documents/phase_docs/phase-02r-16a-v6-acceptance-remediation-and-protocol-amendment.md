@@ -10,8 +10,8 @@
 | GitHub issue | [#94](https://github.com/anilreddy89/Inforsight/issues/94) |
 | Issue title | `[Implementation] R2-16A: Adopt ADR 0013 and Protocol 3.1.0 for Generation v6 statistical acceptance` |
 | Branch | `feat/94-r2-16a-acceptance-protocol-amendment` |
-| Pull request | TBD |
-| Status | Implemented on branch feat/94-r2-16a-acceptance-protocol-amendment; mechanical proceed observed |
+| Pull request | [#95](https://github.com/anilreddy89/Inforsight/pull/95) |
+| Status | Completed on 2026-09-04 through issue #94 and PR #95, merge commit `4d7e9da` |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
 | Classification | Architecture decision, protocol remediation, and mechanical gate re-evaluation |

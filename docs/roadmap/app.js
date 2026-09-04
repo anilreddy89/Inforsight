@@ -358,13 +358,13 @@ const timelineData = [
       {
         id: "R2-16A",
         title: "Acceptance Remediation & Protocol 3.1.0 Amendment (ADR 0013)",
-        status: "Implemented — Mechanical Proceed",
-        commit: "Branch: feat/94-r2-16a-acceptance-protocol-amendment",
+        status: "Completed — Mechanical Proceed",
+        commit: "4d7e9da",
         summary: {
           tech: "Adopted ADR 0013 and approved Statistical Acceptance Protocol 3.1.0. Re-evaluated 120 inventory units across seeds 20271201..20271220. All 10 rule families passed 100% (median AUC 0.7031, 20/20 seed consistency, AP lift +0.1344, Brier skill +0.0658, worst fold 0.6709). Mechanical decision: PROCEED. Final holdout remains not_materialized.",
           simple: "Remediation Complete & Accepted! All 4 secondary quality checks were recalibrated to standard mathematical theory (binomial joint coverage and numerical quadrature bounds). All 10 rule families passed 100%, and the system derived a mechanical 'PROCEED' decision, officially completing Phase 2R and clearing the path to resume Phase 2!"
         },
-        checks: "Implemented under Issue #94; ADR 0013 & Protocol 3.1.0; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: PROCEED."
+        checks: "Issue #94 & PR #95 merged (commit 4d7e9da); ADR 0013 & Protocol 3.1.0; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: PROCEED; Phase 2R complete; authorizes P2-08."
       }
     ]
   }
