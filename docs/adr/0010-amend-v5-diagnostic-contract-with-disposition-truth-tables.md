@@ -1,6 +1,6 @@
 # ADR 0010: Amend post-v4 diagnostic authorization contract with disposition truth tables
 
-- Status: Proposed through [issue #80](https://github.com/anilreddy89/Inforsight/issues/80)
+- Status: Accepted through [issue #80](https://github.com/anilreddy89/Inforsight/issues/80) and [PR #81](https://github.com/anilreddy89/Inforsight/pull/81), merge commit `627e698`
 - Date: 2026-09-03
 - Decision owner: Anil Jonnala
 - Trigger: R2-14B readiness failure under ADR 0008, contract `1.0.0`, and ADR 0009

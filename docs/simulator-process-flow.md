@@ -796,11 +796,19 @@ mechanical H1-H5 disposition thresholds. PR #79 merged commit `3088c4c`,
 recording the governed readiness stop `stop_contract_not_executable` under accepted
 ADR 0009 with zero executed units and all hypotheses unresolved.
 
-Phase 2R.14BA issue #80 establishes ADR 0010 and amended contract `1.1.0`, freezing
-complete quantitative disposition truth tables before successor increment Phase 2R.14BB
-executes the 17 diagnostics on unspent seeds `20280101..20280120`. R2-14C, R2-15, R2-16,
-and resumed Phase 2 remain blocked. Reserved acceptance seeds and the final holdout
-remain `not_materialized`.
+Phase 2R.14BA issue #80 and PR #81 merged commit `627e698`, establishing accepted
+ADR 0010 and amended contract `1.1.0` to freeze complete quantitative disposition
+truth tables before successor increment Phase 2R.14BB executes the 17 diagnostics on
+unspent seeds `20280101..20280120`. R2-14C, R2-15, R2-16, and resumed Phase 2 remain
+blocked. Reserved acceptance seeds and the final holdout remain `not_materialized`.
+
+Under Issue #82, Phase 2R.14BB executed all 17 diagnostics across 120 inventory units
+(development seeds `20280101..20280120`) and evaluated the 320-cell feasibility surface
+(`D16` / `D17`) under Contract `1.1.0`. Dispositions: `H1` supported, `H2` unresolved,
+`H3` rejected, `H4` rejected, `H5` rejected, `H6` infeasible (0/320 cells satisfy simultaneous
+recovery and hazard bounds). The mechanical response is `stop_infeasible_design` and is
+recorded in proposed ADR 0011. R2-14C and downstream work remain blocked; reserved acceptance
+and the final holdout remain `not_materialized`.
 
 ## Test map
 
@@ -826,6 +834,8 @@ remain `not_materialized`.
 | `test_v4_qualification.py` | development/future domain separation, complete inventory, readiness, and nine frozen gates |
 | `test_v5_diagnostic_contract.py` | R2-14A seed-domain separation, inventory completeness, frozen feasibility surface, and holdout boundary |
 | `test_v5_diagnostics.py` | R2-14B readiness rules, inventory completeness, domain disjointness, 320-cell grid exactness, suppression, and artifact reproduction |
+| `test_v5_diagnostic_contract_amendment.py` | R2-14BA contract 1.1.0 truth tables, fail-closed tokens, frozen grid, and domain disjointness |
+| `test_v5_diagnostics_execution.py` | R2-14BB readiness rules, 120 inventory units, 320-cell grid exactness, mechanical dispositions, privacy suppression, and artifact reproduction |
 | `test_scaffold.py` | Public clean-room project identity |
 | `data-contracts/tests/test_policy_event_contract.py` | Individual envelope and payload contracts |
 

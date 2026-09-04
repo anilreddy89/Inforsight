@@ -28,6 +28,7 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-13-v4-redesign-diagnostic-*` — merged issue-#69/PR-#70 aggregate evidence for all 20 development seeds. Observable-oracle separation and rolling-payment support are supported failure mechanisms; parity, episode dilution, and temporal instability are rejected; candidate learning remains unresolved. Future acceptance and the final holdout remain `not_materialized`.
 - `phase-02r-14-v4-qualification-*` — issue-#72 aggregate development evidence for all 20 frozen v4 seeds. Driver support, exact parity, matched-null behavior, and structural controls pass, while observable recovery, probability quality, reference recovery, and the `<0.20` hazard bound fail. The mechanical decision is `redesign`; R2-15 and acceptance remain blocked.
 - `phase-02r-14b-v5-redesign-diagnostic-*` — merged issue-#78/PR-#79 readiness-only stop evidence. Contract `1.0.0` lacked mechanical H1-H5 disposition thresholds, so execution was unauthorized: 0/120 inventory units and 0/320 D16 cells executed, all hypotheses remain unresolved, and the response is `stop_contract_not_executable`. Accepted ADR 0009 records the stop; Phase 2R.14BA issue #80 amends the contract before Phase 2R.14BB execution. R2-14C remains blocked and reserved acceptance/final holdout remain `not_materialized`.
+- `phase-02r-14bb-v5-redesign-diagnostic-*` — issue-#82 aggregate development evidence for all 20 development seeds (120 inventory units) and exhaustive 320-cell feasibility surface (`D16 / D17`) under Contract `1.1.0`. `H1_LOG_HAZARD_SPREAD` is supported (insufficient public observable spread); `H3_PROBABILITY_SCALE`, `H4_REFERENCE_SPECIFICATION`, and `H5_HAZARD_TAIL` are rejected; `H6_DESIGN_FEASIBILITY` is infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds). The mechanical response is `stop_infeasible_design`; proposed ADR 0011 records the stop. R2-14C remains blocked; reserved acceptance and final holdout remain `not_materialized`.
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
@@ -151,3 +152,25 @@ make r2-14a-diagnostic-contract-check
 The check binds ADR 0008, contract `1.0.0`, four disjoint information domains,
 the 17-diagnostic inventory, the fixed 320-cell feasibility surface, and continued
 absence of reserved acceptance and final-holdout material.
+
+R2-14BA issue #80 amends the diagnostic authorization contract to `1.1.0`. Validate
+its quantitative truth-table boundary without importing a simulator:
+
+```bash
+python3 scripts/check_r2_14ba_diagnostic_contract.py
+make r2-14ba-diagnostic-contract-check
+```
+
+Run or verify Phase 2R.14BB diagnostic execution evidence with:
+
+```bash
+python3 scripts/run_v5_redesign_diagnostics_execution.py --readiness-check
+python3 scripts/run_v5_redesign_diagnostics_execution.py --check
+make r2-14bb-diagnostic-check
+```
+
+The committed evidence is strictly aggregate-only with minimum 10-policy privacy
+suppression. Intermediate per-seed rows are purged immediately. The mechanical
+decision `stop_infeasible_design` records that 0/320 feasibility surface cells
+satisfy simultaneous recovery and hazard constraints. R2-14C remains blocked,
+and reserved acceptance seeds and the final holdout remain `not_materialized`.

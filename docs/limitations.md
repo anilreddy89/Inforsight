@@ -105,7 +105,7 @@ Introduce a separately versioned generator and observation design with:
 | Status | Scheduled |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | Historical work complete through R2-14 (`redesign`); R2-14A [issue #76](https://github.com/anilreddy89/Inforsight/issues/76) merged as `52c03c8`; R2-14B [issue #78](https://github.com/anilreddy89/Inforsight/issues/78) merged as `3088c4c` with readiness stop under accepted ADR 0009; R2-14BA [issue #80](https://github.com/anilreddy89/Inforsight/issues/80) amends contract `1.1.0` under ADR 0010 before R2-14BB execution |
+| Owner | Historical work complete through R2-14 (`redesign`); R2-14A [issue #76](https://github.com/anilreddy89/Inforsight/issues/76) merged as `52c03c8`; R2-14B [issue #78](https://github.com/anilreddy89/Inforsight/issues/78) merged as `3088c4c` with readiness stop under accepted ADR 0009; R2-14BA [issue #80](https://github.com/anilreddy89/Inforsight/issues/80) merged as `627e698` approving amended contract `1.1.0` under ADR 0010 before R2-14BB execution |
 | Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json` |
 | Detailed plan | Historical v2 design remains in ADR 0004 and protocol `1.0.0`; v3 design and failed acceptance remain in ADR 0005 and R2-08 through R2-11; ADR 0006, issue #66, and backlog R2-12 through R2-16 own the replacement diagnostic and redesign sequence |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
