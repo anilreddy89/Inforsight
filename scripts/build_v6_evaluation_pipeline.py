@@ -321,6 +321,16 @@ def main() -> int:
              if not path.exists() or path.read_bytes() != artifacts[key]]
     if stale:
         print(f"R2-15 v6 artifacts are missing or stale: {', '.join(stale)}", file=sys.stderr)
+        import difflib
+        for key in stale:
+            path = FILES[key]
+            if path.exists():
+                committed = path.read_text("utf-8").splitlines()
+                generated = artifacts[key].decode("utf-8").splitlines()
+                diff = "\n".join(difflib.unified_diff(
+                    committed, generated, fromfile=f"committed:{key}", tofile=f"generated:{key}",
+                ))
+                print(f"--- Diff for {key} ---\n{diff}\n--- End diff ---", file=sys.stderr)
         return 1
     print("R2-15 Generation v6 evaluation artifact reproducibility check: passed")
     return 0
