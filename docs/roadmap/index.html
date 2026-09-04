@@ -658,6 +658,19 @@
              data-simple="Candidate Chosen! Under Contract 6.0.0, the transparent Logistic Regression model beat XGBoost (0.7057 vs 0.6801 AUC) with lower calibration error and zero leakage flags. Candidate frozen for acceptance testing!"
              data-tech="Phase 2R.15: Logistic regression selected over XGBoost on 20 development seeds (0.7057 vs 0.6801 AUC, Brier 0.1287 vs 0.1332). Cryptographic model state hash authorized; ready for R2-16 blind acceptance."></p>
         </div>
+
+        <div class="metric-summary-card" style="border-color: #f59e0b;">
+          <div class="metric-card-title" style="color: #f59e0b;">Phase 2R.16 (v6 Acceptance Gate)</div>
+          <div class="metric-big-val" style="color: #f59e0b;">0.7031 AUC</div>
+          <div class="metric-row"><span>Tested Seeds:</span> <strong>20 reserved pairs (120 units)</strong></div>
+          <div class="metric-row"><span>Signal Consistency:</span> <strong>20 / 20 pass (AUC ≥ 0.65)</strong></div>
+          <div class="metric-row"><span>AP Lift / Brier Skill:</span> <strong>+0.1344 / +0.0658</strong></div>
+          <div class="metric-row"><span>Mechanical Decision:</span> <strong>REDESIGN (4 secondary rules)</strong></div>
+          <div class="metric-status-box tag-redesign" style="border-color: rgba(245,158,11,0.3);">R2-16 Gate: MECHANICAL REDESIGN</div>
+          <p class="metric-note text-dynamic"
+             data-simple="Acceptance Gate Executed: The model recovered signal across all 20 unseen acceptance seeds (0.7031 median AUC vs 0.50 null). 4 strict secondary checks triggered a mechanical redesign protocol decision."
+             data-tech="Phase 2R.16: Evaluated 120 inventory units on reserved seeds 20271201..20271220. Primary signal recovery passed (0.7031 AUC, 20/20 seed consistency, +0.1344 AP lift). 4 secondary rules tripped thresholds, deriving mechanical decision 'redesign'."></p>
+        </div>
       </div>
 
       <!-- Interactive Chart View -->
@@ -746,7 +759,7 @@
         <h3>Engineering Rigor &amp; Test Suite Health</h3>
         <div class="test-grid">
           <div class="test-stat-box">
-            <span class="test-num">365</span>
+            <span class="test-num">371</span>
             <span class="test-label">Automated Safety Tests</span>
           </div>
           <div class="test-stat-box">
