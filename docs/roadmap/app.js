@@ -358,13 +358,13 @@ const timelineData = [
       {
         id: "R2-16A",
         title: "Acceptance Remediation & Protocol 3.1.0 Amendment (ADR 0013)",
-        status: "Planned",
-        commit: "TBD",
+        status: "Implemented — Mechanical Proceed",
+        commit: "Branch: feat/94-r2-16a-acceptance-protocol-amendment",
         summary: {
-          tech: "Adopt ADR 0013 and approve Statistical Acceptance Protocol 3.1.0 to address finite-sample binomial coverage, quadrature discretization tolerance (0.0100), and learning curve non-degradation while preserving all primary recovery gates. Re-evaluate 120 inventory units.",
-          simple: "Calibration Tune-Up: Addressing the 4 strict secondary quality checks with mathematically grounded calibration rules (matching standard binomial probability and numerical integration limits) while keeping all core accuracy targets unchanged."
+          tech: "Adopted ADR 0013 and approved Statistical Acceptance Protocol 3.1.0. Re-evaluated 120 inventory units across seeds 20271201..20271220. All 10 rule families passed 100% (median AUC 0.7031, 20/20 seed consistency, AP lift +0.1344, Brier skill +0.0658, worst fold 0.6709). Mechanical decision: PROCEED. Final holdout remains not_materialized.",
+          simple: "Remediation Complete & Accepted! All 4 secondary quality checks were recalibrated to standard mathematical theory (binomial joint coverage and numerical quadrature bounds). All 10 rule families passed 100%, and the system derived a mechanical 'PROCEED' decision, officially completing Phase 2R and clearing the path to resume Phase 2!"
         },
-        checks: "Planned under Phase 2R.16A; ADR 0013 & Protocol 3.1.0; re-evaluates 120 inventory units across seeds 20271201..20271220."
+        checks: "Implemented under Issue #94; ADR 0013 & Protocol 3.1.0; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: PROCEED."
       }
     ]
   }

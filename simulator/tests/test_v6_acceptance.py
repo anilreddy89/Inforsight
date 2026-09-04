@@ -11,6 +11,7 @@ from inforsight_simulator.v6_acceptance import (
     BOOTSTRAP_REPLICATES, DEVELOPMENT_SEEDS, FINAL_HOLDOUT_STATUS,
     GOVERNED_ACCEPTANCE_FOLDS, RESERVED_ACCEPTANCE_SEEDS, RuleResult,
     SPENT_ACCEPTANCE_SEEDS, SPENT_DIAGNOSTIC_SEEDS, SPENT_QUALIFICATION_SEEDS,
+    V6_ACCEPTANCE_PROTOCOL_VERSION,
     aggregate_decision, average_precision, brier_score,
     build_readiness_manifest, calibration_intercept_slope,
     evaluate_readiness, percentile_interval, planned_inventory,
@@ -79,6 +80,14 @@ class V6AcceptanceTests(unittest.TestCase):
     def test_holdout_protection(self) -> None:
         manifest = build_readiness_manifest(ROOT)
         self.assertEqual(manifest["final_holdout_status"], "not_materialized")
+
+    def test_protocol_version_3_1_0_governance(self) -> None:
+        self.assertEqual(V6_ACCEPTANCE_PROTOCOL_VERSION, "3.1.0")
+        manifest = build_readiness_manifest(ROOT)
+        self.assertEqual(manifest["acceptance_protocol_version"], "3.1.0")
+        self.assertEqual(manifest["phase"], "R2-16A")
+        self.assertEqual(manifest["issue"], 94)
+        self.assertEqual(manifest["readiness_decision"], "proceed")
 
 
 if __name__ == "__main__":

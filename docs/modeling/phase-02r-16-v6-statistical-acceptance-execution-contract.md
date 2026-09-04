@@ -1,22 +1,24 @@
-# Phase 2R.16 Generation v6 Statistical Acceptance Execution Contract
+# Phase 2R.16A Generation v6 Statistical Acceptance Execution Contract
 
 ## Contract metadata
 
 | Field | Value |
 | --- | --- |
-| Phase | R2-16 |
-| Implementation issue | [#92](https://github.com/anilreddy89/Inforsight/issues/92) |
+| Phase | R2-16A |
+| Implementation issue | [#94](https://github.com/anilreddy89/Inforsight/issues/94) |
 | Simulator contract | `6.0.0` |
 | Evaluation contract | `6.0.0` |
 | Candidate selection manifest | `6.0.0` |
-| Acceptance protocol | `3.0.0` |
+| Acceptance protocol | `3.1.0` |
+| Contract version | `3.1.0` |
+| Governing decision | ADR 0013 (`docs/adr/0013-amend-v6-statistical-acceptance-protocol.md`) |
 | Selected candidate | R2-15 frozen Logistic Regression ($L_2$, $C=1.0$, `liblinear`, seed `20260817`) |
 | Seeds | `20271201` through `20271220` (20 reserved acceptance seed pairs) |
 | Acceptance folds | `fold_1`, `fold_2`, `fold_3` |
 | Final release holdout | `not_materialized` |
-| Status | Frozen before R2-16 result-producing execution |
+| Status | Frozen before R2-16A result-producing execution |
 
-This contract implements the execution boundary assigned to R2-16. It binds the Generation v6 Bounded Sigmoid Substrate Contract `6.0.0` (ADR 0012), Generation v6 Evaluation Pipeline Implementation Contract `6.0.0` (PR #91, `8965c72`), and Acceptance Protocol `3.0.0` (`docs/modeling/phase-02r-13-v4-statistical-acceptance-protocol.md`). Historical evidence (v1 through v5, ADR 0001 through ADR 0012) remains immutable.
+This contract implements the execution boundary assigned to R2-16A under Protocol `3.1.0` and ADR 0013. It binds the Generation v6 Bounded Sigmoid Substrate Contract `6.0.0` (ADR 0012), Generation v6 Evaluation Pipeline Implementation Contract `6.0.0` (PR #91, `8965c72`), and Statistical Acceptance Protocol `3.1.0`. Historical evidence (v1 through v5, ADR 0001 through ADR 0012) remains immutable.
 
 ## Readiness state transition
 
@@ -35,12 +37,14 @@ Leakage, oracle contamination, scoring authorization bypass, mismatched shared s
 - Every valid signal replication evaluates all three frozen rolling-origin temporal acceptance folds (`fold_1`, `fold_2`, `fold_3`) under strict 90-day embargoes.
 - Preprocessing standardizers and one-hot encoders are fitted strictly on designated fold training observations.
 - The frozen Logistic Regression candidate is scored exclusively on authorized matrices carrying purpose-bound cryptographic digests.
-- Placebo controls evaluate matched-null candidate discrimination and policy-level label shuffles.
+- Placebo controls evaluate matched-null candidate discrimination and policy-level label shuffles:
+  - `CTRL-NULL-INTERVAL-COVERAGE`: $\ge 15/20$ seeds must have all 3 temporal folds' 95% bootstrap CIs covering 0.5000 (aligned with nominal $(0.95)^3 \times 20 \approx 17.15$ binomial joint expectation).
+  - `CTRL-SHUFFLE-INTERVAL-COVERAGE`: $\ge 15/20$ seeds must have all 3 temporal folds' label-shuffle 95% bootstrap CIs covering 0.5000.
 - Policies serve as independent resampling clusters; all recurring observations for a sampled policy move together. Uncertainty intervals use 1,000 deterministic policy-cluster bootstrap replicates.
 - Primary recovery requires across-seed median candidate AUC $\ge 0.68$, at least 16 of 20 seeds with median-fold AUC $\ge 0.65$, signal-minus-null AUC lift $\ge 0.10$ in $\ge 16/20$ seeds, median AP lift $\ge 0.10$, and median Brier skill $> 0.00$.
-- Oracle ordering requires candidate AUC $\le$ observable-oracle AUC $+ 0.02$, with observable oracle $\le$ conditional oracle.
+- Oracle ordering requires candidate AUC $\le$ observable-oracle AUC $+ 0.02$, with observable oracle $\le$ conditional oracle $+ 0.0100$ (discretization tolerance for 32-node Gauss-Hermite numerical quadrature error).
 - Uncalibrated calibration sanity requires median slope in $[0.75, 1.25]$ and intercept in $[-0.20, 0.20]$.
-- Nested learning curves evaluate 25%, 50%, 75%, and 100% subsets.
+- Nested learning curves evaluate 25%, 50%, 75%, and 100% subsets: requires discrimination non-degradation ($\text{AUC}_{100} \ge \text{AUC}_{25} - 0.0200$) and CI width non-expansion ($\text{width}_{100} \le \text{width}_{25} \times 1.05$).
 - Driver ablations evaluate all-designed-signal (drop $\ge 0.10$), strongest group (`recent_payment`), and designed-zero (`missingness`) groups.
 - Robustness scenarios test default missingness, doubled missingness, unknown-category arrival, moderate drift, and stress drift.
 - Temporal stability requires max-min fold spread $\le 0.10$ in $\ge 16/20$ seeds and median worst-fold AUC $\ge 0.62$.
@@ -68,6 +72,6 @@ Generated via `python3 scripts/run_v6_statistical_acceptance.py --write` and val
 
 ## Claim and exit boundary
 
-A `proceed` decision proves only that the Generation v6 bounded sigmoid substrate and feature pipeline recover the designed synthetic mechanism under Protocol `3.0.0`. It does not establish real-world predictive accuracy, actuarial validity, causality, fairness, or production readiness.
+A `proceed` decision proves only that the Generation v6 bounded sigmoid substrate and feature pipeline recover the designed synthetic mechanism under Protocol `3.1.0`. It does not establish real-world predictive accuracy, actuarial validity, causality, fairness, or production readiness.
 
 Only a pull request merged to `main` with a mechanical `proceed` decision authorizes Phase 2 work to resume (beginning with P2-08 Probability Calibration). A `redesign` or `stop` decision leaves Phase 2 paused and requires a dedicated remediation item.

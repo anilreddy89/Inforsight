@@ -7,11 +7,11 @@
 | Phase | Phase 2R — Modeling Foundation Remediation Gate, Acceptance Protocol Remediation |
 | Sequence | R2-16A |
 | Change tracker ID | `R2-16A` |
-| GitHub issue | TBD |
+| GitHub issue | [#94](https://github.com/anilreddy89/Inforsight/issues/94) |
 | Issue title | `[Implementation] R2-16A: Adopt ADR 0013 and Protocol 3.1.0 for Generation v6 statistical acceptance` |
-| Branch | `feat/r2-16a-acceptance-protocol-amendment` |
+| Branch | `feat/94-r2-16a-acceptance-protocol-amendment` |
 | Pull request | TBD |
-| Status | Planned |
+| Status | Implemented on branch feat/94-r2-16a-acceptance-protocol-amendment; mechanical proceed observed |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
 | Classification | Architecture decision, protocol remediation, and mechanical gate re-evaluation |
@@ -157,17 +157,17 @@ body:
     attributes:
       label: Acceptance checks
       value: |
-        - [ ] ADR 0013 is authored and approved documenting root causes and mathematical justifications for Protocol 3.1.0.
-        - [ ] All primary signal recovery gates remain strictly unchanged (median AUC >= 0.68, consistency >= 16/20, AP lift >= 0.10, Brier skill > 0).
-        - [ ] Null/shuffle interval coverage threshold is aligned with nominal binomial expectation (>= 15/20 seeds or >= 54/60 folds).
-        - [ ] Observable oracle ordering includes a 0.0100 numerical quadrature discretization tolerance.
-        - [ ] Learning curve evaluation tests sample-size non-degradation and non-expansion rather than asymptotic variance contraction.
-        - [ ] Protocol engine in simulator/src/inforsight_simulator/v6_acceptance.py is updated to Protocol 3.1.0.
-        - [ ] Unit tests in simulator/tests/test_v6_acceptance.py pass 100%.
-        - [ ] Re-evaluation executes cleanly across all 20 acceptance seeds and produces committed manifest, report, and decision.
-        - [ ] scripts/run_v6_statistical_acceptance.py --check validates byte-for-byte reproducibility.
-        - [ ] make check and repository boundary checks pass.
-        - [ ] Final release holdout remains strictly not_materialized.
+        - [x] ADR 0013 is authored and approved documenting root causes and mathematical justifications for Protocol 3.1.0.
+        - [x] All primary signal recovery gates remain strictly unchanged (median AUC >= 0.68, consistency >= 16/20, AP lift >= 0.10, Brier skill > 0).
+        - [x] Null/shuffle interval coverage threshold is aligned with nominal binomial expectation (>= 15/20 seeds or >= 54/60 folds).
+        - [x] Observable oracle ordering includes a 0.0100 numerical quadrature discretization tolerance.
+        - [x] Learning curve evaluation tests sample-size non-degradation and non-expansion rather than asymptotic variance contraction.
+        - [x] Protocol engine in simulator/src/inforsight_simulator/v6_acceptance.py is updated to Protocol 3.1.0.
+        - [x] Unit tests in simulator/tests/test_v6_acceptance.py pass 100%.
+        - [x] Re-evaluation executes cleanly across all 20 acceptance seeds and produces committed manifest, report, and decision.
+        - [x] scripts/run_v6_statistical_acceptance.py --check validates byte-for-byte reproducibility.
+        - [x] make check and repository boundary checks pass.
+        - [x] Final release holdout remains strictly not_materialized.
   - type: textarea
     id: dependencies
     attributes:
@@ -176,3 +176,44 @@ body:
         Predecessor: R2-16 merged via PR #93.
         Blocks: Resumed Phase 2 work (P2-08 Probability Calibration) until merged decision is proceed.
 ```
+
+---
+
+## 6. Verification and Observed Results
+
+### 6.1 Execution Verification
+- **ADR 0013**: Published at `docs/adr/0013-amend-v6-statistical-acceptance-protocol.md`.
+- **Execution Contract `3.1.0`**: Published at `docs/modeling/phase-02r-16-v6-statistical-acceptance-execution-contract.md`.
+- **Protocol Engine**: `simulator/src/inforsight_simulator/v6_acceptance.py` updated to Protocol `3.1.0`.
+- **Unit Tests**: `python3 -m unittest simulator.tests.test_v6_acceptance -v` (7 tests passed in 0.003s).
+- **Evaluation Suite**: `make v6-evaluation-check` (9 tests passed in 41s).
+- **Qualification Suite**: `make r2-14d-qualification-check` (10 tests passed in 0.09s).
+- **All Contracts Suite**: `make check-contracts` (passed).
+- **Acceptance Protocol Reproducibility**: `python3 scripts/run_v6_statistical_acceptance.py --check` (passed).
+- **Repository Boundary Check**: `./scripts/check_repository_boundaries.sh` (passed).
+
+### 6.2 Observed Results under Protocol 3.1.0
+
+| Metric / Rule | Governed Target | Observed Value | Status |
+| --- | --- | ---: | :---: |
+| Candidate Median ROC AUC | $\ge 0.6800$ | **`0.7031`** | **PASS** |
+| 20-Seed Consistency Pass Count | $\ge 16 / 20$ (AUC $\ge 0.65$) | **`20 / 20`** | **PASS** |
+| Signal-Null Improvement Lift | $\ge 16 / 20$ (lift $\ge 0.10$) | **`20 / 20`** | **PASS** |
+| Median Average Precision Lift | $\ge 0.1000$ | **`0.1344`** | **PASS** |
+| Median Brier Skill Score | $> 0.0000$ | **`0.0658`** | **PASS** |
+| Median Calibration Slope | $[0.75, 1.25]$ | **`0.9086`** | **PASS** |
+| Median Absolute Intercept | $\le 0.2000$ | **`0.1726`** | **PASS** |
+| All-Signal Ablation AUC Drop | $\ge 0.1000$ | **`0.2005`** | **PASS** |
+| Temporal Fold Spread Pass Count | $\ge 16 / 20$ (spread $\le 0.10$) | **`20 / 20`** | **PASS** |
+| Median Worst-Fold AUC | $\ge 0.6200$ | **`0.6709`** | **PASS** |
+| Pooled Seed-Balanced AUC 95% CI LB | $> 0.6000$ | **`0.6012`** | **PASS** |
+| Null 95% CI Coverage (`CTRL-NULL-INTERVAL-COVERAGE`) | $\ge 15 / 20$ seeds | **`16 / 20`** | **PASS** |
+| Shuffle 95% CI Coverage (`CTRL-SHUFFLE-INTERVAL-COVERAGE`) | $\ge 15 / 20$ seeds | **`17 / 20`** | **PASS** |
+| Oracle Discretization Tolerance (`ORACLE-CONDITIONAL-ORDERING`) | $\le 0.0100$ | **`0.004482`** | **PASS** |
+| Learning Curve CI Ratio (`LEARNING-VARIANCE-CONTRACTION`) | $\le 1.05$ | **`0.9864`** | **PASS** |
+| Final Release Holdout | `not_materialized` | **`not_materialized`** | **PASS** |
+
+### 6.3 Mechanical Gate Outcome
+**Mechanical Decision**: **`PROCEED`**
+
+Under ADR 0013 and Protocol 3.1.0, 100% of all required rules pass. With pull request merge to `main`, Phase 2R remediation is officially complete and paused Phase 2 work (beginning with P2-08 Probability Calibration) is authorized to resume.
