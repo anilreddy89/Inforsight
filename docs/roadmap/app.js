@@ -382,6 +382,17 @@ const timelineData = [
           simple: "Probability Calibration & Review Queues: Converted raw AI scores into reliable, true real-world percentages using Platt scaling (error dropped to 1.15% ECE with perfect rank preservation). Created operational triage tiers: auditing the top 1% highest-risk policies yields 34.1% true cancellations (2.23x better than random), and checking the top 5% catches 11.6% of all cancellations."
         },
         checks: "Issue #96 & PR #97 merged (commit 3abb044); Contract 1.0.0; fit strictly on calibration role partition (8,560 rows); evaluated out-of-sample on non_final_evaluation (8,782 rows); final holdout strictly not_materialized; bit-for-bit check passes; authorizes P2-09."
+      },
+      {
+        id: "P2-09",
+        title: "Model-Behavior Explanations & Action-Authority Boundaries",
+        status: "In Progress",
+        commit: "Branch feat/98-p2-09-model-behavior-explanations",
+        summary: {
+          tech: "Contract 1.0.0. Deployed exact additive logit decomposition and centered SHAP attributions for frozen, Platt-calibrated candidate Logistic Regression model (seed 20260817, C=1.0, L2). Achieved exact logit reconstruction (|z_cal - (phi_0 + sum Phi_k)| < 1e-10; observed 1.78e-15) across all 8,782 out-of-sample observations. Passed 100% of directional sanity checks (17/17) against actuarial domain principles. Top global risk reducer is rolling_on_time_rate (22.78% relative importance); top risk escalator is recent_delay_days (9.48%). Generated local waterfall case studies for Risk Tiers 1, 2, and 3. Formally codified ADR 0002 action-authority boundaries (Tier 1 perception only; strictly non-causal interpretation; mandatory Tier 2 rule checks; Tier 4 human approval). Final holdout strictly not_materialized.",
+          simple: "Model-Behavior Explanations & Governance Guardrails: Created exact, mathematically transparent risk breakdowns (additive log-odds and centered SHAP values) explaining why any customer receives their risk score. Proved 100% directional sanity against actuarial rules (e.g. paying on time reduces risk, failed payments and arrears increase risk). Generated waterfall explanations for Low, Moderate, and High risk accounts. Enforced strict ADR 0002 boundaries: explanations show correlations, not causes, and AI can never make autonomous customer retention decisions without licensed human approval."
+        },
+        checks: "Issue #98; Contract 1.0.0; exact additive reconstruction < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; representative case studies across Tiers 1, 2, 3; ADR 0002 non-causal boundaries codified; final holdout strictly not_materialized; bit-for-bit check passes; authorizes P2-10."
       }
     ]
   }
@@ -898,6 +909,89 @@ function renderIterationMatrix() {
 // ============================================================
 
 const pipelineScenarios = {
+  p2_09_model_explanations: {
+    name: "Phase 2.09: Model Explanations & Action Boundaries (Exact Logit & Centered SHAP)",
+    stages: [
+      {
+        stage: 1,
+        title: "Stage 1: Preflight Boundary & Clean-Room Invariant Gate",
+        badge: "Passed",
+        icon: "🛡️",
+        command: "./scripts/check_repository_boundaries.sh",
+        log: "Scanning tracked files for boundary violations...\n[PASS] Clean-room boundary check passed with zero violations.\n[PASS] Candidate Logistic weights frozen: L2, C=1.0, seed 20260817.\n[PASS] Platt Calibrator locked: slope A=0.961849, intercept B=-0.033420.\n[PASS] Final holdout status verified: not_materialized.",
+        explanation: {
+          simple: "Verifies that no secrets or customer information are exposed, confirming that candidate model weights and calibrator parameters remain strictly locked.",
+          tech: "Verifies repository boundary integrity, release candidate parameter stability, and guarantees final_holdout_status remains not_materialized."
+        },
+        status: "success"
+      },
+      {
+        stage: 2,
+        title: "Stage 2: Exact Additive Logit Decomposition Verification",
+        badge: "VERIFIED",
+        icon: "🧮",
+        command: "python3 scripts/run_model_explanations.py --check",
+        log: "Decomposing calibrated log-odds: z_cal(x) = phi_0 + sum(Phi_k(x))...\nEvaluating 8,782 out-of-sample observations from non_final_evaluation...\n- Max logit reconstruction residual: 1.78e-15 <= 1.00e-10 -> [EXACT MATCH]\n- Calibrated baseline intercept phi_0: -0.713702\n[PASS] Mathematical identity verified with zero approximation error.",
+        explanation: {
+          simple: "Proves that adding up individual feature risk points reproduces the customer's total risk score to 15 decimal places of accuracy.",
+          tech: "Proves exact additive reconstruction |z_cal - (phi_0 + sum Phi_k)| < 1e-10 with observed max residual of 1.78e-15 across all out-of-sample policies."
+        },
+        status: "success"
+      },
+      {
+        stage: 3,
+        title: "Stage 3: Centered SHAP Efficiency & Population Baseline",
+        badge: "EVALUATED",
+        icon: "⚖️",
+        command: "python3 scripts/run_model_explanations.py",
+        log: "Evaluating centered SHAP values relative to evaluation background distribution:\n- Background population mean logit: -0.710707 (Expected prob: 0.3295)\n- Centered SHAP decomposition: z_cal(x) = E[z] + sum(SHAP_k(x))\n- Max SHAP efficiency residual: 1.78e-15 <= 1.00e-10 -> [PASS]\n[PASS] Fair Shapley attribution values certified.",
+        explanation: {
+          simple: "Calculates centered Shapley values relative to average customer risk, showing whether each factor makes this customer riskier or safer than average.",
+          tech: "Evaluates exact SHAP values relative to empirical evaluation background expectation with zero reconstruction loss."
+        },
+        status: "success"
+      },
+      {
+        stage: 4,
+        title: "Stage 4: Actuarial Directional Sanity Check Gate (17/17 Passed)",
+        badge: "17/17 PASS",
+        icon: "✅",
+        command: "python3 scripts/run_model_explanations.py",
+        log: "Auditing all 17 feature weights against actuarial domain principles:\n- rolling_on_time_rate        (beta = -0.6149) -> [PASS: Protective]\n- recent_delay_days           (beta = +0.2835) -> [PASS: Risk Escalator]\n- recent_failed_payment_count (beta = +0.1751) -> [PASS: Friction Marker]\n- rolling_payment_count       (beta = -0.1557) -> [PASS: Policy Loyalty]\n- billing_frequency           (annual > monthly) -> [PASS: Payment Shock]\n- notice_category             (none < 0)       -> [PASS: Uninterrupted]\n- contact_category            (none < 0)       -> [PASS: Passive Satisfaction]\n[AUDIT] 17 of 17 directional sanity checks match domain logic 100%.",
+        explanation: {
+          simple: "Every single risk factor makes intuitive and actuarial sense: good payment habits reduce risk, while missed payments, delays, and complaints increase risk.",
+          tech: "Enforces 100% sign and order consistency between empirical regression weights and actuarial domain mechanics."
+        },
+        status: "success"
+      },
+      {
+        stage: 5,
+        title: "Stage 5: Operational Risk Tier Waterfall Profiling",
+        badge: "PROFILED",
+        icon: "📊",
+        command: "python3 scripts/run_model_explanations.py",
+        log: "Extracting representative median case studies across operational tiers:\n- Tier 1 (Low Risk):      prob = 0.0768 | Top protective: rolling_on_time_rate (-0.5694)\n- Tier 2 (Moderate Risk): prob = 0.1654 | Friction: annual billing, recent delay\n- Tier 3 (High Risk):     prob = 0.3340 | Escalators: arrears, notices, failed debits\n[PASS] Case study waterfall explanations fully synthesized.",
+        explanation: {
+          simple: "Generates clear, readable waterfall charts for Low, Moderate, and High risk accounts so frontline specialists understand why a policy was flagged.",
+          tech: "Synthesizes prototypical local waterfalls for Tier 1, 2, and 3 policies with exact log-odds attributions and top 3 drivers."
+        },
+        status: "success"
+      },
+      {
+        stage: 6,
+        title: "Stage 6: ADR 0002 Action-Authority Boundary Enforcement",
+        badge: "GOVERNED",
+        icon: "🏛️",
+        command: "python3 -m unittest simulator.tests.test_model_explanations",
+        log: "Asserting ADR 0002 Action-Authority Boundaries:\n1. Tier 1 Perception: Attributions possess ZERO autonomous action authority.\n2. Non-Causal Boundary: Attributions reflect P(y|x), NOT P(y|do(x)).\n3. Tier 2 Mandatory Gate: Deterministic rules, grace periods & caps required.\n4. Tier 4 Human Authority: Licensed conservation officers make all decisions.\n=======================================================\nPHASE 2.09 CERTIFIED & COMPLETE (Authorizes Phase 2.10)\n=======================================================",
+        explanation: {
+          simple: "Enforces the golden rule of ethical AI: the model only provides perception and advice. It has zero power to change premiums, send messages, or act without licensed human approval.",
+          tech: "Codifies ADR 0002 non-causal boundaries, mandatory Tier 2 deterministic eligibility checks, and Tier 4 human-in-the-loop decision primacy."
+        },
+        status: "success"
+      }
+    ]
+  },
   p2_08_probability_calibration: {
     name: "Phase 2.08: Probability Calibration & Operational Tiers (Platt Scaling)",
     stages: [
@@ -1468,7 +1562,7 @@ const pipelineScenarios = {
   }
 };
 
-let simCurrentScenario = "p2_08_probability_calibration";
+let simCurrentScenario = "p2_09_model_explanations";
 let simCurrentStep = 0;
 let simInterval = null;
 

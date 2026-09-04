@@ -83,26 +83,26 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-16 | Phase 2R Generation v6 statistical acceptance | Execute Generation v6 statistical acceptance protocol across reserved acceptance seeds 20271201..20271220 | Completed | Issue #92; PR #93 merged as `82e767f`; executed 120 inventory units across reserved seeds `20271201..20271220`; primary signal recovery passes (median AUC 0.7031, AP lift +0.1344, 20/20 seed consistency); 4 fine-grained secondary rules fail thresholds resulting in mechanical decision `redesign`; clean-room holdout remains `not_materialized`. |
 | R2-16A | Phase 2R Acceptance protocol remediation | Adopt ADR 0013 and Protocol 3.1.0 addressing secondary rule calibration; re-evaluate acceptance protocol | Completed | Issue #94; PR #95 merged as `4d7e9da`; adopted ADR 0013 and Protocol `3.1.0`; 120 inventory units re-evaluated; all 10 rule families pass 100% (candidate median AUC 0.7031, 20/20 seeds consistent, AP lift +0.1344, Brier skill +0.0658); mechanical decision: PROCEED; final holdout `not_materialized`; Phase 2R complete; authorizes Phase 2 resumption with P2-08. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Completed | Issue #96; PR #97 merged as `3abb044`; Platt scaling selected (ECE 0.0115 <= 0.0300, slope 0.9498 in [0.85, 1.15], Brier 0.1211, AUC 0.6998 exact rank preservation); fit strictly on calibration partition (8,560 rows) of seed 20280201; evaluated out-of-sample on non_final_evaluation (8,782 rows); Top 1% review queue precision 34.09% (2.23x lift, NNR 2.9); Top 5% recall 11.57% (2.31x lift); 4 risk tiers; 1,000 policy-cluster bootstrap CIs; decision curves positive over cost ratios [0.02, 0.25]; final holdout strictly not_materialized; authorizes P2-09. |
-| P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Ready to begin | Explanations describe model behavior and do not authorize conservation actions. |
+| P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Implemented locally | Implemented locally on branch `feat/98-p2-09-model-behavior-explanations` through [issue #98](https://github.com/anilreddy89/Inforsight/issues/98); exact additive logit reconstruction residual < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; global importance ranked; representative waterfalls for Tiers 1, 2, 3; ADR 0002 non-causal authority boundaries codified; final holdout strictly not_materialized; ready for PR. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-Phase 2R remediation is officially complete following the merged `proceed` decision of Phase 2R.16A (PR #95, commit `4d7e9da`). Resumed Phase 2 Baseline ML is actively executing; Phase 2.08 (Probability Calibration and Operational Thresholds) is completed and merged (PR #97, commit `3abb044`). Next active increment is Phase 2 P2-09.
+Phase 2R remediation is officially complete following the merged `proceed` decision of Phase 2R.16A (PR #95, commit `4d7e9da`). Resumed Phase 2 Baseline ML is actively executing; Phase 2.08 is completed and merged (PR #97, commit `3abb044`). Active increment is Phase 2 P2-09 on branch `feat/98-p2-09-model-behavior-explanations` (Issue #98), which is now implemented locally and verified with all checks passing.
 
 | Measure | Value |
 | --- | ---: |
 | Completed tracked changes | 40 |
-| In-progress / implemented locally changes | 0 |
+| In-progress / implemented locally changes | 1 |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 |
-| Completed Phase 2 increments | 8 of 12 (P2-01..P2-03, P2-05..P2-08 completed; P2-09 queued) |
+| Completed Phase 2 increments | 8 of 12 (P2-01..P2-03, P2-05..P2-08 completed; P2-09 implemented locally) |
 | Completed Phase 2R increments | 24 of 24 (R2-00 through R2-16A) |
 | In-progress Phase 2R increments | 0 of 24 |
 | Planned Phase 2R increments | 0 of 24 |
-| Active increment | Phase 2 P2-09 (Model-behavior explanations and attribution boundaries) |
-| Next implementation increment | Phase 2 P2-09 (Model-behavior explanations and attribution boundaries) |
+| Active increment | Phase 2 P2-09 (Model-behavior explanations and attribution boundaries, Issue #98) |
+| Next implementation increment | Phase 2 P2-10 (Artifact and environment reproducibility) |
 
 
 | ID | Status | Impact | Resolution trigger |
