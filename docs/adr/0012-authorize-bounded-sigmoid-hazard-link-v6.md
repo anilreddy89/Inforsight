@@ -1,6 +1,6 @@
 # ADR 0012: Authorize bounded sigmoid hazard link architecture for Generation v6
 
-- Status: Accepted through [issue #86](https://github.com/anilreddy89/Inforsight/issues/86)
+- Status: Accepted through [issue #86](https://github.com/anilreddy89/Inforsight/issues/86) and [PR #87](https://github.com/anilreddy89/Inforsight/pull/87), merge commit `18ce32f`
 - Date: 2026-09-04
 - Decision owner: Anil Jonnala
 - Trigger: Causal response `stop_infeasible_design` from Phase 2R.14BB under ADR 0011
