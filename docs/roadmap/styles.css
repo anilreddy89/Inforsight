@@ -860,6 +860,7 @@ body {
 .tag-pipeline { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
 .tag-stop { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
 .tag-redesign { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+.tag-proceed { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
 
 .metric-note {
   font-size: 0.82rem;
@@ -1946,6 +1947,12 @@ body {
   background: rgba(234, 179, 8, 0.15);
   color: #fef08a;
   border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.iteration-badge.status-pass {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .iteration-formula-box {
