@@ -1,4 +1,4 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap check-contracts check-v1-v3 check-v4-v5
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap check-contracts check-v1-v3 check-v4-v5
 
 serve-roadmap:
 	python3 scripts/serve_roadmap.py
@@ -9,7 +9,12 @@ check-contracts: boundary-check dataset-check contract-test r2-08-design-check r
 
 check-v1-v3: assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check v3-corpus-check v3-evaluation-check v3-acceptance-check
 
-check-v4-v5: r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14b-diagnostic-check r2-14bb-diagnostic-check r2-14d-qualification-check
+check-v4-v5: r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14b-diagnostic-check r2-14bb-diagnostic-check r2-14d-qualification-check v6-evaluation-check
+
+v6-evaluation-check:
+	python3 scripts/check_v6_evaluation_support.py --check
+	python3 scripts/build_v6_evaluation_pipeline.py --check
+	python3 -m unittest simulator.tests.test_v6_evaluation -v
 
 r2-14d-qualification-check:
 	python3 scripts/run_v6_qualification.py --readiness-check >/dev/null

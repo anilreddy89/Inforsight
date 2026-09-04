@@ -332,6 +332,17 @@ const timelineData = [
           simple: "Substrate Qualified! Evaluated 20 test seeds and 120 units under Generation v6. All 9 safety and accuracy gates passed cleanly, authorizing final candidate model evaluation."
         },
         checks: "All 9 qualification gates passed; mechanical decision 'qualified'; authorizes Phase 2R.15."
+      },
+      {
+        id: "R2-15",
+        title: "Generation v6 Evaluation Pipeline & Release Candidate Freeze",
+        status: "In Progress",
+        commit: "Issue #90",
+        summary: {
+          tech: "Build governed Generation v6 chronological folds, feature extraction, diagnostics, and deterministic candidate selection, and freeze memberships and fitted-state digests before acceptance access.",
+          simple: "Evaluation & Selection: Building leak-free features, testing candidate models (Logistic Regression vs. XGBoost), selecting the best candidate, and locking down all checksums."
+        },
+        checks: "In progress on branch feat/90-r2-15-v6-evaluation-and-candidate; structural support, feature parity, candidate comparison, and digest freeze."
       }
     ]
   }
