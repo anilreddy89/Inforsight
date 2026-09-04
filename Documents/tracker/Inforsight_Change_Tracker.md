@@ -67,8 +67,7 @@ Current release milestone: [**v0.2.0-risk-model**](https://github.com/anilreddy8
 | R2-14BB | Phase 2R — v5 diagnostic execution and design | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface. | Completed | [#82](https://github.com/anilreddy89/Inforsight/issues/82) | [#83](https://github.com/anilreddy89/Inforsight/pull/83), [#84](https://github.com/anilreddy89/Inforsight/pull/84) | 2026-09-03 | `464a4fd`, `3a7c890` | 120 inventory units, 320-cell feasibility surface, H1-H6 dispositions, ADR 0011, iteration ledger, Roadmap Web UI | Dispositions: `H1` supported, `H3`–`H5` rejected, `H6` infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds); causal response `stop_infeasible_design` recorded in ADR 0011; iteration ledger and Web UI published. R2-14C unblocked with v6 bounded sigmoid architecture. |
 | CI-01 | Infrastructure / CI | Parallelize CI across 4 concurrent jobs, enable pip caching, and prevent duplicate triggers. | Completed | — | [#85](https://github.com/anilreddy89/Inforsight/pull/85) | 2026-09-03 | `afdcb5f` | `.github/workflows/ci.yml`, `Makefile`, 4 parallel jobs + `scaffold-checks` gate | Reduces CI runtime from ~20m to ~3.5–4.5m with zero test loss; prevents duplicate push/PR runs. |
 | R2-14C | Phase 2R — Generation v6 architecture | Authorize bounded sigmoid hazard link architecture for Generation v6 and approve Substrate Contract 6.0.0. | Completed | [#86](https://github.com/anilreddy89/Inforsight/issues/86) | [#87](https://github.com/anilreddy89/Inforsight/pull/87) | 2026-09-04 | `18ce32f` | ADR 0012, Substrate Contract `6.0.0`, `scripts/check_r2_14c_v6_contract.py`, `simulator/tests/test_v6_contract.py`, [phase document](../phase_docs/phase-02r-14c-v6-bounded-sigmoid-architecture.md) | Resolves Proportional Hazards Trilemma; guarantees total monthly hazard $\le 0.1500 < 0.2000$; authorizes fresh development seeds `20280201..20280220`; authorizes Phase 2R.14D. |
-| R2-14D | Phase 2R — Generation v6 implementation | Implement Generation v6 bounded sigmoid substrate and evaluate against qualification gates. | Completed | [#88](https://github.com/anilreddy89/Inforsight/issues/88) | [#89](https://github.com/anilreddy89/Inforsight/pull/89) | 2026-09-04 | `89ec94a` | Simulator modules `v6_*.py`, qualification runner, 120-unit development evidence, manifest, report, decision, and [phase document](../phase_docs/phase-02r-14d-v6-substrate-qualification.md) | All 9 qualification gates pass (median AUC = 0.7086 >= 0.70, AP lift = 0.1398 >= 0.10, max hazard = 0.14999 <= 0.1500 < 0.20, parity mismatches = 0); mechanical decision is `qualified`; authorizes Phase 2R.15. |
-| R2-15 | Phase 2R — Generation v6 evaluation & candidate | Freeze Generation v6 evaluation folds, feature pipeline, candidate models, and deterministic selection. | In progress | [#90](https://github.com/anilreddy89/Inforsight/issues/90) | TBD | TBD | — | Simulator module `v6_evaluation.py`, runner `scripts/build_v6_evaluation_pipeline.py`, fold split manifests, feature pipeline, diagnostics, candidate selection manifest, and [phase document](../phase_docs/phase-02r-15-v6-evaluation-and-candidate.md) | Authorizes candidate comparison, selects exactly one candidate, and freezes all memberships and fitted-state digests before acceptance access. |
+| R2-15 | Phase 2R — Generation v6 evaluation & candidate | Freeze Generation v6 evaluation folds, feature pipeline, candidate models, and deterministic selection. | Completed | [#90](https://github.com/anilreddy89/Inforsight/issues/90) | [#91](https://github.com/anilreddy89/Inforsight/pull/91) | 2026-09-04 | `8965c72` | Simulator module `v6_evaluation.py`, runner `scripts/build_v6_evaluation_pipeline.py`, fold split manifests, feature pipeline, diagnostics, candidate selection manifest, and [phase document](../phase_docs/phase-02r-15-v6-evaluation-and-candidate.md) | Authorizes candidate comparison, selects Logistic Regression (AUC: 0.7057 vs XGBoost: 0.6801), and freezes all memberships and fitted-state digests; clean-room invariants preserved; authorizes Phase 2R.16. |
 | P2-09 | Phase 2 — Baseline ML | Publish SHAP or equivalent attribution examples and feature sanity checks. | Paused | TBD | TBD | After R2-11 and P2-08 | — | Explanation examples with model-behavior and action-authority boundaries | Paused; do not substantively interpret v1 seed-noise behavior. |
 | P2-10 | Phase 2 — Baseline ML | Version training configuration, dependencies, feature contract, split manifest, metrics, and model artifacts. | Pending | TBD | TBD | TBD | — | Reproducible training and scoring commands with artifact provenance | Applies to both baseline and boosted model. |
 | P2-11 | Phase 2 — Baseline ML | Publish `MODEL_CARD.md`, experiment report, and Phase 2 model decision note. | Pending | TBD | TBD | TBD | — | Model comparison, limitations, calibration and threshold evidence, explanations, and acceptance-gate decision | Completes Phase 2 only when held-out temporal scoring is leakage-safe and reproducible. |
@@ -93,19 +92,20 @@ Inforsight has a strong and repeatable v1 pipeline-engineering foundation. Phase
 11. `LIM-002-004` records that the historical v2 behavior features can include post-cutoff ingested values; R2-09 implements the event-first v3 correction, while evaluation and acceptance evidence remain pending through R2-10/R2-11.
 12. R2-07 records `stop` before model fitting; R2-08/R2-09 provide the historical v3.0 substrate; issues #60/#61 version remediation and downstream evidence to simulator `3.1.0`, evaluation `3.2.0`, and protocol `2.2.0`; P2-08 and P2-09 remain paused through R2-11.
 
-In one sentence: Phase 2R.14D qualified the Generation v6 bounded sigmoid substrate, and Phase 2R.15 is in progress under Issue #90 to freeze the replacement evaluation pipeline and release candidate.
+In one sentence: Phase 2R.15 froze the Generation v6 evaluation pipeline and release candidate (Logistic Regression), and Phase 2R.16 is ready to execute replacement statistical acceptance testing.
 
 
 | Measure | Value |
-| Completed tracked changes | 38 |
+| --- | --- |
+| Completed tracked changes | 39 |
 | Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 2 |
-| In-progress changes | 1 |
+| In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
-| Completed Phase 2R increments | 21 of 22 (R2-00 through R2-14D) |
-| Active Phase 2R increment | R2-15 (Generation v6 evaluation construction and candidate freeze) |
+| Completed Phase 2R increments | 22 of 22 (R2-00 through R2-15) |
+| Active Phase 2R increment | Phase 2R.16 (Generation v6 replacement statistical acceptance gate) |
 | Next implementation increment | Phase 2R.16 (Generation v6 replacement statistical acceptance gate) |
 
 ## Latest verification baseline

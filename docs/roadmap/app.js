@@ -336,13 +336,24 @@ const timelineData = [
       {
         id: "R2-15",
         title: "Generation v6 Evaluation Pipeline & Release Candidate Freeze",
-        status: "In Progress",
-        commit: "Issue #90",
+        status: "Completed",
+        commit: "8965c72",
         summary: {
-          tech: "Build governed Generation v6 chronological folds, feature extraction, diagnostics, and deterministic candidate selection, and freeze memberships and fitted-state digests before acceptance access.",
-          simple: "Evaluation & Selection: Building leak-free features, testing candidate models (Logistic Regression vs. XGBoost), selecting the best candidate, and locking down all checksums."
+          tech: "Built chronological rolling-origin folds, 17-feature extraction with event lineage validation, non-final diagnostics (decision: allow, 0 flags), and deterministic candidate comparison. Selected Logistic Regression over XGBoost (ROC AUC: 0.7057 vs 0.6801, Brier: 0.1287 vs 0.1354). Froze all memberships, states, and scoring authorizations into cryptographic digests.",
+          simple: "Candidate Selected! Extracted 17 point-in-time features with zero data leakage. Evaluated Logistic Regression against XGBoost: Logistic won on accuracy (0.7057 ROC AUC vs 0.6801) and calibration, earning selection as release candidate. All checksums locked down before statistical acceptance testing."
         },
-        checks: "In progress on branch feat/90-r2-15-v6-evaluation-and-candidate; structural support, feature parity, candidate comparison, and digest freeze."
+        checks: "Issue #90 & PR #91 merged; 365 tests pass; structural support passes; 0 diagnostic flags; Logistic selected; clean-room invariants strictly preserved; authorizes Phase 2R.16."
+      },
+      {
+        id: "R2-16",
+        title: "Generation v6 Statistical Acceptance Protocol Execution",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Execute the complete frozen acceptance protocol across reserved acceptance seeds 20271201..20271220 and unobserved folds, and publish one mechanical decision note. Only merged proceed resumes governed Phase 2 work.",
+          simple: "Final Statistical Acceptance: Run the frozen release candidate through the untouched, reserved acceptance test folds to verify real-world statistical performance. A green 'proceed' decision unlocks Phase 2 completion."
+        },
+        checks: "Pending execution under frozen protocol 3.0.0; reserved acceptance seeds 20271201..20271220 remain untouched."
       }
     ]
   }
@@ -596,23 +607,23 @@ const iterationMatrixData = [
   },
   {
     generation: "Generation v6",
-    phase: "Phases 2R.14C – 2R.14D",
-    title: "Bounded Sigmoid Architecture & Substrate Qualification",
+    phase: "Phases 2R.14C – 2R.15",
+    title: "Bounded Sigmoid Architecture & Candidate Selection Freeze",
     badgeClass: "status-pass",
-    statusText: "Mechanical QUALIFIED (100% Gates Passed)",
+    statusText: "Candidate Frozen (Logistic Selected, ROC AUC: 0.7057)",
     adr: "ADR 0012 Bounded Sigmoid Hazard Link",
     formula: "λ_lapse(t) = 0.10 · σ(z_lapse),   λ_surr(t) = 0.05 · σ(z_surr)   [Bounded S-Curve: λ_total ≤ 0.1500 < 0.2000]",
     failure: {
-      tech: "None. All 9 mechanical qualification gates under Substrate Contract 6.0.0 passed across all 20 development seeds (20280201..20280220).",
-      simple: "No failures! Every single safety and accuracy gate passed across all 20 test seeds without moving the goalposts."
+      tech: "None. All 9 mechanical qualification gates passed under Contract 6.0.0. Feature diagnostics passed with 0 flags under Evaluation Contract 6.0.0.",
+      simple: "Zero failures! All 9 safety and accuracy gates passed. Diagnostics verified 17 leak-free features with zero cheating."
     },
     rootCause: {
       tech: "Bounded logistic link function σ(z) = 1/(1 + e^(-z)) bounds marginal event hazards independently of extreme feature realizations. Centered linear predictor with scale 6.0 preserves steep discrimination around the decision boundary while strictly guaranteeing max monthly hazard <= 0.1500.",
       simple: "The S-curve prevents runaway risk: even if a customer has every risk factor imaginable, their monthly cancellation risk cannot exceed the strict 15% cap, while preserving crisp discrimination."
     },
     decision: {
-      tech: "Mechanical decision 'qualified' recorded under Contract 6.0.0 Section 10. Authorizes Phase 2R.15 Candidate Model Acceptance using fresh evaluation seeds 20280301..20280320.",
-      simple: "Substrate mathematically qualified! Recorded ADR 0012 and unlocked Phase 2R.15 to train and benchmark final candidate models against placebo controls."
+      tech: "Mechanical decision 'qualified' in 2R.14D authorized Phase 2R.15. Phase 2R.15 froze the 17-feature evaluation pipeline, 0 diagnostic flags, and selected Logistic Regression over XGBoost (ROC AUC 0.7057 vs 0.6801). Cryptographically frozen; authorizes Phase 2R.16 statistical acceptance.",
+      simple: "Substrate qualified and candidate frozen! Logistic Regression won the tournament against XGBoost with 70.6% ROC AUC. All checksums locked, authorizing Phase 2R.16 final acceptance."
     }
   }
 ];
@@ -844,6 +855,76 @@ function renderIterationMatrix() {
 // ============================================================
 
 const pipelineScenarios = {
+  v6_candidate_selection: {
+    name: "Generation v6 Candidate Selection (Logistic 70.6% vs XGBoost)",
+    stages: [
+      {
+        stage: 1,
+        title: "Stage 1: Clean-Room & Structural Support Audit",
+        badge: "Passed",
+        icon: "🛡️",
+        command: "python3 scripts/check_v6_evaluation_support.py --check",
+        log: "Asserting structural support across all 4 folds (fold_1..3, selection)...\n[PASS] fold_1: 1,662 eligible, 245 pos, 1,417 neg, 0 censored -> PASS\n[PASS] fold_2: 1,509 eligible, 273 pos, 1,236 neg, 0 censored -> PASS\n[PASS] fold_3: 1,015 eligible, 168 pos, 847 neg, 0 censored -> PASS\n[PASS] selection: 996 eligible, 167 pos, 829 neg, 0 censored -> PASS\n[PASS] All 4 billing frequencies present; zero right-censoring.",
+        explanation: {
+          simple: "First, verifies that all training, evaluation, and test sets have enough data, all payment frequencies, and zero missing outcome data.",
+          tech: "Executes check_v6_evaluation_support.py; asserts min eligible >= 500, min class >= 50, all 4 frequencies, and 0% right censoring."
+        },
+        status: "success"
+      },
+      {
+        stage: 2,
+        title: "Stage 2: Point-in-Time 17-Feature Extraction & Pipeline Fitting",
+        badge: "Passed",
+        icon: "⚙️",
+        command: "python3 -c 'from inforsight_simulator.v6_evaluation import fit_preprocessor, transform...'",
+        log: "Extracting 17 point-in-time features under Feature Dictionary 6.0.0...\nValidating event lineage: effective_date <= as_of and ingested_at <= as_of...\nFitting statistical standardizers strictly on designated training data...\nEncoding categories with reserved __unknown__ category path...\n[PASS] 28 output encoded features. Preprocessor digest: 149d7ecc... frozen.",
+        explanation: {
+          simple: "Extracts 17 behavior features without looking into the future. Prepares encoders strictly from training policies.",
+          tech: "Validates strict event lineage for all 17 features, fits fit-only z-score standardizer and one-hot encoder with reserved __unknown__ token."
+        },
+        status: "success"
+      },
+      {
+        stage: 3,
+        title: "Stage 3: Non-Final Feature Diagnostics & Protected-Concept Screen",
+        badge: "Passed",
+        icon: "🔬",
+        command: "python3 scripts/build_v6_evaluation_pipeline.py --check",
+        log: "Screening feature space for protected identifiers or simulator internals...\n[PASS] 0 forbidden tokens (oracle, frailty, outcome, scenario) detected.\nComputing mutual information & single-feature shallow decision trees...\nStrongest driver group: recent_payment (Max MI: 0.048, Stump AUC: 0.655)\nDesigned zero group: missingness (Constant, 0 flags requiring redesign)\n=======================================================\nDIAGNOSTIC DECISION: ALLOW (0 Remediation Flags)\n=======================================================",
+        explanation: {
+          simple: "Runs diagnostic checks on every feature to ensure the AI isn't cheating using hidden simulator variables or memorizing IDs. Zero cheating detected!",
+          tech: "Runs mutual information and stump tree screens; verifies absence of forbidden tokens; issues decision 'allow' with 0 flags."
+        },
+        status: "success"
+      },
+      {
+        stage: 4,
+        title: "Stage 4: Candidate Model Tournament (Logistic vs. XGBoost)",
+        badge: "Passed",
+        icon: "⚔️",
+        command: "python3 scripts/build_v6_evaluation_pipeline.py --check",
+        log: "Training Candidate 1: Logistic Regression (L2, C=1.0, liblinear)...\nTraining Candidate 2: XGBoost Comparator (25 trees, depth=2, lr=0.1, exact)...\nEvaluating both candidates on identical 996-observation selection fold:\n- Logistic Regression : ROC AUC = 0.7057 | Brier = 0.1287 | Log Loss = 0.4168\n- XGBoost Comparator  : ROC AUC = 0.6801 | Brier = 0.1354 | Log Loss = 0.4377",
+        explanation: {
+          simple: "Both AI models compete on the exact same unseen test cases. Logistic Regression outperforms XGBoost across every single metric!",
+          tech: "Fits candidates on identical fit data; evaluates on selection fold. Logistic achieves superior ROC AUC (0.7057 vs 0.6801) and Brier calibration (0.1287 vs 0.1354)."
+        },
+        status: "success"
+      },
+      {
+        stage: 5,
+        title: "Stage 5: Deterministic Selection & Cryptographic Freeze",
+        badge: "SELECTED",
+        icon: "🏆",
+        command: "python3 scripts/build_v6_evaluation_pipeline.py --check",
+        log: "Applying frozen candidate selection rule:\n1. ROC AUC Comparison: 0.7057 > 0.6801 (+0.0256 delta >= 1e-12 tolerance)\n=======================================================\nSELECTED RELEASE CANDIDATE: LOGISTIC REGRESSION\nSELECTION REASON: higher_roc_auc\n=======================================================\nVerifying state reload against runtime predictions -> EXACT MATCH\nBinding scoring authorization: 572238427bf... [CRYPTOGRAPHICALLY FROZEN]\nAuthorizes Phase 2R.16 (Replacement Statistical Acceptance Protocol).",
+        explanation: {
+          simple: "Logistic Regression is officially crowned the Release Candidate. The exact mathematical weights and scoring permissions are cryptographically locked into place before final testing.",
+          tech: "Deterministic selection rule chooses 'logistic' by higher_roc_auc. Reload predictions match; binds Scoring Authorization 6.0.0; authorizes Phase 2R.16."
+        },
+        status: "success"
+      }
+    ]
+  },
   v6_qualified: {
     name: "Generation v6 Qualification (Bounded Sigmoid Hazard Link)",
     stages: [
@@ -1152,7 +1233,7 @@ const pipelineScenarios = {
   }
 };
 
-let simCurrentScenario = "v6_qualified";
+let simCurrentScenario = "v6_candidate_selection";
 let simCurrentStep = 0;
 let simInterval = null;
 

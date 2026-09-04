@@ -19,7 +19,7 @@
       <div class="brand-group">
         <div class="brand-logo-mark">I</div>
         <div class="brand-text">
-          <div class="brand-title">Inforsight <span class="badge badge-version">v6 (R2-14D Substrate Qualified)</span></div>
+          <div class="brand-title">Inforsight <span class="badge badge-version">v6 (R2-15 Candidate Selected)</span></div>
           <div class="brand-tagline">See Risk. Shape Action. Honest AI for life insurance conservation.</div>
         </div>
       </div>
@@ -86,12 +86,12 @@
 
         <div class="hero-stats-grid">
           <div class="stat-card">
-            <div class="stat-num highlight-cyan">36</div>
+            <div class="stat-num highlight-cyan">37</div>
             <div class="stat-label">Merged Code Increments</div>
             <div class="stat-sub">100% verified with automated tests</div>
           </div>
           <div class="stat-card">
-            <div class="stat-num highlight-green">357</div>
+            <div class="stat-num highlight-green">365</div>
             <div class="stat-label">Automated Safety Tests</div>
             <div class="stat-sub">Zero future data leaks tolerated</div>
           </div>
@@ -647,16 +647,16 @@
         </div>
 
         <div class="metric-summary-card" style="border-color: #10b981;">
-          <div class="metric-card-title" style="color: #10b981;">Phase 2R (v6 Bounded Sigmoid)</div>
-          <div class="metric-big-val" style="color: #10b981;">0.709 AUC</div>
-          <div class="metric-row"><span>Qualification Seeds:</span> <strong>20 development seeds</strong></div>
-          <div class="metric-row"><span>Median AP Lift:</span> <strong>+0.140 (over baseline)</strong></div>
-          <div class="metric-row"><span>Brier Skill Score:</span> <strong>+0.075 (calibrated)</strong></div>
-          <div class="metric-row"><span>Max Monthly Hazard:</span> <strong>0.14999 (&lt; 0.20)</strong></div>
-          <div class="metric-status-box tag-pipeline" style="background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.3);">R2-14D Gate: QUALIFIED (All 9 Passed)</div>
+          <div class="metric-card-title" style="color: #10b981;">Phase 2R (v6 Candidate Selected)</div>
+          <div class="metric-big-val" style="color: #10b981;">0.7057 AUC</div>
+          <div class="metric-row"><span>Selected Architecture:</span> <strong>Logistic Regression</strong></div>
+          <div class="metric-row"><span>Comparator Model:</span> <strong>XGBoost (0.6801 AUC)</strong></div>
+          <div class="metric-row"><span>Calibration (Brier):</span> <strong>0.1287 (Logistic) vs 0.1332</strong></div>
+          <div class="metric-row"><span>Point-in-Time Features:</span> <strong>17 features (0 leak flags)</strong></div>
+          <div class="metric-status-box tag-pipeline" style="background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.3);">R2-15 Gate: CANDIDATE FROZEN (Logistic)</div>
           <p class="metric-note text-dynamic"
-             data-simple="Total Breakthrough! Replaced runaway exponential hazard rockets with bounded S-curves. The AI achieved 71% accuracy with safe, realistic cancellation rates!"
-             data-tech="ADR 0012 &amp; Contract 6.0.0: Bounded logistic link capped at 15%/mo resolved the Trilemma. All 9 gates passed mechanically; Phase 2R.15 authorized."></p>
+             data-simple="Candidate Chosen! Under Contract 6.0.0, the transparent Logistic Regression model beat XGBoost (0.7057 vs 0.6801 AUC) with lower calibration error and zero leakage flags. Candidate frozen for acceptance testing!"
+             data-tech="Phase 2R.15: Logistic regression selected over XGBoost on 20 development seeds (0.7057 vs 0.6801 AUC, Brier 0.1287 vs 0.1332). Cryptographic model state hash authorized; ready for R2-16 blind acceptance."></p>
         </div>
       </div>
 
@@ -724,19 +724,20 @@
               <text x="0" y="285" fill="#ef4444" font-size="10" text-anchor="middle">Redesign Gate</text>
             </g>
 
-            <!-- Group 4: R2-13 Diagnostic & v4 Target -->
+            <!-- Group 4: R2-15 v6 Candidate Selection -->
             <g class="chart-group" transform="translate(680, 0)">
-              <rect x="-25" y="207" width="22" height="33" fill="#ec4899" rx="2" />
-              <rect x="5" y="90" width="22" height="150" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="4" rx="2" />
-              <text x="0" y="270" fill="#cbd5e1" font-size="12" text-anchor="middle">v4 Diagnostics</text>
-              <text x="0" y="285" fill="#10b981" font-size="10" text-anchor="middle">Target Frozen (ADR 0007)</text>
+              <rect x="-35" y="240" width="18" height="0" fill="#64748b" rx="2" />
+              <rect x="-15" y="34" width="18" height="206" fill="#38bdf8" rx="2" />
+              <rect x="5" y="60" width="18" height="180" fill="#a855f7" rx="2" />
+              <text x="0" y="270" fill="#cbd5e1" font-size="12" text-anchor="middle">v6 Candidate</text>
+              <text x="0" y="285" fill="#10b981" font-size="10" text-anchor="middle">0.7057 Logistic</text>
             </g>
           </svg>
         </div>
 
         <div class="chart-caption text-dynamic"
-             data-simple="Key Takeaway: The AI wasn't broken! Our diagnostics proved that even a psychic computer with 100% perfect knowledge could only get 53% accuracy on v3 because the noise was too loud. In v4, we doubled signal strength so the AI has real patterns to discover."
-             data-tech="Key Takeaway: The v3 acceptance gate failed because the theoretical observable oracle itself only achieved AUC 0.533 (barely above random 0.50). This proved the failure was NOT a modeling flaw, but weak signal in the data generator. ADR 0007 directly resolves this by doubling public coefficients and halving latent noise.">
+             data-simple="Key Takeaway: In Generation v6 (Phase 2R.15), both models decisively clear our 0.65 target threshold. Logistic Regression beats XGBoost (0.7057 vs 0.6801 AUC) with lower calibration error, achieving a transparent, leak-free candidate ready for final blind acceptance testing."
+             data-tech="Key Takeaway: Generation v6 Candidate Selection (Phase 2R.15) achieves 0.7057 ROC-AUC with Logistic Regression and 0.6801 with XGBoost across 20 dev seeds (both exceeding the 0.65 target). With Brier score of 0.1287 and zero diagnostic flags, Logistic Regression was locked and authorized for Phase 2R.16 holdout acceptance.">
         </div>
       </div>
 
@@ -745,8 +746,8 @@
         <h3>Engineering Rigor &amp; Test Suite Health</h3>
         <div class="test-grid">
           <div class="test-stat-box">
-            <span class="test-num">258+</span>
-            <span class="test-label">Simulator Tests</span>
+            <span class="test-num">365</span>
+            <span class="test-label">Automated Safety Tests</span>
           </div>
           <div class="test-stat-box">
             <span class="test-num">12</span>
@@ -884,7 +885,8 @@
           <div class="sim-scenario-selector">
             <label for="simScenarioSelect">Scenario to Run:</label>
             <select id="simScenarioSelect" class="filter-select">
-              <option value="v6_qualified" selected>🟢 Generation v6 Qualification (Bounded Sigmoid Hazard Link)</option>
+              <option value="v6_candidate_selection" selected>🟢 Generation v6 Candidate Selection (R2-15 Model Freeze)</option>
+              <option value="v6_qualified">🟢 Generation v6 Qualification (Bounded Sigmoid Hazard Link)</option>
               <option value="happy_v4">🟢 Historical Pass (v4 Pipeline with Signal)</option>
               <option value="leakage_stop">🔴 Fail-Closed STOP (Tomorrow's Event Leaks Into Today)</option>
               <option value="weak_redesign">🟠 Fail-Closed REDESIGN (AI Fails to Beat Placebo)</option>

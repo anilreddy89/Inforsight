@@ -10,8 +10,8 @@
 | GitHub issue | [#90](https://github.com/anilreddy89/Inforsight/issues/90) |
 | Issue title | `[Implementation] R2-15: Freeze Generation v6 evaluation pipeline and release candidate` |
 | Branch | `feat/90-r2-15-v6-evaluation-and-candidate` |
-| Pull request | TBD |
-| Status | In progress since 2026-09-04 |
+| Pull request | [#91](https://github.com/anilreddy89/Inforsight/pull/91) |
+| Status | Completed on 2026-09-04, merge commit `8965c72` |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
 | Classification | Capability / Remediation |
