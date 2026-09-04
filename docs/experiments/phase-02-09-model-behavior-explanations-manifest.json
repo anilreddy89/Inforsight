@@ -1,0 +1,968 @@
+{
+  "action_authority_boundaries": {
+    "non_causal_boundary": "Attributions describe statistical correlations (P(y|x)), not causal levers (P(y|do(x))). Altering observed features manually does not guarantee customer risk reduction.",
+    "tier_1_perception_role": "Attributions quantify mathematical associations in the perception layer. They possess zero autonomous authority to trigger workflows, alter premiums, or send communications.",
+    "tier_2_deterministic_rules_required": "All candidate accounts must pass deterministic eligibility filters (grace period checks, cooling-off periods, communication caps) before any intervention.",
+    "tier_4_licensed_human_approval": "Final approval for all customer retention interventions remains with licensed human conservation officers."
+  },
+  "artifact_version": "1.0.0",
+  "background_distribution": {
+    "base_value_logit": -1.8764,
+    "base_value_probability": 0.1328,
+    "evaluation_observations": 8782
+  },
+  "candidate_model": {
+    "c_param": 1.0,
+    "calibrated_intercept": -0.7136,
+    "calibrator": {
+      "method": "platt",
+      "param_a": 0.9618,
+      "param_b": -0.0334
+    },
+    "family": "LogisticRegression",
+    "random_seed": 20260817,
+    "raw_intercept": -0.7073,
+    "regularization": "l2",
+    "solver": "liblinear"
+  },
+  "claim_boundary": "model_behavior_explanations_and_action_authority_boundaries_only",
+  "contract_version": "1.0.0",
+  "directional_sanity_checks": [
+    {
+      "actuarial_rationale": "Older policies have higher surrender friction and emotional attachment; reduces lapse hazard.",
+      "expected_sign": "negative",
+      "feature_name": "tenure_days",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": -0.025,
+      "observed_coefficient": -0.026,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Higher dollar commitments carry heavier household budget strain under economic shock; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "premium_amount_cents",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.0531,
+      "observed_coefficient": 0.0553,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Recent billing payment delays reflect acute household liquidity friction or disengagement; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "recent_delay_days",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.2835,
+      "observed_coefficient": 0.2948,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Failed payment attempts reflect direct billing mechanism breakdowns; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "recent_failed_payment_count",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.175,
+      "observed_coefficient": 0.182,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Automated billing retry events reflect recurring transaction failures; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "recent_retry_count",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.0044,
+      "observed_coefficient": 0.0046,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Successful recovery of overdue premium demonstrates willingness to preserve coverage; reduces lapse hazard.",
+      "expected_sign": "negative",
+      "feature_name": "recent_recovery_count",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": -0.0037,
+      "observed_coefficient": -0.0039,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Days spent in delinquent status consume contractual grace period; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "arrears_duration_days",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.0767,
+      "observed_coefficient": 0.0797,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Higher historical on-time payment rate reflects reliable retention habits; strongly reduces lapse hazard.",
+      "expected_sign": "negative",
+      "feature_name": "rolling_on_time_rate",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": -0.6148,
+      "observed_coefficient": -0.6393,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Longer history of completed premium payments builds policy equity and loyalty; reduces lapse hazard.",
+      "expected_sign": "negative",
+      "feature_name": "rolling_payment_count",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": -0.1558,
+      "observed_coefficient": -0.1619,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Multiple reminder and grace notices correlate with ongoing billing friction; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "recent_notice_count",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.0468,
+      "observed_coefficient": 0.0487,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Elevated customer contact frequency often precedes cancellations, disputes, or complaints; increases lapse hazard.",
+      "expected_sign": "positive",
+      "feature_name": "recent_contact_count",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.0365,
+      "observed_coefficient": 0.038,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Missingness indicator flags data availability and pipeline imputation.",
+      "expected_sign": "neutral",
+      "feature_name": "payment_attribute_missing",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": -0.017,
+      "observed_coefficient": -0.0177,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Missingness indicator flags data availability and pipeline imputation.",
+      "expected_sign": "neutral",
+      "feature_name": "contact_attribute_missing",
+      "feature_type": "numeric",
+      "observed_calibrated_coefficient": 0.0,
+      "observed_coefficient": 0.0,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Term life policies have zero cash surrender value, resulting in lower structural barrier to lapse than whole life.",
+      "expected_sign": "term_higher_than_whole_life",
+      "feature_name": "product_type",
+      "feature_type": "categorical",
+      "observed_calibrated_coefficient": -0.2267,
+      "observed_coefficient": -0.2358,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Large annual lump-sum premium debits create payment shock compared to smaller automated monthly ACH debits.",
+      "expected_sign": "positive_for_annual",
+      "feature_name": "billing_frequency",
+      "feature_type": "categorical",
+      "observed_calibrated_coefficient": -0.136,
+      "observed_coefficient": -0.1415,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Absence of late notices indicates continuous, uninterrupted payment flow.",
+      "expected_sign": "negative_for_none",
+      "feature_name": "notice_category",
+      "feature_type": "categorical",
+      "observed_calibrated_coefficient": -0.1701,
+      "observed_coefficient": -0.1768,
+      "status": "pass"
+    },
+    {
+      "actuarial_rationale": "Absence of service complaints or inquiries indicates passive policyholder satisfaction.",
+      "expected_sign": "negative_for_none",
+      "feature_name": "contact_category",
+      "feature_type": "categorical",
+      "observed_calibrated_coefficient": -0.2267,
+      "observed_coefficient": -0.2358,
+      "status": "pass"
+    }
+  ],
+  "final_holdout_status": "not_materialized",
+  "global_feature_importance": [
+    {
+      "feature_group": "rolling_history",
+      "feature_name": "rolling_on_time_rate",
+      "mean_abs_attribution": 0.5903,
+      "mean_abs_shap": 0.5504,
+      "overall_direction": "predominantly_risk_increasing",
+      "rank": 1,
+      "relative_importance_pct": 22.78
+    },
+    {
+      "feature_group": "service_notice",
+      "feature_name": "contact_category",
+      "mean_abs_attribution": 0.4029,
+      "mean_abs_shap": 0.1273,
+      "overall_direction": "predominantly_protective",
+      "rank": 2,
+      "relative_importance_pct": 15.55
+    },
+    {
+      "feature_group": "service_notice",
+      "feature_name": "notice_category",
+      "mean_abs_attribution": 0.3594,
+      "mean_abs_shap": 0.1428,
+      "overall_direction": "predominantly_protective",
+      "rank": 3,
+      "relative_importance_pct": 13.87
+    },
+    {
+      "feature_group": "static",
+      "feature_name": "product_type",
+      "mean_abs_attribution": 0.3386,
+      "mean_abs_shap": 0.0303,
+      "overall_direction": "predominantly_protective",
+      "rank": 4,
+      "relative_importance_pct": 13.07
+    },
+    {
+      "feature_group": "recent_payment",
+      "feature_name": "recent_delay_days",
+      "mean_abs_attribution": 0.2505,
+      "mean_abs_shap": 0.2576,
+      "overall_direction": "predominantly_protective",
+      "rank": 5,
+      "relative_importance_pct": 9.67
+    },
+    {
+      "feature_group": "static",
+      "feature_name": "billing_frequency",
+      "mean_abs_attribution": 0.2394,
+      "mean_abs_shap": 0.2053,
+      "overall_direction": "predominantly_protective",
+      "rank": 6,
+      "relative_importance_pct": 9.24
+    },
+    {
+      "feature_group": "rolling_history",
+      "feature_name": "rolling_payment_count",
+      "mean_abs_attribution": 0.141,
+      "mean_abs_shap": 0.1609,
+      "overall_direction": "predominantly_risk_increasing",
+      "rank": 7,
+      "relative_importance_pct": 5.44
+    },
+    {
+      "feature_group": "recent_payment",
+      "feature_name": "recent_failed_payment_count",
+      "mean_abs_attribution": 0.0742,
+      "mean_abs_shap": 0.0803,
+      "overall_direction": "predominantly_protective",
+      "rank": 8,
+      "relative_importance_pct": 2.86
+    },
+    {
+      "feature_group": "static",
+      "feature_name": "premium_amount_cents",
+      "mean_abs_attribution": 0.0472,
+      "mean_abs_shap": 0.0473,
+      "overall_direction": "predominantly_risk_increasing",
+      "rank": 9,
+      "relative_importance_pct": 1.82
+    },
+    {
+      "feature_group": "service_notice",
+      "feature_name": "recent_notice_count",
+      "mean_abs_attribution": 0.0445,
+      "mean_abs_shap": 0.0446,
+      "overall_direction": "predominantly_protective",
+      "rank": 10,
+      "relative_importance_pct": 1.72
+    },
+    {
+      "feature_group": "static",
+      "feature_name": "tenure_days",
+      "mean_abs_attribution": 0.041,
+      "mean_abs_shap": 0.0411,
+      "overall_direction": "predominantly_protective",
+      "rank": 11,
+      "relative_importance_pct": 1.58
+    },
+    {
+      "feature_group": "service_notice",
+      "feature_name": "recent_contact_count",
+      "mean_abs_attribution": 0.0333,
+      "mean_abs_shap": 0.0332,
+      "overall_direction": "predominantly_protective",
+      "rank": 12,
+      "relative_importance_pct": 1.29
+    },
+    {
+      "feature_group": "recent_payment",
+      "feature_name": "arrears_duration_days",
+      "mean_abs_attribution": 0.0208,
+      "mean_abs_shap": 0.0212,
+      "overall_direction": "predominantly_protective",
+      "rank": 13,
+      "relative_importance_pct": 0.8
+    },
+    {
+      "feature_group": "missingness",
+      "feature_name": "payment_attribute_missing",
+      "mean_abs_attribution": 0.0055,
+      "mean_abs_shap": 0.0058,
+      "overall_direction": "predominantly_risk_increasing",
+      "rank": 14,
+      "relative_importance_pct": 0.21
+    },
+    {
+      "feature_group": "recent_payment",
+      "feature_name": "recent_retry_count",
+      "mean_abs_attribution": 0.0017,
+      "mean_abs_shap": 0.0017,
+      "overall_direction": "predominantly_protective",
+      "rank": 15,
+      "relative_importance_pct": 0.06
+    },
+    {
+      "feature_group": "recent_payment",
+      "feature_name": "recent_recovery_count",
+      "mean_abs_attribution": 0.0012,
+      "mean_abs_shap": 0.0013,
+      "overall_direction": "predominantly_risk_increasing",
+      "rank": 16,
+      "relative_importance_pct": 0.05
+    },
+    {
+      "feature_group": "missingness",
+      "feature_name": "contact_attribute_missing",
+      "mean_abs_attribution": 0.0,
+      "mean_abs_shap": 0.0,
+      "overall_direction": "mixed_neutral",
+      "rank": 17,
+      "relative_importance_pct": 0.0
+    }
+  ],
+  "issue": 98,
+  "lineage": {
+    "command_sha256": "adc617358e0e2aa09d3220acb17efdebaf1f7cef84d182591676597d7ab4f671",
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "explanations_contract_sha256": "7cd1d3bbf9a3c1b2b417a7fc3c1d4af601e3a1f7812500c8e04a751fa0b36e8c",
+    "source_sha256": "9b01d7b039417fd9e2a595fc7cf38cafa6d8b3149d3176b963880a2ecdbdb3cb",
+    "upstream_calibration_manifest_sha256": "ff196d6b78e803eef6e51a2cb439070673d4150fa98ace5bb6f03696f933c06b",
+    "upstream_candidate_manifest_sha256": "5fc28797a47f1321ca141d814fc33b37018e05f99779053b6789ebef3dca7803"
+  },
+  "materialization": {
+    "acceptance_seeds": "isolated_not_accessed",
+    "executable_fitted_objects": "not_committed",
+    "feature_matrices": "regenerated_not_committed",
+    "final_holdout": "not_materialized",
+    "oracle_sidecars": "not_accessed",
+    "raw_observations": "regenerated_not_committed",
+    "row_level_predictions": "not_committed"
+  },
+  "milestone": "v0.2.0-risk-model",
+  "phase": "P2-09",
+  "reconstruction_validation": {
+    "exact_reconstruction_passed": true,
+    "max_reconstruction_error": 1.78e-15,
+    "tolerance": 1e-10
+  },
+  "representative_case_studies": {
+    "tier_1_low_risk": {
+      "base_value_logit": -1.8763705202768075,
+      "base_value_probability": 0.1328,
+      "calibrated_logit": -2.628735686693282,
+      "calibrated_probability": 0.0673,
+      "observation_id": "v6-obs-b7d571519efc059fd2bcf50d",
+      "policy_id": "v6-pol-0fb8903b87b70fd3785e3865",
+      "reconstruction_error": 4.440892098500626e-16,
+      "risk_tier": "Tier 1: Low Risk",
+      "root_attributions": [
+        {
+          "attribution_log_odds": 0.0264719572845309,
+          "centered_shap": 0.054827750000403026,
+          "direction": "risk_increasing",
+          "feature_group": "static",
+          "feature_name": "tenure_days",
+          "raw_value": 0.0821917808219178
+        },
+        {
+          "attribution_log_odds": -0.028159951978973474,
+          "centered_shap": -0.02649762636027068,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "premium_amount_cents",
+          "raw_value": 0.9287627619160592
+        },
+        {
+          "attribution_log_odds": -0.20213429719346704,
+          "centered_shap": -0.23679056375593316,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_delay_days",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.035384657870114154,
+          "centered_shap": -0.042147033174310296,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_failed_payment_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.0008058249048176386,
+          "centered_shap": -0.0009028734548302804,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_retry_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.0005845373997578251,
+          "centered_shap": 0.0006938017785123787,
+          "direction": "risk_increasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_recovery_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.010448472548704098,
+          "centered_shap": -0.010856965051073869,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "arrears_duration_days",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.5583744563114609,
+          "centered_shap": -0.7145767209204453,
+          "direction": "risk_decreasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_on_time_rate",
+          "raw_value": 0.5
+        },
+        {
+          "attribution_log_odds": 0.09787434640819001,
+          "centered_shap": 0.15652535353878627,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_payment_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.03385560167646944,
+          "centered_shap": -0.034160461641053325,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_notice_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.02389075099156463,
+          "centered_shap": -0.023509900563795923,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_contact_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.002620725167113805,
+          "centered_shap": 0.0030027028730925656,
+          "direction": "risk_increasing",
+          "feature_group": "missingness",
+          "feature_name": "payment_attribute_missing",
+          "raw_value": 0
+        },
+        {
+          "attribution_log_odds": 0.0,
+          "centered_shap": 0.0,
+          "direction": "neutral",
+          "feature_group": "missingness",
+          "feature_name": "contact_attribute_missing",
+          "raw_value": 0
+        },
+        {
+          "attribution_log_odds": -0.3097766367122651,
+          "centered_shap": 0.02884426693319203,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "product_type",
+          "raw_value": "fictional_whole_life"
+        },
+        {
+          "attribution_log_odds": 0.12205772937101583,
+          "centered_shap": 0.29273773922682117,
+          "direction": "risk_increasing",
+          "feature_group": "static",
+          "feature_name": "billing_frequency",
+          "raw_value": "annual"
+        },
+        {
+          "attribution_log_odds": -0.46869658841544226,
+          "centered_shap": -0.10930684777250357,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "notice_category",
+          "raw_value": "none"
+        },
+        {
+          "attribution_log_odds": -0.4931754064679385,
+          "centered_shap": -0.09024778807306556,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "contact_category",
+          "raw_value": "none"
+        }
+      ],
+      "top_protective_drivers": [
+        {
+          "attribution_log_odds": -0.5583744563114609,
+          "centered_shap": -0.7145767209204453,
+          "direction": "risk_decreasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_on_time_rate",
+          "raw_value": 0.5
+        },
+        {
+          "attribution_log_odds": -0.4931754064679385,
+          "centered_shap": -0.09024778807306556,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "contact_category",
+          "raw_value": "none"
+        },
+        {
+          "attribution_log_odds": -0.46869658841544226,
+          "centered_shap": -0.10930684777250357,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "notice_category",
+          "raw_value": "none"
+        }
+      ],
+      "top_risk_drivers": [
+        {
+          "attribution_log_odds": 0.12205772937101583,
+          "centered_shap": 0.29273773922682117,
+          "direction": "risk_increasing",
+          "feature_group": "static",
+          "feature_name": "billing_frequency",
+          "raw_value": "annual"
+        },
+        {
+          "attribution_log_odds": 0.09787434640819001,
+          "centered_shap": 0.15652535353878627,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_payment_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.0264719572845309,
+          "centered_shap": 0.054827750000403026,
+          "direction": "risk_increasing",
+          "feature_group": "static",
+          "feature_name": "tenure_days",
+          "raw_value": 0.0821917808219178
+        }
+      ]
+    },
+    "tier_2_moderate_risk": {
+      "base_value_logit": -1.8763705202768075,
+      "base_value_probability": 0.1328,
+      "calibrated_logit": -1.5978536234220697,
+      "calibrated_probability": 0.1683,
+      "observation_id": "v6-obs-d83c446fe2ba05a9c0f5a18c",
+      "policy_id": "v6-pol-cffeb85d2eda1dbefe65f603",
+      "reconstruction_error": 2.220446049250313e-16,
+      "risk_tier": "Tier 2: Moderate Risk",
+      "root_attributions": [
+        {
+          "attribution_log_odds": -0.054063942665882804,
+          "centered_shap": -0.025708149950010674,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "tenure_days",
+          "raw_value": 1.5616438356164384
+        },
+        {
+          "attribution_log_odds": -0.006093634785010119,
+          "centered_shap": -0.004431309166307325,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "premium_amount_cents",
+          "raw_value": 0.9562947340912966
+        },
+        {
+          "attribution_log_odds": -0.20213429719346704,
+          "centered_shap": -0.23679056375593316,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_delay_days",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.035384657870114154,
+          "centered_shap": -0.042147033174310296,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_failed_payment_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.0008058249048176386,
+          "centered_shap": -0.0009028734548302804,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_retry_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.0005845373997578251,
+          "centered_shap": 0.0006938017785123787,
+          "direction": "risk_increasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_recovery_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.010448472548704098,
+          "centered_shap": -0.010856965051073869,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "arrears_duration_days",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.641527165951216,
+          "centered_shap": 0.48532490134223166,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_on_time_rate",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.04799750842641928,
+          "centered_shap": 0.10664851555701556,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_payment_count",
+          "raw_value": 0.08333333333333333
+        },
+        {
+          "attribution_log_odds": -0.03385560167646944,
+          "centered_shap": -0.034160461641053325,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_notice_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.02389075099156463,
+          "centered_shap": -0.023509900563795923,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_contact_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.002620725167113805,
+          "centered_shap": 0.0030027028730925656,
+          "direction": "risk_increasing",
+          "feature_group": "missingness",
+          "feature_name": "payment_attribute_missing",
+          "raw_value": 0
+        },
+        {
+          "attribution_log_odds": 0.0,
+          "centered_shap": 0.0,
+          "direction": "neutral",
+          "feature_group": "missingness",
+          "feature_name": "contact_attribute_missing",
+          "raw_value": 0
+        },
+        {
+          "attribution_log_odds": -0.37044977496550885,
+          "centered_shap": -0.031828871320051716,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "product_type",
+          "raw_value": "fictional_term_life"
+        },
+        {
+          "attribution_log_odds": 0.12205772937101583,
+          "centered_shap": 0.29273773922682117,
+          "direction": "risk_increasing",
+          "feature_group": "static",
+          "feature_name": "billing_frequency",
+          "raw_value": "annual"
+        },
+        {
+          "attribution_log_odds": -0.46869658841544226,
+          "centered_shap": -0.10930684777250357,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "notice_category",
+          "raw_value": "none"
+        },
+        {
+          "attribution_log_odds": -0.4931754064679385,
+          "centered_shap": -0.09024778807306556,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "contact_category",
+          "raw_value": "none"
+        }
+      ],
+      "top_protective_drivers": [
+        {
+          "attribution_log_odds": -0.4931754064679385,
+          "centered_shap": -0.09024778807306556,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "contact_category",
+          "raw_value": "none"
+        },
+        {
+          "attribution_log_odds": -0.46869658841544226,
+          "centered_shap": -0.10930684777250357,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "notice_category",
+          "raw_value": "none"
+        },
+        {
+          "attribution_log_odds": -0.37044977496550885,
+          "centered_shap": -0.031828871320051716,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "product_type",
+          "raw_value": "fictional_term_life"
+        }
+      ],
+      "top_risk_drivers": [
+        {
+          "attribution_log_odds": 0.641527165951216,
+          "centered_shap": 0.48532490134223166,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_on_time_rate",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.12205772937101583,
+          "centered_shap": 0.29273773922682117,
+          "direction": "risk_increasing",
+          "feature_group": "static",
+          "feature_name": "billing_frequency",
+          "raw_value": "annual"
+        },
+        {
+          "attribution_log_odds": 0.04799750842641928,
+          "centered_shap": 0.10664851555701556,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_payment_count",
+          "raw_value": 0.08333333333333333
+        }
+      ]
+    },
+    "tier_3_high_risk": {
+      "base_value_logit": -1.8763705202768075,
+      "base_value_probability": 0.1328,
+      "calibrated_logit": -0.8244259392955603,
+      "calibrated_probability": 0.3048,
+      "observation_id": "v6-obs-d5ddc812c30182ef92e94401",
+      "policy_id": "v6-pol-e715054badf344892d1c20fb",
+      "reconstruction_error": 1.1102230246251565e-16,
+      "risk_tier": "Tier 3: High Risk",
+      "root_attributions": [
+        {
+          "attribution_log_odds": -0.054063942665882804,
+          "centered_shap": -0.025708149950010674,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "tenure_days",
+          "raw_value": 1.5616438356164384
+        },
+        {
+          "attribution_log_odds": -0.08218764492630735,
+          "centered_shap": -0.08052531930760456,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "premium_amount_cents",
+          "raw_value": 0.8613528300346669
+        },
+        {
+          "attribution_log_odds": 0.04892996554020141,
+          "centered_shap": 0.01427369897773531,
+          "direction": "risk_increasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_delay_days",
+          "raw_value": 0.13893023333333332
+        },
+        {
+          "attribution_log_odds": -0.035384657870114154,
+          "centered_shap": -0.042147033174310296,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_failed_payment_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.0008058249048176386,
+          "centered_shap": -0.0009028734548302804,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_retry_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.0005845373997578251,
+          "centered_shap": 0.0006938017785123787,
+          "direction": "risk_increasing",
+          "feature_group": "recent_payment",
+          "feature_name": "recent_recovery_count",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.010448472548704098,
+          "centered_shap": -0.010856965051073869,
+          "direction": "risk_decreasing",
+          "feature_group": "recent_payment",
+          "feature_name": "arrears_duration_days",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.641527165951216,
+          "centered_shap": 0.48532490134223166,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_on_time_rate",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": -0.001879329555351437,
+          "centered_shap": 0.05677167757524484,
+          "direction": "risk_decreasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_payment_count",
+          "raw_value": 0.16666666666666666
+        },
+        {
+          "attribution_log_odds": 0.06466563777565881,
+          "centered_shap": 0.06436077781107492,
+          "direction": "risk_increasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_notice_count",
+          "raw_value": 0.3333333333333333
+        },
+        {
+          "attribution_log_odds": 0.05585584875785802,
+          "centered_shap": 0.05623669918562672,
+          "direction": "risk_increasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_contact_count",
+          "raw_value": 0.3333333333333333
+        },
+        {
+          "attribution_log_odds": 0.002620725167113805,
+          "centered_shap": 0.0030027028730925656,
+          "direction": "risk_increasing",
+          "feature_group": "missingness",
+          "feature_name": "payment_attribute_missing",
+          "raw_value": 0
+        },
+        {
+          "attribution_log_odds": 0.0,
+          "centered_shap": 0.0,
+          "direction": "neutral",
+          "feature_group": "missingness",
+          "feature_name": "contact_attribute_missing",
+          "raw_value": 0
+        },
+        {
+          "attribution_log_odds": -0.3097766367122651,
+          "centered_shap": 0.02884426693319203,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "product_type",
+          "raw_value": "fictional_whole_life"
+        },
+        {
+          "attribution_log_odds": -0.08524507872725798,
+          "centered_shap": 0.0854349311285474,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "billing_frequency",
+          "raw_value": "semiannual"
+        },
+        {
+          "attribution_log_odds": -0.1581248895143244,
+          "centered_shap": 0.20126485112861428,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "notice_category",
+          "raw_value": "billing_reminder"
+        },
+        {
+          "attribution_log_odds": -0.1870510052096682,
+          "centered_shap": 0.2158766131852047,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "contact_category",
+          "raw_value": "service_request"
+        }
+      ],
+      "top_protective_drivers": [
+        {
+          "attribution_log_odds": -0.3097766367122651,
+          "centered_shap": 0.02884426693319203,
+          "direction": "risk_decreasing",
+          "feature_group": "static",
+          "feature_name": "product_type",
+          "raw_value": "fictional_whole_life"
+        },
+        {
+          "attribution_log_odds": -0.1870510052096682,
+          "centered_shap": 0.2158766131852047,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "contact_category",
+          "raw_value": "service_request"
+        },
+        {
+          "attribution_log_odds": -0.1581248895143244,
+          "centered_shap": 0.20126485112861428,
+          "direction": "risk_decreasing",
+          "feature_group": "service_notice",
+          "feature_name": "notice_category",
+          "raw_value": "billing_reminder"
+        }
+      ],
+      "top_risk_drivers": [
+        {
+          "attribution_log_odds": 0.641527165951216,
+          "centered_shap": 0.48532490134223166,
+          "direction": "risk_increasing",
+          "feature_group": "rolling_history",
+          "feature_name": "rolling_on_time_rate",
+          "raw_value": 0.0
+        },
+        {
+          "attribution_log_odds": 0.06466563777565881,
+          "centered_shap": 0.06436077781107492,
+          "direction": "risk_increasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_notice_count",
+          "raw_value": 0.3333333333333333
+        },
+        {
+          "attribution_log_odds": 0.05585584875785802,
+          "centered_shap": 0.05623669918562672,
+          "direction": "risk_increasing",
+          "feature_group": "service_notice",
+          "feature_name": "recent_contact_count",
+          "raw_value": 0.3333333333333333
+        }
+      ]
+    }
+  }
+}
