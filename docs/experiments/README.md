@@ -2,6 +2,8 @@
 
 Record each meaningful experiment with its question, data version, observation boundary, method, result, limitations, and decision. Retain failed and rejected experiments when they explain project direction.
 
+For a synthesized cross-generation ledger of all methods, observable failures, mathematical root causes, and architectural decisions from v1 through v5, see [**The Iteration Ledger**](iteration-ledger.md).
+
 Current machine-readable experiment evidence includes:
 
 The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeline evidence. Their recorded `sealed_not_scored` state describes the artifact-generation runs at the time. Independent review after Phase 2.07 later generated predictions from the v1 test fixture through a partition-relabeling bypass; no test metric was computed. R2-03 repaired the local scoring boundary through issue #39 and PR #40 without changing these artifacts. The fixture remains review-exposed historical evidence, while the future one-shot holdout obligation remains governed by `LIM-002-003`.

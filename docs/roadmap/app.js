@@ -247,13 +247,63 @@ const timelineData = [
       {
         id: "R2-14",
         title: "v4 Substrate Implementation & Development Qualification",
-        status: "Planned",
-        commit: "Current Work",
+        status: "Redesign",
+        commit: "4b234bf",
         summary: {
-          tech: "Implementing contract 4.0.0 and protocol 3.0.0 with single-pass qualification gates.",
-          simple: "Currently implementing the v4 simulator with the updated signal strength, scheduled payments, and qualification gates."
+          tech: "Implemented contract 4.0.0 and protocol 3.0.0. All 20 seeds evaluated; observable recovery passed but monthly hazards breached < 0.20 bound. Triggered REDESIGN.",
+          simple: "v4 Qualification Failure: Doubling the risk multiplier caused cancellation chances to explode past 20%/month. The automated gate declared REDESIGN."
         },
-        checks: "Next active engineering increment."
+        checks: "Qualification failed closed on hazard ceiling; acceptance holdout preserved."
+      }
+    ]
+  },
+  {
+    phase: "Phase 2R: v5 Post-v4 Redesign Diagnostics",
+    milestone: "v0.2.1-statistical-remediation",
+    items: [
+      {
+        id: "R2-14A",
+        title: "Close Out v4 & Authorize Post-v4 Diagnostics (ADR 0008)",
+        status: "Completed",
+        commit: "52c03c8",
+        summary: {
+          tech: "Approved ADR 0008 and contract 1.0.0 freezing 17 diagnostics (D1-D17) and 320-cell feasibility surface without producing replacement results.",
+          simple: "Designed a comprehensive 17-test battery and 320-point computer grid to rigorously test whether the proportional hazards formula can ever work."
+        },
+        checks: "Clean-room contract validation passed; no synthetic data created."
+      },
+      {
+        id: "R2-14B",
+        title: "v5 Preflight: Contract Ambiguity Readiness STOP (ADR 0009)",
+        status: "Stop",
+        commit: "3088c4c",
+        summary: {
+          tech: "Fail-closed runner detected Contract 1.0.0 lacked mechanical H1-H5 numerical disposition thresholds. Halted with decision stop_contract_not_executable (0/120 units, 0/320 cells).",
+          simple: "The Missing Threshold Stop: The runner caught that pass/fail rules for 5 tests weren't numerically defined. It halted before running a single seed to prevent researcher bias."
+        },
+        checks: "Readiness failed closed; zero seeds spent; ADR 0009 accepted."
+      },
+      {
+        id: "R2-14BA",
+        title: "Amended Contract 1.1.0 with Quantitative Truth Tables (ADR 0010)",
+        status: "Completed",
+        commit: "627e698",
+        summary: {
+          tech: "Approved amended contract 1.1.0 freezing explicit numerical thresholds (std < 0.35, AUC < 0.60, hazard >= 0.20). Authorized Phase 2R.14BB execution.",
+          simple: "Fixed the rules: Explicitly wrote down exact pass/fail numbers in Contract 1.1.0 before giving the computer permission to execute the diagnostics."
+        },
+        checks: "Contract amendment passed; development seeds 20280101..20280120 authorized."
+      },
+      {
+        id: "R2-14BB",
+        title: "Diagnostic Execution & Proof of Infeasibility (ADR 0011)",
+        status: "Stop",
+        commit: "Issue #82",
+        summary: {
+          tech: "Executed all 17 diagnostics across 120 inventory units and 320-cell feasibility grid. 0 of 320 cells met joint constraints. Recorded stop_infeasible_design.",
+          simple: "The Final Proof: Tested all 320 parameter combinations across 20 seeds. Exactly ZERO worked! Proposed ADR 0011 permanently stopping the proportional hazards track."
+        },
+        checks: "120/120 units executed; 0/320 cells feasible; proposed ADR 0011 recorded."
       }
     ]
   }
@@ -320,6 +370,175 @@ const roadblocksData = [
       tech: "The automated gate halted fail-closed (STOP decision). ADR 0005 introduced the dual-time invariant: E.effective_at <= as_of AND E.ingested_at <= as_of for every feature.",
       simple: "Instead of ignoring the bug, the system automatically stopped the pipeline. We redesigned the engine so events are only visible if both the event AND the computer entry happened in the past."
     }
+  },
+  {
+    id: "LIM-002-005",
+    type: "rb-redesign",
+    title: "v3 Signal-Recovery Collapse Across 20 Seeds",
+    phase: "Discovered in R2-11 Acceptance Gate",
+    adr: "ADR 0006 Diagnostic Boundary",
+    trap: {
+      tech: "Statistical acceptance failed decisively on 20 seed pairs. Signal AUC was 0.519 (target >= 0.65; 0/20 passed); matched-null lift was +0.016 (target >= +0.10; 0/20 passed).",
+      simple: "Clean, leak-free data finally ran—and the models failed! They scored 51.9% accuracy (barely beating coin-flip) and beat the placebo by only 1.6%."
+    },
+    pivot: {
+      tech: "Protocol 2.2.0 executed mechanical 'redesign' decision. Refused to lower thresholds. ADR 0006 authorized 6 scientific hypotheses (H1-H6) to isolate failure mechanics.",
+      simple: "We refused to move the goalposts to make it pass. The gate declared REDESIGN and launched a scientific diagnostic inquiry."
+    }
+  },
+  {
+    id: "LIM-002-006",
+    type: "rb-redesign",
+    title: "v4 Hazard Ceiling Explosion Across 100% of Seeds",
+    phase: "Discovered in R2-14 Qualification Gate",
+    adr: "ADR 0008 Post-v4 Diagnostics",
+    trap: {
+      tech: "Doubling log-hazard beta coefficients caused monthly discrete hazards to violate the < 0.20 actuarial bound on 100% of seeds (reaching 0.25 - 0.45). Brier skill score collapsed.",
+      simple: "Rocket Explosion: To make the AI smarter, we doubled risk multipliers. But exponential math caused high-risk customers to cancel at 40%/month, breaking real-world insurance rules."
+    },
+    pivot: {
+      tech: "Qualification triggered mechanical 'redesign'. Blocked R2-15 acceptance. ADR 0008 authorized 17 diagnostics and an exhaustive 320-cell feasibility surface.",
+      simple: "Stopped immediately. Set up an exhaustive 320-point computer search to test if ANY combination of this formula could work."
+    }
+  },
+  {
+    id: "LIM-002-007",
+    type: "rb-stop",
+    title: "v5 Contract Ambiguity Halts Pre-Result Readiness",
+    phase: "Discovered in R2-14B Readiness Gate",
+    adr: "ADR 0009 Readiness Stop & ADR 0010 Amendment",
+    trap: {
+      tech: "Fail-closed runner detected Contract 1.0.0 lacked mechanical H1-H5 numerical disposition thresholds, leaving supported vs rejected open to post-hoc caller discretion.",
+      simple: "Missing Rule Stop: The runner caught that pass/fail thresholds weren't numerically frozen. It halted before running a single seed to prevent researcher bias."
+    },
+    pivot: {
+      tech: "Halted with decision stop_contract_not_executable (0/120 units, 0/320 cells). ADR 0010 approved amended Contract 1.1.0 freezing quantitative truth tables before execution.",
+      simple: "Refused to let humans fudge thresholds. Stopped, amended the contract with exact numbers on main, and only then ran the execution."
+    }
+  },
+  {
+    id: "LIM-002-008",
+    type: "rb-stop",
+    title: "Mathematical Infeasibility: The Proportional Hazards Trilemma",
+    phase: "Discovered in R2-14BB Diagnostic Execution",
+    adr: "ADR 0011 Stop Infeasible Design",
+    trap: {
+      tech: "All 320 Cartesian parameter cells evaluated across 120 inventory units. Exactly 0 of 320 cells satisfied simultaneous recovery (AUC >= 0.70, AP lift >= 0.10) and hazard ceiling (< 0.20).",
+      simple: "The Final Catch-22: The computer tested all 320 possible combinations. Exactly ZERO worked! Safe hazards meant blind AI (57% AUC); smart AI meant blown hazard ceilings (>20%)."
+    },
+    pivot: {
+      tech: "Adopted causal response 'stop_infeasible_design' under Contract 1.1.0 Section 10. Proposed ADR 0011 permanently stopping proportional hazards track. Next pivot requires bounded sigmoid link or state machine.",
+      simple: "Recorded ADR 0011 on main: permanently documenting the mathematical proof so future engineers don't waste time on a dead end. Pivoting to bounded non-exponential formulas."
+    }
+  }
+];
+
+// Master Iteration Matrix Data: Method, Failure, Root Cause, Decision
+const iterationMatrixData = [
+  {
+    generation: "Generation v1",
+    phase: "Phases 1.01 – 2.07",
+    title: "Baseline Pipeline Engineering & Independent Draws",
+    badgeClass: "status-warn",
+    statusText: "Pipeline Only (Confounding & Zero Signal)",
+    adr: "ADR 0001 • ADR 0002 • ADR 0003",
+    formula: "P(Lapse) ~ Bernoulli(p), P(Surrender) ~ Bernoulli(q) [Independent of pre-cutoff features]",
+    failure: {
+      tech: "Temporal confounding: all policies issued Day 0; first-billing cutoff segregated monthly into train, annual into test (LIM-002-001). Zero feature signal: AUC ~ 0.53 (LIM-002-002). Relabeling bypass (LIM-002-003).",
+      simple: "All policies started on Day 1, so monthly policies went to train and annual to test. Worse, cancellations were random coin-flips: models scored 53% accuracy because features had zero signal."
+    },
+    rootCause: {
+      tech: "Simulator lacked pre-cutoff behavioral hazard mechanism. Single-batch issuance confounded billing frequency with observation time. Partition authorization was an unauthenticated string.",
+      simple: "The simulator decided who canceled randomly after the cutoff date. And because everyone enrolled on Day 1, the calendar scrambled policy billing types."
+    },
+    decision: {
+      tech: "Bound results strictly to 'pipeline_engineering_only'. Retired v1 fixture as release holdout. Established Phase 2R remediation and cryptographic scoring authorization.",
+      simple: "Admitted honestly that v1 proves software plumbing but NOT machine learning accuracy. Started Phase 2R remediation from scratch."
+    }
+  },
+  {
+    generation: "Generation v2",
+    phase: "Phases 2R.04 – 2R.07",
+    title: "Multi-Cohort Issuance & Latent Frailty Hazards",
+    badgeClass: "status-stop",
+    statusText: "Fail-Closed STOP (Ingestion Leakage)",
+    adr: "ADR 0004 Predeclared Gate",
+    formula: "λ(t) = λ₀(t) · exp(Xβ + u),  u ~ Normal(0, σ²=0.04)",
+    failure: {
+      tech: "Preflight readiness audit halted fail-closed before model training (READINESS-DUAL-TIME-VISIBILITY failure, LIM-002-004).",
+      simple: "Future Paperwork Leak: The automated gate stopped the build before any model trained because an event entered the computer after cutoff was used in features."
+    },
+    rootCause: {
+      tech: "Ingestion delay caused events with effective_at <= as_of to be processed even when ingested_at > as_of, leaking retroactive paperwork into historical features.",
+      simple: "In the real world, someone can cancel on Monday, but the mail doesn't arrive until Friday. If your model looks on Wednesday, it shouldn't know yet!"
+    },
+    decision: {
+      tech: "Mechanical decision 'stop'. Halted all model fitting and holdout access. ADR 0005 mandated bitemporal dual-time predicates (effective_at <= as_of AND ingested_at <= as_of).",
+      simple: "System halted completely. Refused to train models on leaky data. Redesigned the entire simulator around dual-time event sourcing."
+    }
+  },
+  {
+    generation: "Generation v3",
+    phase: "Phases 2R.08 – 2R.11",
+    title: "Event-First Dual-Time Substrate & Matched Controls",
+    badgeClass: "status-redesign",
+    statusText: "Mechanical REDESIGN (Decisive Signal Recovery Failure)",
+    adr: "ADR 0005 • ADR 0006 Diagnostic Boundary",
+    formula: "Dual-time: E.effective_at <= as_of AND E.ingested_at <= as_of | Paired Matched-Null Control",
+    failure: {
+      tech: "Signal-recovery acceptance failed decisively across all 20 seed pairs: Median AUC 0.519 (target >= 0.65, 0/20 passed); median matched-null lift +0.016 (target >= +0.10, 0/20 passed).",
+      simple: "Clean, leak-free data finally ran—and the models failed! They scored 51.9% accuracy (coin-flip) and beat the placebo by only 1.6%."
+    },
+    rootCause: {
+      tech: "Severe signal-to-noise deficit. Behavioral log-hazard coefficients produced narrow spread (std < 0.35); latent frailty noise overwhelmed observable behavioral predictors.",
+      simple: "The behavioral clues (late bills, service complaints) were too faint, and random background customer noise drowned them out completely."
+    },
+    decision: {
+      tech: "Protocol 2.2.0 executed mechanical 'redesign' decision. Refused to lower thresholds. ADR 0006 authorized 6 scientific hypotheses (H1-H6) to isolate failure mechanics.",
+      simple: "We refused to move the goalposts to make it pass. The gate declared REDESIGN and launched a scientific diagnostic inquiry."
+    }
+  },
+  {
+    generation: "Generation v4",
+    phase: "Phases 2R.12 – 2R.14",
+    title: "Signal Amplification & The Hazard Ceiling Explosion",
+    badgeClass: "status-redesign",
+    statusText: "Mechanical REDESIGN (Actuarial Hazard Ceiling Violation)",
+    adr: "ADR 0007 • ADR 0008 Post-v4 Diagnostics",
+    formula: "λ(t) = λ₀(t) · exp(2.0 · Xβ + u),  u ~ Normal(0, 0.01) [The Exponential Rocket]",
+    failure: {
+      tech: "100% of seeds breached the < 0.20 monthly discrete hazard ceiling (reaching 0.25 - 0.45). Brier skill score collapsed (< 0). Severe early cohort attrition.",
+      simple: "Rocket Explosion: To make the AI smarter, we doubled risk multipliers. But exponential math caused high-risk customers to cancel at 40%/month, breaking real-world insurance rules."
+    },
+    rootCause: {
+      tech: "In an additive hazard model, doubling beta exponentially scales upper-tail hazard (exp(2) ~ 7.4x, exp(3) ~ 20x). High-risk customers vanished in months 1-3, destroying survival dynamics.",
+      simple: "Exponential math behaves like an explosion: turning up the volume dial just enough to help the detector blasted through real-world life insurance physics."
+    },
+    decision: {
+      tech: "Qualification gate triggered mechanical 'redesign'. Blocked R2-15 acceptance. ADR 0008 authorized 17 diagnostics and exhaustive 320-cell feasibility surface.",
+      simple: "Stopped immediately. Set up an exhaustive 320-point computer search to test if ANY combination of this formula could work."
+    }
+  },
+  {
+    generation: "Generation v5",
+    phase: "Phases 2R.14B – 2R.14BB",
+    title: "Feasibility Surface & Mathematical Proof of Infeasibility",
+    badgeClass: "status-stop",
+    statusText: "Architectural STOP (0 of 320 Cells Feasible)",
+    adr: "ADR 0009 • ADR 0010 • ADR 0011 Stop Infeasible Design",
+    formula: "λ_lapse(t) + λ_surrender(t) < 0.20   VS   AUC >= 0.70 & AP_lift >= 0.10 [The Catch-22]",
+    failure: {
+      tech: "0 of 320 Cartesian feasibility grid cells satisfied simultaneous recovery (AUC >= 0.70, AP lift >= 0.10) and hazard ceiling (< 0.20) constraints.",
+      simple: "The Final Catch-22: The computer tested all 320 possible combinations. Exactly ZERO worked! Safe hazards meant blind AI (57% AUC); smart AI meant blown hazard ceilings (>20%)."
+    },
+    rootCause: {
+      tech: "Mathematical proof of the Proportional Hazards Trilemma: The additive exponential hazards link has no feasible parameter space under life-insurance monthly event bounds.",
+      simple: "The Catch-22 is mathematically unsolvable with this formula: the exponential link (e^Score) is fundamentally the wrong shape for bounded life insurance risk."
+    },
+    decision: {
+      tech: "Adopted causal response 'stop_infeasible_design' under Contract 1.1.0 Section 10. Proposed ADR 0011 permanently stopping proportional hazards track. Next pivot requires bounded sigmoid link or state machine.",
+      simple: "Recorded ADR 0011 on main: permanently documenting the mathematical proof so future engineers don't waste time on a dead end. Pivoting to bounded non-exponential formulas."
+    }
   }
 ];
 
@@ -331,6 +550,7 @@ function initApp() {
   bindEvents();
   renderTimeline();
   renderRoadblocks();
+  renderIterationMatrix();
   updateExplainerTexts();
 }
 
@@ -379,6 +599,7 @@ function setExplainerMode(mode) {
   updateExplainerTexts();
   renderTimeline();
   renderRoadblocks();
+  renderIterationMatrix();
 }
 
 function updateExplainerTexts() {
@@ -485,6 +706,58 @@ function renderRoadblocks() {
           <p class="text-dynamic">
             ${state.explainerMode === 'simple' ? rb.pivot.simple : rb.pivot.tech}
           </p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderIterationMatrix() {
+  const container = document.getElementById('iterationMatrixContainer');
+  if (!container) return;
+
+  container.innerHTML = iterationMatrixData.map(item => `
+    <div class="iteration-card ${item.badgeClass}">
+      <div class="iteration-card-header">
+        <div class="iteration-title-group">
+          <div class="iteration-gen-tag">${item.generation} • ${item.phase}</div>
+          <h3 class="iteration-card-title">${item.title}</h3>
+        </div>
+        <div class="iteration-badge ${item.badgeClass}">${item.statusText}</div>
+      </div>
+
+      <div class="iteration-formula-box">
+        <span class="iteration-formula-label">Formula / Rule:</span>
+        <code>${item.formula}</code>
+      </div>
+
+      <div class="iteration-cols-3">
+        <div class="iter-box failure">
+          <div class="iter-box-title">
+            <span>❌</span> What Failed
+          </div>
+          <p class="text-dynamic">
+            ${state.explainerMode === 'simple' ? item.failure.simple : item.failure.tech}
+          </p>
+        </div>
+
+        <div class="iter-box root-cause">
+          <div class="iter-box-title">
+            <span>🔍</span> Root Cause & Math Driver
+          </div>
+          <p class="text-dynamic">
+            ${state.explainerMode === 'simple' ? item.rootCause.simple : item.rootCause.tech}
+          </p>
+        </div>
+
+        <div class="iter-box decision">
+          <div class="iter-box-title">
+            <span>⚖️</span> Strategic Decision & ADR
+          </div>
+          <p class="text-dynamic">
+            ${state.explainerMode === 'simple' ? item.decision.simple : item.decision.tech}
+          </p>
+          <div class="iter-adr-tag">${item.adr}</div>
         </div>
       </div>
     </div>
