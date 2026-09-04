@@ -75,27 +75,28 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-14A | Phase 2R post-v4 extension | Close out v4 and authorize bounded v5 diagnostics | Completed | Issue #76 and PR #77 merged as `52c03c8`; ADR 0008 and contract `1.0.0` freeze the 17-diagnostic inventory and disjoint seed domains. |
 | R2-14B | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Completed — readiness stop | Issue #78 and PR #79 merged as `3088c4c`; readiness stopped with `stop_contract_not_executable` under accepted ADR 0009; zero units executed, hypotheses unresolved, seeds 20280101..20280120 unspent. |
 | R2-14BA | Phase 2R post-v4 extension | Close out R2-14B readiness stop and approve amended diagnostic authorization contract | Completed | Issue #80 and PR #81 merged as `627e698`; ADR 0010 accepted and contract `1.1.0` approved; Phase 2R.14BB unblocked. |
-| R2-14BB | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Implemented locally | Issue #82; all 120 inventory units and 320 feasibility surface cells evaluated under Contract `1.1.0`; H1 supported, H3-H5 rejected, H6 infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds); causal response `stop_infeasible_design`; proposed ADR 0011. |
+| R2-14BB | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Completed | Issue #82; PR #83 merged as `464a4fd` and PR #84 merged as `3a7c890`; all 120 inventory units and 320 feasibility surface cells evaluated under Contract `1.1.0`; H1 supported, H3-H5 rejected, H6 infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds); causal response `stop_infeasible_design` recorded in ADR 0011; iteration ledger and Web UI component published. |
+| CI-01 | Infrastructure / CI | Parallelize CI across 4 concurrent jobs, enable pip caching, and prevent duplicate triggers | Completed | PR #85 merged as `afdcb5f`; wall-clock CI reduced from ~20m to ~3.5–4.5m with zero test loss. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until a replacement acceptance gate records merged `proceed`; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 through R2-14BA are merged. Under Issue #82, Phase 2R.14BB executed all 17 diagnostics across 120 inventory units (development seeds `20280101..20280120`) and evaluated the 320-cell feasibility surface (`D16` / `D17`) under Contract `1.1.0`. Dispositions: `H1` supported, `H2` unresolved, `H3` rejected, `H4` rejected, `H5` rejected, `H6` infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds). The mechanical response is `stop_infeasible_design` and is recorded in proposed ADR 0011. R2-14C and downstream work remain blocked; reserved acceptance and the final holdout remain `not_materialized`.
+R2-08 through R2-14BB are merged on `main`. Under Issue #82, Phase 2R.14BB executed all 17 diagnostics across 120 inventory units (development seeds `20280101..20280120`) and evaluated the 320-cell feasibility surface (`D16` / `D17`) under Contract `1.1.0`. Dispositions: `H1` supported, `H2` unresolved, `H3` rejected, `H4` rejected, `H5` rejected, `H6` infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds). The mechanical response is `stop_infeasible_design` and is recorded in ADR 0011. R2-14C and downstream work remain blocked; reserved acceptance and the final holdout remain `not_materialized`. PR #85 optimized GitHub CI into 4 parallel jobs with pip caching, reducing run time from ~20m to ~3.5-4.5m.
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 32 |
-| In-progress / implemented locally changes | 1 |
+| Completed tracked changes | 34 |
+| In-progress / implemented locally changes | 0 |
 | Planned changes | 1 |
 | Changes needing confirmation | 1 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
-| Completed Phase 2R increments | 18 of 20 (R2-14BB implemented locally) |
-| In-progress Phase 2R increments | 1 of 20 |
-| Planned Phase 2R increments | 1 of 20 (R2-14C blocked) |
-| Next implementation increment | PR closeout for Phase 2R.14BB (Issue #82) |
+| Completed Phase 2R increments | 19 of 20 (R2-00 through R2-14BB) |
+| In-progress Phase 2R increments | 0 of 20 |
+| Planned Phase 2R increments | 1 of 20 (R2-14C blocked by ADR 0011) |
+| Next implementation increment | Phase 2R closeout / architectural direction decision after ADR 0011 |
 
 
 | ID | Status | Impact | Resolution trigger |

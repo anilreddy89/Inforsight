@@ -64,7 +64,8 @@ Current release milestone: [**v0.2.0-risk-model**](https://github.com/anilreddy8
 | R2-14A | Phase 2R — post-v4 diagnostic governance | Close out v4 and authorize bounded v5 diagnostics. | Completed | [#76](https://github.com/anilreddy89/Inforsight/issues/76) | [#77](https://github.com/anilreddy89/Inforsight/pull/77) | 2026-09-03 | `52c03c8` | ADR 0008; diagnostic contract `1.0.0`; [phase document](../phase_docs/phase-02r-14a-v4-closeout-and-v5-diagnostic-authorization.md) | Documentation-only closeout merged with both hosted CI runs passing; no diagnostic result, acceptance access, or final holdout. |
 | R2-14B | Phase 2R — v5 diagnostic execution and design | Validate the frozen post-v4 diagnostic boundary before result-producing execution. | Completed — readiness stop | [#78](https://github.com/anilreddy89/Inforsight/issues/78) | [#79](https://github.com/anilreddy89/Inforsight/pull/79) | 2026-09-03 | `3088c4c` | Readiness-only manifest, report, hypothesis disposition, accepted ADR 0009; [phase document](../phase_docs/phase-02r-14b-v5-redesign-diagnostics-and-design.md) | Contract `1.0.0` lacked mechanical H1-H5 disposition thresholds; zero result units executed, all hypotheses unresolved, seeds 20280101..20280120 unspent. |
 | R2-14BA | Phase 2R — diagnostic contract amendment | Close out R2-14B readiness stop and approve amended diagnostic authorization contract. | Completed | [#80](https://github.com/anilreddy89/Inforsight/issues/80) | [#81](https://github.com/anilreddy89/Inforsight/pull/81) | 2026-09-03 | `627e698` | ADR 0010; amended diagnostic contract `1.1.0`; [phase document](../phase_docs/phase-02r-14ba-r2-14b-closeout-and-diagnostic-contract-amendment.md) | Freezes mechanical H1-H5 disposition truth tables and quantitative thresholds; seeds `20280101..20280120` authorized for Phase 2R.14BB execution. |
-| R2-14BB | Phase 2R — v5 diagnostic execution and design | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface. | Implemented locally | [#82](https://github.com/anilreddy89/Inforsight/issues/82) | TBD | 2026-09-03 | Pending merge | 120 inventory units, 320-cell feasibility surface, H1-H6 dispositions, proposed ADR 0011 | Dispositions: `H1` supported, `H3`–`H5` rejected, `H6` infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds); causal response `stop_infeasible_design`. R2-14C remains blocked. |
+| R2-14BB | Phase 2R — v5 diagnostic execution and design | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface. | Completed | [#82](https://github.com/anilreddy89/Inforsight/issues/82) | [#83](https://github.com/anilreddy89/Inforsight/pull/83), [#84](https://github.com/anilreddy89/Inforsight/pull/84) | 2026-09-03 | `464a4fd`, `3a7c890` | 120 inventory units, 320-cell feasibility surface, H1-H6 dispositions, ADR 0011, iteration ledger, Roadmap Web UI | Dispositions: `H1` supported, `H3`–`H5` rejected, `H6` infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds); causal response `stop_infeasible_design` recorded in ADR 0011; iteration ledger and Web UI published. R2-14C remains blocked. |
+| CI-01 | Infrastructure / CI | Parallelize CI across 4 concurrent jobs, enable pip caching, and prevent duplicate triggers. | Completed | — | [#85](https://github.com/anilreddy89/Inforsight/pull/85) | 2026-09-03 | `afdcb5f` | `.github/workflows/ci.yml`, `Makefile`, 4 parallel jobs + `scaffold-checks` gate | Reduces CI runtime from ~20m to ~3.5–4.5m with zero test loss; prevents duplicate push/PR runs. |
 | P2-09 | Phase 2 — Baseline ML | Publish SHAP or equivalent attribution examples and feature sanity checks. | Paused | TBD | TBD | After R2-11 and P2-08 | — | Explanation examples with model-behavior and action-authority boundaries | Paused; do not substantively interpret v1 seed-noise behavior. |
 | P2-10 | Phase 2 — Baseline ML | Version training configuration, dependencies, feature contract, split manifest, metrics, and model artifacts. | Pending | TBD | TBD | TBD | — | Reproducible training and scoring commands with artifact provenance | Applies to both baseline and boosted model. |
 | P2-11 | Phase 2 — Baseline ML | Publish `MODEL_CARD.md`, experiment report, and Phase 2 model decision note. | Pending | TBD | TBD | TBD | — | Model comparison, limitations, calibration and threshold evidence, explanations, and acceptance-gate decision | Completes Phase 2 only when held-out temporal scoring is leakage-safe and reproducible. |
@@ -89,20 +90,20 @@ Inforsight has a strong and repeatable v1 pipeline-engineering foundation. Phase
 11. `LIM-002-004` records that the historical v2 behavior features can include post-cutoff ingested values; R2-09 implements the event-first v3 correction, while evaluation and acceptance evidence remain pending through R2-10/R2-11.
 12. R2-07 records `stop` before model fitting; R2-08/R2-09 provide the historical v3.0 substrate; issues #60/#61 version remediation and downstream evidence to simulator `3.1.0`, evaluation `3.2.0`, and protocol `2.2.0`; P2-08 and P2-09 remain paused through R2-11.
 
-In one sentence: Under Issue #82, Phase 2R.14BB executed all 17 diagnostics across 120 inventory units and the 320-cell feasibility surface (`D16` / `D17`), mechanically deriving dispositions `H1` supported, `H3`–`H5` rejected, and `H6` infeasible (0/320 cells meet simultaneous constraints), and recording causal response `stop_infeasible_design` in proposed ADR 0011.
+In one sentence: Under Issue #82, Phase 2R.14BB executed all 17 diagnostics across 120 inventory units and the 320-cell feasibility surface (`D16` / `D17`), mechanically deriving dispositions `H1` supported, `H3`–`H5` rejected, and `H6` infeasible (0/320 cells meet simultaneous constraints), and recording causal response `stop_infeasible_design` in ADR 0011; PR #85 optimized CI runtime from ~20m to ~3.5-4.5m with zero test loss.
 
 
 | Measure | Value |
-| Completed tracked changes | 34 |
-| Implemented locally changes | 1 |
+| Completed tracked changes | 36 |
+| Implemented locally changes | 0 |
 | Planned changes | 1 |
 | Paused changes | 2 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
-| Completed Phase 2R increments | R2-00 through R2-14BA |
-| Active Phase 2R increment | None (R2-14BB planned) |
-| Next implementation increment | Phase 2R.14BB: Execute bounded post-v4 redesign diagnostics under amended contract 1.1.0 |
+| Completed Phase 2R increments | R2-00 through R2-14BB |
+| Active Phase 2R increment | None (R2-14C blocked by ADR 0011) |
+| Next implementation increment | Phase 2R closeout / architectural direction decision after ADR 0011 |
 
 ## Latest verification baseline
 
