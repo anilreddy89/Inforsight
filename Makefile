@@ -1,15 +1,19 @@
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap check-contracts check-v1-v3 check-v4-v5
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap check-contracts check-v1-v3 check-v4-v5 probability-calibration-check
 
 serve-roadmap:
 	python3 scripts/serve_roadmap.py
 
-check: check-contracts check-v1-v3 check-v4-v5 simulator-test
+check: check-contracts check-v1-v3 check-v4-v5 probability-calibration-check simulator-test
 
 check-contracts: boundary-check dataset-check contract-test r2-08-design-check r2-12-diagnostic-contract-check r2-14a-diagnostic-contract-check r2-14ba-diagnostic-contract-check r2-14c-contract-check
 
 check-v1-v3: assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check v3-corpus-check v3-evaluation-check v3-acceptance-check
 
 check-v4-v5: r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14b-diagnostic-check r2-14bb-diagnostic-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check
+
+probability-calibration-check:
+	python3 scripts/run_probability_calibration.py --check
+	python3 -m unittest simulator.tests.test_probability_calibration -v
 
 v6-acceptance-check:
 	python3 scripts/run_v6_statistical_acceptance.py --readiness-check >/dev/null
