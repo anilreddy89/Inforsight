@@ -8,9 +8,10 @@ permissions:
   contents: read
 
 jobs:
-  scaffold-checks:
+  boundary-and-contracts:
+    name: Boundary & Contracts
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -19,9 +20,36 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: |
+            data-contracts/requirements-test.txt
+            simulator/pyproject.toml
 
-      - name: Validate repository boundaries
-        run: ./scripts/check_repository_boundaries.sh
+      - name: Install contract test dependencies
+        run: python -m pip install -r data-contracts/requirements-test.txt
+
+      - name: Install simulator package
+        run: python -m pip install -e simulator
+
+      - name: Run boundary and contract checks
+        run: make check-contracts
+
+  v1-v3-pipeline-checks:
+    name: Generations v1-v3 Pipeline Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: |
+            data-contracts/requirements-test.txt
+            simulator/pyproject.toml
 
       - name: Install contract test dependencies
         run: python -m pip install -r data-contracts/requirements-test.txt
@@ -29,5 +57,70 @@ jobs:
       - name: Install simulator and modeling dependencies
         run: python -m pip install -e simulator
 
-      - name: Run repository checks
-        run: make check
+      - name: Run v1-v3 pipeline checks
+        run: make check-v1-v3
+
+  v4-v5-diagnostics-checks:
+    name: Generations v4-v5 Diagnostics & Qualification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: |
+            data-contracts/requirements-test.txt
+            simulator/pyproject.toml
+
+      - name: Install contract test dependencies
+        run: python -m pip install -r data-contracts/requirements-test.txt
+
+      - name: Install simulator and modeling dependencies
+        run: python -m pip install -e simulator
+
+      - name: Run v4-v5 diagnostics and qualification checks
+        run: make check-v4-v5
+
+  simulator-unit-tests:
+    name: Simulator Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: |
+            data-contracts/requirements-test.txt
+            simulator/pyproject.toml
+
+      - name: Install contract test dependencies
+        run: python -m pip install -r data-contracts/requirements-test.txt
+
+      - name: Install simulator and modeling dependencies
+        run: python -m pip install -e simulator
+
+      - name: Run complete simulator unit test suite
+        run: make simulator-test
+
+  scaffold-checks:
+    name: CI Completion Gate (scaffold-checks)
+    needs:
+      - boundary-and-contracts
+      - v1-v3-pipeline-checks
+      - v4-v5-diagnostics-checks
+      - simulator-unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Confirm all checks passed
+        run: echo "All parallel CI validation jobs passed successfully."
