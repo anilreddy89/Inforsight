@@ -31,6 +31,16 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-14-v4-qualification-*` — issue-#72 aggregate development evidence for all 20 frozen v4 seeds. Driver support, exact parity, matched-null behavior, and structural controls pass, while observable recovery, probability quality, reference recovery, and the `<0.20` hazard bound fail. The mechanical decision is `redesign`; R2-15 and acceptance remain blocked.
 - `phase-02r-14b-v5-redesign-diagnostic-*` — merged issue-#78/PR-#79 readiness-only stop evidence. Contract `1.0.0` lacked mechanical H1-H5 disposition thresholds, so execution was unauthorized: 0/120 inventory units and 0/320 D16 cells executed, all hypotheses remain unresolved, and the response is `stop_contract_not_executable`. Accepted ADR 0009 records the stop; Phase 2R.14BA issue #80 amends the contract before Phase 2R.14BB execution. R2-14C remains blocked and reserved acceptance/final holdout remain `not_materialized`.
 - `phase-02r-14bb-v5-redesign-diagnostic-*` — issue-#82 aggregate development evidence for all 20 development seeds (120 inventory units) and exhaustive 320-cell feasibility surface (`D16 / D17`) under Contract `1.1.0`. `H1_LOG_HAZARD_SPREAD` is supported (insufficient public observable spread); `H3_PROBABILITY_SCALE`, `H4_REFERENCE_SPECIFICATION`, and `H5_HAZARD_TAIL` are rejected; `H6_DESIGN_FEASIBILITY` is infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds). The mechanical response is `stop_infeasible_design`; proposed ADR 0011 records the stop. R2-14C remains blocked; reserved acceptance and final holdout remain `not_materialized`.
+- `phase-02-08-probability-calibration-manifest.json` — deterministic Phase 2.08 probability calibration evidence, Platt scaling and isotonic regression parameters, out-of-sample calibration metrics (ECE: `0.0115`, slope: `0.9498`, intercept: `-0.1155`, Brier: `0.1211`, AUC: `0.6998`), operational review capacity trade-offs (Top 1% through 20%) with 1,000 policy-cluster bootstrap 95% CIs, Decision Curve Analysis across cost ratios, and risk tiers.
+- `phase-02-08-probability-calibration-report.md` — human-readable probability calibration report, reliability diagrams, model comparison tables, review capacity curves, and cost-benefit utility analysis.
+
+Regenerate or verify the Phase 2.08 probability calibration evidence with:
+
+```bash
+python3 scripts/run_probability_calibration.py --write
+python3 scripts/run_probability_calibration.py --check
+make probability-calibration-check
+```
 
 Regenerate or verify the Phase 2R.06 evidence with:
 
