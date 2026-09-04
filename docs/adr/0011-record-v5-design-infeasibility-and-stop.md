@@ -1,6 +1,6 @@
 # ADR 0011: Record post-v4 redesign diagnostic findings, v5 design infeasibility, and stop
 
-- Status: Proposed through [issue #82](https://github.com/anilreddy89/Inforsight/issues/82)
+- Status: Accepted through [issue #82](https://github.com/anilreddy89/Inforsight/issues/82) and [PR #83](https://github.com/anilreddy89/Inforsight/pull/83), merge commit `464a4fd`
 - Date: 2026-09-03
 - Decision owner: Anil Jonnala
 - Trigger: Execution of bounded post-v4 redesign diagnostics under Contract `1.1.0` and ADR 0010
