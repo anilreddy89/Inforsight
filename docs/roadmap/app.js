@@ -376,12 +376,12 @@ const timelineData = [
         id: "P2-08",
         title: "Probability Calibration & Operational Thresholds",
         status: "Completed",
-        commit: "feat/96-p2-08-probability-calibration",
+        commit: "3abb044",
         summary: {
           tech: "Contract 1.0.0. Evaluated Platt scaling and isotonic calibration on candidate Logistic Regression (seed 20260817, C=1.0, L2) strictly on 8,560 calibration rows of seed 20280201. Platt scaling selected (ECE 0.0115 <= 0.0300, calibration slope 0.9498 within [0.85, 1.15], Brier score 0.1211, AUC 0.6998 preserving rank order). Established 4 operational risk tiers and triage queues (Top 1% achieves 34.09% precision / 2.23x lift; Top 5% intercepts 11.57% of population lapses / 2.31x lift; Top 20% intercepts 36.64% lapses). 1,000 policy-cluster bootstrap CIs and net benefit decision curves verified. Final holdout strictly not_materialized.",
           simple: "Probability Calibration & Review Queues: Converted raw AI scores into reliable, true real-world percentages using Platt scaling (error dropped to 1.15% ECE with perfect rank preservation). Created operational triage tiers: auditing the top 1% highest-risk policies yields 34.1% true cancellations (2.23x better than random), and checking the top 5% catches 11.6% of all cancellations."
         },
-        checks: "Contract 1.0.0; Issue #96; fit strictly on calibration role partition (8,560 rows); evaluated out-of-sample on non_final_evaluation (8,782 rows); final holdout strictly not_materialized; bit-for-bit check passes."
+        checks: "Issue #96 & PR #97 merged (commit 3abb044); Contract 1.0.0; fit strictly on calibration role partition (8,560 rows); evaluated out-of-sample on non_final_evaluation (8,782 rows); final holdout strictly not_materialized; bit-for-bit check passes; authorizes P2-09."
       }
     ]
   }

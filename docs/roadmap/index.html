@@ -19,7 +19,7 @@
       <div class="brand-group">
         <div class="brand-logo-mark">I</div>
         <div class="brand-text">
-          <div class="brand-title">Inforsight <span class="badge badge-version">v6 (Accepted — PROCEED)</span></div>
+          <div class="brand-title">Inforsight <span class="badge badge-version">v6 Accepted • P2-08 Calibrated</span></div>
           <div class="brand-tagline">See Risk. Shape Action. Honest AI for life insurance conservation.</div>
         </div>
       </div>
@@ -151,8 +151,8 @@
           <div class="story-icon">🏆</div>
           <h4>The Engineering Pivot</h4>
           <p class="text-dynamic"
-             data-simple="We proved mathematically why proportional hazards failed (0/320 cells), qualified a bounded sigmoid link (ADR 0012), and passed all 20 blind acceptance seeds with 0.7031 AUC to earn a mechanical PROCEED (ADR 0013)!"
-             data-tech="Proved Trilemma infeasibility across 320 cells (ADR 0011), qualified bounded sigmoid link (ADR 0012), and passed 20-seed statistical acceptance under Protocol 3.1.0 (ADR 0013) with mechanical PROCEED.">
+             data-simple="We proved mathematically why proportional hazards failed (0/320 cells), qualified a bounded sigmoid link (ADR 0012), passed all 20 blind acceptance seeds with 0.7031 AUC (ADR 0013), and successfully calibrated probabilities with operational triage tiers (P2-08)!"
+             data-tech="Proved Trilemma infeasibility across 320 cells (ADR 0011), qualified bounded sigmoid link (ADR 0012), passed 20-seed statistical acceptance under Protocol 3.1.0 (ADR 0013), and completed Phase 2.08 probability calibration with operational review queues.">
           </p>
         </div>
       </div>
@@ -609,6 +609,46 @@
           </div>
         </div>
 
+        <!-- Threshold 5: Probability Calibration Quality (ECE <= 0.0300 & Slope in [0.85, 1.15]) -->
+        <div class="threshold-card">
+          <div class="th-header">
+            <div class="th-badge pass">Passed in Phase 2.08 (Platt Scaling)</div>
+            <div class="th-title">5. Calibration Quality (ECE &le; 0.0300 &amp; Slope &isin; [0.85, 1.15])</div>
+            <div class="th-target">Target: <strong>ECE &le; 0.0300 | Slope &isin; [0.85, 1.15]</strong> | Observed: <strong>ECE 0.0115 | Slope 0.9498</strong></div>
+          </div>
+
+          <div class="gauge-wrapper">
+            <div class="gauge-bar-bg">
+              <div class="zone zone-target" style="width: 30%;">Calibrated (&le; 0.03)</div>
+              <div class="zone zone-weak" style="width: 30%;">Miscalibrated</div>
+              <div class="zone zone-coin" style="width: 40%;">Severe Error (&gt; 0.06)</div>
+              <div class="gauge-marker marker-actual" style="left: 11.5%;" title="Observed ECE: 0.0115">
+                <span class="marker-label">Observed: 0.0115</span>
+              </div>
+              <div class="gauge-marker marker-target" style="left: 30%;" title="Target: 0.0300">
+                <span class="marker-label">Target: 0.0300</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="th-explanation">
+            <div class="th-box why-chosen">
+              <strong>Why &le; 0.0300 ECE was chosen:</strong>
+              <p class="text-dynamic"
+                 data-simple="If an AI says 100 people have a 20% chance of canceling, roughly 20 of them should actually cancel. Expected Calibration Error (ECE) &le; 0.03 means the model's confidence is off by no more than 3 percentage points, so conservation teams can trust the probabilities when allocating retention budgets."
+                 data-tech="Expected Calibration Error (ECE) with 10 quantile bins measures the mean gap between predicted posterior probability and empirical lapse prevalence. Threshold &le; 0.0300 and slope in [0.85, 1.15] ensure posterior risk probabilities map monotonically and accurately to actuarial loss distributions without over- or under-confidence.">
+              </p>
+            </div>
+            <div class="th-box what-happened">
+              <strong>What actually happened in Phase 2.08:</strong>
+              <p class="text-dynamic"
+                 data-simple="Platt scaling fit on 8,560 separate calibration policies produced an outstanding 0.0115 ECE (1.15% error) and 0.9498 slope on 8,782 out-of-sample policies, beating the target with zero loss in ranking accuracy (0.6998 AUC preserved exactly)!"
+                 data-tech="Platt Scaling (A=0.9618, B=-0.0334) fit strictly on calibration role policies and evaluated out-of-sample on non_final_evaluation (8,782 rows). ECE dropped to 0.0115 (&le; 0.0300), calibration slope hit 0.9498 (&isin; [0.85, 1.15]), Brier score improved to 0.1211, and ROC AUC maintained exact rank preservation (0.6998, &Delta; &le; 1e-6).">
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -782,8 +822,8 @@
         </div>
 
         <div class="chart-caption text-dynamic"
-             data-simple="Key Takeaway: In Generation v6 Acceptance (Phase 2R.16A), the frozen model decisively cleared our 0.65 target threshold across all 20 blind acceptance seeds (0.7031 median AUC, 20/20 seed consistency). With all 10 rule families satisfied under Protocol 3.1.0, the mechanical decision is PROCEED, officially completing Phase 2R!"
-             data-tech="Key Takeaway: Generation v6 Statistical Acceptance (Phase 2R.16A) achieves 0.7031 median ROC-AUC with Logistic Regression across 20 reserved acceptance seeds (all 20 seeds exceeding the 0.65 target). Under Protocol 3.1.0 (ADR 0013), all 10 rule families passed with zero diagnostic flags, deriving mechanical decision PROCEED and unpausing Phase 2 for P2-08.">
+             data-simple="Key Takeaway: In Generation v6 Acceptance (Phase 2R.16A), the frozen model cleared our 0.65 target across all 20 blind test seeds (0.7031 median AUC). In Phase 2.08, Platt scaling calibrated raw predictions into reliable real-world probabilities (0.0115 ECE) while preserving 100% of ranking accuracy (0.6998 AUC) and establishing operational triage tiers!"
+             data-tech="Key Takeaway: Generation v6 Statistical Acceptance (Phase 2R.16A) achieves 0.7031 median ROC-AUC with Logistic Regression across 20 reserved acceptance seeds under Protocol 3.1.0 (ADR 0013). Phase 2.08 successfully fit Platt calibration on designated calibration data (ECE 0.0115 <= 0.0300, slope 0.9498, AUC 0.6998 exact preservation), establishing operational review queues and risk tiers.">
         </div>
       </div>
 
