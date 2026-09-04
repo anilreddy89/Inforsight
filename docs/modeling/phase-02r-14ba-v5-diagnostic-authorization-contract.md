@@ -7,7 +7,7 @@
 | Phase | R2-14BA |
 | Issue | [#80](https://github.com/anilreddy89/Inforsight/issues/80) |
 | Contract version | `1.1.0` |
-| Status | Proposed; result-producing execution remains blocked until merge |
+| Status | Accepted through issue #80 and PR #81, merge commit `627e698`; execution authorized for Phase 2R.14BB |
 | Governing decision | ADR 0010 |
 | Predecessor merge | `3088c4c` |
 | Trigger evidence | R2-14B readiness stop, protocol `3.0.0`, ADR 0009 |
