@@ -101,7 +101,7 @@ R2-08 through R2-16 are merged on `main`. Phase 2R.16 executed the Generation v6
 | In-progress Phase 2R increments | 0 of 23 |
 | Planned Phase 2R increments | 0 of 23 |
 | Active Phase 2R increment | None (R2-16 merged with mechanical decision `redesign`) |
-| Next implementation increment | Focused remediation issue / protocol amendment for secondary acceptance rules |
+| Next implementation increment | Phase 2R.16A (Acceptance protocol remediation and Protocol 3.1.0 amendment) |
 
 
 | ID | Status | Impact | Resolution trigger |

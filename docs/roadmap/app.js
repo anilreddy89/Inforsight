@@ -356,7 +356,7 @@ const timelineData = [
         checks: "Issue #92 & PR #93 merged; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: redesign."
       },
       {
-        id: "R2-17",
+        id: "R2-16A",
         title: "Acceptance Remediation & Protocol 3.1.0 Amendment (ADR 0013)",
         status: "Planned",
         commit: "TBD",
@@ -364,7 +364,7 @@ const timelineData = [
           tech: "Adopt ADR 0013 and approve Statistical Acceptance Protocol 3.1.0 to address finite-sample binomial coverage, quadrature discretization tolerance (0.0100), and learning curve non-degradation while preserving all primary recovery gates. Re-evaluate 120 inventory units.",
           simple: "Calibration Tune-Up: Addressing the 4 strict secondary quality checks with mathematically grounded calibration rules (matching standard binomial probability and numerical integration limits) while keeping all core accuracy targets unchanged."
         },
-        checks: "Planned under Phase 2R.17; ADR 0013 & Protocol 3.1.0; re-evaluates 120 inventory units across seeds 20271201..20271220."
+        checks: "Planned under Phase 2R.16A; ADR 0013 & Protocol 3.1.0; re-evaluates 120 inventory units across seeds 20271201..20271220."
       }
     ]
   }

@@ -1,15 +1,15 @@
-# Phase 2R.17 — Generation v6 Acceptance Remediation and Protocol 3.1.0 Amendment
+# Phase 2R.16A — Generation v6 Acceptance Remediation and Protocol 3.1.0 Amendment
 
 ## Issue metadata
 
 | Field | Value |
 | --- | --- |
 | Phase | Phase 2R — Modeling Foundation Remediation Gate, Acceptance Protocol Remediation |
-| Sequence | R2-17 |
-| Change tracker ID | `R2-17` |
+| Sequence | R2-16A |
+| Change tracker ID | `R2-16A` |
 | GitHub issue | TBD |
-| Issue title | `[Implementation] R2-17: Adopt ADR 0013 and Protocol 3.1.0 for Generation v6 statistical acceptance` |
-| Branch | `feat/r2-17-acceptance-protocol-amendment` |
+| Issue title | `[Implementation] R2-16A: Adopt ADR 0013 and Protocol 3.1.0 for Generation v6 statistical acceptance` |
+| Branch | `feat/r2-16a-acceptance-protocol-amendment` |
 | Pull request | TBD |
 | Status | Planned |
 | Milestone | `v0.2.0-risk-model` |
@@ -33,7 +33,7 @@
 
 ## 1. Objective and Executive Summary
 
-Phase 2R.17 addresses the mechanical `redesign` outcome of Phase 2R.16 by adopting **ADR 0013** and approving **Statistical Acceptance Protocol `3.1.0`**.
+Phase 2R.16A addresses the mechanical `redesign` outcome of Phase 2R.16 by adopting **ADR 0013** and approving **Statistical Acceptance Protocol `3.1.0`**.
 
 In Phase 2R.16, the Generation v6 bounded sigmoid architecture achieved **complete scientific success on all primary recovery criteria**:
 - **Candidate Median ROC AUC**: **0.7031** (threshold $\ge 0.6800$)
@@ -48,7 +48,7 @@ In Phase 2R.16, the Generation v6 bounded sigmoid architecture achieved **comple
 
 However, the protocol derived a mechanical decision of **`redesign`** solely because 4 fine-grained secondary quality checks missed strict mathematical thresholds due to finite-sample and numerical discretization effects.
 
-Phase 2R.17 formally analyzes these 4 rule families, establishes mathematically defensible calibration tolerances in **Protocol `3.1.0`**, amends the execution contract to version `3.1.0`, updates the acceptance engine, and executes the re-evaluation across the 20 acceptance seeds.
+Phase 2R.16A formally analyzes these 4 rule families, establishes mathematically defensible calibration tolerances in **Protocol `3.1.0`**, amends the execution contract to version `3.1.0`, updates the acceptance engine, and executes the re-evaluation across the 20 acceptance seeds.
 
 ---
 
@@ -89,7 +89,7 @@ Phase 2R.17 formally analyzes these 4 rule families, establishes mathematically 
 1. **ADR 0013**:
    - Create `docs/adr/0013-amend-v6-statistical-acceptance-protocol.md` documenting the mathematical analysis, options, and approved changes.
 2. **Protocol Amendment**:
-   - Update `docs/modeling/phase-02r-16-v6-statistical-acceptance-execution-contract.md` to version `3.1.0` (or publish `docs/modeling/phase-02r-17-v6-acceptance-protocol-3-1-0.md`).
+   - Update `docs/modeling/phase-02r-16-v6-statistical-acceptance-execution-contract.md` to version `3.1.0` (or publish `docs/modeling/phase-02r-16a-v6-acceptance-protocol-3-1-0.md`).
 3. **Acceptance Engine Update**:
    - Update `simulator/src/inforsight_simulator/v6_acceptance.py` to evaluate Protocol `3.1.0` thresholds.
 4. **Acceptance Test Suite Update**:
@@ -122,7 +122,7 @@ Phase 2R.17 formally analyzes these 4 rule families, establishes mathematically 
 ## 5. Copy-Ready GitHub Issue Template
 
 ```yaml
-title: "[Implementation] R2-17: Adopt ADR 0013 and Protocol 3.1.0 for Generation v6 statistical acceptance"
+title: "[Implementation] R2-16A: Adopt ADR 0013 and Protocol 3.1.0 for Generation v6 statistical acceptance"
 labels: ["remediation", "gate", "statistical-acceptance"]
 body:
   - type: markdown
@@ -136,7 +136,7 @@ body:
     attributes:
       label: Work and release metadata
       value: |
-        Backlog work ID: R2-17
+        Backlog work ID: R2-16A
         Milestone: v0.2.0-risk-model
         Phase: Phase 2R — Modeling Foundation Remediation Gate, Acceptance Protocol Remediation
         Strict predecessor: Phase 2R.16 (PR #93, merge commit 82e767f)
