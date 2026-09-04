@@ -19,7 +19,7 @@
       <div class="brand-group">
         <div class="brand-logo-mark">I</div>
         <div class="brand-text">
-          <div class="brand-title">Inforsight <span class="badge badge-version">v5 (R2-14BB Diagnostics Complete)</span></div>
+          <div class="brand-title">Inforsight <span class="badge badge-version">v6 (R2-14D Substrate Qualified)</span></div>
           <div class="brand-tagline">See Risk. Shape Action. Honest AI for life insurance conservation.</div>
         </div>
       </div>
@@ -86,12 +86,12 @@
 
         <div class="hero-stats-grid">
           <div class="stat-card">
-            <div class="stat-num highlight-cyan">34</div>
+            <div class="stat-num highlight-cyan">36</div>
             <div class="stat-label">Merged Code Increments</div>
             <div class="stat-sub">100% verified with automated tests</div>
           </div>
           <div class="stat-card">
-            <div class="stat-num highlight-green">347</div>
+            <div class="stat-num highlight-green">357</div>
             <div class="stat-label">Automated Safety Tests</div>
             <div class="stat-sub">Zero future data leaks tolerated</div>
           </div>
@@ -384,8 +384,14 @@
               <tr>
                 <td><code>0011</code></td>
                 <td>Record v5 Design Infeasibility Stop</td>
-                <td><span class="badge badge-active">Proposed (#82)</span></td>
-                <td>Proved that 0/320 feasibility cells work; halted proportional hazards implementation track permanently.</td>
+                <td><span class="badge badge-success">Accepted</span></td>
+                <td>Proved that 0/320 feasibility cells work under exponential link; halted proportional hazards implementation track permanently under the Trilemma.</td>
+              </tr>
+              <tr>
+                <td><code>0012</code></td>
+                <td>Bounded Sigmoid Hazard Link</td>
+                <td><span class="badge badge-success">Accepted</span></td>
+                <td>Replaced runaway exponential link with bounded logistic link &lambda; = &lambda;<sub>max</sub>&middot;&sigma;(z), capping monthly hazard &le; 0.1500 &lt; 0.2000 and qualifying Generation v6.</td>
               </tr>
             </tbody>
           </table>
@@ -603,7 +609,7 @@
       </div>
 
       <!-- Metrics Comparison Cards -->
-      <div class="cards-grid cols-3">
+      <div class="cards-grid cols-4">
         <div class="metric-summary-card">
           <div class="metric-card-title">Phase 1 / 2 (v1 Substrate)</div>
           <div class="metric-big-val">100 Policies</div>
@@ -638,6 +644,19 @@
           <p class="metric-note text-dynamic"
              data-simple="Honest Science: The AI barely beat a coin flip because the simulated customer cancellation was drowned in random noise. Redesign triggered!"
              data-tech="Signal passed readiness but 0/20 seeds exceeded 0.65 AUC target. Halted to prevent holdout overfitting."></p>
+        </div>
+
+        <div class="metric-summary-card" style="border-color: #10b981;">
+          <div class="metric-card-title" style="color: #10b981;">Phase 2R (v6 Bounded Sigmoid)</div>
+          <div class="metric-big-val" style="color: #10b981;">0.709 AUC</div>
+          <div class="metric-row"><span>Qualification Seeds:</span> <strong>20 development seeds</strong></div>
+          <div class="metric-row"><span>Median AP Lift:</span> <strong>+0.140 (over baseline)</strong></div>
+          <div class="metric-row"><span>Brier Skill Score:</span> <strong>+0.075 (calibrated)</strong></div>
+          <div class="metric-row"><span>Max Monthly Hazard:</span> <strong>0.14999 (&lt; 0.20)</strong></div>
+          <div class="metric-status-box tag-pipeline" style="background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.3);">R2-14D Gate: QUALIFIED (All 9 Passed)</div>
+          <p class="metric-note text-dynamic"
+             data-simple="Total Breakthrough! Replaced runaway exponential hazard rockets with bounded S-curves. The AI achieved 71% accuracy with safe, realistic cancellation rates!"
+             data-tech="ADR 0012 &amp; Contract 6.0.0: Bounded logistic link capped at 15%/mo resolved the Trilemma. All 9 gates passed mechanically; Phase 2R.15 authorized."></p>
         </div>
       </div>
 
@@ -865,7 +884,8 @@
           <div class="sim-scenario-selector">
             <label for="simScenarioSelect">Scenario to Run:</label>
             <select id="simScenarioSelect" class="filter-select">
-              <option value="happy_v4">🟢 Normal Pass (v4 Pipeline with Signal)</option>
+              <option value="v6_qualified" selected>🟢 Generation v6 Qualification (Bounded Sigmoid Hazard Link)</option>
+              <option value="happy_v4">🟢 Historical Pass (v4 Pipeline with Signal)</option>
               <option value="leakage_stop">🔴 Fail-Closed STOP (Tomorrow's Event Leaks Into Today)</option>
               <option value="weak_redesign">🟠 Fail-Closed REDESIGN (AI Fails to Beat Placebo)</option>
             </select>

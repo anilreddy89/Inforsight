@@ -10,7 +10,7 @@
 | GitHub issue | [#88](https://github.com/anilreddy89/Inforsight/issues/88) |
 | Issue title | `[Substrate Qualification] Phase 2R.14D: Implement and qualify Generation v6 bounded sigmoid hazard link substrate` |
 | Branch | `feat/88-r2-14d-v6-substrate-qualification` |
-| Pull request | To be created |
+| Pull request | [#89](https://github.com/anilreddy89/Inforsight/pull/89), merge commit `89ec94a` |
 | Status | Completed on 2026-09-04 |
 | Milestone | `v0.2.0-risk-model` |
 | Priority | Release blocking |
@@ -34,7 +34,7 @@
 
 Phase 2R.14D implements and qualifies the **Generation v6 Bounded Sigmoid Hazard Link Substrate**, operationalizing the architectural authorization of ADR 0012 and Contract `6.0.0` to resolve the Proportional Hazards Trilemma.
 
-The qualification evaluation executed across all 20 development seeds (`20280201..20280220`) for 120 governed evaluation units (3 temporal folds per seed, evaluated under matched signal and matched null scenarios). 
+The qualification evaluation executed across all 20 development seeds (`20280201..20280220`) for 120 governed evaluation units (3 temporal folds per seed, evaluated under matched signal and matched null scenarios).
 
 **Mechanical Decision**: `qualified` (100% of qualification gates passed).
 
