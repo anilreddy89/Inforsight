@@ -109,8 +109,8 @@
     "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
     "evaluation_contract_sha256": "436a4ff7ac5f94859ab1ef1a14dfb92b5c51c1d2073e6e7f4dd83226dec932c3",
     "feature_dictionary_sha256": "5039083cba2c9256c73eb9b72b8013df0b4e99ab18e625b8c0fce0577e76bcb8",
-    "feature_manifest_sha256": "c0356f7a18c22bee9576f9aa5c89f99de11d03a1f4144ef77c2a7aaba95d53d3",
-    "source_sha256": "b6842c2a1bc3caf21f6ba2e77879202f26ad1e31ae827eafef83a0831d8fe876",
+    "feature_manifest_sha256": "873a89b822c6af0cd9bb6d658ec986075c4e2780b7e37cca9d11df4672be14d9",
+    "source_sha256": "48b594bd956d59f3f98db086f1f96d103eb4a925370013e7b67e6f0c6d2dc189",
     "substrate_contract_sha256": "059cd0ee2d875d5094861e2cd291e5d2f273980f03cb310e960184d44cc40aa2",
     "upstream_qualification_manifest_sha256": "3e88a84c8fab713dc242627a5fbbccd34f9b3981bb7b59e9091db8eb6e0a8de8"
   },

@@ -218,17 +218,31 @@ def _materialization() -> dict:
 
 def _portable_candidate(value: dict) -> dict:
     result = dict(value)
-    for name in ("logistic", "xgboost"):
-        item = dict(result[name])
-        state = item.pop("safe_fitted_state")
-        item.pop("prediction_sha256")
-        item["portable_fit_evidence"] = {
-            "state_sha256": item.pop("safe_fitted_state_sha256"),
-            "feature_count": len(state["feature_names"]),
-            "runtime_prediction_reload_verified": True,
-            "committed_executable_state": False,
-        }
-        result[name] = item
+    logistic = dict(result["logistic"])
+    logistic_state = logistic.pop("safe_fitted_state")
+    logistic.pop("prediction_sha256")
+    logistic["portable_fit_evidence"] = {
+        "state_sha256": logistic.pop("safe_fitted_state_sha256"),
+        "feature_count": len(logistic_state["feature_names"]),
+        "runtime_prediction_reload_verified": True,
+        "committed_executable_state": False,
+    }
+    boosted = dict(result["xgboost"])
+    boosted_state = boosted.pop("safe_fitted_state")
+    boosted.pop("safe_fitted_state_sha256")
+    boosted.pop("prediction_sha256")
+    boosted["portable_fit_evidence"] = {
+        "feature_count": len(boosted_state["feature_names"]),
+        "trained_tree_count": boosted_state["trained_tree_count"],
+        "runtime_prediction_reload_verified": True,
+        "committed_executable_state": False,
+        "reason": (
+            "Native fitted numeric bytes vary across supported operating systems; "
+            "runtime reload is verified before portable evidence is emitted."
+        ),
+    }
+    result["logistic"] = logistic
+    result["xgboost"] = boosted
     result["prediction_boundary"] = {
         "runtime_verified": True, "row_level_predictions_committed": False,
     }
