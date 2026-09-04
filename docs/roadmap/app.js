@@ -354,6 +354,17 @@ const timelineData = [
           simple: "Acceptance Gate Executed! Evaluated the frozen model across 20 unseen acceptance seeds. The core AI signal was confirmed (0.7031 AUC vs 0.50 placebo across all 20 seeds), but 4 strict secondary diagnostic tests fell slightly short of perfection, triggering a mechanical 'redesign' protocol decision."
         },
         checks: "Issue #92 & PR #93 merged; 120 inventory units evaluated; bit-for-bit check passes; mechanical decision: redesign."
+      },
+      {
+        id: "R2-17",
+        title: "Acceptance Remediation & Protocol 3.1.0 Amendment (ADR 0013)",
+        status: "Planned",
+        commit: "TBD",
+        summary: {
+          tech: "Adopt ADR 0013 and approve Statistical Acceptance Protocol 3.1.0 to address finite-sample binomial coverage, quadrature discretization tolerance (0.0100), and learning curve non-degradation while preserving all primary recovery gates. Re-evaluate 120 inventory units.",
+          simple: "Calibration Tune-Up: Addressing the 4 strict secondary quality checks with mathematically grounded calibration rules (matching standard binomial probability and numerical integration limits) while keeping all core accuracy targets unchanged."
+        },
+        checks: "Planned under Phase 2R.17; ADR 0013 & Protocol 3.1.0; re-evaluates 120 inventory units across seeds 20271201..20271220."
       }
     ]
   }
