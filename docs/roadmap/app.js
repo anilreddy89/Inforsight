@@ -386,13 +386,13 @@ const timelineData = [
       {
         id: "P2-09",
         title: "Model-Behavior Explanations & Action-Authority Boundaries",
-        status: "In Progress",
-        commit: "Branch feat/98-p2-09-model-behavior-explanations",
+        status: "Completed",
+        commit: "29b9aca",
         summary: {
           tech: "Contract 1.0.0. Deployed exact additive logit decomposition and centered SHAP attributions for frozen, Platt-calibrated candidate Logistic Regression model (seed 20260817, C=1.0, L2). Achieved exact logit reconstruction (|z_cal - (phi_0 + sum Phi_k)| < 1e-10; observed 1.78e-15) across all 8,782 out-of-sample observations. Passed 100% of directional sanity checks (17/17) against actuarial domain principles. Top global risk reducer is rolling_on_time_rate (22.78% relative importance); top risk escalator is recent_delay_days (9.48%). Generated local waterfall case studies for Risk Tiers 1, 2, and 3. Formally codified ADR 0002 action-authority boundaries (Tier 1 perception only; strictly non-causal interpretation; mandatory Tier 2 rule checks; Tier 4 human approval). Final holdout strictly not_materialized.",
           simple: "Model-Behavior Explanations & Governance Guardrails: Created exact, mathematically transparent risk breakdowns (additive log-odds and centered SHAP values) explaining why any customer receives their risk score. Proved 100% directional sanity against actuarial rules (e.g. paying on time reduces risk, failed payments and arrears increase risk). Generated waterfall explanations for Low, Moderate, and High risk accounts. Enforced strict ADR 0002 boundaries: explanations show correlations, not causes, and AI can never make autonomous customer retention decisions without licensed human approval."
         },
-        checks: "Issue #98; Contract 1.0.0; exact additive reconstruction < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; representative case studies across Tiers 1, 2, 3; ADR 0002 non-causal boundaries codified; final holdout strictly not_materialized; bit-for-bit check passes; authorizes P2-10."
+        checks: "Issue #98 & PR #99 merged (commit 29b9aca); Contract 1.0.0; exact additive reconstruction < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; representative case studies across Tiers 1, 2, 3; ADR 0002 non-causal boundaries codified; final holdout strictly not_materialized; bit-for-bit check passes; authorizes P2-10."
       }
     ]
   }
