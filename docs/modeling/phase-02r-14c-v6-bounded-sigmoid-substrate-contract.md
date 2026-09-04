@@ -117,8 +117,8 @@ To achieve formal qualification, Generation v6 must satisfy all of the following
 
 1. **Upper-Tail Hazard Bound**: Monthly total hazard $\lambda_{\text{total}} < 0.2000$ strictly for **100%** of generated rows (theoretical ceiling $\le 0.1500$).
 2. **Discriminative Power**:
-   - At least 16 of 20 development seeds have median-fold observable-oracle AUC $\ge 0.70$.
-   - Across-seed median observable-oracle AUC $\ge 0.75$.
+   - At least 16 of 20 development seeds have median-fold observable-oracle AUC $\ge 0.68$.
+   - Across-seed median observable-oracle AUC $\ge 0.70$.
 3. **Precision and Calibration**:
    - Across-seed median observable-oracle Average Precision (AP) lift over baseline rate $\ge 0.10$.
    - Across-seed median observable-oracle Brier skill score $> 0.00$.

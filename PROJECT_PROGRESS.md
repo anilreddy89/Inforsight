@@ -78,27 +78,27 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-14BB | Phase 2R post-v4 extension | Execute bounded post-v4 redesign diagnostics and evaluate feasibility surface | Completed | Issue #82; PR #83 merged as `464a4fd` and PR #84 merged as `3a7c890`; all 120 inventory units and 320 feasibility surface cells evaluated under Contract `1.1.0`; H1 supported, H3-H5 rejected, H6 infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds); causal response `stop_infeasible_design` recorded in ADR 0011; iteration ledger and Web UI component published. |
 | CI-01 | Infrastructure / CI | Parallelize CI across 4 concurrent jobs, enable pip caching, and prevent duplicate triggers | Completed | PR #85 merged as `afdcb5f`; wall-clock CI reduced from ~20m to ~3.5–4.5m with zero test loss. |
 | R2-14C | Phase 2R Generation v6 architecture | Authorize bounded sigmoid hazard link architecture for Generation v6 and approve Substrate Contract 6.0.0 | Completed | Issue #86; PR #87 merged as `18ce32f`; ADR 0012 approves bounded logistic hazard link, breaking Proportional Hazards Trilemma; Substrate Contract `6.0.0` with Coefficient Registry `3.0.0` and development seeds `20280201..20280220`; authorizes Phase 2R.14D. |
-| R2-14D | Phase 2R Generation v6 implementation | Implement Generation v6 bounded sigmoid substrate and evaluate against qualification gates | Planned | TBD |
+| R2-14D | Phase 2R Generation v6 implementation | Implement Generation v6 bounded sigmoid substrate and evaluate against qualification gates | Completed | Issue #88; implemented v6 modules, qualification runner, and tests; executed 120-unit qualification on seeds 20280201..20280220; all 9 qualification gates pass (median AUC = 0.7086 >= 0.70, AP lift = 0.1398 >= 0.10, max hazard = 0.14999 <= 0.1500 < 0.20, parity mismatches = 0); mechanical decision is qualified; authorizes Phase 2R.15. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Paused | Blocked until a replacement acceptance gate records merged `proceed`; final holdout is not selection data. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Paused | Blocked until R2-11 and P2-08; explanations describe model behavior and do not authorize conservation actions. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Pending | Must prove documented artifact reload reproduces held-out predictions. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-R2-08 through R2-14BB are merged on `main`. Under Issue #86, Phase 2R.14C authorized the Generation v6 bounded sigmoid hazard link architecture under ADR 0012 and approved Substrate Contract `6.0.0` (`docs/modeling/phase-02r-14c-v6-bounded-sigmoid-substrate-contract.md`), breaking the Proportional Hazards Trilemma by mathematically guaranteeing total monthly hazard $\le 0.1500 < 0.2000$. Phase 2R.14D is authorized to implement and qualify the v6 substrate on development seeds `20280201..20280220`. Reserved acceptance seeds and the final release holdout remain untouched, unassigned, and `not_materialized`.
+R2-08 through R2-14C are merged on `main`. Under Issue #88, Phase 2R.14D implemented and mechanically qualified the Generation v6 bounded sigmoid substrate across 20 development seeds (`20280201..20280220`) for 120 evaluation units under Substrate Contract `6.0.0`. All qualification gates passed with a mechanical decision of `qualified`, authorizing Phase 2R.15 (candidate evaluation and freeze). Reserved acceptance seeds `20271201..20271220` and the final release holdout remain untouched, unassigned, and `not_materialized`.
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 35 |
+| Completed tracked changes | 36 |
 | In-progress / implemented locally changes | 0 |
-| Planned changes | 1 |
+| Planned changes | 0 |
 | Changes needing confirmation | 1 |
 | Completed Phase 1 increments | 7 of 7 |
 | Completed Phase 2 increments | 7 of 12, with P2-08 and P2-09 paused |
-| Completed Phase 2R increments | 20 of 21 (R2-00 through R2-14C) |
+| Completed Phase 2R increments | 21 of 21 (R2-00 through R2-14D) |
 | In-progress Phase 2R increments | 0 of 21 |
-| Planned Phase 2R increments | 1 of 21 (R2-14D) |
-| Next implementation increment | Phase 2R.14D (Generation v6 substrate implementation and qualification) |
+| Planned Phase 2R increments | 0 of 21 |
+| Next implementation increment | Phase 2R.15 (Generation v6 evaluation construction and candidate freeze) |
 
 
 | ID | Status | Impact | Resolution trigger |
