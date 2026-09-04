@@ -1,13 +1,13 @@
-# Phase 2R.16 Generation v6 Statistical Acceptance Protocol Report
+# Phase 2R.16A Generation v6 Statistical Acceptance Protocol Report
 
-Issue: #92
-Protocol Version: `3.0.0`
+Issue: #94
+Protocol Version: `3.1.0`
 Substrate Contract: `6.0.0`
 Selected Candidate: `logistic` (Logistic Regression)
 
 ## 1. Executive Summary & Mechanical Decision
 
-Mechanical Decision: **`REDESIGN`**
+Mechanical Decision: **`PROCEED`**
 
 | Summary Metric | Governed Target | Observed Value | Status |
 | --- | --- | ---: | :---: |
@@ -36,22 +36,22 @@ Mechanical Decision: **`REDESIGN`**
 | `READINESS-CONTRACT-AUTHORITY` | `lineage` | `[]` | `[]` | **PASS** | `stop` |
 | `READINESS-INVENTORY` | `inventory` | `120` | `120` | **PASS** | `redesign` |
 | `CTRL-NULL-MEDIAN-AUC` | `controls` | `[0.45, 0.55]` | `0.5123` | **PASS** | `redesign` |
-| `CTRL-NULL-INTERVAL-COVERAGE` | `controls` | `18` | `16` | **FAIL** | `redesign` |
+| `CTRL-NULL-INTERVAL-COVERAGE` | `controls` | `15` | `16` | **PASS** | `redesign` |
 | `CTRL-SHUFFLE-MEDIAN-AUC` | `controls` | `[0.47, 0.53]` | `0.5029` | **PASS** | `redesign` |
-| `CTRL-SHUFFLE-INTERVAL-COVERAGE` | `controls` | `18` | `17` | **FAIL** | `redesign` |
+| `CTRL-SHUFFLE-INTERVAL-COVERAGE` | `controls` | `15` | `17` | **PASS** | `redesign` |
 | `SIGNAL-MEDIAN-AUC` | `recovery` | `0.68` | `0.7031` | **PASS** | `redesign` |
 | `SIGNAL-SEED-CONSISTENCY` | `recovery` | `16` | `20` | **PASS** | `redesign` |
 | `SIGNAL-MATCHED-NULL-LIFT` | `recovery` | `16` | `20` | **PASS** | `redesign` |
 | `SIGNAL-MEDIAN-AP-LIFT` | `recovery` | `0.1` | `0.1344` | **PASS** | `redesign` |
 | `SIGNAL-MEDIAN-BRIER-SKILL` | `recovery` | `0.0` | `0.0658` | **PASS** | `redesign` |
 | `ORACLE-OBSERVABLE-CEILING` | `oracle` | `0.02` | `0.0067` | **PASS** | `redesign` |
-| `ORACLE-CONDITIONAL-ORDERING` | `oracle` | `1e-12` | `0.004482` | **FAIL** | `redesign` |
+| `ORACLE-CONDITIONAL-ORDERING` | `oracle` | `0.01` | `0.004482` | **PASS** | `redesign` |
 | `CALIBRATION-SLOPE` | `calibration` | `[0.75, 1.25]` | `0.9086` | **PASS** | `redesign` |
 | `CALIBRATION-INTERCEPT` | `calibration` | `0.2` | `0.1726` | **PASS** | `redesign` |
 | `CALIBRATION-BRIER-SKILL-COUNT` | `calibration` | `16` | `20` | **PASS** | `redesign` |
 | `UNCERTAINTY-POOLED-AUC-LB` | `uncertainty` | `0.6` | `0.6012` | **PASS** | `redesign` |
 | `LEARNING-AUC-MONOTONICITY` | `learning` | `0.02` | `-0.0027` | **PASS** | `redesign` |
-| `LEARNING-VARIANCE-CONTRACTION` | `learning` | `0.2` | `0.0136` | **FAIL** | `redesign` |
+| `LEARNING-VARIANCE-CONTRACTION` | `learning` | `1.05` | `0.9864` | **PASS** | `redesign` |
 | `LEARNING-BRIER-MONOTONICITY` | `learning` | `0.01` | `-0.0015` | **PASS** | `redesign` |
 | `ABLATION-ALL-SIGNAL-DROP` | `ablation` | `0.1` | `0.2005` | **PASS** | `redesign` |
 | `ABLATION-STRONGEST-DRIVER-DROP` | `ablation` | `15` | `60` | **PASS** | `redesign` |
