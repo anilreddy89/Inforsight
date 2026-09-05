@@ -380,14 +380,16 @@ Assign every P3-01 through P3-10 issue to GitHub Milestone #4 ([**v0.3.0-decisio
 ```text
 P3-01 (Domain Contracts & Action Taxonomy)
   ├──> P3-02 (Deterministic Action Eligibility Rules Engine)
-  │      └──> P3-03 (Cost-Utility & Uplift Optimization Matrix)
-  └──> P3-04 (Model Serving & Inference Gateway)
-         └──> P3-05 (Bounded Case Intelligence Assistant)
-                └──> P3-06 (HITL Workflow & Audit Trail Engine)
-                       └──> P3-07 (Interactive Conservation Dashboard)
-                              └──> P3-08 (Counterfactual Simulation & Off-Policy Eval)
-                                     └──> P3-09 (End-to-End System Qualification Gate)
-                                            └──> P3-10 (Milestone Release v0.3.0)
+  │      ├──> P3-03 (Cost-Utility & Uplift Optimization Matrix)
+  │      │      └──> P3-08 (Counterfactual Simulation & Off-Policy Eval) ───────┐
+  │      └──> P3-05 (Bounded Case Intelligence: Template -> LLM)               │
+  └──> P3-04 (Model Serving & Inference Gateway)                               │
+         └──> P3-04A (Model Monitoring & Drift Detection Architecture)         │
+                └──> P3-05                                                     │
+                       └──> P3-06 (HITL Workflow & Audit Trail Engine)         │
+                              └──> P3-07 (Interactive Dashboard, with OPE) ───┤
+                                     └─────────────────────────────────────────┴──> P3-09 (System Qualification)
+                                                                                      └──> P3-10 (Release v0.3.0)
 ```
 
 ### P3-01 - Conservation domain contracts and action taxonomy
@@ -443,7 +445,7 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - [ ] Engine has zero dependency on model prediction scores or probability thresholds.
 - [ ] Property-based rule tests and `make check` pass.
 
-**Depends on:** P3-01. **Blocks:** P3-03, P3-05.
+**Depends on:** P3-01. **Blocks:** P3-03, P3-05, P3-08.
 
 ---
 
@@ -474,7 +476,7 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - [ ] High-risk "Lost Causes" are successfully diverted from scarce specialist phone queues.
 - [ ] Unit and optimization benchmarks pass.
 
-**Depends on:** P3-02. **Blocks:** P3-05, P3-07.
+**Depends on:** P3-02. **Blocks:** P3-05, P3-07, P3-08.
 
 ---
 
@@ -512,37 +514,65 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - [ ] P99 latency $< 5\text{ms}$ for single policy scoring.
 - [ ] API integration tests and Docker build pass.
 
-**Depends on:** P3-01. **Blocks:** P3-05, P3-07.
+**Depends on:** P3-01. **Blocks:** P3-04A, P3-05, P3-07.
 
 ---
 
-### P3-05 - Bounded case intelligence assistant
+### P3-04A - Model monitoring and drift detection architecture
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
-**Outcome:** An evidence-assembly assistant synthesizes structured, fact-grounded "Conservation Case Briefs" for customer service specialists without hallucination or action authority.
+**Outcome:** A formal design specification and diagnostics telemetry architecture to detect feature distribution drift, calibration decay, and scoring anomalies in production.
 
 **Scope:**
-- Build `simulator/assistant/` case briefing engine combining:
-  - Reconstructed point-in-time policy history (billing cadence, missed drafts, notice timeline).
-  - Model risk score, operational tier, and local SHAP feature attributions.
-  - Eligible actions from P3-02 rules engine.
-  - Optimization recommendation and expected utility from P3-03.
-- Generate structured Markdown / JSON Case Brief:
-  - **Executive Summary:** Core risk drivers stated in plain language (e.g., "Risk driven by 2 consecutive failed auto-debits following card expiration").
+- Specify input feature drift monitoring using Population Stability Index (PSI) and Characteristic Stability Index (CSI) against frozen Phase 2.11 training baseline distributions:
+  - Green (stable): $\text{PSI} < 0.10$.
+  - Yellow (moderate shift): $0.10 \le \text{PSI} < 0.25$.
+  - Red (significant drift): $\text{PSI} \ge 0.25$ triggers automated triage alerting and human model-risk review.
+- Specify calibration decay tracking: rolling Expected Calibration Error (ECE) and Brier Score over sliding observation windows (e.g. rolling 500 cases).
+- Design `/v1/diagnostics` endpoint schema for the FastAPI gateway:
+  - Reports inference volume, latency percentiles (P50, P95, P99), active PSI per feature, and rolling calibration error.
+- Define automated fail-safe fallback policies: when critical drift is flagged on primary risk drivers (e.g. `rolling_on_time_rate`), the engine flags scoring uncertainty and requires specialist confirmation for high-stakes actions.
+
+**Acceptance checks:**
+- [ ] Design document specifies mathematical formulations for PSI, CSI, and rolling window ECE tracking.
+- [ ] Gateway contract specifies OpenAPI schema for `GET /v1/diagnostics`.
+- [ ] Predeclared drift thresholds and alert action matrix are formally documented.
+- [ ] Repository checks pass.
+
+**Depends on:** P3-04. **Blocks:** P3-05, P3-07.
+
+---
+
+### P3-05 - Bounded case intelligence assistant (Template-first & optional LLM)
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** An evidence-assembly assistant synthesizes structured, fact-grounded "Conservation Case Briefs" for customer service specialists using a deterministic template foundation, augmented by an optional grounded LLM narrative layer.
+
+**Scope:**
+- **Layer 1: Deterministic Template Engine (Core Foundation):**
+  - Implement rule-and-template briefing engine in `simulator/assistant/`.
+  - Ingests point-in-time event history, calibrated risk score, SHAP attributions, eligible action set, and utility ranking.
+  - Deterministically formats structured Case Briefs (Markdown/JSON). Completely testable with zero hallucination risk by construction.
+- **Layer 2: LLM-Enhanced Narrative Layer (Responsible Generative Augmentation):**
+  - Synthesizes natural-language case summaries, contextual talking points, and customer-empathy guidance.
+  - Implements an automated **Grounding Guard / Post-Processing Validator**: verifies that every cited fact, date, count, amount, or notice directly matches an entity in the reconstructed history. Ungrounded claims are automatically rejected or redacted.
+- Generates standard Case Brief sections:
+  - **Executive Summary:** Core risk drivers stated in plain language.
   - **Factual Timeline:** Chronological event highlights leading up to observation cutoff.
   - **Intervention Recommendations:** Ordered list of eligible actions with pros/cons and talking points.
   - **Mandatory Disclaimer:** Draft status clearly displayed (`status: PENDING_HUMAN_REVIEW`).
-- Hallucination prevention guard: strictly verify that every assertion in the brief cites an explicit reconstructed event ID or feature value; reject or redact ungrounded claims.
 
 **Acceptance checks:**
-- [ ] Case briefs are strictly grounded in event history and feature attributions; no unverified facts generated.
+- [ ] Layer 1 deterministic template produces 100% reproducible, testable briefs with zero hallucination.
+- [ ] Layer 2 LLM post-processing validator rejects or redacts ungrounded entities not present in event history.
 - [ ] Disqualified actions never appear as recommended interventions in the brief.
 - [ ] Brief outputs clearly state advisory status and prohibit automated outreach execution.
 - [ ] Factual grounding verification tests pass on representative synthetic cases.
 - [ ] Unit tests and `make check` pass.
 
-**Depends on:** P3-02, P3-03, P3-04. **Blocks:** P3-06, P3-07.
+**Depends on:** P3-02, P3-03, P3-04, P3-04A. **Blocks:** P3-06, P3-07.
 
 ---
 
@@ -576,27 +606,27 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
-**Outcome:** A lightweight, interactive web application provides conservation teams with a living operational demonstration of the end-to-end decision intelligence platform.
+**Outcome:** A lightweight, interactive web application provides conservation teams with a living operational demonstration of the end-to-end decision intelligence platform, including triage queues, case dossiers, and counterfactual business impact.
 
 **Scope:**
 - Implement interactive Streamlit application (`dashboard/`):
-  - **Executive Portfolio View:** Portfolio risk distribution across tiers, active grace period counts, queue capacity utilization, and projected retention ROI.
+  - **Executive Portfolio View:** Portfolio risk distribution across tiers, active grace period counts, queue capacity utilization, and projected retention ROI (displaying P3-08 OPE results).
   - **Triage Queue Table:** Filterable, prioritized queue of policies (Top 1%, 5%, 20%) with calibrated risk, primary risk driver, eligible actions, and net utility rank.
   - **Case Investigation Dossier:** Deep-dive view for a selected policy:
     - Interactive SHAP waterfall chart explaining risk drivers.
     - Interactive point-in-time event timeline.
-    - AI-generated Case Brief with talking points and action options.
+    - Case Brief (template or LLM-grounded) with talking points and action options.
   - **Specialist Decision Console:** Interactive action approval panel (Approve / Override / Reject) with real-time feedback and live append to audit log.
-- Wire dashboard directly to `BundledInferenceEngine`, rules evaluator, and v6 synthetic cohort.
+- Wire dashboard directly to `BundledInferenceEngine`, rules evaluator, P3-08 simulation results, and v6 synthetic cohort.
 
 **Acceptance checks:**
 - [ ] Dashboard loads and runs locally without external cloud dependencies.
 - [ ] Selecting different triage tiers dynamically updates queue tables and capacity meters.
 - [ ] Submitting a human decision immediately logs a valid, hash-chained audit entry.
-- [ ] SHAP attributions render interactively and match underlying linear model weights.
+- [ ] Displays both point-in-time case intelligence and offline policy evaluation (OPE) metrics.
 - [ ] UI automated smoke tests pass.
 
-**Depends on:** P3-03, P3-04, P3-05, P3-06. **Blocks:** P3-08, P3-09.
+**Depends on:** P3-03, P3-04, P3-04A, P3-05, P3-06, P3-08. **Blocks:** P3-09.
 
 ---
 
@@ -604,10 +634,11 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
-**Outcome:** A counterfactual simulation framework rigorously evaluates the business impact and ROI of the conservation decision engine against baseline triage strategies.
+**Outcome:** A counterfactual simulation framework rigorously evaluates the business impact and ROI of the conservation decision engine against baseline triage strategies prior to dashboard integration.
 
 **Scope:**
-- Extend the Generation v6 simulation engine to support synthetic intervention responses (counterfactual potential outcomes):
+- Analytically independent from UI: run as reproducible offline simulation scripts (`scripts/run_offline_policy_evaluation.py`).
+- Extend Generation v6 simulation engine to support synthetic intervention responses (counterfactual potential outcomes):
   - Baseline hazard: $\lambda_0(t) = \lambda_{\max}\sigma(z)$.
   - Post-intervention hazard: $\lambda_a(t) = \lambda_{\max}\sigma(z + \gamma_a)$, where $\gamma_a$ represents intervention effect by action type.
   - Heterogeneous treatment effect: effectiveness modulated by policyholder tenure, past payment reliability, and contact frequency.
@@ -617,14 +648,16 @@ P3-01 (Domain Contracts & Action Taxonomy)
     - *Naive ML Policy:* Triage purely by risk score without uplift or eligibility constraints.
     - *Random Triage:* Uniform random outreach within budget.
 - Quantify key business metrics: Lapse Rate Reduction (lift), Net Preserved Annual Premium, Cost-per-Conserved-Policy, and Return on Conservation Spend (ROCS).
+- Export summary results for consumption by P3-07 dashboard.
 
 **Acceptance checks:**
 - [ ] Counterfactual simulation maintains strict temporal consistency and no future leakage.
 - [ ] Decision engine demonstrates statistically significant improvement in Net Preserved Value over naive ML and heuristic baselines.
 - [ ] Off-policy evaluation includes 95% bootstrap confidence intervals.
+- [ ] Produces exportable summary metrics consumed by P3-07 dashboard.
 - [ ] Simulation reproducibility tests pass across multiple seeds.
 
-**Depends on:** P3-07. **Blocks:** P3-09.
+**Depends on:** P3-02, P3-03. **Blocks:** P3-07, P3-09.
 
 ---
 

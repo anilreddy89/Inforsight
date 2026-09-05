@@ -142,10 +142,11 @@ An independent review after P2-07 identified three [claim-blocking limitations](
 - Deterministic action eligibility rules engine (fail-closed business and regulatory filters)
 - Cost-utility and uplift optimization matrix (resource-constrained specialist triage)
 - High-throughput zero-dependency model serving gateway (`FastAPI`)
-- Bounded case intelligence assistant (fact-grounded dossier synthesis)
+- Model monitoring and drift detection architecture (PSI/CSI & rolling calibration tracking)
+- Bounded case intelligence assistant (deterministic template-first with grounded LLM layer)
 - Human-in-the-loop workflow and hash-chained audit trail engine
-- Interactive conservation intelligence dashboard (living demonstration)
 - Counterfactual simulation and offline policy evaluation (OPE)
+- Interactive conservation intelligence dashboard (living demonstration)
 
 ### ⏳ Future phases (deferred to Phase 4)
 - Enterprise distributed infrastructure (Java/Spring microservices, Apache Kafka event streaming)
