@@ -367,9 +367,322 @@ merge R2-11 -> R2-12 -> R2-13 -> R2-14 -> R2-15 -> R2-16
 - [x] **P2-11 - Final evaluation, model card, and decision note:** Completed on 2026-09-04 through [issue #102](https://github.com/anilreddy89/Inforsight/issues/102) and [PR #103](https://github.com/anilreddy89/Inforsight/pull/103), merge commit `ec363d6` (squashed `8ac7aed`). Pre-registered evaluation contract `1.0.0` was approved and frozen before executing the one-shot out-of-sample evaluation on 8,782 observations (1,440 policies) using standalone `BundledInferenceEngine`. 1,000 policy-cluster bootstrap CIs confirmed ROC AUC 0.6998 [0.6847, 0.7153] (Gate G1 >= 0.6800), Average Precision 0.2765 [0.2560, 0.2994] (Gate G2 >= 0.2500), Brier score 0.1211 [0.1170, 0.1252], ECE 0.0115 <= 0.0300 (Gate G3), slope 0.9498 in [0.85, 1.15] (Gate G4), Top 1% review queue precision 34.09% (Gate G5 >= 0.3000, 2.23x lift), and Top 5% review queue lift 2.31x (Gate G6 >= 2.00x, 11.57% recall). 100% of acceptance gates passed (G1-G6). Published root `MODEL_CARD.md` (Mitchell et al. 2019), cryptographic manifest `phase-02-11-final-evaluation-manifest.json`, quantitative report `phase-02-11-final-evaluation-report.md`, and Phase 2 decision note `phase-02-11-phase-2-decision-note.md` recording formal release determination `RELEASE`. Resolved limitations `LIM-002-001`, `LIM-002-002`, and `LIM-002-003` in `docs/limitations.md`. Final holdout remains strictly unmaterialized. Unblocks P2-12 (`v0.2.0-risk-model` release tag).
 - [x] **P2-12 - Release marker and notes:** Completed on 2026-09-05 through [issue #104](https://github.com/anilreddy89/Inforsight/issues/104) and [PR #105](https://github.com/anilreddy89/Inforsight/pull/105), merge commit `7797c09` (squashed `df5d8e8`). Following the formal `RELEASE` determination of Phase 2.11, published milestone release documentation [`docs/release-notes/v0.2.0-risk-model.md`](release-notes/v0.2.0-risk-model.md) capturing the pure-JSON release model bundle `inforsight-v6-logistic-platt-20260817` (SHA-256 `7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656`), standalone zero-dependency inference engine `BundledInferenceEngine`, 100% passing acceptance gate scorecard (Gates G1-G6), explainability attributions, 4 operational risk tiers, and high-lift review queues. Prepared annotated Git tag `v0.2.0-risk-model` and milestone closeout instructions, officially completing Phase 2 (Baseline ML) and enabling Phase 3 (Policy Conservation Decision Engine).
 
+## Phase 3 - Policy Conservation Decision Engine & Intervention Orchestration
+
+Phase 3 transitions Inforsight from pure risk estimation to **governed decision intelligence and intervention orchestration**. It consumes the frozen, pure-JSON release candidate model bundle `inforsight-v6-logistic-platt-20260817` and standalone `BundledInferenceEngine` from Phase 2 ([`v0.2.0-risk-model`](https://github.com/anilreddy89/Inforsight/releases/tag/v0.2.0-risk-model)).
+
+All Phase 3 work operates under the hard authority boundary established in [**ADR 0002**](adr/0002-separate-risk-from-action-eligibility.md): **no predictive model or autonomous agent possesses authority to execute customer outreach or alter an in-force policy**. Probabilistic risk perception is strictly decoupled from deterministic action eligibility, case evidence assembly, cost-utility optimization, and mandatory human review.
+
+Assign every P3-01 through P3-10 issue to GitHub Milestone #4 ([**v0.3.0-decision-engine**](https://github.com/anilreddy89/Inforsight/milestone/4)). Follow the sequential, test-driven merge order: each increment merges to `main` before the next branch begins.
+
+### Dependency and execution flow
+
+```text
+P3-01 (Domain Contracts & Action Taxonomy)
+  ├──> P3-02 (Deterministic Action Eligibility Rules Engine)
+  │      └──> P3-03 (Cost-Utility & Uplift Optimization Matrix)
+  └──> P3-04 (Model Serving & Inference Gateway)
+         └──> P3-05 (Bounded Case Intelligence Assistant)
+                └──> P3-06 (HITL Workflow & Audit Trail Engine)
+                       └──> P3-07 (Interactive Conservation Dashboard)
+                              └──> P3-08 (Counterfactual Simulation & Off-Policy Eval)
+                                     └──> P3-09 (End-to-End System Qualification Gate)
+                                            └──> P3-10 (Milestone Release v0.3.0)
+```
+
+### P3-01 - Conservation domain contracts and action taxonomy
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** Versioned JSON Schema contracts define allowed conservation actions, case state transitions, and audit event envelopes before any business logic is written.
+
+**Scope:**
+- Create `data-contracts/conservation-action.schema.json` defining standard intervention types:
+  - `courtesy_reminder`: Automated low-friction touchpoint (SMS / Email) for early-stage friction.
+  - `grace_period_consultation`: Structured advisory session for policyholders in active grace period.
+  - `specialist_phone_outreach`: High-touch consultation by licensed conservation specialist.
+  - `payment_method_remediation`: Direct resolution of EFT/credit card payment method failures.
+  - `abstain`: Explicit "Do Not Disturb" decision for non-salvageable or self-curing policies.
+- Define action attributes: direct financial cost $c(a)$, required personnel hours, channel constraints, regulatory cooling-off windows, and minimum/maximum policy tenure requirements.
+- Create `data-contracts/conservation-case-event.schema.json` formalizing the case lifecycle state machine (`CREATED` -> `TRIAGED` -> `EVIDENCE_ASSEMBLED` -> `RECOMMENDED` -> `HUMAN_REVIEWED` -> `EXECUTED` / `DISMISSED` -> `RESOLVED`).
+- Add positive and negative contract examples, schema validation tests, and contract documentation.
+
+**Acceptance checks:**
+- [ ] Schema validation tests verify all valid action types and reject malformed actions.
+- [ ] Illegal state transitions (e.g., executing without human review approval) fail contract validation.
+- [ ] Action schema enforces positive non-zero cost and valid operational channel enumerations.
+- [ ] Existing event and observation contracts remain unaffected.
+- [ ] Schema tests and `make check` pass.
+
+**Blocks:** P3-02, P3-04.
+
+---
+
+### P3-02 - Deterministic action eligibility rules engine
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** A pure deterministic rules engine enforces business, legal, and regulatory constraints on intervention actions, completely decoupled from ML risk scores.
+
+**Scope:**
+- Implement `simulator/rules/` rule evaluator consuming policy point-in-time state and applicant metadata.
+- Enforce hard deterministic eligibility boundaries ([ADR 0002](adr/0002-separate-risk-from-action-eligibility.md)):
+  - **Grace Period Invariant:** High-touch specialist outreach requires active grace period status (`active_grace_period_flag == 1`) or imminent grace threshold.
+  - **Legal / Dispute Freeze:** Policies with active claims, legal holds, or registered disputes are strictly disqualified from all conservation actions (`disqualify_all`).
+  - **Regulatory Contact Limits:** Enforce TCPA / DNC compliance, state-specific outreach hours, and mandatory 30-day contact cooling-off windows.
+  - **Communication Preferences:** Honor policyholder opt-outs across SMS, email, and phone channels.
+  - **Policy Viability:** Exclude terminated, surrendered, or matured policies.
+- Fail-closed design: missing or ambiguous state attributes disqualify the action with an auditable disqualification reason code (`DISQUALIFIED_<REASON>`).
+- Output an immutable `EligibleActionSet` with explicit eligibility rationale for every evaluated action.
+
+**Acceptance checks:**
+- [ ] Active legal dispute or claim freezes all outreach actions deterministically.
+- [ ] Channel opt-outs disqualify the respective communication medium.
+- [ ] Contact fatigue rule rejects outreach if contact occurred within the 30-day window.
+- [ ] Missing required state attributes results in safe abstention, never unauthorized action.
+- [ ] Engine has zero dependency on model prediction scores or probability thresholds.
+- [ ] Property-based rule tests and `make check` pass.
+
+**Depends on:** P3-01. **Blocks:** P3-03, P3-05.
+
+---
+
+### P3-03 - Cost-utility and uplift optimization matrix
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** An economic optimization engine allocates eligible conservation actions to maximize net preserved value under strict specialist capacity and budget constraints.
+
+**Scope:**
+- Implement uplift / treatment-effect decision logic categorizing policyholders across 4 operational quadrants:
+  - *Persuadables / Salvageable:* High risk, high treatment responsiveness $\rightarrow$ prioritize for outreach.
+  - *Lost Causes:* High risk, near-zero treatment responsiveness $\rightarrow$ avoid wasting high-touch resources.
+  - *Sure Things:* Low risk, self-curing billing hiccups $\rightarrow$ avoid unnecessary outreach expense.
+  - *Sleeping Dogs:* Policies where intervention triggers adverse lapse decisions $\rightarrow$ enforce strict abstention.
+- Formulate Expected Value of Intervention:
+  $$\mathbb{E}[U(a \mid x)] = \Delta p_{\text{lapse}}(a, x) \cdot V_{\text{policy}} - c(a)$$
+  where $V_{\text{policy}}$ is policy lifetime value / annual premium, $\Delta p_{\text{lapse}}$ is estimated treatment effect, and $c(a)$ is direct action cost.
+- Solve the constrained resource allocation problem (Knapsack / Greedy Rank-Ordering) subject to operational capacity:
+  - Specialist Call Queue Capacity: $\sum \mathbf{1}_{\{a = \text{specialist}\}} \le K_{\text{specialist}}$ (e.g. Top 1% queue capacity).
+  - Monthly Outreach Budget: $\sum c(a) \le B_{\text{total}}$.
+- Provide deterministic tie-breaking and rank reproducibility.
+
+**Acceptance checks:**
+- [ ] Optimization ranking respects strict specialist capacity cutoffs without queue overflow.
+- [ ] Negative expected utility ($\mathbb{E}[U] \le 0$) defaults to `abstain`.
+- [ ] Priority queue allocation is byte-deterministic across identical input portfolios.
+- [ ] High-risk "Lost Causes" are successfully diverted from scarce specialist phone queues.
+- [ ] Unit and optimization benchmarks pass.
+
+**Depends on:** P3-02. **Blocks:** P3-05, P3-07.
+
+---
+
+### P3-04 - Model serving and inference gateway
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** A high-throughput, zero-dependency REST inference gateway wraps the frozen pure-JSON model bundle with strict input validation and explicit authority bounds.
+
+**Scope:**
+- Implement lightweight FastAPI service (`serving/`) hosting `BundledInferenceEngine`.
+- Provide endpoints:
+  - `GET /health`: Engine status, bundle digest verification (`7ac292...`), dependency check.
+  - `GET /v1/model/info`: Bundle metadata, feature contract, calibration parameters, operational tiers.
+  - `POST /v1/score`: Single observation point-in-time scoring.
+  - `POST /v1/score/batch`: Vectorized batch scoring for triage queue generation.
+- Response payload strictly enforces ADR 0002 boundary:
+  ```json
+  {
+    "policy_id": "POL-10492",
+    "calibrated_probability": 0.3842,
+    "operational_tier": "TIER_3_HIGH_RISK",
+    "feature_attributions": { ... },
+    "authorized_to_act": false,
+    "action_authority_boundary": "ADR_0002_REQUIRES_HUMAN_REVIEW"
+  }
+  ```
+- Sub-millisecond latency target per single scoring request with zero scikit-learn dependency at runtime.
+- Provide Docker containerization, health probes, and OpenAPI / Swagger documentation.
+
+**Acceptance checks:**
+- [ ] Reloaded model produces bit-for-bit identical probabilities to frozen Phase 2.11 evaluation.
+- [ ] Every response payload includes explicit `authorized_to_act: false` marker.
+- [ ] Invalid schema versions or missing required features return structured 422 HTTP validation errors.
+- [ ] P99 latency $< 5\text{ms}$ for single policy scoring.
+- [ ] API integration tests and Docker build pass.
+
+**Depends on:** P3-01. **Blocks:** P3-05, P3-07.
+
+---
+
+### P3-05 - Bounded case intelligence assistant
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** An evidence-assembly assistant synthesizes structured, fact-grounded "Conservation Case Briefs" for customer service specialists without hallucination or action authority.
+
+**Scope:**
+- Build `simulator/assistant/` case briefing engine combining:
+  - Reconstructed point-in-time policy history (billing cadence, missed drafts, notice timeline).
+  - Model risk score, operational tier, and local SHAP feature attributions.
+  - Eligible actions from P3-02 rules engine.
+  - Optimization recommendation and expected utility from P3-03.
+- Generate structured Markdown / JSON Case Brief:
+  - **Executive Summary:** Core risk drivers stated in plain language (e.g., "Risk driven by 2 consecutive failed auto-debits following card expiration").
+  - **Factual Timeline:** Chronological event highlights leading up to observation cutoff.
+  - **Intervention Recommendations:** Ordered list of eligible actions with pros/cons and talking points.
+  - **Mandatory Disclaimer:** Draft status clearly displayed (`status: PENDING_HUMAN_REVIEW`).
+- Hallucination prevention guard: strictly verify that every assertion in the brief cites an explicit reconstructed event ID or feature value; reject or redact ungrounded claims.
+
+**Acceptance checks:**
+- [ ] Case briefs are strictly grounded in event history and feature attributions; no unverified facts generated.
+- [ ] Disqualified actions never appear as recommended interventions in the brief.
+- [ ] Brief outputs clearly state advisory status and prohibit automated outreach execution.
+- [ ] Factual grounding verification tests pass on representative synthetic cases.
+- [ ] Unit tests and `make check` pass.
+
+**Depends on:** P3-02, P3-03, P3-04. **Blocks:** P3-06, P3-07.
+
+---
+
+### P3-06 - Human-in-the-loop workflow and audit trail engine
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** A human-in-the-loop (HITL) review state machine orchestrates specialist decisions and records an immutable, append-only audit trail for regulatory compliance.
+
+**Scope:**
+- Implement conservation case workflow engine:
+  - **Specialist Review Actions:** `APPROVE_RECOMMENDATION`, `OVERRIDE_ACTION`, `REQUEST_MORE_INFO`, `REJECT_AND_CLOSE`.
+  - **Reviewer Identity & Justification:** Require valid reviewer ID, timestamp, and mandatory structured rationale for overrides.
+- Create append-only cryptographic audit logger (`conservation-audit-log.jsonl`):
+  - Records observation snapshot, model score, eligible action set, case brief digest, human decision, rationale, and resulting intervention event.
+  - Each audit entry contains a SHA-256 hash chaining to the preceding entry (hash-chained audit ledger) to guarantee tamper-evidence.
+- Point-in-time audit replay: build verification tool `scripts/verify_conservation_audit_trail.py` proving full historical reconstruction.
+
+**Acceptance checks:**
+- [ ] Actions cannot transition to execution without recorded human approval and reviewer credentials.
+- [ ] Overrides without structured justification are rejected.
+- [ ] Tampering with historical audit log entries breaks hash-chain verification.
+- [ ] Audit trail reproduces exact decision context from historical point in time.
+- [ ] Workflow and audit tests pass.
+
+**Depends on:** P3-05. **Blocks:** P3-07, P3-09.
+
+---
+
+### P3-07 - Interactive conservation intelligence dashboard
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** A lightweight, interactive web application provides conservation teams with a living operational demonstration of the end-to-end decision intelligence platform.
+
+**Scope:**
+- Implement interactive Streamlit application (`dashboard/`):
+  - **Executive Portfolio View:** Portfolio risk distribution across tiers, active grace period counts, queue capacity utilization, and projected retention ROI.
+  - **Triage Queue Table:** Filterable, prioritized queue of policies (Top 1%, 5%, 20%) with calibrated risk, primary risk driver, eligible actions, and net utility rank.
+  - **Case Investigation Dossier:** Deep-dive view for a selected policy:
+    - Interactive SHAP waterfall chart explaining risk drivers.
+    - Interactive point-in-time event timeline.
+    - AI-generated Case Brief with talking points and action options.
+  - **Specialist Decision Console:** Interactive action approval panel (Approve / Override / Reject) with real-time feedback and live append to audit log.
+- Wire dashboard directly to `BundledInferenceEngine`, rules evaluator, and v6 synthetic cohort.
+
+**Acceptance checks:**
+- [ ] Dashboard loads and runs locally without external cloud dependencies.
+- [ ] Selecting different triage tiers dynamically updates queue tables and capacity meters.
+- [ ] Submitting a human decision immediately logs a valid, hash-chained audit entry.
+- [ ] SHAP attributions render interactively and match underlying linear model weights.
+- [ ] UI automated smoke tests pass.
+
+**Depends on:** P3-03, P3-04, P3-05, P3-06. **Blocks:** P3-08, P3-09.
+
+---
+
+### P3-08 - Counterfactual simulation and offline policy evaluation
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** A counterfactual simulation framework rigorously evaluates the business impact and ROI of the conservation decision engine against baseline triage strategies.
+
+**Scope:**
+- Extend the Generation v6 simulation engine to support synthetic intervention responses (counterfactual potential outcomes):
+  - Baseline hazard: $\lambda_0(t) = \lambda_{\max}\sigma(z)$.
+  - Post-intervention hazard: $\lambda_a(t) = \lambda_{\max}\sigma(z + \gamma_a)$, where $\gamma_a$ represents intervention effect by action type.
+  - Heterogeneous treatment effect: effectiveness modulated by policyholder tenure, past payment reliability, and contact frequency.
+- Conduct Offline Policy Evaluation (OPE):
+  - Compare Decision Engine (Uplift + Eligibility + HITL) against:
+    - *Heuristic Policy:* Simple rule-based triage (e.g. grace period only).
+    - *Naive ML Policy:* Triage purely by risk score without uplift or eligibility constraints.
+    - *Random Triage:* Uniform random outreach within budget.
+- Quantify key business metrics: Lapse Rate Reduction (lift), Net Preserved Annual Premium, Cost-per-Conserved-Policy, and Return on Conservation Spend (ROCS).
+
+**Acceptance checks:**
+- [ ] Counterfactual simulation maintains strict temporal consistency and no future leakage.
+- [ ] Decision engine demonstrates statistically significant improvement in Net Preserved Value over naive ML and heuristic baselines.
+- [ ] Off-policy evaluation includes 95% bootstrap confidence intervals.
+- [ ] Simulation reproducibility tests pass across multiple seeds.
+
+**Depends on:** P3-07. **Blocks:** P3-09.
+
+---
+
+### P3-09 - End-to-end system qualification and integration gate
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** A rigorous, automated pre-release qualification suite verifies that the integrated decision engine enforces all architectural invariants and passes all operational gates.
+
+**Scope:**
+- Build system-level integration test suite (`tests/qualification/test_phase_03_qualification.py`):
+  - End-to-end flow: Raw Event Stream $\rightarrow$ Point-in-Time Reconstruction $\rightarrow$ Bundle Scoring $\rightarrow$ Deterministic Eligibility $\rightarrow$ Uplift Ranking $\rightarrow$ Case Brief Assembly $\rightarrow$ HITL Review $\rightarrow$ Audit Logging.
+- Pre-register and enforce 6 System Qualification Gates:
+  - **Gate S1 (Authority Isolation):** 100% of automated outreach attempts without human credentials fail with security exception.
+  - **Gate S2 (Eligibility Invariant):** 100% of policies with active legal dispute or missing required evidence are disqualified from outreach.
+  - **Gate S3 (Budget & Capacity Adherence):** Queue allocations strictly observe operational capacity limits ($0\%$ overflow).
+  - **Gate S4 (Audit Tamper Resistance):** Any mutation of audit log records is detected by cryptographic hash-chain verification.
+  - **Gate S5 (Inference Latency):** P99 inference latency $\le 10\text{ms}$ under 50-policy batch load.
+  - **Gate S6 (Reproducibility):** End-to-end decision pipeline reproduces bit-for-bit results under fixed seeds.
+- Publish formal Qualification Report and cryptographic artifact manifest.
+
+**Acceptance checks:**
+- [ ] All 6 System Qualification Gates (S1–S6) pass 100%.
+- [ ] Zero invariant violations across 1,000 synthetic test policies.
+- [ ] All unit, integration, and property tests pass in CI.
+- [ ] Qualification manifest generated with SHA-256 digests.
+
+**Depends on:** P3-06, P3-07, P3-08. **Blocks:** P3-10.
+
+---
+
+### P3-10 - Milestone release marker and notes (v0.3.0-decision-engine)
+
+**Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
+
+**Outcome:** Formal release documentation, architecture decision summary, and milestone closeout for `v0.3.0-decision-engine`.
+
+**Scope:**
+- Author comprehensive milestone release notes: `docs/release-notes/v0.3.0-decision-engine.md`.
+- Document complete system architecture, decision engine operational guide, API specifications, and HITL governance standards.
+- Prepare annotated Git release tag `v0.3.0-decision-engine`.
+- Close GitHub Milestone #4 ([`v0.3.0-decision-engine`](https://github.com/anilreddy89/Inforsight/milestone/4)).
+- Update root `README.md`, `docs/backlog.md`, and interactive roadmap (`docs/roadmap/app.js`).
+- Author Phase 3 decision note and transition roadmap for Phase 4 (Enterprise Integration & Scale).
+
+**Acceptance checks:**
+- [ ] Release notes document all Phase 3 capabilities, gates, and performance metrics.
+- [ ] Milestone #4 reaches 100% completion on GitHub.
+- [ ] Annotated Git tag `v0.3.0-decision-engine` created and verified.
+- [ ] All documentation links, schema validators, and full CI suite pass.
+
+**Depends on:** P3-09.
+
+---
+
 ## Deferred intentionally
 
-- Evaluate richer lifecycle contracts only when the Phase 2 data-sufficiency gate demonstrates that the MVP requires them: issue age, face amount, acquisition channel, recurring exposure, payment retries, reinstatement, maturity, loans, cash value, address and payment-method changes, and prior conservation attempts.
-- Open a separately governed fairness and bias assessment only when a defined jurisdiction and use case, legitimate and privacy-reviewed subgroup data, governance approval, adequate subgroup sample sizes, uncertainty reporting, and impact-aware metrics make the assessment meaningful; do not invent demographic attributes or claim fairness from the current fictional corpus.
-- Add SQL persistence schemas only when a storage consumer requires them.
-- Java services, Kafka, cloud deployment, bounded agents, and RAG remain deferred until the data and baseline-model gates pass.
+- **Enterprise Distributed Infrastructure (Phase 4):** Java/Spring microservices, Apache Kafka event streaming, Cloud deployment (AWS/GCP), multi-region active-active persistence, and container orchestration (Kubernetes) remain intentionally deferred until the core decision intelligence contracts and workflows are validated locally under [ADR 0003](adr/0003-start-local-and-defer-distributed-infrastructure.md).
+- **Richer Lifecycle Contracts:** Issue age, face amount, acquisition channel, recurring exposure, payment retries, reinstatement, maturity, policy loans, cash surrender value, address updates, and prior conservation attempts will be incorporated when storage and servicing integrations demand them.
+- **Fairness and Demographic Bias Assessment:** Open a separately governed fairness assessment only when a defined legal jurisdiction, legitimate privacy-reviewed subgroup attributes, regulatory compliance mandate, and adequate sample sizes are available. Do not invent synthetic demographic proxy variables or claim bias mitigation without representative data.
+- **Enterprise Storage & SQL Persistence:** Dedicated SQL/relational schemas and database migrations remain deferred until enterprise storage consumers require persistence beyond event-first JSONL and hash-chained audit ledgers.
