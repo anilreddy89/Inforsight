@@ -426,7 +426,7 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
-**Status:** In progress (Implemented locally) on branch `feat/108-p3-02-action-eligibility-rules-engine` through [issue #108](https://github.com/anilreddy89/Inforsight/issues/108). 17 focused eligibility tests pass. · [Phase document](../Documents/phase_docs/phase-03-02-deterministic-action-eligibility-rules-engine.md)
+**Status:** Completed on 2026-09-05 through [issue #108](https://github.com/anilreddy89/Inforsight/issues/108) and [PR #109](https://github.com/anilreddy89/Inforsight/pull/109), merge commit `1177394`. 17 focused eligibility tests pass, 412 simulator tests pass. · [Phase document](../Documents/phase_docs/phase-03-02-deterministic-action-eligibility-rules-engine.md)
 
 **Outcome:** A pure deterministic rules engine enforces business, legal, and regulatory constraints on intervention actions, completely decoupled from ML risk scores.
 
@@ -442,12 +442,12 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Output an immutable `EligibleActionSet` with explicit eligibility rationale for every evaluated action.
 
 **Acceptance checks:**
-- [ ] Active legal dispute or claim freezes all outreach actions deterministically.
-- [ ] Channel opt-outs disqualify the respective communication medium.
-- [ ] Contact fatigue rule rejects outreach if contact occurred within the 30-day window.
-- [ ] Missing required state attributes results in safe abstention, never unauthorized action.
-- [ ] Engine has zero dependency on model prediction scores or probability thresholds.
-- [ ] Property-based rule tests and `make check` pass.
+- [x] Active legal dispute or claim freezes all outreach actions deterministically.
+- [x] Channel opt-outs disqualify the respective communication medium.
+- [x] Contact fatigue rule rejects outreach if contact occurred within the 30-day window.
+- [x] Missing required state attributes results in safe abstention, never unauthorized action.
+- [x] Engine has zero dependency on model prediction scores or probability thresholds.
+- [x] Property-based rule tests and `make check` pass.
 
 **Depends on:** P3-01. **Blocks:** P3-03, P3-05, P3-08.
 
