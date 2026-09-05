@@ -84,24 +84,24 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | R2-16A | Phase 2R Acceptance protocol remediation | Adopt ADR 0013 and Protocol 3.1.0 addressing secondary rule calibration; re-evaluate acceptance protocol | Completed | Issue #94; PR #95 merged as `4d7e9da`; adopted ADR 0013 and Protocol `3.1.0`; 120 inventory units re-evaluated; all 10 rule families pass 100% (candidate median AUC 0.7031, 20/20 seeds consistent, AP lift +0.1344, Brier skill +0.0658); mechanical decision: PROCEED; final holdout `not_materialized`; Phase 2R complete; authorizes Phase 2 resumption with P2-08. |
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Completed | Issue #96; PR #97 merged as `3abb044`; Platt scaling selected (ECE 0.0115 <= 0.0300, slope 0.9498 in [0.85, 1.15], Brier 0.1211, AUC 0.6998 exact rank preservation); fit strictly on calibration partition (8,560 rows) of seed 20280201; evaluated out-of-sample on non_final_evaluation (8,782 rows); Top 1% review queue precision 34.09% (2.23x lift, NNR 2.9); Top 5% recall 11.57% (2.31x lift); 4 risk tiers; 1,000 policy-cluster bootstrap CIs; decision curves positive over cost ratios [0.02, 0.25]; final holdout strictly not_materialized; authorizes P2-09. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Completed | Issue #98; PR #99 merged as `29b9aca`; exact additive logit reconstruction residual < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; global importance ranked; representative waterfalls for Tiers 1, 2, 3; ADR 0002 non-causal authority boundaries codified; final holdout strictly not_materialized; authorizes P2-10. |
-| P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Implemented locally | Implemented and verified on branch `feat/100-p2-10-artifact-and-environment-reproducibility` through [issue #100](https://github.com/anilreddy89/Inforsight/issues/100); unified fitted preprocessing (28 features), linear weights, Platt parameters, attribution baselines, and risk tiers into unified release bundle; verified reload reproduction ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$, 100% tier concordance, 392 safety tests pass); ready for PR. |
+| P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Completed | Issue #100; PR #101 merged as `7112e82`; unified release model bundle (28 features), pure-JSON serialization, bit-for-bit reload invariant verified ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$, 100% tier concordance, 392 safety tests pass); clean-room holdout `not_materialized`; authorizes P2-11. |
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
 
-Phase 2R remediation is officially complete following the merged `proceed` decision of Phase 2R.16A (PR #95, commit `4d7e9da`). Resumed Phase 2 Baseline ML is actively executing; Phase 2.08 (PR #97, commit `3abb044`) and Phase 2.09 (PR #99, commit `29b9aca`) are completed and merged. Phase 2 P2-10 is implemented locally on branch `feat/100-p2-10-artifact-and-environment-reproducibility` (Issue #100) and ready for PR.
+Phase 2R remediation is officially complete following the merged `proceed` decision of Phase 2R.16A (PR #95, commit `4d7e9da`). Resumed Phase 2 Baseline ML is actively executing; Phase 2.08 (PR #97, commit `3abb044`), Phase 2.09 (PR #99, commit `29b9aca`), and Phase 2.10 (PR #101, commit `7112e82`) are completed and merged on `main`. Active increment: None (Phase 2 P2-11 ready to plan).
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 41 |
-| In-progress / implemented locally changes | 1 |
+| Completed tracked changes | 42 |
+| In-progress / implemented locally changes | 0 |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 |
-| Completed Phase 2 increments | 9 of 12 (P2-01..P2-03, P2-05..P2-09 completed; P2-10 implemented locally) |
+| Completed Phase 2 increments | 10 of 12 (P2-01..P2-03, P2-05..P2-10 completed) |
 | Completed Phase 2R increments | 24 of 24 (R2-00 through R2-16A) |
 | In-progress Phase 2R increments | 0 of 24 |
 | Planned Phase 2R increments | 0 of 24 |
-| Active increment | Phase 2 P2-10 (Artifact and environment reproducibility, Issue #100 - Ready for PR) |
+| Active increment | None (Phase 2 P2-11 ready to plan) |
 | Next implementation increment | Phase 2 P2-11 (Final evaluation, model card, and decision note) |
 
 

@@ -398,12 +398,12 @@ const timelineData = [
         id: "P2-10",
         title: "Artifact and Environment Reproducibility (Release Model Bundle)",
         status: "Completed",
-        commit: "Branch feat/100-p2-10-artifact-and-environment-reproducibility",
+        commit: "7112e82",
         summary: {
           tech: "Contract 1.0.0. Unified fitted preprocessor transformations (13 numeric scalers + 4 categorical one-hot encoders = 28 features), Logistic Regression weights (seed 20260817, C=1.0, L2), Platt calibration parameters (A=0.961849, B=-0.033420), explainer background baseline (E[z]=-0.7107, E[p]=0.3295), and operational decision policies (4 risk tiers, 3 review queues, ADR 0002 action boundaries) into an immutable, pure-JSON release model bundle (phase-02-10-model-bundle.json). Implemented standalone BundledInferenceEngine achieving bit-for-bit reload invariance across all 8,782 out-of-sample observations (max prob delta: 2.22e-16 <= 1.00e-12; max logit delta: 8.88e-16 <= 1.00e-12; 100% operational tier concordance). Locked Python runtime and dependency lock hashes. Final holdout strictly not_materialized.",
           simple: "Artifact & Environment Reproducibility: Packaged the entire trained AI pipeline (preprocessor, linear weights, calibrator, explainer baselines, and risk rules) into a single, secure, transparent JSON bundle with zero external ML library dependencies at runtime. Proved bit-for-bit reload reproduction: the standalone bundle engine generates identical predictions across all 8,782 customer accounts with zero drift (divergence under 1 part in 10 quadrillion). Locked environment versions and cryptographic checksums."
         },
-        checks: "Issue #100 & PR #101; Contract 1.0.0; pure-JSON serialization without pickle; standalone BundledInferenceEngine; bit-for-bit verification passes (max prob diff 2.22e-16 <= 1e-12); 100% operational tier concordance (8,782/8,782); ADR 0002 authority compliance; final holdout strictly not_materialized; make model-bundle-check passes."
+        checks: "Issue #100 & PR #101 merged (commit 7112e82); Contract 1.0.0; pure-JSON serialization without pickle; standalone BundledInferenceEngine; bit-for-bit verification passes (max prob diff 2.22e-16 <= 1e-12); 100% operational tier concordance (8,782/8,782); ADR 0002 authority compliance; final holdout strictly not_materialized; make model-bundle-check passes; authorizes P2-11."
       }
     ]
   }
