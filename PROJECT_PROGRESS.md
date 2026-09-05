@@ -88,7 +88,7 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Completed | Issue #102; PR #103 merged as `ec363d6`; 100% passing scorecard (Gates G1–G6); decision note RELEASE; resolved LIM-002-001, LIM-002-002, LIM-002-003. |
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Completed | Issue #104; PR #105 merged as `7797c09`; published milestone release notes, created annotated git tag `v0.2.0-risk-model`, closed GitHub Milestone #3. |
 | P3-01 | Phase 3 | Conservation domain contracts and action taxonomy | Completed | Issue #106 and [PR #107](https://github.com/anilreddy89/Inforsight/pull/107) merged as `7ed7efd`; JSON Schemas and fixtures implemented in `data-contracts`, test suite passing (20/20 contracts tests, 395/395 simulator tests). |
-| P3-02 | Phase 3 | Deterministic action eligibility rules engine | Pending | Pure deterministic rules enforcing business, legal, and regulatory constraints (ADR 0002). |
+| P3-02 | Phase 3 | Deterministic action eligibility rules engine | In progress | Issue #108, branch `feat/108-p3-02-action-eligibility-rules-engine`; pure deterministic rules engine enforcing ADR 0002 boundary. 17/17 tests passing locally. |
 | P3-03 | Phase 3 | Cost-utility and uplift optimization matrix | Pending | Economic optimization allocating conservation actions under specialist capacity limits. |
 | P3-04 | Phase 3 | Model serving and inference gateway | Pending | High-throughput zero-dependency FastAPI REST gateway wrapping `BundledInferenceEngine`. |
 | P3-04A | Phase 3 | Model monitoring and drift detection architecture | Pending | Telemetry architecture for PSI/CSI input drift and rolling calibration tracking. |
@@ -104,15 +104,15 @@ Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2
 | Measure | Value |
 | --- | ---: |
 | Completed tracked changes | 45 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 1) |
-| In-progress / implemented locally changes | 0 |
+| In-progress / implemented locally changes | 1 |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 1 of 10 |
-| In-progress Phase 3 increments | 0 |
-| Active increment | Phase 3 complete through P3-01 (next: P3-02) |
+| In-progress Phase 3 increments | 1 |
+| Active increment | Phase 3 P3-02 (Deterministic action eligibility rules engine) |
 | Next implementation increment | Phase 3 P3-02 (Deterministic action eligibility rules engine) |
 
 | ID | Status | Impact | Resolution trigger |

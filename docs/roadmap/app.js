@@ -447,13 +447,13 @@ const timelineData = [
       {
         id: "P3-02",
         title: "Deterministic Action Eligibility Rules Engine",
-        status: "Pending",
-        commit: "Pending",
+        status: "In progress",
+        commit: "Branch feat/108",
         summary: {
           tech: "Pure deterministic rules engine enforcing business, legal, and regulatory boundaries (grace period prerequisite, legal dispute freeze, TCPA cooling-off windows, channel opt-outs). Fail-closed evaluation with auditable disqualification reason codes, completely decoupled from ML risk scores.",
           simple: "Safety & Legal Rules Engine: A strict set of non-negotiable legal and business rules that filter what actions are allowed. For example, policies with active disputes or legal holds are frozen immediately from all outreach, regardless of what any AI model suggests."
         },
-        checks: "simulator/rules/ rules engine; ADR 0002 compliance; fail-closed disqualification codes; zero model score dependency; blocks P3-03, P3-05, P3-08."
+        checks: "Issue #108; simulator/rules/ engine; ADR 0002 compliance; 17/17 test_rules_eligibility.py passing; fail-closed disqualification codes; zero model score dependency; blocks P3-03, P3-05, P3-08."
       },
       {
         id: "P3-03",

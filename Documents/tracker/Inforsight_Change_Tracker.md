@@ -75,7 +75,7 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P2-11 | Phase 2 — Baseline ML | Publish `MODEL_CARD.md`, experiment report, and Phase 2 model decision note. | Completed | [#102](https://github.com/anilreddy89/Inforsight/issues/102) | [#103](https://github.com/anilreddy89/Inforsight/pull/103) | 2026-09-05 | `ec363d6` | `MODEL_CARD.md`, `docs/experiments/phase-02-11-*`, [phase document](../phase_docs/phase-02-11-final-evaluation-model-card-and-decision-note.md) | Contract 1.0.0; one-shot out-of-sample scoring of 8,782 observations; 100% passing acceptance gate scorecard (Gates G1–G6); decision note records RELEASE; LIM-002-001/002/003 formally resolved; authorizes P2-12. |
 | P2-12 | Phase 2 — Baseline ML | Publish the agreed risk-model release marker and release notes. | Completed | [#104](https://github.com/anilreddy89/Inforsight/issues/104) | [#105](https://github.com/anilreddy89/Inforsight/pull/105) | 2026-09-05 | `7797c09` | `docs/release-notes/v0.2.0-risk-model.md`, git tag `v0.2.0-risk-model`, GitHub release, [phase document](../phase_docs/phase-02-12-release-marker-and-notes.md) | Formally tags v0.2.0-risk-model, closes GitHub Milestone #3, publishes dual-audience release notes, and officially completes Phase 2 (12/12 Phase 2 and 24/24 Phase 2R increments complete); authorizes Phase 3 kick-off. |
 | P3-01 | Phase 3 — Conservation Decision Engine | Conservation domain contracts and action taxonomy (ADR 0002). | Completed | [#106](https://github.com/anilreddy89/Inforsight/issues/106) | [#107](https://github.com/anilreddy89/Inforsight/pull/107) | 2026-09-05 | `7ed7efd` | `data-contracts/conservation-action.schema.json`, `conservation-case-event.schema.json`, `data-contracts/tests/test_conservation_contracts.py`, 21 valid/invalid fixtures, `data-contracts/README.md`, [phase document](../phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md) | Merged in PR #107; 5 intervention types, cost/resource rules, ADR 0002 state machine; 20 contract tests pass. Authorizes P3-02, P3-04. |
-| P3-02 | Phase 3 — Conservation Decision Engine | Deterministic action eligibility rules engine (business, legal, regulatory constraints). | Pending | TBD | TBD | TBD | — | `simulator/rules/`, property-based eligibility tests | Depends on P3-01. Blocks P3-03, P3-05, P3-08. |
+| P3-02 | Phase 3 — Conservation Decision Engine | Deterministic action eligibility rules engine (business, legal, regulatory constraints). | In progress | [#108](https://github.com/anilreddy89/Inforsight/issues/108) | TBD | TBD | — | `simulator/src/inforsight_simulator/rules/`, `simulator/tests/test_rules_eligibility.py` (17 tests pass), [phase document](../phase_docs/phase-03-02-deterministic-action-eligibility-rules-engine.md) | Branch `feat/108-p3-02-action-eligibility-rules-engine`; pure deterministic rules engine enforcing ADR 0002 boundary. Depends on P3-01; blocks P3-03, P3-05, P3-08. |
 | P3-03 | Phase 3 — Conservation Decision Engine | Cost-utility and uplift optimization matrix (constrained resource allocation). | Pending | TBD | TBD | TBD | — | `simulator/optimization/`, utility matrix tests | Depends on P3-02. Blocks P3-05, P3-07, P3-08. |
 | P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | Pending | TBD | TBD | TBD | — | `serving/`, Dockerfile, gateway integration tests | Depends on P3-01. Blocks P3-04A, P3-05, P3-07. |
 | P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Pending | TBD | TBD | TBD | — | `docs/architecture/model-monitoring.md`, `/v1/diagnostics` schema | Depends on P3-04. Blocks P3-05, P3-07. |
@@ -108,15 +108,15 @@ In one sentence: Phase 2 is 100% complete and released, and Phase 3-01 contracts
 | Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
-| In-progress changes | 0 |
+| In-progress changes | 1 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 1 of 10 |
-| In-progress Phase 3 increments | 0 |
+| In-progress Phase 3 increments | 1 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
-| Active increment | Phase 3 complete through P3-01 (next: P3-02) |
-| Next implementation increment | Phase 3 P3-02 (Deterministic action eligibility rules engine) |
+| Active increment | Phase 3 P3-02 (Deterministic action eligibility rules engine) |
+| Next implementation increment | Phase 3 P3-03 (Cost-utility and uplift optimization matrix) |
 
 ## Latest verification baseline
 
@@ -302,7 +302,8 @@ Completion evidence:
 - Issue #100 closed when PR #101 merged as `7112e82`; Phase 2.10 release model bundle and reproducibility engine complete on `main`.
 - Issue #102 closed when PR #103 merged as `ec363d6`; Phase 2.11 final evaluation, MODEL_CARD.md, and Phase 2 decision note (RELEASE) complete on `main`.
 - Issue #104 closed when PR #105 merged as `7797c09`; Phase 2.12 v0.2.0-risk-model release tag, notes, and Milestone #3 closure complete on `main`.
-- Phase 3.01 kicked off: phase specification authored in `Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md`; Milestone #4 (v0.3.0-decision-engine) active.
+- Issue #106 closed when PR #107 merged as `7ed7efd`; Phase 3.01 conservation domain contracts and action taxonomy complete on `main`.
+- Issue #108 opened for Phase 3.02: Deterministic Action Eligibility Rules Engine; branch `feat/108-p3-02-action-eligibility-rules-engine` created; rules engine and 17 focused eligibility tests pass locally.
 
 ## Update procedure
 

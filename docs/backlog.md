@@ -426,6 +426,8 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
+**Status:** In progress (Implemented locally) on branch `feat/108-p3-02-action-eligibility-rules-engine` through [issue #108](https://github.com/anilreddy89/Inforsight/issues/108). 17 focused eligibility tests pass. · [Phase document](../Documents/phase_docs/phase-03-02-deterministic-action-eligibility-rules-engine.md)
+
 **Outcome:** A pure deterministic rules engine enforces business, legal, and regulatory constraints on intervention actions, completely decoupled from ML risk scores.
 
 **Scope:**
