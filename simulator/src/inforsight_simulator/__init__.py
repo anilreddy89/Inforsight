@@ -220,6 +220,23 @@ from .v3_evaluation import (
     validate_authorization as validate_v3_authorization,
     validate_temporal_fold as validate_v3_temporal_fold,
 )
+from .rules import (
+    ActionEligibilityResult,
+    ConservationActionDefinition,
+    DisqualificationReasonCode,
+    DISQUALIFICATION_DESCRIPTIONS,
+    EligibilityRulesEngine,
+    EligibleActionSet,
+    PolicyContext,
+    evaluate_action_eligibility,
+    evaluate_channel_consent,
+    evaluate_contact_cooling_off,
+    evaluate_grace_period,
+    evaluate_legal_freeze,
+    evaluate_policy_viability,
+    evaluate_tenure_bounds,
+    get_standard_action_catalog,
+)
 
 
 __version__ = "0.1.0"
@@ -402,6 +419,21 @@ __all__ = [
     "validate_dispositions",
     "transform_partition",
     "XGBOOST_PINNED_VERSION",
+    "ActionEligibilityResult",
+    "ConservationActionDefinition",
+    "DisqualificationReasonCode",
+    "DISQUALIFICATION_DESCRIPTIONS",
+    "EligibilityRulesEngine",
+    "EligibleActionSet",
+    "PolicyContext",
+    "evaluate_action_eligibility",
+    "evaluate_channel_consent",
+    "evaluate_contact_cooling_off",
+    "evaluate_grace_period",
+    "evaluate_legal_freeze",
+    "evaluate_policy_viability",
+    "evaluate_tenure_bounds",
+    "get_standard_action_catalog",
 ]
 
 
