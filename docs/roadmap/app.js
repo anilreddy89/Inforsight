@@ -458,13 +458,13 @@ const timelineData = [
       {
         id: "P3-03",
         title: "Cost-Utility & Uplift Optimization Matrix",
-        status: "Pending",
-        commit: "Pending",
+        status: "In Progress",
+        commit: "Branch feat/110-p3-03-cost-utility-optimization (Issue #110)",
         summary: {
           tech: "Economic optimization framework categorizing policyholders across 4 uplift quadrants (Persuadables, Lost Causes, Sure Things, Sleeping Dogs). Solves capacity-constrained resource allocation (Knapsack/greedy rank-ordering) to maximize net preserved value under specialist queue caps and outreach budgets.",
           simple: "Smart Outreach Allocation: Ensures expensive outreach (like phone calls from senior specialists) is reserved for customers who genuinely need and respond to help. Avoids wasting staff time on lost causes or bothering customers who prefer to self-cure."
         },
-        checks: "simulator/optimization/ matrix; net expected utility formulation; specialist call queue capacity adherence; blocks P3-05, P3-07, P3-08."
+        checks: "Issue #110 open; simulator/optimization/ matrix implemented; 9/9 test_optimization.py passing; 4-quadrant uplift; net expected utility; knapsack capacity solver; ADR 0002 compliance; blocks P3-05, P3-07, P3-08."
       },
       {
         id: "P3-04",
