@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "action_id": "act_invalid_negative_cost",
+  "action_type": "courtesy_reminder",
+  "channel": "sms",
+  "direct_cost_usd": -5.0,
+  "personnel_hours": 0.0,
+  "regulatory_cooling_off_days": 30,
+  "minimum_policy_tenure_days": 30,
+  "maximum_policy_tenure_days": null,
+  "requires_grace_period": false
+}
+

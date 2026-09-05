@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "action_id": "act_invalid_channel_none_for_active",
+  "action_type": "specialist_phone_outreach",
+  "channel": "none",
+  "direct_cost_usd": 65.0,
+  "personnel_hours": 1.0,
+  "regulatory_cooling_off_days": 30,
+  "minimum_policy_tenure_days": 90,
+  "maximum_policy_tenure_days": null,
+  "requires_grace_period": false
+}
+

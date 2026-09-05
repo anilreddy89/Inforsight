@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.example/contracts/conservation-case-event.schema.json",
+  "title": "Inforsight conservation case event",
+  "description": "Versioned JSON Schema contract formalizing the conservation case lifecycle state machine, human review gates, and ADR 0002 authority boundaries.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_event_id",
+    "case_id",
+    "policy_id",
+    "from_state",
+    "to_state",
+    "occurred_at",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Version of this conservation-case-event contract.",
+      "const": "1.0.0"
+    },
+    "case_event_id": {
+      "description": "Synthetic unique identifier for this immutable case event.",
+      "type": "string",
+      "pattern": "^cev_[a-z0-9]{12,64}$"
+    },
+    "case_id": {
+      "description": "Unique identifier for the conservation case episode.",
+      "type": "string",
+      "pattern": "^case_[a-z0-9]{12,64}$"
+    },
+    "policy_id": {
+      "description": "Synthetic identifier of the associated policy.",
+      "type": "string",
+      "pattern": "^pol_[a-z0-9]{12,64}$"
+    },
+    "from_state": {
+      "description": "Preceding lifecycle state of the case.",
+      "enum": [
+        "NONE",
+        "CREATED",
+        "TRIAGED",
+        "EVIDENCE_ASSEMBLED",
+        "RECOMMENDED",
+        "HUMAN_REVIEWED",
+        "EXECUTED",
+        "DISMISSED"
+      ]
+    },
+    "to_state": {
+      "description": "Target lifecycle state resulting from this transition event.",
+      "enum": [
+        "CREATED",
+        "TRIAGED",
+        "EVIDENCE_ASSEMBLED",
+        "RECOMMENDED",
+        "HUMAN_REVIEWED",
+        "EXECUTED",
+        "DISMISSED",
+        "RESOLVED"
+      ]
+    },
+    "occurred_at": {
+      "description": "RFC 3339 UTC timestamp when the state transition occurred.",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "payload": {
+      "description": "State-specific evidence and decision payload.",
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "description": "Permitted case lifecycle state transitions. Note that RECOMMENDED -> EXECUTED is excluded, strictly enforcing ADR 0002 mandatory human review.",
+      "anyOf": [
+        {
+          "properties": {
+            "from_state": { "const": "NONE" },
+            "to_state": { "const": "CREATED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "CREATED" },
+            "to_state": { "const": "TRIAGED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "TRIAGED" },
+            "to_state": { "const": "EVIDENCE_ASSEMBLED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "EVIDENCE_ASSEMBLED" },
+            "to_state": { "const": "RECOMMENDED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "RECOMMENDED" },
+            "to_state": { "const": "HUMAN_REVIEWED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "HUMAN_REVIEWED" },
+            "to_state": { "const": "EXECUTED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "HUMAN_REVIEWED" },
+            "to_state": { "const": "DISMISSED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "EXECUTED" },
+            "to_state": { "const": "RESOLVED" }
+          },
+          "required": ["from_state", "to_state"]
+        },
+        {
+          "properties": {
+            "from_state": { "const": "DISMISSED" },
+            "to_state": { "const": "RESOLVED" }
+          },
+          "required": ["from_state", "to_state"]
+        }
+      ]
+    },
+    {
+      "description": "ADR 0002 Enforcement: transitions to HUMAN_REVIEWED or EXECUTED must include valid human review credentials and decision record.",
+      "if": {
+        "properties": {
+          "to_state": { "enum": ["HUMAN_REVIEWED", "EXECUTED"] }
+        },
+        "required": ["to_state"]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["human_review"],
+            "properties": {
+              "human_review": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "reviewer_id",
+                  "reviewed_at",
+                  "decision",
+                  "rationale_code"
+                ],
+                "properties": {
+                  "reviewer_id": {
+                    "type": "string",
+                    "pattern": "^usr_[a-z0-9_]{3,32}$"
+                  },
+                  "reviewed_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "Z$"
+                  },
+                  "decision": {
+                    "enum": ["APPROVED", "OVERRIDDEN", "REJECTED"]
+                  },
+                  "rationale_code": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]{3,64}$"
+                  },
+                  "justification": {
+                    "type": "string",
+                    "minLength": 5
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "decision": { "enum": ["OVERRIDDEN", "REJECTED"] }
+                      }
+                    },
+                    "then": {
+                      "required": ["justification"]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "Transition to RECOMMENDED must include structured recommendation and ADR 0002 non-authority marker.",
+      "if": {
+        "properties": {
+          "to_state": { "const": "RECOMMENDED" }
+        },
+        "required": ["to_state"]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["recommendation"],
+            "properties": {
+              "recommendation": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "action_type",
+                  "model_score",
+                  "operational_tier",
+                  "authorized_to_act"
+                ],
+                "properties": {
+                  "action_type": {
+                    "enum": [
+                      "courtesy_reminder",
+                      "grace_period_consultation",
+                      "specialist_phone_outreach",
+                      "payment_method_remediation",
+                      "abstain"
+                    ]
+                  },
+                  "model_score": {
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "operational_tier": {
+                    "enum": [
+                      "TIER_1_LOW",
+                      "TIER_2_MODERATE",
+                      "TIER_3_HIGH",
+                      "TIER_4_CRITICAL"
+                    ]
+                  },
+                  "authorized_to_act": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+

@@ -428,6 +428,133 @@ const timelineData = [
         checks: "Issue #104 & PR #105 merged (commit 7797c09 / df5d8e8); annotated tag v0.2.0-risk-model; docs/release-notes/v0.2.0-risk-model.md; backlog & roadmap updated; clean tree & 395 unit tests pass; Phase 2 100% complete."
       }
     ]
+  },
+  {
+    phase: "Phase 3: Policy Conservation Decision Engine",
+    milestone: "v0.3.0-decision-engine",
+    items: [
+      {
+        id: "P3-01",
+        title: "Domain Contracts & Action Taxonomy",
+        status: "In progress",
+        commit: "Issue #106 (feat/106-p3-01-conservation-contracts)",
+        summary: {
+          tech: "Formalized versioned JSON Schema contracts for 5 standard conservation intervention types (courtesy_reminder, grace_period_consultation, specialist_phone_outreach, payment_method_remediation, abstain). Formalized conservation case event state machine (CREATED -> TRIAGED -> EVIDENCE_ASSEMBLED -> RECOMMENDED -> HUMAN_REVIEWED -> EXECUTED/DISMISSED -> RESOLVED). Enforced ADR 0002 boundary requiring explicit human review approval metadata before execution.",
+          simple: "Conservation Rules & Actions Contract: Before writing any automation, we established strict rules and contracts for allowed customer actions (reminders, phone consultations, payment help, or 'do not disturb'). Enforced our core safety guarantee: no AI model or automated script is ever permitted to contact a customer or change a policy without a licensed specialist reviewing and approving it first!"
+        },
+        checks: "Issue #106 active; branch feat/106-p3-01-conservation-contracts; phase specification authored in Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md; data-contracts/conservation-action.schema.json; conservation-case-event.schema.json; ADR 0002 human review boundary; blocks P3-02, P3-04."
+      },
+      {
+        id: "P3-02",
+        title: "Deterministic Action Eligibility Rules Engine",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Pure deterministic rules engine enforcing business, legal, and regulatory boundaries (grace period prerequisite, legal dispute freeze, TCPA cooling-off windows, channel opt-outs). Fail-closed evaluation with auditable disqualification reason codes, completely decoupled from ML risk scores.",
+          simple: "Safety & Legal Rules Engine: A strict set of non-negotiable legal and business rules that filter what actions are allowed. For example, policies with active disputes or legal holds are frozen immediately from all outreach, regardless of what any AI model suggests."
+        },
+        checks: "simulator/rules/ rules engine; ADR 0002 compliance; fail-closed disqualification codes; zero model score dependency; blocks P3-03, P3-05, P3-08."
+      },
+      {
+        id: "P3-03",
+        title: "Cost-Utility & Uplift Optimization Matrix",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Economic optimization framework categorizing policyholders across 4 uplift quadrants (Persuadables, Lost Causes, Sure Things, Sleeping Dogs). Solves capacity-constrained resource allocation (Knapsack/greedy rank-ordering) to maximize net preserved value under specialist queue caps and outreach budgets.",
+          simple: "Smart Outreach Allocation: Ensures expensive outreach (like phone calls from senior specialists) is reserved for customers who genuinely need and respond to help. Avoids wasting staff time on lost causes or bothering customers who prefer to self-cure."
+        },
+        checks: "simulator/optimization/ matrix; net expected utility formulation; specialist call queue capacity adherence; blocks P3-05, P3-07, P3-08."
+      },
+      {
+        id: "P3-04",
+        title: "Model Serving & Inference Gateway",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "High-throughput, sub-millisecond REST inference gateway (FastAPI) wrapping standalone BundledInferenceEngine. Enforces input validation, reload bit-for-bit invariance, and ADR 0002 boundary markers (authorized_to_act: false) on all scoring responses.",
+          simple: "Ultra-Fast Scoring Gateway: A clean, lightning-fast web service that loads our verified AI model bundle and delivers predictions in under 5 milliseconds, while explicitly labeling every prediction as advisory-only."
+        },
+        checks: "serving/ FastAPI service; Dockerfile; reload bit-for-bit check; ADR 0002 authorized_to_act: false marker; blocks P3-04A, P3-05, P3-07."
+      },
+      {
+        id: "P3-04A",
+        title: "Model Monitoring & Drift Detection Architecture",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Production telemetry architecture specifying Population Stability Index (PSI/CSI) input drift tracking and rolling calibration error (ECE/Brier) over sliding observation windows. Defines /v1/diagnostics schema and automated fail-safe fallback policies.",
+          simple: "Drift & AI Health Monitor: Automated monitors that watch the model in production. If customer behavior changes over time or predictions become uncalibrated, alerts trigger immediately so humans can investigate."
+        },
+        checks: "Telemetry specification; PSI/CSI mathematical thresholds; /v1/diagnostics endpoint; fail-safe fallback policies; blocks P3-05, P3-07."
+      },
+      {
+        id: "P3-05",
+        title: "Bounded Case Intelligence Assistant",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Evidence-assembly assistant synthesizing structured Case Briefs using a deterministic template engine as core foundation, augmented by an optional grounded LLM narrative layer with automated grounding validators that reject ungrounded entities.",
+          simple: "Specialist Dossier Assistant: Generates a clear, one-page case brief for customer service specialists explaining why a policy is at risk, summarizing payment history, and suggesting talking points. Guaranteed zero hallucinations via strict factual grounding guards."
+        },
+        checks: "simulator/assistant/ briefing engine; deterministic templates; LLM grounding validator; draft advisory status marker; blocks P3-06, P3-07."
+      },
+      {
+        id: "P3-06",
+        title: "Human-in-the-Loop Workflow & Audit Engine",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Specialist decision review state machine (Approve, Override, Dismiss) paired with an append-only, cryptographic hash-chained audit ledger (SHA-256) guaranteeing tamper-evidence and full point-in-time decision replay.",
+          simple: "Human Review & Tamper-Proof Audit: Specialist decision dashboard and a tamper-evident audit ledger. Every human decision, override reason, and system recommendation is chained with cryptographic hashes so no records can ever be secretly altered."
+        },
+        checks: "simulator/workflow/ review state machine; hash-chained audit logger; replay verification tool; blocks P3-07, P3-09."
+      },
+      {
+        id: "P3-07",
+        title: "Interactive Conservation Dashboard",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Interactive Streamlit web application providing executive portfolio risk distribution, capacity-constrained triage queue tables (Top 1%, 5%, 20%), deep-dive policy dossier views with SHAP waterfalls, and specialist decision console.",
+          simple: "Interactive Decision Console: A live web dashboard for conservation teams to explore portfolio risk tiers, investigate individual policyholder histories, inspect AI explanations, and approve or adjust outreach recommendations."
+        },
+        checks: "dashboard/ Streamlit app; real-time queue filtering; live audit logging; offline policy evaluation display; blocks P3-09."
+      },
+      {
+        id: "P3-08",
+        title: "Counterfactual Simulation & Offline Policy Evaluation",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Counterfactual potential-outcomes simulation engine extending Generation v6 substrate to evaluate heterogeneous treatment effects, lapse rate reduction, Net Preserved Value, and Return on Conservation Spend (ROCS) against heuristic and naive ML policies.",
+          simple: "What-If Business Impact Simulator: Mathematically tests how many policies and dollars the decision engine saves compared to simple rules or naive scoring, proving the business return before deploying to real customers."
+        },
+        checks: "scripts/run_offline_policy_evaluation.py; 95% bootstrap CIs; Net Preserved Value comparison; blocks P3-07, P3-09."
+      },
+      {
+        id: "P3-09",
+        title: "End-to-End System Qualification Gate",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Pre-registered 6 System Qualification Gates (S1 Authority Isolation, S2 Eligibility Invariant, S3 Budget/Capacity Adherence, S4 Audit Tamper Resistance, S5 Inference Latency <= 10ms, S6 Deterministic Reproducibility) across 1,000 synthetic test policies.",
+          simple: "Final System Safety Test: A comprehensive automated certification run testing all 6 core safety and performance gates across 1,000 simulated policies to verify zero security leaks, zero rule violations, and sub-10ms response times."
+        },
+        checks: "tests/qualification/ qualification suite; 100% pass across Gates S1–S6; qualification manifest with SHA-256 digests; blocks P3-10."
+      },
+      {
+        id: "P3-10",
+        title: "Milestone Release Marker & Notes (v0.3.0-decision-engine)",
+        status: "Pending",
+        commit: "Pending",
+        summary: {
+          tech: "Milestone release documentation (docs/release-notes/v0.3.0-decision-engine.md), annotated Git tag v0.3.0-decision-engine, Phase 3 decision note, and transition roadmap for Phase 4 (Enterprise Integration & Scale).",
+          simple: "Milestone 3.0 Completion: Publishing formal release notes, closing Milestone #4, and tagging v0.3.0-decision-engine to officially mark the Policy Conservation Decision Engine as complete!"
+        },
+        checks: "Annotated Git tag v0.3.0-decision-engine; docs/release-notes/v0.3.0-decision-engine.md; Milestone #4 closed; Phase 4 transition plan."
+      }
+    ]
   }
 ];
 

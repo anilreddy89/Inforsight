@@ -41,7 +41,7 @@ Most portfolio projects show a single model and a final accuracy number. This pr
 | **v5** | 320-cell feasibility surface, 17 diagnostics | **0 of 320 cells** satisfy simultaneous AUC ≥ 0.70 and hazard < 0.20 — *mathematically infeasible* | `stop_infeasible_design` |
 | **v6** | **Bounded sigmoid hazard link** | Broke the Proportional Hazards Trilemma; 20/20 seeds pass; median AUC 0.7031 | ✅ `proceed` |
 
-> The full iteration history with root-cause analysis is in the [Iteration Ledger](docs/experiments/iteration-ledger.md).
+> The full iteration history with root-cause analysis is in the [Iteration Ledger](docs/experiments/iteration-ledger.md). Historical R2-08 issue #53 anchored the v3 redesign contract, and R2-11 recorded the v3 statistical acceptance stop; release evaluation holdouts remained strictly `not_materialized` throughout development.
 
 **Generation v6** introduced a bounded logistic hazard link — $\lambda(t) = \lambda_{\max}\sigma(z)$ — that mathematically guarantees monthly hazard ≤ 0.15 while preserving discriminative signal. This architecture passed all 120 inventory units across 20 acceptance seeds under [Protocol 3.1.0](docs/modeling/phase-02r-16-v6-statistical-acceptance-execution-contract.md).
 

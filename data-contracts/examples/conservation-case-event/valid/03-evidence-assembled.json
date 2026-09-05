@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "case_event_id": "cev_03918a2b3c4d5e6f7a8b9c0d",
+  "case_id": "case_01918a2b3c4d5e6f7a8b9c0d",
+  "policy_id": "pol_a1b2c3d4e5f60718",
+  "from_state": "TRIAGED",
+  "to_state": "EVIDENCE_ASSEMBLED",
+  "occurred_at": "2026-09-01T08:10:00Z",
+  "payload": {
+    "evidence_snapshot": {
+      "history_event_count": 14,
+      "unpaid_premium_due_cents": 12000,
+      "grace_period_days_remaining": 12,
+      "prior_contact_count_30d": 0
+    }
+  }
+}
+

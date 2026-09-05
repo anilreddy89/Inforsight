@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "action_id": "act_grace_period_consultation_v1",
+  "action_type": "grace_period_consultation",
+  "channel": "phone",
+  "direct_cost_usd": 25.0,
+  "personnel_hours": 0.5,
+  "regulatory_cooling_off_days": 30,
+  "minimum_policy_tenure_days": 60,
+  "maximum_policy_tenure_days": null,
+  "requires_grace_period": true
+}
+

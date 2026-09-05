@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "case_event_id": "cev_04918a2b3c4d5e6f7a8b9c0d",
+  "case_id": "case_01918a2b3c4d5e6f7a8b9c0d",
+  "policy_id": "pol_a1b2c3d4e5f60718",
+  "from_state": "EVIDENCE_ASSEMBLED",
+  "to_state": "RECOMMENDED",
+  "occurred_at": "2026-09-01T08:15:00Z",
+  "payload": {
+    "recommendation": {
+      "action_type": "grace_period_consultation",
+      "model_score": 0.4215,
+      "operational_tier": "TIER_3_HIGH",
+      "authorized_to_act": false
+    },
+    "eligible_actions": [
+      "grace_period_consultation",
+      "payment_method_remediation"
+    ]
+  }
+}
+

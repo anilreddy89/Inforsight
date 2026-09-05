@@ -59,6 +59,34 @@ Eligible records require `eligible_active`, non-null active-policy features, and
 
 The simulator domain objects additionally enforce temporal relations that JSON Schema cannot express, including the exact 90-day horizon and positive source-event timing. See the [modeling contract](../docs/modeling/phase-02-01-modeling-contract.md) for the complete semantics.
 
+## Phase 3 Conservation domain contracts
+
+Phase 3 introduces versioned JSON Schema Draft 2020-12 contracts formalizing the conservation decision intelligence and intervention orchestration boundary:
+
+### Conservation action schema
+
+[`conservation-action.schema.json`](conservation-action.schema.json) defines version `1.0.0` of the allowed conservation action taxonomy:
+
+| Action type | Operational channel | Description | Default direct cost $c(a)$ | Personnel hours |
+| :--- | :--- | :--- | :---: | :---: |
+| `courtesy_reminder` | `sms`, `email` | Low-friction automated touchpoint for early friction | \$1.50 | 0.00 |
+| `grace_period_consultation` | `phone`, `video` | Advisory consultation for active grace period | \$25.00 | 0.50 |
+| `specialist_phone_outreach` | `phone` | High-touch outreach by licensed specialist | \$65.00 | 1.00 |
+| `payment_method_remediation` | `sms`, `email`, `web` | Involuntary payment failure resolution | \$3.00 | 0.10 |
+| `abstain` | `none` | Explicit non-intervention decision ("Do Not Disturb") | \$0.00 | 0.00 |
+
+Active interventions enforce strictly positive non-zero cost and valid operational communication channels. The `abstain` action strictly enforces \$0.00 cost, 0.0 hours, and channel `none`.
+
+### Conservation case event schema
+
+[`conservation-case-event.schema.json`](conservation-case-event.schema.json) defines version `1.0.0` of the case lifecycle state machine under **ADR 0002** (*Separate Risk Perception from Action Authority*):
+
+$$\text{CREATED} \rightarrow \text{TRIAGED} \rightarrow \text{EVIDENCE\_ASSEMBLED} \rightarrow \text{RECOMMENDED} \rightarrow \text{HUMAN\_REVIEWED} \rightarrow \text{EXECUTED} / \text{DISMISSED} \rightarrow \text{RESOLVED}$$
+
+- **ADR 0002 Invariant**: Direct automated execution from `RECOMMENDED` to `EXECUTED` is strictly forbidden by schema constraints.
+- **Human Review Evidence**: Transitions to `HUMAN_REVIEWED` or `EXECUTED` require valid reviewer credentials (`reviewer_id`), UTC timestamp (`reviewed_at`), structured decision (`APPROVED`, `OVERRIDDEN`, `REJECTED`), and mandatory justification when overriding recommendations.
+- **Model Advisory Marker**: Recommendations must contain `authorized_to_act: false`, codifying that AI models provide perceptual advice rather than execution authority.
+
 ## Validate the contract
 
 Install the test-only dependency and run the contract tests:
@@ -68,4 +96,4 @@ python3 -m pip install -r data-contracts/requirements-test.txt
 python3 -m unittest discover -s data-contracts/tests -v
 ```
 
-The test suite checks that the envelope, payload, and observation schemas are valid JSON Schema Draft 2020-12. It covers every event type, the event examples, all four valid observation-label variants, and contradictory label, eligibility, version, currency, and type states.
+The test suite checks that the envelope, payload, observation, action, and case event schemas are valid JSON Schema Draft 2020-12. It covers every event type, the event examples, all valid observation-label variants, action parameter rules, and ADR 0002 case state machine transitions.

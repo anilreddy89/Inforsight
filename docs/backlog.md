@@ -396,6 +396,8 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
+**Status:** In progress through [issue #106](https://github.com/anilreddy89/Inforsight/issues/106) on branch `feat/106-p3-01-conservation-contracts` · [Phase document](../Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md)
+
 **Outcome:** Versioned JSON Schema contracts define allowed conservation actions, case state transitions, and audit event envelopes before any business logic is written.
 
 **Scope:**
