@@ -89,7 +89,7 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P2-12 | Phase 2 | Risk-model release marker and release notes | Completed | Issue #104; PR #105 merged as `7797c09`; published milestone release notes, created annotated git tag `v0.2.0-risk-model`, closed GitHub Milestone #3. |
 | P3-01 | Phase 3 | Conservation domain contracts and action taxonomy | Completed | Issue #106 and [PR #107](https://github.com/anilreddy89/Inforsight/pull/107) merged as `7ed7efd`; JSON Schemas and fixtures implemented in `data-contracts`, test suite passing (20/20 contracts tests, 395/395 simulator tests). |
 | P3-02 | Phase 3 | Deterministic action eligibility rules engine | Completed | Issue #108 and [PR #109](https://github.com/anilreddy89/Inforsight/pull/109) merged as `1177394`; pure deterministic rules engine enforcing ADR 0002 boundary. 17/17 rules tests pass, 412/412 simulator suite tests pass. |
-| P3-03 | Phase 3 | Cost-utility and uplift optimization matrix | In progress | Issue #110; active on branch `feat/110-p3-03-cost-utility-optimization`. 4-quadrant uplift, net utility formulation, knapsack solver under capacity constraints; 9/9 tests pass. |
+| P3-03 | Phase 3 | Cost-utility and uplift optimization matrix | Completed | Issue #110 and [PR #111](https://github.com/anilreddy89/Inforsight/pull/111) merged as `a1e97cb`; 4-quadrant uplift, net utility formulation, knapsack solver under capacity constraints; 9/9 tests pass. |
 | P3-04 | Phase 3 | Model serving and inference gateway | Pending | High-throughput zero-dependency FastAPI REST gateway wrapping `BundledInferenceEngine`. |
 | P3-04A | Phase 3 | Model monitoring and drift detection architecture | Pending | Telemetry architecture for PSI/CSI input drift and rolling calibration tracking. |
 | P3-05 | Phase 3 | Bounded case intelligence assistant | Pending | Deterministic template foundation with optional grounded LLM narrative layer. |
@@ -99,20 +99,20 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-09 | Phase 3 | End-to-end system qualification and integration gate | Pending | Automated pre-release qualification suite enforcing Gates S1–S6. |
 | P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Pending | Milestone closeout, release tag `v0.3.0-decision-engine`, and documentation. |
 
-Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is actively underway under milestone `v0.3.0-decision-engine` (Milestone #4), with Phase 3.01 merged on `main` (PR #107, commit `7ed7efd`) and Phase 3.02 merged on `main` (PR #109, commit `1177394`), and Phase 3.03 in progress on Issue #110.
+Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is actively underway under milestone `v0.3.0-decision-engine` (Milestone #4), with Phase 3.01 merged on `main` (PR #107, commit `7ed7efd`), Phase 3.02 merged on `main` (PR #109, commit `1177394`), and Phase 3.03 merged on `main` (PR #111, commit `a1e97cb`).
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 46 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 2) |
-| In-progress / implemented locally changes | 1 (P3-03) |
+| Completed tracked changes | 47 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 3) |
+| In-progress / implemented locally changes | 0 |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 2 of 10 |
-| In-progress Phase 3 increments | 1 (P3-03) |
-| Active increment | Phase 3 P3-03 (Cost-utility and uplift optimization matrix, Issue #110) |
+| Completed Phase 3 increments | 3 of 10 |
+| In-progress Phase 3 increments | 0 |
+| Active increment | Phase 3 complete through P3-03 (next: P3-04) |
 | Next implementation increment | Phase 3 P3-04 (Model serving and inference gateway) |
 
 | ID | Status | Impact | Resolution trigger |

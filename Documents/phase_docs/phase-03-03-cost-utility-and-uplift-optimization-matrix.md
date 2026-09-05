@@ -10,8 +10,8 @@
 | GitHub issue | [#110](https://github.com/anilreddy89/Inforsight/issues/110) |
 | Issue title | `[Implementation] P3-03: Cost-utility and uplift optimization matrix` |
 | Branch | `feat/110-p3-03-cost-utility-optimization` |
-| Pull request | Pending PR creation (instructions provided) |
-| Status | Complete (Ready for PR) |
+| Pull request | [#111](https://github.com/anilreddy89/Inforsight/pull/111) |
+| Status | Complete (Merged as `a1e97cb`) |
 | Milestone | [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4) |
 | Priority | Milestone blocking / Foundational |
 | Classification | Core Engine / Optimization / Economics |
