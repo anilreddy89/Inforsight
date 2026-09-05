@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 from typing import Any
 from fastapi import FastAPI, HTTPException, status
@@ -19,6 +20,7 @@ from serving.models import (
     ScoreRequest,
     ScoreResponse,
 )
+from serving.monitoring import DriftMonitor
 
 DEFAULT_BUNDLE_PATH = (
     Path(__file__).resolve().parent.parent / "docs" / "experiments" / "phase-02-10-model-bundle.json"
@@ -28,6 +30,7 @@ DEFAULT_BUNDLE_PATH = (
 _bundle: ModelBundle | None = None
 _engine: BundledInferenceEngine | None = None
 _bundle_sha256: str = ""
+_monitor: DriftMonitor | None = None
 
 
 def get_bundle_path() -> Path:
@@ -52,8 +55,9 @@ def load_engine(bundle_path: Path | str | None = None) -> tuple[ModelBundle, Bun
 
 
 def create_app(bundle_path: Path | str | None = None) -> FastAPI:
-    global _bundle, _engine, _bundle_sha256
+    global _bundle, _engine, _bundle_sha256, _monitor
     _bundle, _engine, _bundle_sha256 = load_engine(bundle_path)
+    _monitor = DriftMonitor(_bundle)
 
     app = FastAPI(
         title="Inforsight Model Serving Gateway",
@@ -130,10 +134,14 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         if _engine is None:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
         raw_map = req.features.to_feature_dict()
+        t0 = time.perf_counter()
         try:
             result = _engine.score_record(raw_map)
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Inference error: {str(e)}")
+        latency_ms = (time.perf_counter() - t0) * 1000.0
+        if _monitor is not None:
+            _monitor.record_single_request(latency_ms)
         return _format_scoring_response(req, result)
 
     @app.post("/v1/score/batch", response_model=BatchScoreResponse, tags=["Scoring"])
@@ -141,14 +149,32 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         if _engine is None:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
         raw_maps = [r.features.to_feature_dict() for r in req.requests]
+        t0 = time.perf_counter()
         try:
             results = _engine.score_batch(raw_maps)
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Batch inference error: {str(e)}")
+        latency_ms = (time.perf_counter() - t0) * 1000.0
+        if _monitor is not None:
+            _monitor.record_batch_request(latency_ms, len(results))
         scores = [_format_scoring_response(r, res) for r, res in zip(req.requests, results)]
         return BatchScoreResponse(count=len(scores), scores=scores)
 
+    @app.get("/v1/diagnostics", tags=["Monitoring"])
+    def diagnostics() -> JSONResponse:
+        """Return inference telemetry, PSI/CSI drift, rolling calibration, and alert summary.
+
+        schema_version: 1.0.0 (predeclared in Phase 3.04A design spec).
+        ADR 0002: authorized_to_act is unconditionally False in the alert_summary section.
+        """
+        if _monitor is None:
+            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Monitor not initialised")
+        report = _monitor.diagnostics_report()
+        return JSONResponse(content=report)
+
     return app
+
+
 
 
 app = create_app()
