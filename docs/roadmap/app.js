@@ -408,13 +408,13 @@ const timelineData = [
       {
         id: "P2-11",
         title: "Final Evaluation, Model Card & Phase 2 Decision Note",
-        status: "In Progress",
-        commit: "Working (Issue #102)",
+        status: "Completed",
+        commit: "8ac7aed / ec363d6",
         summary: {
-          tech: "Contract 1.0.0. Pre-registered, access-controlled one-shot final evaluation of the frozen release model bundle (inforsight-v6-logistic-platt-20260817) on the final evaluation partition. Publishes comprehensive root MODEL_CARD.md (Mitchell et al. 2019), final experiment report with 1,000 cluster bootstrap CIs, and Phase 2 Decision Note (RELEASE decision). Resolves LIM-002-001, LIM-002-002, and LIM-002-003.",
-          simple: "Final Model Card & Release Decision: Carrying out the formal, one-shot final test of the frozen AI model with full statistical audit. Publishing the industry-standard MODEL_CARD.md explaining capabilities, limitations, synthetic data boundaries, and the absence of demographic bias testing, and recording the official Phase 2 release decision to unlock the v0.2.0 milestone release."
+          tech: "Contract 1.0.0. One-shot out-of-sample final evaluation of frozen release model bundle (inforsight-v6-logistic-platt-20260817) on 8,782 observations via standalone BundledInferenceEngine. Computed 1,000 policy-cluster bootstrap CIs: ROC AUC 0.6998 [0.6847, 0.7153] (Gate G1 >= 0.6800), AP 0.2765 [0.2560, 0.2994] (Gate G2 >= 0.2500), Brier score 0.1211 [0.1170, 0.1252], ECE 0.0115 <= 0.0300 (Gate G3), slope 0.9498 in [0.85, 1.15] (Gate G4), Top 1% review queue precision 34.09% (Gate G5 >= 0.3000, 2.23x lift), and Top 5% review queue lift 2.31x (Gate G6 >= 2.00x). Passed 100% of acceptance gates (G1-G6). Published root MODEL_CARD.md (Mitchell et al. 2019), quantitative report, cryptographic manifest, and Phase 2 decision note recording formal determination 'RELEASE'. Resolved LIM-002-001, LIM-002-002, and LIM-002-003 in docs/limitations.md. Final holdout remains strictly unmaterialized.",
+          simple: "Final Model Card & Release Determination: Completed the formal, pre-registered final evaluation of the frozen AI release bundle. Passed all 6 pre-registered gates (0.6998 AUC, 1.15% ECE, 34.1% Top-1% precision, 2.31x Top-5% lift). Published the root MODEL_CARD.md documenting transparent performance, operational review queues, synthetic data provenance, ADR 0002 action boundaries, and explicit disclaimer regarding the absence of demographic bias testing. Officially recorded the Phase 2 'RELEASE' decision note and resolved the first 3 limitations (LIM-002-001, LIM-002-002, LIM-002-003)!"
         },
-        checks: "Issue #102 opened; Branch feat/102-p2-11-final-evaluation-and-model-card; Contract 1.0.0; MODEL_CARD.md; final evaluation report; Phase 2 decision note (RELEASE); LIM-002-001/002/003 resolved; enables P2-12."
+        checks: "Issue #102 & PR #103 merged (commit ec363d6 / 8ac7aed); Contract 1.0.0; Gates G1-G6 passed; 1,000-sample cluster bootstrap CIs; root MODEL_CARD.md; final evaluation report; Phase 2 decision note (RELEASE); LIM-002-001/002/003 resolved; make final-evaluation-check passes; authorizes P2-12."
       }
     ]
   }
@@ -426,45 +426,45 @@ const roadblocksData = [
     id: "LIM-002-001",
     type: "rb-guard",
     title: "Billing Frequency Confounded with Observation Time",
-    phase: "Discovered in Phase 2.03",
-    adr: "ADR 0004 / 0005",
+    phase: "Discovered in Phase 2.03 • Resolved in Phase 2.11 (PR #103)",
+    adr: "ADR 0004 / 0005 • Resolved",
     trap: {
       tech: "All policies were issued in one initial batch, and observation cutoff occurred at first billing. Monthly policies entered train, quarterly entered embargo, semiannual entered val, and annual entered test.",
       simple: "All policies started on Day 1, and were evaluated on their first bill. That meant all monthly policies were in the training set and all yearly policies in the test set. Models couldn't tell time apart from policy type!"
     },
     pivot: {
-      tech: "Introduced multi-cohort issuance spread across years, recurring point-in-time observation windows, and required all billing frequencies in all chronological folds.",
-      simple: "Staggered policy start dates across years and checked on policies repeatedly. Now every time period contains a fair mix of monthly, quarterly, and annual policies."
+      tech: "Introduced multi-cohort issuance spread across years, recurring point-in-time observation windows, and required all billing frequencies in all chronological folds. Formally verified and marked Resolved in Phase 2.11 final evaluation (issue #102).",
+      simple: "Staggered policy start dates across years and checked on policies repeatedly. Now every time period contains a fair mix of monthly, quarterly, and annual policies. Formally verified and marked Resolved in Phase 2.11!"
     }
   },
   {
     id: "LIM-002-002",
     type: "rb-redesign",
     title: "Simulator Lacked Pre-Cutoff Feature-Conditioned Risk",
-    phase: "Discovered in Review after Phase 2.07",
-    adr: "ADR 0004 / 0005 / 0007",
+    phase: "Discovered in Review after Phase 2.07 • Resolved in Phase 2.11 (PR #103)",
+    adr: "ADR 0004 / 0005 / 0007 / 0012 • Resolved",
     trap: {
       tech: "The v1 generator assigned lapse/surrender outcomes independently of customer attributes or historical events. Features had near-zero true mutual information with the target.",
       simple: "The initial simulator decided who canceled purely at random after the cutoff date. The ML models had literally nothing real to learn from, resulting in 53% coin-flip accuracy."
     },
     pivot: {
-      tech: "Designed a multi-hazard frailty model with registered beta coefficients for behavioral drivers (billing frequency, arrears, service contacts) and explicit oracle probabilities.",
-      simple: "Replaced flat random assignment with a realistic hazard formula: missed payments and service complaints increase risk of cancellation, giving models true signal to discover."
+      tech: "Designed a multi-hazard frailty model with registered beta coefficients for behavioral drivers (billing frequency, arrears, service contacts) and explicit oracle probabilities under bounded sigmoid link (ADR 0012). Formally verified and marked Resolved in Phase 2.11 final evaluation (issue #102).",
+      simple: "Replaced flat random assignment with a realistic hazard formula: missed payments and service complaints increase risk of cancellation, giving models true signal to discover. Formally verified and marked Resolved in Phase 2.11!"
     }
   },
   {
     id: "LIM-002-003",
     type: "rb-guard",
     title: "Test Matrix Relabeling During Adversarial Review",
-    phase: "Discovered in Review after Phase 2.07",
-    adr: "ADR 0004 & Scoring Auth Contract",
+    phase: "Discovered in Review after Phase 2.07 • Resolved in Phase 2.11 (PR #103)",
+    adr: "ADR 0004 & Scoring Auth Contract • Resolved",
     trap: {
       tech: "Scoring APIs previously authorized predictions based on a caller-supplied partition string. A reviewer was able to generate test predictions by relabeling the test matrix as 'validation'.",
       simple: "A security hole in our test code: anyone could sneak a peek at test set predictions simply by renaming the input variable to 'validation'."
     },
     pivot: {
-      tech: "Implemented cryptographic scoring authorization contracts that verify row count, row order, fitted preprocessor ID, purpose, and exact SHA-256 matrix digests before computing scores.",
-      simple: "Added digital tamper seals. If anyone tries to modify, reorder, or rename the dataset, the scoring engine immediately throws an integrity exception."
+      tech: "Implemented cryptographic scoring authorization contracts that verify row count, row order, fitted preprocessor ID, purpose, and exact SHA-256 matrix digests before computing scores. Standalone one-shot evaluation runner and pre-registered contract sealed test data. Formally verified and marked Resolved in Phase 2.11 (issue #102).",
+      simple: "Added digital tamper seals. If anyone tries to modify, reorder, or rename the dataset, the scoring engine immediately throws an integrity exception. Fully sealed and marked Resolved in Phase 2.11!"
     }
   },
   {

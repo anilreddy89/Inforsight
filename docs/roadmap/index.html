@@ -19,7 +19,7 @@
       <div class="brand-group">
         <div class="brand-logo-mark">I</div>
         <div class="brand-text">
-          <div class="brand-title">Inforsight <span class="badge badge-version">v6 Accepted • P2-08 Calibrated</span></div>
+          <div class="brand-title">Inforsight <span class="badge badge-version">v6 Evaluated • Phase 2 RELEASED</span></div>
           <div class="brand-tagline">See Risk. Shape Action. Honest AI for life insurance conservation.</div>
         </div>
       </div>
@@ -44,7 +44,7 @@
     <!-- Navigation Tabs -->
     <nav class="nav-tabs">
       <button class="nav-tab active" data-tab="briefing">
-        <span class="tab-icon">🎯</span> Recruiter Tour
+        <span class="tab-icon">🎯</span> Tour
       </button>
       <button class="nav-tab" data-tab="timeline">
         <span class="tab-icon">⏳</span> Timeline
@@ -71,7 +71,7 @@
   <main class="app-main">
 
     <!-- ============================================================
-         TAB 1: RECRUITER & BEGINNER BRIEFING
+         TAB 1: BRIEFING
          ============================================================ -->
     <section id="tab-briefing" class="tab-panel active">
       <div class="hero-banner">
@@ -86,12 +86,12 @@
 
         <div class="hero-stats-grid">
           <div class="stat-card">
-            <div class="stat-num highlight-cyan">41</div>
+            <div class="stat-num highlight-cyan">42</div>
             <div class="stat-label">Merged Code Increments</div>
             <div class="stat-sub">100% verified with automated tests</div>
           </div>
           <div class="stat-card">
-            <div class="stat-num highlight-green">392</div>
+            <div class="stat-num highlight-green">395</div>
             <div class="stat-label">Automated Safety Tests</div>
             <div class="stat-sub">Zero future data leaks tolerated</div>
           </div>
@@ -151,8 +151,8 @@
           <div class="story-icon">🏆</div>
           <h4>The Engineering Pivot</h4>
           <p class="text-dynamic"
-             data-simple="We proved mathematically why proportional hazards failed (0/320 cells), qualified a bounded sigmoid link (ADR 0012), passed all 20 blind acceptance seeds with 0.7031 AUC (ADR 0013), and successfully calibrated probabilities with operational triage tiers (P2-08)!"
-             data-tech="Proved Trilemma infeasibility across 320 cells (ADR 0011), qualified bounded sigmoid link (ADR 0012), passed 20-seed statistical acceptance under Protocol 3.1.0 (ADR 0013), and completed Phase 2.08 probability calibration with operational review queues.">
+             data-simple="We proved mathematically why proportional hazards failed (0/320 cells), qualified a bounded sigmoid link (ADR 0012), passed all 20 blind acceptance seeds with 0.7031 AUC (ADR 0013), verified 100% of final evaluation gates (0.6998 AUC, 1.15% ECE, 2.31x lift), published MODEL_CARD.md, and officially recorded the Phase 2 RELEASE determination!"
+             data-tech="Proved Trilemma infeasibility across 320 cells (ADR 0011), qualified bounded sigmoid link (ADR 0012), passed 20-seed statistical acceptance under Protocol 3.1.0 (ADR 0013), and passed 100% of pre-registered final evaluation gates (0.6998 AUC, 0.0115 ECE, 2.31x lift) deriving formal RELEASE determination under Phase 2.11.">
           </p>
         </div>
       </div>
@@ -744,6 +744,21 @@
              data-simple="Probability Calibration & Review Queues: Converted raw AI scores into reliable, true real-world percentages using Platt scaling (error dropped to 1.15% ECE with exact rank preservation). Reviewing the top 1% highest-risk policies yields 34.1% true cancellations (2.23x better than random), and checking the top 5% catches 11.6% of all cancellations."
              data-tech="Phase 2.08: Platt scaling fit strictly on calibration partition (8,560 rows) and evaluated out-of-sample on non_final_evaluation (8,782 rows). ECE 0.0115 <= 0.0300, slope 0.9498 in [0.85, 1.15], Brier 0.1211. 1,000 policy-cluster bootstrap CIs and decision curves confirmed positive net benefit across cost ratios [0.02, 0.25]. Final holdout remains strictly not_materialized."></p>
         </div>
+
+        <div class="metric-summary-card" style="border-color: #a855f7;">
+          <div class="metric-card-title" style="color: #a855f7;">Phase 2.11 (Final Evaluation &amp; Release)</div>
+          <div class="metric-big-val" style="color: #a855f7;">RELEASE</div>
+          <div class="metric-row"><span>Out-of-Sample AUC:</span> <strong>0.6998 [0.6847, 0.7153] (Gate G1)</strong></div>
+          <div class="metric-row"><span>Average Precision:</span> <strong>0.2765 [0.2560, 0.2994] (Gate G2)</strong></div>
+          <div class="metric-row"><span>Calibration ECE / Slope:</span> <strong>0.0115 (G3) / 0.9498 (G4)</strong></div>
+          <div class="metric-row"><span>Top 1% Precision:</span> <strong>34.09% (G5 >= 0.3000, 2.23x lift)</strong></div>
+          <div class="metric-row"><span>Top 5% Lift / Recall:</span> <strong>2.31x (G6 >= 2.00x) / 11.57%</strong></div>
+          <div class="metric-row"><span>Gates G1–G6:</span> <strong>6 of 6 Passed (100%)</strong></div>
+          <div class="metric-status-box tag-proceed" style="background: rgba(168,85,247,0.15); color: #a855f7; border-color: rgba(168,85,247,0.3);">P2-11 Decision: OFFICIAL RELEASE</div>
+          <p class="metric-note text-dynamic"
+             data-simple="Final Release Determination: Conducted one-shot evaluation on 8,782 out-of-sample policies via standalone JSON engine. All 6 gates passed with 1,000-sample cluster bootstrap CIs. Published root MODEL_CARD.md, resolved LIM-002-001/002/003, and recorded the formal RELEASE decision note!"
+             data-tech="Phase 2.11: Pre-registered contract 1.0.0 executed against release bundle inforsight-v6-logistic-platt-20260817. 1,000 policy-cluster bootstrap CIs confirmed ROC AUC 0.6998, AP 0.2765, Brier 0.1211, ECE 0.0115, slope 0.9498, Top-1% precision 34.09%, and Top-5% lift 2.31x. Gates G1-G6 passed. Mitchell et al. MODEL_CARD.md published. Decision: RELEASE. Authorizes P2-12."></p>
+        </div>
       </div>
 
       <!-- Interactive Chart View -->
@@ -822,8 +837,8 @@
         </div>
 
         <div class="chart-caption text-dynamic"
-             data-simple="Key Takeaway: In Generation v6 Acceptance (Phase 2R.16A), the frozen model cleared our 0.65 target across all 20 blind test seeds (0.7031 median AUC). In Phase 2.08, Platt scaling calibrated raw predictions into reliable real-world probabilities (0.0115 ECE). In Phase 2.09, exact additive logit and centered SHAP attributions were audited 17/17 against actuarial rules. In Phase 2.10, the entire system was packaged into an immutable JSON release model bundle with bit-for-bit reload invariance across 8,782 out-of-sample policies!"
-             data-tech="Key Takeaway: Generation v6 Statistical Acceptance (Phase 2R.16A) achieves 0.7031 median ROC-AUC with Logistic Regression across 20 reserved acceptance seeds under Protocol 3.1.0 (ADR 0013). Phase 2.08 fit Platt calibration on designated calibration data (ECE 0.0115 <= 0.0300, slope 0.9498, AUC 0.6998 exact preservation). Phase 2.09 verified exact additive decomposition and ADR 0002 non-causal authority boundaries. Phase 2.10 unified the pipeline into an immutable, pure-JSON release model bundle with bit-for-bit reload invariance (max prob diff 2.22e-16 <= 1.00e-12, 100% tier concordance).">
+             data-simple="Key Takeaway: In Phase 2.11, the frozen release model passed all 6 pre-registered acceptance gates across 8,782 out-of-sample policies: 0.6998 ROC AUC (Gate G1 >= 0.6800), 0.2765 AP (Gate G2 >= 0.2500), 1.15% ECE (Gate G3 <= 3%), 0.9498 slope (Gate G4 in [0.85, 1.15]), 34.09% Top-1% review queue precision (Gate G5 >= 30%, 2.23x lift), and 2.31x Top-5% lift (Gate G6 >= 2.00x). Root MODEL_CARD.md was published, LIM-002-001/002/003 resolved, and Phase 2 formally RELEASED!"
+             data-tech="Key Takeaway: Phase 2.11 executed pre-registered contract 1.0.0 against release model bundle inforsight-v6-logistic-platt-20260817 on 8,782 out-of-sample observations. 1,000 policy-cluster bootstrap CIs confirmed ROC AUC 0.6998 [0.6847, 0.7153], AP 0.2765 [0.2560, 0.2994], Brier 0.1211 [0.1170, 0.1252], ECE 0.0115 <= 0.0300, slope 0.9498 in [0.85, 1.15], Top-1% precision 34.09% (2.23x lift), and Top-5% lift 2.31x. 100% of acceptance gates passed (G1-G6). Mitchell et al. MODEL_CARD.md published, LIM-002-001/002/003 resolved, and official RELEASE decision note recorded, authorizing P2-12.">
         </div>
       </div>
 
@@ -832,7 +847,7 @@
         <h3>Engineering Rigor &amp; Test Suite Health</h3>
         <div class="test-grid">
           <div class="test-stat-box">
-            <span class="test-num">392</span>
+            <span class="test-num">395</span>
             <span class="test-label">Automated Safety Tests</span>
           </div>
           <div class="test-stat-box">
@@ -1124,9 +1139,9 @@
         <strong>Inforsight Conservation Intelligence</strong> — Open Source under Apache 2.0.
       </div>
       <div class="footer-right">
-        <span>Current Branch: <code>feat/102-p2-11-final-evaluation-and-model-card</code></span>
+        <span>Current Branch: <code>main</code></span>
         <span>•</span>
-        <span>Latest Closeout: <code>P2-10 (PR #101)</code></span>
+        <span>Latest Closeout: <code>P2-11 (PR #103)</code></span>
       </div>
     </div>
   </footer>
