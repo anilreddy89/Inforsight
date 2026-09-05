@@ -1,0 +1,135 @@
+name: Design specification
+description: Propose a formal design specification, monitoring architecture, or contract before implementation begins
+title: "[Design] "
+labels: [ "design" ]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Use this form for a bounded design or architecture specification task. The outcome must be a formally documented artifact — a design document, endpoint contract, threshold matrix, or module specification — that predeclares acceptance checks before any implementation is evaluated.
+
+- type: textarea
+  id: work_metadata
+  attributes:
+    label: Work metadata
+    description: Enter the stable backlog ID, classification, priority, and milestone using the engineering improvement workflow definitions.
+    placeholder: |
+      Backlog work ID: P3-04A
+      Classification: Architecture / Design
+      Priority: Milestone blocking
+      Milestone: v0.3.0-decision-engine
+  validations:
+    required: true
+
+- type: textarea
+  id: outcome
+  attributes:
+    label: Outcome
+    description: What formally documented artifact should exist when this issue is complete? Name the document, contract, schema, or module specification.
+    placeholder: |
+      A design specification document at Documents/phase_docs/... that formally predeclares:
+      - Mathematical formulations and threshold matrices
+      - OpenAPI endpoint contracts versioned at schema_version X.Y.Z
+      - Reference module structure and key data structures
+  validations:
+    required: true
+
+- type: textarea
+  id: context
+  attributes:
+    label: Context
+    description: Why is this design specification needed now? What preceding work created the need, and which downstream increments are blocked without it?
+    placeholder: Include the predecessor commit or issue, the gap being closed, and links to related phase docs or ADRs.
+  validations:
+    required: true
+
+- type: textarea
+  id: scope
+  attributes:
+    label: In scope and out of scope
+    description: List what this design issue owns and the adjacent implementation or infrastructure work that must remain separate.
+    placeholder: |
+      In scope:
+      - Formal mathematical formulations and predeclared thresholds
+      - Versioned endpoint or schema contracts
+      - Reference module structure and key data structures
+      - Predeclared acceptance checks
+
+      Out of scope:
+      - Full production implementation of the specified module
+      - Infrastructure, deployment, or observability tooling
+      - Any access to or materialization of the final holdout
+  validations:
+    required: true
+
+- type: textarea
+  id: impact
+  attributes:
+    label: Claim, limitation, contract, and artifact impact
+    description: State whether schemas, versioned contracts, deterministic outputs, manifests, or existing artifacts change.
+    placeholder: |
+      Allowed while open:
+      Blocked while open:
+      Limitations affected:
+      Downstream work resumed at closure:
+      Contract or version change:
+      Artifact migration or compatibility:
+  validations:
+    required: true
+
+- type: textarea
+  id: acceptance
+  attributes:
+    label: Acceptance checks
+    description: List objective, testable conditions that must be satisfied. All checks must be predeclared before any design output is evaluated.
+    placeholder: |
+      - [ ] Design document specifies complete mathematical formulations.
+      - [ ] Versioned contract or schema is formally declared.
+      - [ ] Predeclared threshold matrix or action taxonomy is documented.
+      - [ ] Reference module structure and key data structures are specified.
+      - [ ] Any unit tests validating the design artifact pass.
+      - [ ] `make check` passes.
+  validations:
+    required: true
+
+- type: textarea
+  id: evidence
+  attributes:
+    label: Evidence
+    description: What evidence will demonstrate that the design specification is complete and correct?
+    placeholder: |
+      - Design document present at Documents/phase_docs/...
+      - Versioned contract schema accessible and well-formed
+      - Unit test output confirming reference implementation correctness
+      - make check and repository boundary checks pass
+  validations:
+    required: true
+
+- type: textarea
+  id: dependencies
+  attributes:
+    label: Dependencies
+    description: List prerequisite issues or pull requests, downstream items unblocked at closure, and related decisions or limitations.
+    placeholder: |
+      Must merge first:
+      Blocks:
+      Related decisions or limitations:
+  validations:
+    required: true
+
+- type: checkboxes
+  id: boundaries
+  attributes:
+    label: Boundaries
+    description: Confirm that the proposed design respects the repository's contribution requirements.
+    options:
+    - label: This issue uses only fictional data, public sources, and original implementation.
+      required: true
+    - label: This issue does not include credentials, customer information, or proprietary material.
+      required: true
+    - label: This issue preserves point-in-time, authority, and human-review boundaries where applicable.
+      required: true
+    - label: This issue does not access, transform, predict, or evaluate a final holdout unless that access is explicitly authorized in scope.
+      required: true
+    - label: Any versioned contract, schema, or threshold matrix introduced by this design has an explicit migration plan for the implementing issue.
+      required: true

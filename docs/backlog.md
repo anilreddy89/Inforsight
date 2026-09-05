@@ -512,13 +512,13 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Provide Docker containerization, health probes, and OpenAPI / Swagger documentation.
 
 **Acceptance checks:**
-- [ ] Reloaded model produces bit-for-bit identical probabilities to frozen Phase 2.11 evaluation.
-- [ ] Every response payload includes explicit `authorized_to_act: false` marker.
-- [ ] Invalid schema versions or missing required features return structured 422 HTTP validation errors.
-- [ ] P99 latency $< 5\text{ms}$ for single policy scoring.
-- [ ] API integration tests and Docker build pass.
+- [x] Reloaded model produces bit-for-bit identical probabilities to frozen Phase 2.11 evaluation.
+- [x] Every response payload includes explicit `authorized_to_act: false` marker.
+- [x] Invalid schema versions or missing required features return structured 422 HTTP validation errors.
+- [x] P99 latency $< 5\text{ms}$ for single policy scoring.
+- [x] API integration tests and Docker build pass.
 
-**Depends on:** P3-01. **Blocks:** P3-04A, P3-05, P3-07.
+**Depends on:** P3-01, P2-10. **Blocks:** P3-04A, P3-05, P3-07.
 
 ---
 
