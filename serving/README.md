@@ -182,3 +182,120 @@ docker run -d -p 8000:8000 --name inforsight-gateway inforsight-serving:latest
 # Check health probe
 curl -s http://localhost:8000/health | python3 -m json.tool
 ```
+
+---
+
+## 5. Phase 3 Overview — Plain English
+
+### What Phase 3 is building
+
+Phase 2 produced a **risk model** that predicts which policyholders are likely to lapse. Phase 3 turns that prediction into a full **decision engine** — figuring out who to save, what action to take, whether you're allowed to take it, and how to spend resources wisely. Every action still requires a human to approve before anything happens.
+
+---
+
+### What's been completed
+
+#### ✅ P3-01 — Domain Contracts & Action Taxonomy
+Defined every intervention type the system is allowed to take, along with the rules for how a case moves from start to finish.
+
+| Action | What it means |
+|---|---|
+| `courtesy_reminder` | Automated low-friction SMS or email nudge |
+| `grace_period_consultation` | Structured advisory call for policyholders in active grace period |
+| `specialist_phone_outreach` | High-touch outreach from a licensed conservation specialist |
+| `payment_method_remediation` | Direct resolution of a failed EFT or card payment |
+| `abstain` | Explicit do-not-disturb — zero cost, no channel |
+
+The case lifecycle state machine governs how every case progresses:
+
+```
+CREATED → TRIAGED → EVIDENCE_ASSEMBLED → RECOMMENDED → HUMAN_REVIEWED → EXECUTED / DISMISSED → RESOLVED
+```
+
+**Evidence:** 20/20 contract tests pass.
+
+---
+
+#### ✅ P3-02 — Deterministic Action Eligibility Rules Engine
+A strictly rule-based engine that checks what the system is **legally and contractually allowed to do** before any action is ever recommended. It has zero connection to ML scores — rules are rules.
+
+Hard boundaries enforced:
+- **Legal / dispute freeze** — any active claim or legal hold disqualifies all outreach
+- **Channel consent** — honors SMS, email, and phone opt-outs (TCPA / DNC compliance)
+- **Contact cooling-off** — enforces mandatory 30-day quiet windows between contacts
+- **Grace period gating** — grace-period consultations only allowed during active grace status
+- **Policy viability** — terminated, surrendered, or matured policies are excluded
+- **Tenure bounds** — minimum and maximum policy age requirements per action type
+
+Fail-closed design: missing or ambiguous state always results in disqualification, never unauthorized action.
+
+**Evidence:** 17/17 focused eligibility tests pass, 412/412 simulator tests pass.
+
+---
+
+#### ✅ P3-03 — Cost-Utility & Uplift Optimization Matrix
+An economic engine that allocates conservation actions across a portfolio to maximize net preserved value under real operational constraints (specialist headcount and monthly budget).
+
+Each policyholder is categorized into one of four quadrants:
+
+| Quadrant | Profile | Decision |
+|---|---|---|
+| **Persuadables** | High lapse risk + high treatment responsiveness | Prioritize for outreach |
+| **Lost Causes** | High lapse risk + near-zero responsiveness | Avoid expensive high-touch resources |
+| **Sure Things** | Low risk, self-curing | Lightweight nudge only |
+| **Sleeping Dogs** | Intervention increases lapse likelihood | Strict abstention |
+
+The optimizer then ranks interventions by expected net utility and fills the specialist queue and budget greedily, with deterministic tie-breaking.
+
+$$\mathbb{E}[U(a \mid x)] = \Delta p_{\text{lapse}}(a, x) \cdot V_{\text{policy}} - c(a)$$
+
+**Evidence:** 9/9 optimization tests pass.
+
+---
+
+#### 🔄 P3-04 — Model Serving & Inference Gateway (this service)
+The REST gateway you are reading about. Wraps the frozen Phase 2 risk model and exposes it to any downstream system. Key properties:
+
+- Replies in under **15ms** (P95)
+- Bit-for-bit identical predictions to the offline `BundledInferenceEngine`
+- Every response permanently includes `authorized_to_act: false` — the model is advisory only
+- Strict input validation: unknown or missing features return HTTP `422`
+
+**Evidence:** 8/8 gateway integration tests pass.
+
+---
+
+### What's still ahead
+
+| Increment | What it does |
+|---|---|
+| **P3-04A** Model Monitoring | Alerts when the model's input distribution or calibration drifts over time |
+| **P3-05** Case Intelligence Assistant | Generates a plain-English summary report for each at-risk policyholder |
+| **P3-06** Human-in-the-Loop Workflow | Requires a licensed caseworker to approve every recommended action before execution |
+| **P3-07** Interactive Dashboard | Visual interface showing portfolio risk, queues, and recommendations at a glance |
+| **P3-08** Counterfactual Simulation | Tests new intervention strategies in simulation before spending real budget |
+| **P3-09** System Qualification Gate | End-to-end automated checks confirming all components work together correctly |
+| **P3-10** Release `v0.3.0-decision-engine` | Official milestone closeout and release tag |
+
+### Dependency order
+
+```
+Domain Contracts (P3-01) ✅
+    ├──→ Rules Engine (P3-02) ✅
+    │         ├──→ Optimization Matrix (P3-03) ✅ ──→ Counterfactual / OPE (P3-08)
+    │         └──→ Case Intelligence (P3-05) ←─────────────────────────────┐
+    └──→ Inference Gateway (P3-04) 🔄                                       │
+              └──→ Model Monitoring (P3-04A) ──────────────────────────→ P3-05
+                                                                              │
+                                         Human Approval Workflow (P3-06) ←───┘
+                                                    │
+                                         Dashboard (P3-07)
+                                                    │
+                                         System Qualification (P3-09)
+                                                    │
+                                         🎉 Release v0.3.0 (P3-10)
+```
+
+---
+
+*Last updated: 2026-09-05 · Phase 3 progress tracked in [PROJECT_PROGRESS.md](../PROJECT_PROGRESS.md)*
