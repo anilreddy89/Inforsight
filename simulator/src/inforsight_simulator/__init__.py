@@ -237,6 +237,19 @@ from .rules import (
     evaluate_tenure_bounds,
     get_standard_action_catalog,
 )
+from .optimization import (
+    ActionUtility,
+    OptimalRecommendation,
+    PolicyValuation,
+    PortfolioAllocation,
+    PortfolioOptimizer,
+    SPECIALIST_ACTIONS,
+    UpliftQuadrant,
+    classify_uplift_quadrant,
+    estimate_treatment_effect,
+    evaluate_action_utilities,
+    select_best_unconstrained_action,
+)
 
 
 __version__ = "0.1.0"
@@ -434,6 +447,17 @@ __all__ = [
     "evaluate_policy_viability",
     "evaluate_tenure_bounds",
     "get_standard_action_catalog",
+    "ActionUtility",
+    "OptimalRecommendation",
+    "PolicyValuation",
+    "PortfolioAllocation",
+    "PortfolioOptimizer",
+    "SPECIALIST_ACTIONS",
+    "UpliftQuadrant",
+    "classify_uplift_quadrant",
+    "estimate_treatment_effect",
+    "evaluate_action_utilities",
+    "select_best_unconstrained_action",
 ]
 
 

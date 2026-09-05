@@ -474,13 +474,13 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Provide deterministic tie-breaking and rank reproducibility.
 
 **Acceptance checks:**
-- [ ] Optimization ranking respects strict specialist capacity cutoffs without queue overflow.
-- [ ] Negative expected utility ($\mathbb{E}[U] \le 0$) defaults to `abstain`.
-- [ ] Priority queue allocation is byte-deterministic across identical input portfolios.
-- [ ] High-risk "Lost Causes" are successfully diverted from scarce specialist phone queues.
-- [ ] Unit and optimization benchmarks pass.
+- [x] Optimization ranking respects strict specialist capacity cutoffs without queue overflow.
+- [x] Negative expected utility ($\mathbb{E}[U] \le 0$) defaults to `abstain`.
+- [x] Priority queue allocation is byte-deterministic across identical input portfolios.
+- [x] High-risk "Lost Causes" are successfully diverted from scarce specialist phone queues.
+- [x] Unit and optimization benchmarks pass.
 
-**Depends on:** P3-02. **Blocks:** P3-05, P3-07, P3-08.
+**Depends on:** P3-01, P3-02. **Blocks:** P3-05, P3-07, P3-08.
 
 ---
 
