@@ -469,24 +469,24 @@ const timelineData = [
       {
         id: "P3-04",
         title: "Model Serving & Inference Gateway",
-        status: "In Progress",
-        commit: "Branch feat/112-p3-04-model-serving-gateway (Issue #112)",
+        status: "Completed",
+        commit: "87a66f9",
         summary: {
           tech: "High-throughput, sub-millisecond REST inference gateway (FastAPI) wrapping standalone BundledInferenceEngine. Enforces input validation, reload bit-for-bit invariance, and ADR 0002 boundary markers (authorized_to_act: false) on all scoring responses.",
           simple: "Ultra-Fast Scoring Gateway: A clean, lightning-fast web service that loads our verified AI model bundle and delivers predictions in under 5 milliseconds, while explicitly labeling every prediction as advisory-only."
         },
-        checks: "Issue #112 open; serving/ FastAPI gateway implemented; Dockerfile; 8/8 test_gateway.py passing; reload bit-for-bit verified; ADR 0002 authorized_to_act: false on all responses; blocks P3-04A, P3-05, P3-07."
+        checks: "Issue #112 closed by PR #113 (87a66f9); serving/ FastAPI gateway implemented; Dockerfile; 8/8 test_gateway.py passing; reload bit-for-bit verified; ADR 0002 authorized_to_act: false on all responses; unblocks P3-04A, P3-05, P3-07."
       },
       {
         id: "P3-04A",
         title: "Model Monitoring & Drift Detection Architecture",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "920f943",
         summary: {
-          tech: "Production telemetry architecture specifying Population Stability Index (PSI/CSI) input drift tracking and rolling calibration error (ECE/Brier) over sliding observation windows. Defines /v1/diagnostics schema and automated fail-safe fallback policies.",
+          tech: "Production telemetry architecture specifying Population Stability Index (PSI/CSI) input drift tracking and rolling calibration error (ECE/Brier) over sliding observation windows. Exposes /v1/diagnostics schema 1.0.0, zero-proportion guard, and drift alert action matrix.",
           simple: "Drift & AI Health Monitor: Automated monitors that watch the model in production. If customer behavior changes over time or predictions become uncalibrated, alerts trigger immediately so humans can investigate."
         },
-        checks: "Telemetry specification; PSI/CSI mathematical thresholds; /v1/diagnostics endpoint; fail-safe fallback policies; blocks P3-05, P3-07."
+        checks: "Issue #114 closed by PR #115 (920f943); serving/monitoring/ module; 44/44 test_monitoring.py passing; PSI/CSI computation with zero-proportion guard; rolling ECE (W=500, M=10) & Brier/BSS; latency telemetry collector; drift alert action matrix; /v1/diagnostics schema 1.0.0; ADR 0002 compliance; unblocks P3-05, P3-07."
       },
       {
         id: "P3-05",

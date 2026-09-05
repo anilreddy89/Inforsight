@@ -539,10 +539,10 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Define automated fail-safe fallback policies: when critical drift is flagged on primary risk drivers (e.g. `rolling_on_time_rate`), the engine flags scoring uncertainty and requires specialist confirmation for high-stakes actions.
 
 **Acceptance checks:**
-- [ ] Design document specifies mathematical formulations for PSI, CSI, and rolling window ECE tracking.
-- [ ] Gateway contract specifies OpenAPI schema for `GET /v1/diagnostics`.
-- [ ] Predeclared drift thresholds and alert action matrix are formally documented.
-- [ ] Repository checks pass.
+- [x] Design document specifies mathematical formulations for PSI, CSI, and rolling window ECE tracking.
+- [x] Gateway contract specifies OpenAPI schema for `GET /v1/diagnostics`.
+- [x] Predeclared drift thresholds and alert action matrix are formally documented.
+- [x] Repository checks pass.
 
 **Depends on:** P3-04. **Blocks:** P3-05, P3-07.
 

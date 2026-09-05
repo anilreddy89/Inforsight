@@ -77,8 +77,8 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P3-01 | Phase 3 — Conservation Decision Engine | Conservation domain contracts and action taxonomy (ADR 0002). | Completed | [#106](https://github.com/anilreddy89/Inforsight/issues/106) | [#107](https://github.com/anilreddy89/Inforsight/pull/107) | 2026-09-05 | `7ed7efd` | `data-contracts/conservation-action.schema.json`, `conservation-case-event.schema.json`, `data-contracts/tests/test_conservation_contracts.py`, 21 valid/invalid fixtures, `data-contracts/README.md`, [phase document](../phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md) | Merged in PR #107; 5 intervention types, cost/resource rules, ADR 0002 state machine; 20 contract tests pass. Authorizes P3-02, P3-04. |
 | P3-02 | Phase 3 — Conservation Decision Engine | Deterministic action eligibility rules engine (business, legal, regulatory constraints). | Completed | [#108](https://github.com/anilreddy89/Inforsight/issues/108) | [#109](https://github.com/anilreddy89/Inforsight/pull/109) | 2026-09-05 | `1177394` | `simulator/src/inforsight_simulator/rules/`, `simulator/tests/test_rules_eligibility.py` (17 tests pass), [phase document](../phase_docs/phase-03-02-deterministic-action-eligibility-rules-engine.md) | Merged in PR #109; pure deterministic rules engine enforcing ADR 0002 boundary. 412/412 simulator suite tests pass. Authorizes P3-03, P3-05, P3-08. |
 | P3-03 | Phase 3 — Conservation Decision Engine | Cost-utility and uplift optimization matrix (constrained resource allocation). | Completed | [#110](https://github.com/anilreddy89/Inforsight/issues/110) | [#111](https://github.com/anilreddy89/Inforsight/pull/111) | 2026-09-05 | `a1e97cb` | `simulator/src/inforsight_simulator/optimization/`, `simulator/tests/test_optimization.py` (9 tests pass), [phase document](../phase_docs/phase-03-03-cost-utility-and-uplift-optimization-matrix.md) | Merged in PR #111; 4-quadrant uplift, net expected utility, knapsack solver under specialist capacity caps, ADR 0002 compliance. Authorizes P3-05, P3-07, P3-08. |
-| P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | In progress | [#112](https://github.com/anilreddy89/Inforsight/issues/112) | Pending | 2026-09-05 | — | `serving/`, Dockerfile, `serving/tests/test_gateway.py` (8 tests pass), [phase document](../phase_docs/phase-03-04-model-serving-and-inference-gateway.md) | Ready for PR #113. FastAPI REST service, reload bit-for-bit verified, sub-millisecond CPU scoring, strict ADR 0002 boundary markers (`authorized_to_act: false`). Blocks P3-04A, P3-05, P3-07. |
-| P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Pending | TBD | TBD | TBD | — | `docs/architecture/model-monitoring.md`, `/v1/diagnostics` schema | Depends on P3-04. Blocks P3-05, P3-07. |
+| P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | Completed | [#112](https://github.com/anilreddy89/Inforsight/issues/112) | [#113](https://github.com/anilreddy89/Inforsight/pull/113) | 2026-09-05 | `87a66f9` | `serving/`, Dockerfile, `serving/tests/test_gateway.py` (8 tests pass), [phase document](../phase_docs/phase-03-04-model-serving-and-inference-gateway.md) | Merged in PR #113; FastAPI REST service, reload bit-for-bit verified, sub-millisecond CPU scoring, strict ADR 0002 boundary markers (`authorized_to_act: false`). Authorizes P3-04A, P3-05, P3-07. |
+| P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Completed | [#114](https://github.com/anilreddy89/Inforsight/issues/114) | [#115](https://github.com/anilreddy89/Inforsight/pull/115) | 2026-09-05 | `920f943` | `serving/monitoring/`, `serving/tests/test_monitoring.py` (44 tests pass), `GET /v1/diagnostics` schema `1.0.0`, [phase document](../phase_docs/phase-03-04a-model-monitoring-and-drift-detection-architecture.md) | Merged in PR #115; PSI/CSI input drift with zero-proportion guard, rolling ECE (W=500, M=10) & BSS calibration tracking, latency telemetry ring-buffer, drift alert action matrix, ADR 0002 non-authority compliance. Authorizes P3-05, P3-07. |
 | P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | Pending | TBD | TBD | TBD | — | `simulator/assistant/`, case brief generator, grounding guards | Depends on P3-02, P3-03, P3-04, P3-04A. Blocks P3-06, P3-07. |
 | P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Pending | TBD | TBD | TBD | — | `simulator/workflow/`, audit logger, replay verification tool | Depends on P3-05. Blocks P3-07, P3-09. |
 | P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Pending | TBD | TBD | TBD | — | `dashboard/`, interactive UI, triage consoles | Depends on P3-03, P3-04, P3-04A, P3-05, P3-06, P3-08. Blocks P3-09. |
@@ -101,12 +101,14 @@ Inforsight successfully completed Phase 2 (Baseline ML) and is actively executin
 7. Phase 3-01 is complete and merged to main in PR #107 (commit `7ed7efd`); domain contracts, action taxonomy, and ADR 0002 state machine pass all 20 contract tests.
 8. Phase 3-02 is complete and merged to main in PR #109 (commit `1177394`); deterministic action eligibility rules engine enforcing ADR 0002 boundaries passes all 17 tests.
 9. Phase 3-03 is complete and merged to main in PR #111 (commit `a1e97cb`); cost-utility and uplift optimization matrix passes all 9 tests.
+10. Phase 3-04 is complete and merged to main in PR #113 (commit `87a66f9`); model serving and inference gateway passes all 8 tests with reload invariance verified.
+11. Phase 3-04A is complete and merged to main in PR #115 (commit `920f943`); model monitoring and drift detection architecture passes all 44 tests and exposes `GET /v1/diagnostics` (schema `1.0.0`).
 
-In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-03 on main unblocking P3-04, P3-05, P3-07, and P3-08.
+In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-04A on main unblocking P3-05, P3-07, and P3-08.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 47 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 3) |
+| Completed tracked changes | 49 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 5) |
 | Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
@@ -114,11 +116,11 @@ In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete 
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 3 of 10 |
-| In-progress Phase 3 increments | 1 (P3-04 on feat/112) |
+| Completed Phase 3 increments | 5 of 10 |
+| In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
-| Active increment | Phase 3 P3-04 (Model serving and inference gateway, Issue #112) |
-| Next implementation increment | Phase 3 P3-04A (Model monitoring and drift detection architecture) |
+| Active increment | Phase 3 P3-05 (Bounded case intelligence assistant) |
+| Next implementation increment | Phase 3 P3-05 (Bounded case intelligence assistant) |
 
 ## Latest verification baseline
 
