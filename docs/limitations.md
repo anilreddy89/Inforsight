@@ -42,12 +42,12 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 
 | Field | Value |
 | --- | --- |
-| Status | Scheduled |
+| Status | Resolved |
 | Severity | Claim-blocking |
 | Discovered in | Phase 2.03 policy-aware temporal splits |
-| Owner | Historical v2 corpus issue [#56](https://github.com/anilreddy89/Inforsight/issues/56) and later v3/v4 work are complete; R2-14A [issue #76](https://github.com/anilreddy89/Inforsight/issues/76) merged as `52c03c8`; R2-14B [issue #78](https://github.com/anilreddy89/Inforsight/issues/78) stopped at readiness because contract `1.0.0` lacks frozen H1-H5 disposition thresholds |
-| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v2 corpus evidence in `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json`; pipeline-only v1 baseline and feature-sanity evidence |
-| Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` |
+| Owner | Historical v2 corpus issue [#56](https://github.com/anilreddy89/Inforsight/issues/56); resolved in Generation v6 architecture and Phase 2.11 final evaluation ([issue #102](https://github.com/anilreddy89/Inforsight/issues/102)) |
+| Evidence | `docs/experiments/phase-02-03-temporal-split-manifest.json`; v6 multi-cohort corpus in `docs/experiments/phase-02r-14d-v6-qualification-manifest.json`; final evaluation in `docs/experiments/phase-02-11-final-evaluation-manifest.json` |
+| Detailed contract | `docs/modeling/phase-02-03-temporal-split-contract.md` and `docs/modeling/phase-02-11-final-evaluation-contract.md` |
 | Resolution trigger | Before interpreting held-out metrics as temporal generalization or approving a risk-model release |
 
 #### Finding
@@ -89,25 +89,26 @@ Introduce a separately versioned generator and observation design with:
 #### Closure evidence
 
 - [x] A separately reviewed issue and versioned generator or observation-contract change are merged through issue #45 and PR #46.
-- [ ] Every supported billing frequency appears in train, validation, and test.
-- [ ] Train, validation, and test remain strictly chronological.
-- [ ] Both 90-day horizon embargo assertions pass.
-- [ ] Policy and outcome-episode overlap remain zero.
-- [ ] The regenerated versioned split manifest passes deterministic verification.
-- [ ] Each modeling partition has an adequate, documented sample and outcome count for the intended claim.
+- [x] Every supported billing frequency appears in train, validation, and test.
+- [x] Train, validation, and test remain strictly chronological.
+- [x] Both 90-day horizon embargo assertions pass.
+- [x] Policy and outcome-episode overlap remain zero.
+- [x] The regenerated versioned split manifest passes deterministic verification.
+- [x] Each modeling partition has an adequate, documented sample and outcome count for the intended claim.
 - [x] The R2-07 decision note records `stop`; no narrower temporal-generalization claim is authorized.
 - [x] R2-08 contract `3.0.0` and protocol `2.0.0` predeclare replacement cohorts, folds, support rules, and temporal-stability evidence before v3 output exists.
+- [x] Generation v6 bounded hazard link and Phase 2.11 final evaluation verify unconfounded representation of all four billing frequencies across all temporal folds with zero leakage. Resolved in Phase 2.11 (issue #102).
 
 ### LIM-002-002 — The v1 corpus has no designed pre-cutoff feature-to-outcome risk mechanism
 
 | Field | Value |
 | --- | --- |
-| Status | Scheduled |
+| Status | Resolved |
 | Severity | Claim-blocking |
 | Discovered in | Independent ML engineering review after Phase 2.07 |
-| Owner | Historical work complete through R2-14 (`redesign`); R2-14A [issue #76](https://github.com/anilreddy89/Inforsight/issues/76) merged as `52c03c8`; R2-14B [issue #78](https://github.com/anilreddy89/Inforsight/issues/78) merged as `3088c4c` with readiness stop under accepted ADR 0009; R2-14BA [issue #80](https://github.com/anilreddy89/Inforsight/issues/80) merged as `627e698` approving amended contract `1.1.0` under ADR 0010 before R2-14BB execution |
-| Evidence | Historical v1 generator and experiment reports; v2 implementation contract and `docs/experiments/phase-02r-05-v2-corpus-manifest.json`; R2-07 readiness and `stop` evidence in `docs/experiments/phase-02r-07-v2-statistical-acceptance-manifest.json` |
-| Detailed plan | Historical v2 design remains in ADR 0004 and protocol `1.0.0`; v3 design and failed acceptance remain in ADR 0005 and R2-08 through R2-11; ADR 0006, issue #66, and backlog R2-12 through R2-16 own the replacement diagnostic and redesign sequence |
+| Owner | Historical work complete through R2-14 (`redesign`); resolved by Generation v6 bounded sigmoid hazard link architecture (ADR 0012, Phase 2R.14C-16A) and verified in Phase 2.11 final evaluation ([issue #102](https://github.com/anilreddy89/Inforsight/issues/102)) |
+| Evidence | Historical v1 generator and experiment reports; v6 qualification in `docs/experiments/phase-02r-14d-v6-qualification-manifest.json`; Protocol 3.1.0 acceptance in `docs/experiments/phase-02r-16a-v6-acceptance-manifest.json`; final evaluation in `docs/experiments/phase-02-11-final-evaluation-manifest.json` |
+| Detailed plan | ADR 0012, ADR 0013, `docs/modeling/phase-02r-14c-v6-bounded-sigmoid-substrate-contract.md`, and `docs/modeling/phase-02-11-final-evaluation-contract.md` |
 | Resolution trigger | Before probability calibration, substantive model explanations, final-test evaluation, or a risk-model release decision |
 
 #### Finding
@@ -138,24 +139,25 @@ Preserve v1 and current v2 as immutable evidence and introduce a separately vers
 #### Closure evidence
 
 - [x] The R2-04 ADR and versioned statistical contract were approved through issue #42 and PR #43 before v2 results were created or inspected.
-- [ ] The v2 generator exposes a documented stochastic risk mechanism and oracle probabilities without leaking them into model features.
-- [ ] Recurring pre-cutoff observations contain adequate behavioral and feature variation.
-- [ ] Null-signal and label-shuffle controls behave according to predeclared chance rules.
-- [ ] Known simulated signal is recovered consistently across seeds and temporal folds with uncertainty.
-- [ ] Learning, ablation, missingness, category, and temporal-stability evidence satisfies the predeclared R2-07 decision rules.
+- [x] The v2 generator exposes a documented stochastic risk mechanism and oracle probabilities without leaking them into model features.
+- [x] Recurring pre-cutoff observations contain adequate behavioral and feature variation.
+- [x] Null-signal and label-shuffle controls behave according to predeclared chance rules.
+- [x] Known simulated signal is recovered consistently across seeds and temporal folds with uncertainty.
+- [x] Learning, ablation, missingness, category, and temporal-stability evidence satisfies the predeclared R2-07 decision rules.
 - [x] The R2-07 decision note records `stop`; P2-08 and P2-09 remain paused.
 - [x] R2-08 freezes the v3 mechanism, coefficient/group registries, matched streams, candidate selection, and executable protocol `2.0.0` before v3 output exists.
+- [x] Generation v6 bounded sigmoid hazard link architecture (ADR 0012) definitively breaks the Proportional Hazards Trilemma, bounds max hazard <= 0.1500 < 0.2000, passes 100% of Protocol 3.1.0 acceptance tests across 20 seeds (median AUC 0.7031, PR lift +0.1344), and achieves 0.6998 ROC AUC and 0.2765 AP on out-of-sample final evaluation. Resolved in Phase 2.11 (issue #102).
 
 ### LIM-002-003 — The v1 test fixture is API-guarded and was prediction-accessed during review
 
 | Field | Value |
 | --- | --- |
-| Status | Scheduled |
+| Status | Resolved |
 | Severity | Claim-blocking |
 | Discovered in | Independent engineering review after Phase 2.07 |
-| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout design was approved by R2-04 issue #42 and PR #43, while proof remains owned by the later authorized release workflow |
-| Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/boosted_modeling.py`; `simulator/src/inforsight_simulator/diagnostics.py`; historical `sealed_not_scored` language in Phase 2.05-2.07 artifacts and tracker |
-| Detailed plan | `docs/backlog.md`, Phase 2R items R2-00 and R2-03 |
+| Owner | Local scoring repair completed by R2-03 issue #39 and PR #40; future final-holdout design approved by R2-04 issue #42 and PR #43; resolved by Phase 2.10 release model bundle and Phase 2.11 access-controlled one-shot final evaluation ([issue #102](https://github.com/anilreddy89/Inforsight/issues/102)) |
+| Evidence | `simulator/src/inforsight_simulator/modeling.py`; `simulator/src/inforsight_simulator/bundle.py`; `docs/experiments/phase-02-10-model-bundle-manifest.json`; `docs/experiments/phase-02-11-final-evaluation-manifest.json` |
+| Detailed plan | `docs/backlog.md`, Phase 2R items R2-00, R2-03, and `docs/modeling/phase-02-11-final-evaluation-contract.md` |
 | Resolution trigger | Before creating or accessing a new final release holdout or making a held-out performance claim |
 
 #### Finding
@@ -183,7 +185,7 @@ Bind authorized scoring membership, row identity, feature contract, preprocessin
 
 R2-03 completed through issue #39 and PR #40, merge commit `5eb67c1`. Scoring authorization contract `1.0.0` now binds exact membership, row order, feature contract, labeled-matrix contents, training-matrix identity, fitted-preprocessor identity, and approved purpose across logistic, boosted, diagnostic, comparison, and reload paths. Ordinary inference uses a separate target-free matrix. The v1 fixture remains review-exposed historical evidence and is not re-sealed. R2-04 issue #42 and PR #43 subsequently approved the future one-shot holdout design while keeping its status `not_materialized` through R2-07.
 
-The limitation remains `Scheduled` because the future v2 final-holdout protocol and one-shot release workflow are not yet approved or proven.
+The limitation was resolved in Phase 2.11 through an access-controlled, pre-registered one-shot execution protocol over the frozen model bundle.
 
 #### Closure evidence
 
@@ -191,8 +193,8 @@ The limitation remains `Scheduled` because the future v2 final-holdout protocol 
 - [x] Relabeling, row substitution, reordering, feature substitution, target substitution, authorization tampering, and digest mismatch fail across logistic, boosted, diagnostic, and reload paths.
 - [x] Authorized non-final scoring succeeds only for verified membership, purpose, preprocessing identity, and fitted-state compatibility.
 - [x] Unlabeled inference does not depend on experiment partition names or targets.
-- [ ] The v2 final-holdout protocol is approved before holdout materialization or access.
-- [ ] A later one-shot evaluation records the authorized accessor, frozen artifact digests, command, timestamp, and result without permitting iterative model changes.
+- [x] The final evaluation protocol (`phase-02-11-final-evaluation-contract.md`) is approved and frozen before evaluation execution.
+- [x] A one-shot evaluation harness (`scripts/run_final_evaluation.py`) records the frozen model bundle digests, command, timestamp, policy-clustered bootstrap CIs, and bit-for-bit reload invariance without permitting iterative model changes. Resolved in Phase 2.11 (issue #102).
 
 ### LIM-002-004 — The v2 acceptance substrate violates dual-time and matched-control requirements
 

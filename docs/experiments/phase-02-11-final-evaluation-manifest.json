@@ -1,0 +1,513 @@
+{
+  "artifact_version": "1.0.0",
+  "bundle_id": "inforsight-v6-logistic-platt-20260817",
+  "claim_boundary": "final_evaluation_and_model_card_only",
+  "contract_version": "1.0.0",
+  "decision": "RELEASE",
+  "decision_curves": [
+    {
+      "benefit_over_treat_all": -0.0002,
+      "cost_ratio": 0.02,
+      "implied_threshold": 0.0196,
+      "net_benefit_model": 0.1355,
+      "net_benefit_treat_all": 0.1356,
+      "net_benefit_treat_none": 0.0
+    },
+    {
+      "benefit_over_treat_all": 0.0008,
+      "cost_ratio": 0.05,
+      "implied_threshold": 0.0476,
+      "net_benefit_model": 0.111,
+      "net_benefit_treat_all": 0.1102,
+      "net_benefit_treat_none": 0.0
+    },
+    {
+      "benefit_over_treat_all": 0.01,
+      "cost_ratio": 0.1,
+      "implied_threshold": 0.0909,
+      "net_benefit_model": 0.0778,
+      "net_benefit_treat_all": 0.0678,
+      "net_benefit_treat_none": 0.0
+    },
+    {
+      "benefit_over_treat_all": 0.0308,
+      "cost_ratio": 0.15,
+      "implied_threshold": 0.1304,
+      "net_benefit_model": 0.0563,
+      "net_benefit_treat_all": 0.0255,
+      "net_benefit_treat_none": 0.0
+    },
+    {
+      "benefit_over_treat_all": 0.0563,
+      "cost_ratio": 0.2,
+      "implied_threshold": 0.1667,
+      "net_benefit_model": 0.0394,
+      "net_benefit_treat_all": -0.0169,
+      "net_benefit_treat_none": 0.0
+    },
+    {
+      "benefit_over_treat_all": 0.0878,
+      "cost_ratio": 0.25,
+      "implied_threshold": 0.2,
+      "net_benefit_model": 0.0286,
+      "net_benefit_treat_all": -0.0593,
+      "net_benefit_treat_none": 0.0
+    }
+  ],
+  "evaluation_partition": {
+    "negative": 7442,
+    "positive": 1340,
+    "prevalence": 0.1526,
+    "records": 8782,
+    "unique_policies": 1440
+  },
+  "gates": [
+    {
+      "gate_id": "G1",
+      "metric": "Out-of-Sample ROC AUC",
+      "observed": 0.6998,
+      "passed": true,
+      "rationale": "Baseline discrimination exceeds minimum viable threshold for non-trivial risk ordering.",
+      "target": ">= 0.6800"
+    },
+    {
+      "gate_id": "G2",
+      "metric": "Out-of-Sample Average Precision",
+      "observed": 0.2765,
+      "passed": true,
+      "rationale": "Precision-recall enrichment significantly exceeds 15.26% population baseline.",
+      "target": ">= 0.2500"
+    },
+    {
+      "gate_id": "G3",
+      "metric": "Expected Calibration Error (ECE)",
+      "observed": 0.0115,
+      "passed": true,
+      "rationale": "Predicted probabilities align closely with empirical outcome frequencies.",
+      "target": "<= 0.0300"
+    },
+    {
+      "gate_id": "G4",
+      "metric": "Calibration Slope",
+      "observed": 0.9498,
+      "passed": true,
+      "rationale": "Empirical slope confirms absence of severe over- or under-confidence.",
+      "target": "in [0.85, 1.15]"
+    },
+    {
+      "gate_id": "G5",
+      "metric": "Top 1% Review Queue Precision",
+      "observed": 0.3409,
+      "passed": true,
+      "rationale": "Concentrated risk precision in highest-priority triage queue (2.23x lift).",
+      "target": ">= 0.3000"
+    },
+    {
+      "gate_id": "G6",
+      "metric": "Top 5% Review Queue Lift",
+      "observed": 2.314,
+      "passed": true,
+      "rationale": "Triage queue catches disproportionate share of lapses (11.57% recall at 5% inspection).",
+      "target": ">= 2.00x"
+    }
+  ],
+  "issue": 102,
+  "lineage": {
+    "command_sha256": "f15d1539ea99a5405e299f49cb938b3dcbebb97b03b141d077ff2f37e14216b8",
+    "dependency_lock_sha256": "ecea8433959b514ccb74f8111d66445401e95c0822be9a7789c9bc2d577be482",
+    "final_evaluation_contract_sha256": "e9928e91d8f7e239dcc90b896c8159ef8fdf6a90a36af7be0b6a5a254e8f010d",
+    "model_bundle_manifest_sha256": "a156b6fd70fb50436a2972820031800a1939776247fcbb274048c5d6b1591911",
+    "model_bundle_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+    "source_sha256": "fc354b82e677b5d1a5cf46059770e293d1f130f21b06f009c1a68af8d7d538d7"
+  },
+  "materialization": {
+    "acceptance_seeds": "isolated_not_accessed",
+    "executable_fitted_objects": "not_committed",
+    "feature_matrices": "regenerated_not_committed",
+    "final_evaluation": "executed_and_verified",
+    "final_holdout": "evaluated_and_sealed",
+    "oracle_sidecars": "not_accessed",
+    "raw_observations": "regenerated_not_committed",
+    "row_level_predictions": "not_committed"
+  },
+  "metrics": {
+    "average_precision": 0.2765,
+    "average_precision_ci_95": [
+      0.256,
+      0.2994
+    ],
+    "bin_discretization_delta": -9e-05,
+    "bins": [
+      {
+        "abs_error": 0.004,
+        "bin": 1,
+        "count": 879,
+        "mean_pred": 0.0427,
+        "observed_rate": 0.0387,
+        "wilson_ci_95": [
+          0.0278,
+          0.0536
+        ]
+      },
+      {
+        "abs_error": 0.0006,
+        "bin": 2,
+        "count": 878,
+        "mean_pred": 0.0621,
+        "observed_rate": 0.0626,
+        "wilson_ci_95": [
+          0.0484,
+          0.0807
+        ]
+      },
+      {
+        "abs_error": 0.003,
+        "bin": 3,
+        "count": 878,
+        "mean_pred": 0.0747,
+        "observed_rate": 0.0718,
+        "wilson_ci_95": [
+          0.0565,
+          0.0908
+        ]
+      },
+      {
+        "abs_error": 0.0043,
+        "bin": 4,
+        "count": 878,
+        "mean_pred": 0.0931,
+        "observed_rate": 0.0888,
+        "wilson_ci_95": [
+          0.0718,
+          0.1095
+        ]
+      },
+      {
+        "abs_error": 0.0118,
+        "bin": 5,
+        "count": 878,
+        "mean_pred": 0.1192,
+        "observed_rate": 0.131,
+        "wilson_ci_95": [
+          0.1103,
+          0.1549
+        ]
+      },
+      {
+        "abs_error": 0.0122,
+        "bin": 6,
+        "count": 878,
+        "mean_pred": 0.1511,
+        "observed_rate": 0.139,
+        "wilson_ci_95": [
+          0.1176,
+          0.1634
+        ]
+      },
+      {
+        "abs_error": 0.0183,
+        "bin": 7,
+        "count": 878,
+        "mean_pred": 0.1823,
+        "observed_rate": 0.164,
+        "wilson_ci_95": [
+          0.141,
+          0.19
+        ]
+      },
+      {
+        "abs_error": 0.0049,
+        "bin": 8,
+        "count": 878,
+        "mean_pred": 0.2206,
+        "observed_rate": 0.2255,
+        "wilson_ci_95": [
+          0.1991,
+          0.2543
+        ]
+      },
+      {
+        "abs_error": 0.016,
+        "bin": 9,
+        "count": 878,
+        "mean_pred": 0.2654,
+        "observed_rate": 0.2813,
+        "wilson_ci_95": [
+          0.2526,
+          0.312
+        ]
+      },
+      {
+        "abs_error": 0.0399,
+        "bin": 10,
+        "count": 879,
+        "mean_pred": 0.363,
+        "observed_rate": 0.3231,
+        "wilson_ci_95": [
+          0.293,
+          0.3547
+        ]
+      }
+    ],
+    "brier_score": 0.1211,
+    "brier_score_ci_95": [
+      0.1168,
+      0.1253
+    ],
+    "brier_skill_score": 0.0633,
+    "calibration_intercept": -0.1155,
+    "calibration_slope": 0.9498,
+    "ece": 0.0115,
+    "log_loss": 0.3957,
+    "mce": 0.0399,
+    "reliability": 0.000254,
+    "resolution": 0.008344,
+    "roc_auc": 0.6998,
+    "roc_auc_ci_95": [
+      0.6847,
+      0.7153
+    ],
+    "uncertainty": 0.129303,
+    "within_bin_variance": 0.000458
+  },
+  "milestone": "v0.2.0-risk-model",
+  "operational_review_capacities": [
+    {
+      "capacity": 0.01,
+      "confusion_matrix": {
+        "fn": 1310,
+        "fp": 58,
+        "tn": 7384,
+        "tp": 30
+      },
+      "lift": 2.2342,
+      "lift_ci_95": [
+        1.5469,
+        2.8452
+      ],
+      "net_benefit": -0.0021,
+      "net_benefit_ci_95": [
+        -0.0041,
+        -0.0003
+      ],
+      "nnr": 2.93,
+      "precision": 0.3409,
+      "precision_ci_95": [
+        0.2333,
+        0.4368
+      ],
+      "recall": 0.0224,
+      "recall_ci_95": [
+        0.0156,
+        0.0284
+      ],
+      "reviewed_count": 88,
+      "specificity": 0.9922,
+      "threshold": 0.4542
+    },
+    {
+      "capacity": 0.02,
+      "confusion_matrix": {
+        "fn": 1269,
+        "fp": 105,
+        "tn": 7337,
+        "tp": 71
+      },
+      "lift": 2.6438,
+      "lift_ci_95": [
+        2.1523,
+        3.0344
+      ],
+      "net_benefit": -0.0001,
+      "net_benefit_ci_95": [
+        -0.0027,
+        0.0021
+      ],
+      "nnr": 2.48,
+      "precision": 0.4034,
+      "precision_ci_95": [
+        0.324,
+        0.4682
+      ],
+      "recall": 0.053,
+      "recall_ci_95": [
+        0.043,
+        0.0609
+      ],
+      "reviewed_count": 176,
+      "specificity": 0.9859,
+      "threshold": 0.405
+    },
+    {
+      "capacity": 0.05,
+      "confusion_matrix": {
+        "fn": 1185,
+        "fp": 284,
+        "tn": 7158,
+        "tp": 155
+      },
+      "lift": 2.314,
+      "lift_ci_95": [
+        2.0104,
+        2.5867
+      ],
+      "net_benefit": 0.0005,
+      "net_benefit_ci_95": [
+        -0.0029,
+        0.0039
+      ],
+      "nnr": 2.83,
+      "precision": 0.3531,
+      "precision_ci_95": [
+        0.3047,
+        0.3977
+      ],
+      "recall": 0.1157,
+      "recall_ci_95": [
+        0.1006,
+        0.1293
+      ],
+      "reviewed_count": 439,
+      "specificity": 0.9618,
+      "threshold": 0.3459
+    },
+    {
+      "capacity": 0.1,
+      "confusion_matrix": {
+        "fn": 1057,
+        "fp": 595,
+        "tn": 6847,
+        "tp": 283
+      },
+      "lift": 2.1124,
+      "lift_ci_95": [
+        1.9413,
+        2.317
+      ],
+      "net_benefit": 0.0035,
+      "net_benefit_ci_95": [
+        -0.0005,
+        0.0086
+      ],
+      "nnr": 3.1,
+      "precision": 0.3223,
+      "precision_ci_95": [
+        0.2945,
+        0.3575
+      ],
+      "recall": 0.2112,
+      "recall_ci_95": [
+        0.1942,
+        0.232
+      ],
+      "reviewed_count": 878,
+      "specificity": 0.92,
+      "threshold": 0.2976
+    },
+    {
+      "capacity": 0.15,
+      "confusion_matrix": {
+        "fn": 916,
+        "fp": 893,
+        "tn": 6549,
+        "tp": 424
+      },
+      "lift": 2.1099,
+      "lift_ci_95": [
+        1.9606,
+        2.2711
+      ],
+      "net_benefit": 0.0119,
+      "net_benefit_ci_95": [
+        0.0061,
+        0.0178
+      ],
+      "nnr": 3.11,
+      "precision": 0.3219,
+      "precision_ci_95": [
+        0.2961,
+        0.3487
+      ],
+      "recall": 0.3164,
+      "recall_ci_95": [
+        0.2942,
+        0.3407
+      ],
+      "reviewed_count": 1317,
+      "specificity": 0.88,
+      "threshold": 0.2633
+    },
+    {
+      "capacity": 0.2,
+      "confusion_matrix": {
+        "fn": 809,
+        "fp": 1225,
+        "tn": 6217,
+        "tp": 531
+      },
+      "lift": 1.9818,
+      "lift_ci_95": [
+        1.8739,
+        2.1094
+      ],
+      "net_benefit": 0.0164,
+      "net_benefit_ci_95": [
+        0.0104,
+        0.0224
+      ],
+      "nnr": 3.31,
+      "precision": 0.3024,
+      "precision_ci_95": [
+        0.2809,
+        0.3256
+      ],
+      "recall": 0.3963,
+      "recall_ci_95": [
+        0.375,
+        0.4221
+      ],
+      "reviewed_count": 1756,
+      "specificity": 0.8354,
+      "threshold": 0.2402
+    }
+  ],
+  "phase": "P2-11",
+  "risk_tiers": [
+    {
+      "action_protocol": "Standard automated billing & digital account servicing; zero outreach expense.",
+      "count": 2474,
+      "fraction": 0.2817,
+      "observed_lapses": 136,
+      "observed_rate": 0.055,
+      "threshold_range": [
+        0.0,
+        0.08
+      ],
+      "tier_name": "Tier 1: Low Risk"
+    },
+    {
+      "action_protocol": "Automated retention touchpoint (email/SMS billing reminder, mobile app nudge).",
+      "count": 3661,
+      "fraction": 0.4169,
+      "observed_lapses": 474,
+      "observed_rate": 0.1295,
+      "threshold_range": [
+        0.08,
+        0.2
+      ],
+      "tier_name": "Tier 2: Moderate Risk"
+    },
+    {
+      "action_protocol": "Priority queue for specialist conservation outreach (phone consultation, premium flexibility).",
+      "count": 2647,
+      "fraction": 0.3014,
+      "observed_lapses": 730,
+      "observed_rate": 0.2758,
+      "threshold_range": [
+        0.2,
+        1.0
+      ],
+      "tier_name": "Tier 3: High Risk"
+    }
+  ]
+}

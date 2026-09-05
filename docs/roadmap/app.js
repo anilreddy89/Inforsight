@@ -404,6 +404,17 @@ const timelineData = [
           simple: "Artifact & Environment Reproducibility: Packaged the entire trained AI pipeline (preprocessor, linear weights, calibrator, explainer baselines, and risk rules) into a single, secure, transparent JSON bundle with zero external ML library dependencies at runtime. Proved bit-for-bit reload reproduction: the standalone bundle engine generates identical predictions across all 8,782 customer accounts with zero drift (divergence under 1 part in 10 quadrillion). Locked environment versions and cryptographic checksums."
         },
         checks: "Issue #100 & PR #101 merged (commit 7112e82); Contract 1.0.0; pure-JSON serialization without pickle; standalone BundledInferenceEngine; bit-for-bit verification passes (max prob diff 2.22e-16 <= 1e-12); 100% operational tier concordance (8,782/8,782); ADR 0002 authority compliance; final holdout strictly not_materialized; make model-bundle-check passes; authorizes P2-11."
+      },
+      {
+        id: "P2-11",
+        title: "Final Evaluation, Model Card & Phase 2 Decision Note",
+        status: "In Progress",
+        commit: "Working (Issue #102)",
+        summary: {
+          tech: "Contract 1.0.0. Pre-registered, access-controlled one-shot final evaluation of the frozen release model bundle (inforsight-v6-logistic-platt-20260817) on the final evaluation partition. Publishes comprehensive root MODEL_CARD.md (Mitchell et al. 2019), final experiment report with 1,000 cluster bootstrap CIs, and Phase 2 Decision Note (RELEASE decision). Resolves LIM-002-001, LIM-002-002, and LIM-002-003.",
+          simple: "Final Model Card & Release Decision: Carrying out the formal, one-shot final test of the frozen AI model with full statistical audit. Publishing the industry-standard MODEL_CARD.md explaining capabilities, limitations, synthetic data boundaries, and the absence of demographic bias testing, and recording the official Phase 2 release decision to unlock the v0.2.0 milestone release."
+        },
+        checks: "Issue #102 opened; Branch feat/102-p2-11-final-evaluation-and-model-card; Contract 1.0.0; MODEL_CARD.md; final evaluation report; Phase 2 decision note (RELEASE); LIM-002-001/002/003 resolved; enables P2-12."
       }
     ]
   }
