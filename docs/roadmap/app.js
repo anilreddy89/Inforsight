@@ -469,13 +469,13 @@ const timelineData = [
       {
         id: "P3-04",
         title: "Model Serving & Inference Gateway",
-        status: "Pending",
-        commit: "Pending",
+        status: "In Progress",
+        commit: "Branch feat/112-p3-04-model-serving-gateway (Issue #112)",
         summary: {
           tech: "High-throughput, sub-millisecond REST inference gateway (FastAPI) wrapping standalone BundledInferenceEngine. Enforces input validation, reload bit-for-bit invariance, and ADR 0002 boundary markers (authorized_to_act: false) on all scoring responses.",
           simple: "Ultra-Fast Scoring Gateway: A clean, lightning-fast web service that loads our verified AI model bundle and delivers predictions in under 5 milliseconds, while explicitly labeling every prediction as advisory-only."
         },
-        checks: "serving/ FastAPI service; Dockerfile; reload bit-for-bit check; ADR 0002 authorized_to_act: false marker; blocks P3-04A, P3-05, P3-07."
+        checks: "Issue #112 open; serving/ FastAPI gateway implemented; Dockerfile; 8/8 test_gateway.py passing; reload bit-for-bit verified; ADR 0002 authorized_to_act: false on all responses; blocks P3-04A, P3-05, P3-07."
       },
       {
         id: "P3-04A",
