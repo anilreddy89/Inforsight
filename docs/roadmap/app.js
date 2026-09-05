@@ -420,12 +420,12 @@ const timelineData = [
         id: "P2-12",
         title: "Release Marker & Notes (v0.2.0-risk-model)",
         status: "Completed",
-        commit: "PR #105 / Tag v0.2.0-risk-model",
+        commit: "df5d8e8 / 7797c09",
         summary: {
           tech: "Milestone closure for v0.2.0-risk-model. Authored comprehensive dual-audience release documentation (docs/release-notes/v0.2.0-risk-model.md) capturing the pure-JSON release model bundle inforsight-v6-logistic-platt-20260817 (SHA-256 7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656), standalone BundledInferenceEngine, 6/6 passing acceptance gates (G1-G6), explainability attributions, 4 operational risk tiers, and high-lift review queues. Prepared annotated Git tag v0.2.0-risk-model and milestone closeout instructions, officially completing Phase 2 (Baseline ML) and enabling Phase 3 (Policy Conservation Decision Engine).",
           simple: "Phase 2 Milestone Release Marker: Published the official milestone release notes and annotated release tag for v0.2.0-risk-model! Summarizes the 42-PR journey, 395 passing safety tests, and the breakthrough bounded sigmoid hazard link that solved the Proportional Hazards Trilemma. Marks Phase 2 (Baseline ML) as 100% complete and unlocks Phase 3 (Conservation Decision Engine)!"
         },
-        checks: "Issue #104; annotated tag v0.2.0-risk-model; docs/release-notes/v0.2.0-risk-model.md; backlog & roadmap updated; clean tree & 395 unit tests pass; Phase 2 100% complete."
+        checks: "Issue #104 & PR #105 merged (commit 7797c09 / df5d8e8); annotated tag v0.2.0-risk-model; docs/release-notes/v0.2.0-risk-model.md; backlog & roadmap updated; clean tree & 395 unit tests pass; Phase 2 100% complete."
       }
     ]
   }
