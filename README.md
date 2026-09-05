@@ -70,6 +70,15 @@ $L_2$-regularized Logistic Regression ($C{=}1.0$, `liblinear`) with Platt scalin
 
 > Full metrics, decision curves, and feature attributions: [MODEL_CARD.md](MODEL_CARD.md)
 
+### Real-world operations & mathematical formulation
+
+Life insurance policy conservation differs fundamentally from consumer subscription churn:
+- **Accidental lapses & irreversible coverage**: Most lapses stem from closed accounts, expired cards, or billing miscommunication. Because coverage loss is irreversible and medical re-underwriting is cost-prohibitive, carriers employ an escalating **Outreach Ladder** where licensed agents and in-house conservation caseworkers actively telephone policyholders during the 30-day grace period.
+- **Agent commission chargebacks**: Agents have an urgent financial incentive to reach out because carriers claw back upfront commissions if policies lapse within 12–24 months.
+- **Mathematical architecture**: The Generation v6 bounded sigmoid hazard link ($\lambda_{\text{total}}(t) \le 0.1500$) solved the Proportional Hazards Trilemma by construction. Post-hoc Platt scaling ($\hat{p} = \sigma(A \cdot z + B)$, $A=0.9618, B=-0.0334$) ensures predicted probabilities faithfully match empirical outcomes (ECE = 0.0115), enabling the Top 5% review queue to intercept 2.31× more true lapses than random outreach (NNR = 2.83).
+
+> Detailed operational walkthrough, commission economics, outreach ladder, and mathematical proofs: [docs/operational-context.md](docs/operational-context.md)
+
 ---
 
 ## Authority model

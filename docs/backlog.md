@@ -396,7 +396,7 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
-**Status:** In progress through [issue #106](https://github.com/anilreddy89/Inforsight/issues/106) on branch `feat/106-p3-01-conservation-contracts` · [Phase document](../Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md)
+**Status:** Completed on 2026-09-05 through [issue #106](https://github.com/anilreddy89/Inforsight/issues/106) and [PR #107](https://github.com/anilreddy89/Inforsight/pull/107), merge commit `7ed7efd`. 20 contract tests pass. · [Phase document](../Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md)
 
 **Outcome:** Versioned JSON Schema contracts define allowed conservation actions, case state transitions, and audit event envelopes before any business logic is written.
 
@@ -412,11 +412,11 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Add positive and negative contract examples, schema validation tests, and contract documentation.
 
 **Acceptance checks:**
-- [ ] Schema validation tests verify all valid action types and reject malformed actions.
-- [ ] Illegal state transitions (e.g., executing without human review approval) fail contract validation.
-- [ ] Action schema enforces positive non-zero cost and valid operational channel enumerations.
-- [ ] Existing event and observation contracts remain unaffected.
-- [ ] Schema tests and `make check` pass.
+- [x] Schema validation tests verify all valid action types and reject malformed actions.
+- [x] Illegal state transitions (e.g., executing without human review approval) fail contract validation.
+- [x] Action schema enforces positive non-zero cost and valid operational channel enumerations.
+- [x] Existing event and observation contracts remain unaffected.
+- [x] Schema tests and `make check` pass.
 
 **Blocks:** P3-02, P3-04.
 

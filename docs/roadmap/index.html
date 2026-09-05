@@ -215,10 +215,100 @@
         </div>
       </div>
 
+      <!-- Real-World Conservation Operations & Mathematical Formulation -->
+      <div class="operations-math-section">
+        <h2 class="section-title">Real-World Conservation Operations &amp; Mathematical Formulation</h2>
+        <p class="section-subtitle text-dynamic"
+           data-simple="Why do life insurance companies reach out to customers about payments? Unlike streaming subscriptions, losing life insurance is often irreversible. Here is how real carrier operations work and how our mathematical formulas guide caseworkers."
+           data-tech="Operational dynamics of in-force life conservation, statutory grace escalation, agent chargeback economics, and mathematical formulations for the Generation v6 bounded hazard link and Platt-calibrated inference bundle.">
+        </p>
+
+        <!-- 4-Stage Outreach Ladder Strip -->
+        <div class="ladder-container">
+          <div class="ladder-header">
+            <span class="ladder-badge">The Real-World Outreach Ladder</span>
+            <span class="ladder-note">How carriers escalate missed payments during the statutory grace period</span>
+          </div>
+          <div class="ladder-steps-grid">
+            <div class="ladder-step">
+              <div class="ladder-step-num">Days 1–5</div>
+              <div class="ladder-step-title">1. Billing Hiccup</div>
+              <div class="ladder-step-icon">💳</div>
+              <div class="text-dynamic"
+                   data-simple="Automated bank retry; customer gets an automated email or text message alerting them to a card decline."
+                   data-tech="Automated dunning retries and transactional webhook dispatch. No caseworker intervention."></div>
+            </div>
+            <div class="ladder-step">
+              <div class="ladder-step-num">Days 10–15</div>
+              <div class="ladder-step-title">2. Grace Notice</div>
+              <div class="ladder-step-icon">📬</div>
+              <div class="text-dynamic"
+                   data-simple="Statutory grace period letter sent by mail. Alert appears on the original insurance agent's computer portal."
+                   data-tech="Mandatory written statutory Notice of Grace Period. Alert dispatched to agent management portal."></div>
+            </div>
+            <div class="ladder-step active-focus">
+              <div class="ladder-step-num">Days 20–28</div>
+              <div class="ladder-step-title">3. Human Phone Call</div>
+              <div class="ladder-step-icon">📞</div>
+              <div class="text-dynamic"
+                   data-simple="Critical window! Agents or conservation caseworkers call the customer directly to update banking or prevent accidental lapse before coverage is lost forever."
+                   data-tech="Target operational triage window. Licensed human caseworkers telephone high-risk policyholders to resolve payment failures before termination."></div>
+            </div>
+            <div class="ladder-step">
+              <div class="ladder-step-num">Day 30+</div>
+              <div class="ladder-step-title">4. Lapse &amp; Recovery</div>
+              <div class="ladder-step-icon">📋</div>
+              <div class="text-dynamic"
+                   data-simple="Policy cancels. Reinstatement requires doctor exams, health questionnaires, and paying all back-premiums."
+                   data-tech="Coverage terminated. Reinstatement requires formal evidence of insurability, health underwriting, and back-premium interest."></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two Core Mathematical Formulas Finalized in Phase 2 -->
+        <div class="cards-grid cols-2" style="margin-top: 1.5rem;">
+          <div class="feature-card">
+            <div class="card-icon">🛡️</div>
+            <h3>Formula 1: The Bounded Sigmoid Link (ADR 0012)</h3>
+            <div class="formula-box">
+              <code>&lambda;<sub>total</sub>(t) = 0.10 &middot; &sigma;(z<sub>lapse</sub>) + 0.05 &middot; &sigma;(z<sub>surrender</sub>) &le; 0.1500 &lt; 0.2000</code>
+            </div>
+            <div class="text-dynamic"
+                 data-simple="Previous formulas acted like an exponential curve with no limit—risk scores exploded and cohorts emptied out prematurely. In Generation v6, we bound the risk with a smooth sigmoid S-curve so total monthly hazard can never mathematically exceed 15%. This solved the Trilemma forever."
+                 data-tech="ADR 0012 replaced the unconstrained exponential proportional hazard link &lambda;(t) = &lambda;₀(t)exp(X&beta;+u) with bounded logistic links &lambda;<sub>max</sub>&sigma;(z). Mathematically bounds total monthly hazard &le; 0.1500 &lt; 0.2000 while maintaining discriminative separability (AUC 0.7031).">
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-icon">🎯</div>
+            <h3>Formula 2: Calibrated Triage Scoring (Phase 2.08)</h3>
+            <div class="formula-box">
+              <code>p&#770; = &sigma;(0.961849 &middot; z - 0.033420) &nbsp;|&nbsp; Top 5% Lift: 2.31&times;</code>
+            </div>
+            <div class="text-dynamic"
+                 data-simple="Raw AI predictions can be overconfident. We used Platt scaling to calibrate the scores into honest probabilities (1.15% error). When customer service calls the Top 5% priority queue, they intercept 2.31 times more true cancellations than random calling, needing to review fewer than 3 accounts per saved policy."
+                 data-tech="Univariate Platt scaling calibration p&#770; = &sigma;(A&middot;z + B) fit on 8,560 calibration policies. Preserves ranking (AUC 0.6998) while achieving ECE = 0.0115 and slope = 0.9498. Empowers capacity-constrained triage (Top 1% Precision 34.09%, Top 5% Lift 2.31x, NNR 2.83).">
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: right;">
+          <a href="https://github.com/anilreddy89/Inforsight/blob/main/docs/operational-context.md" target="_blank" class="text-link" style="color: var(--accent-cyan); font-size: 0.88rem; font-weight: 500; text-decoration: none;">
+            Read full operational walkthrough, commission chargebacks &amp; mathematical proofs &rarr;
+          </a>
+        </div>
+      </div>
+
       <!-- FAQ Section -->
       <div class="faq-container">
         <h2 class="section-title">Frequently Asked Questions</h2>
         <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-q">Do life insurance customer service teams really call customers about missed payments in real life?</div>
+            <div class="faq-a">
+              <strong>Yes, absolutely.</strong> In life insurance, this is an essential operational function called <strong>Policy Conservation</strong>. Unlike a streaming service, losing life insurance is often irreversible—reinstating coverage requires medical questionnaires and doctor visits, and older policyholders may become medically uninsurable. Furthermore, insurance agents have an urgent financial incentive to call: if a policy lapses in the first 1 to 2 years, the carrier claws back their upfront commission (known as a <strong>commission chargeback</strong>). For unassigned "orphan" accounts, carrier call centers use triage queues like Inforsight's Top 5% priority list to phone at-risk policyholders during the 30-day grace period to resolve banking changes before coverage is lost.
+            </div>
+          </div>
           <div class="faq-item">
             <div class="faq-q">In simple words, what is 'Policy Conservation'?</div>
             <div class="faq-a">

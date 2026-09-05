@@ -74,7 +74,7 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P2-10 | Phase 2 — Baseline ML | Version training configuration, dependencies, feature contract, split manifest, metrics, and model artifacts. | Completed | [#100](https://github.com/anilreddy89/Inforsight/issues/100) | [#101](https://github.com/anilreddy89/Inforsight/pull/101) | 2026-09-04 | `7112e82` | Model bundle contract 1.0.0, bundle exporter/engine in `bundle.py`, CLI runner, bundle JSON, manifest, report, [phase document](../phase_docs/phase-02-10-artifact-and-environment-reproducibility.md) | Unified fitted preprocessing (28 features), candidate weights, Platt calibrator, explainer reference, and operational decision policies into an immutable cryptographic release bundle; verified reload-and-score bit-for-bit ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$); 100% operational tier concordance; ADR 0002 authority compliance; 392 safety tests pass; final holdout strictly not_materialized; authorizes P2-11. |
 | P2-11 | Phase 2 — Baseline ML | Publish `MODEL_CARD.md`, experiment report, and Phase 2 model decision note. | Completed | [#102](https://github.com/anilreddy89/Inforsight/issues/102) | [#103](https://github.com/anilreddy89/Inforsight/pull/103) | 2026-09-05 | `ec363d6` | `MODEL_CARD.md`, `docs/experiments/phase-02-11-*`, [phase document](../phase_docs/phase-02-11-final-evaluation-model-card-and-decision-note.md) | Contract 1.0.0; one-shot out-of-sample scoring of 8,782 observations; 100% passing acceptance gate scorecard (Gates G1–G6); decision note records RELEASE; LIM-002-001/002/003 formally resolved; authorizes P2-12. |
 | P2-12 | Phase 2 — Baseline ML | Publish the agreed risk-model release marker and release notes. | Completed | [#104](https://github.com/anilreddy89/Inforsight/issues/104) | [#105](https://github.com/anilreddy89/Inforsight/pull/105) | 2026-09-05 | `7797c09` | `docs/release-notes/v0.2.0-risk-model.md`, git tag `v0.2.0-risk-model`, GitHub release, [phase document](../phase_docs/phase-02-12-release-marker-and-notes.md) | Formally tags v0.2.0-risk-model, closes GitHub Milestone #3, publishes dual-audience release notes, and officially completes Phase 2 (12/12 Phase 2 and 24/24 Phase 2R increments complete); authorizes Phase 3 kick-off. |
-| P3-01 | Phase 3 — Conservation Decision Engine | Conservation domain contracts and action taxonomy (ADR 0002). | Implemented locally | [#106](https://github.com/anilreddy89/Inforsight/issues/106) | Pending | 2026-09-05 | — | `data-contracts/conservation-action.schema.json`, `conservation-case-event.schema.json`, `data-contracts/tests/test_conservation_contracts.py`, 21 valid/invalid fixtures, `data-contracts/README.md`, [phase document](../phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md) | Branch `feat/106-p3-01-conservation-contracts`; 5 intervention types, cost/resource rules, ADR 0002 state machine; 20 contract tests pass. Blocks P3-02, P3-04. |
+| P3-01 | Phase 3 — Conservation Decision Engine | Conservation domain contracts and action taxonomy (ADR 0002). | Completed | [#106](https://github.com/anilreddy89/Inforsight/issues/106) | [#107](https://github.com/anilreddy89/Inforsight/pull/107) | 2026-09-05 | `7ed7efd` | `data-contracts/conservation-action.schema.json`, `conservation-case-event.schema.json`, `data-contracts/tests/test_conservation_contracts.py`, 21 valid/invalid fixtures, `data-contracts/README.md`, [phase document](../phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md) | Merged in PR #107; 5 intervention types, cost/resource rules, ADR 0002 state machine; 20 contract tests pass. Authorizes P3-02, P3-04. |
 | P3-02 | Phase 3 — Conservation Decision Engine | Deterministic action eligibility rules engine (business, legal, regulatory constraints). | Pending | TBD | TBD | TBD | — | `simulator/rules/`, property-based eligibility tests | Depends on P3-01. Blocks P3-03, P3-05, P3-08. |
 | P3-03 | Phase 3 — Conservation Decision Engine | Cost-utility and uplift optimization matrix (constrained resource allocation). | Pending | TBD | TBD | TBD | — | `simulator/optimization/`, utility matrix tests | Depends on P3-02. Blocks P3-05, P3-07, P3-08. |
 | P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | Pending | TBD | TBD | TBD | — | `serving/`, Dockerfile, gateway integration tests | Depends on P3-01. Blocks P3-04A, P3-05, P3-07. |
@@ -98,23 +98,25 @@ Inforsight successfully completed Phase 2 (Baseline ML) and is actively executin
 4. Standalone `BundledInferenceEngine` verified bit-for-bit reload reproduction ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$) and 100% operational tier concordance across 8,782 out-of-sample policies.
 5. All 6 Pre-registered Acceptance Gates (G1–G6) passed 100% with 1,000 policy-cluster bootstrap confidence intervals.
 6. Milestone `v0.2.0-risk-model` was formally tagged and released, resolving `LIM-002-001`, `LIM-002-002`, and `LIM-002-003`.
-7. Phase 3-01 is implemented locally on branch `feat/106-p3-01-conservation-contracts` under Issue #106; domain contracts, action taxonomy, and ADR 0002 state machine pass all 20 contract tests.
+7. Phase 3-01 is complete and merged to main in PR #107 (commit `7ed7efd`); domain contracts, action taxonomy, and ADR 0002 state machine pass all 20 contract tests.
 
-In one sentence: Phase 2 is 100% complete and released, and Phase 3-01 contracts are implemented locally ready for pull request review.
+In one sentence: Phase 2 is 100% complete and released, and Phase 3-01 contracts are merged on main authorizing P3-02 and P3-04.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 44 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1) |
-| Implemented locally changes | 1 (P3-01) |
+| Completed tracked changes | 45 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 1) |
+| Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
+| Completed Phase 3 increments | 1 of 10 |
+| In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
-| Active increment | Phase 3 P3-01 (Conservation Domain Contracts and Action Taxonomy) |
-| Next implementation increment | Phase 3 P3-01 (Conservation Domain Contracts and Action Taxonomy) |
+| Active increment | Phase 3 complete through P3-01 (next: P3-02) |
+| Next implementation increment | Phase 3 P3-02 (Deterministic action eligibility rules engine) |
 
 ## Latest verification baseline
 

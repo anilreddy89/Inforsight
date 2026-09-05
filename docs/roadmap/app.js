@@ -436,13 +436,13 @@ const timelineData = [
       {
         id: "P3-01",
         title: "Domain Contracts & Action Taxonomy",
-        status: "In progress",
-        commit: "Issue #106 (feat/106-p3-01-conservation-contracts)",
+        status: "Completed",
+        commit: "PR #107 (7ed7efd)",
         summary: {
           tech: "Formalized versioned JSON Schema contracts for 5 standard conservation intervention types (courtesy_reminder, grace_period_consultation, specialist_phone_outreach, payment_method_remediation, abstain). Formalized conservation case event state machine (CREATED -> TRIAGED -> EVIDENCE_ASSEMBLED -> RECOMMENDED -> HUMAN_REVIEWED -> EXECUTED/DISMISSED -> RESOLVED). Enforced ADR 0002 boundary requiring explicit human review approval metadata before execution.",
-          simple: "Conservation Rules & Actions Contract: Before writing any automation, we established strict rules and contracts for allowed customer actions (reminders, phone consultations, payment help, or 'do not disturb'). Enforced our core safety guarantee: no AI model or automated script is ever permitted to contact a customer or change a policy without a licensed specialist reviewing and approving it first!"
+          simple: "Conservation Rules & Actions Contract: Established strict rules and blueprints for allowed customer actions (reminders, phone consultations, payment help, or 'do not disturb'). Enforced our core safety guarantee: no AI model or automated script is ever permitted to contact a customer or change a policy without a licensed specialist reviewing and approving it first!"
         },
-        checks: "Issue #106 active; branch feat/106-p3-01-conservation-contracts; phase specification authored in Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md; data-contracts/conservation-action.schema.json; conservation-case-event.schema.json; ADR 0002 human review boundary; blocks P3-02, P3-04."
+        checks: "Issue #106 closed by PR #107 (7ed7efd); data-contracts/conservation-action.schema.json; conservation-case-event.schema.json; 21 example fixtures; 8/8 test_conservation_contracts.py passing; 20/20 data-contracts suite; ADR 0002 human review boundary; unblocks P3-02, P3-04."
       },
       {
         id: "P3-02",
