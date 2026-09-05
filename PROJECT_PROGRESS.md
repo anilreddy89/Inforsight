@@ -2,7 +2,7 @@
 
 Personal review document. This file is intentionally excluded from version control and is not an official project status record.
 
-Last reviewed: 2026-09-04
+Last reviewed: 2026-09-05
 Current branch: `main`
 
 ## How progress is tracked
@@ -85,32 +85,42 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P2-08 | Phase 2 | Probability calibration and held-out operational-threshold evaluation | Completed | Issue #96; PR #97 merged as `3abb044`; Platt scaling selected (ECE 0.0115 <= 0.0300, slope 0.9498 in [0.85, 1.15], Brier 0.1211, AUC 0.6998 exact rank preservation); fit strictly on calibration partition (8,560 rows) of seed 20280201; evaluated out-of-sample on non_final_evaluation (8,782 rows); Top 1% review queue precision 34.09% (2.23x lift, NNR 2.9); Top 5% recall 11.57% (2.31x lift); 4 risk tiers; 1,000 policy-cluster bootstrap CIs; decision curves positive over cost ratios [0.02, 0.25]; final holdout strictly not_materialized; authorizes P2-09. |
 | P2-09 | Phase 2 | SHAP or equivalent attribution examples and explanation boundaries | Completed | Issue #98; PR #99 merged as `29b9aca`; exact additive logit reconstruction residual < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; global importance ranked; representative waterfalls for Tiers 1, 2, 3; ADR 0002 non-causal authority boundaries codified; final holdout strictly not_materialized; authorizes P2-10. |
 | P2-10 | Phase 2 | Versioned training configuration, dependencies, metrics, and model artifacts | Completed | Issue #100; PR #101 merged as `7112e82`; unified release model bundle (28 features), pure-JSON serialization, bit-for-bit reload invariant verified ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$, 100% tier concordance, 392 safety tests pass); clean-room holdout `not_materialized`; authorizes P2-11. |
-| P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Pending | Requires model comparison, limitation disposition, calibrated evaluation, shortcut review, and explanations. |
-| P2-12 | Phase 2 | Risk-model release marker and release notes | Pending | Reconcile the planned `v0.3.0-risk-model` label with the actual release sequence before tagging. |
+| P2-11 | Phase 2 | `MODEL_CARD.md`, experiment report, and Phase 2 decision note | Completed | Issue #102; PR #103 merged as `ec363d6`; 100% passing scorecard (Gates G1–G6); decision note RELEASE; resolved LIM-002-001, LIM-002-002, LIM-002-003. |
+| P2-12 | Phase 2 | Risk-model release marker and release notes | Completed | Issue #104; PR #105 merged as `7797c09`; published milestone release notes, created annotated git tag `v0.2.0-risk-model`, closed GitHub Milestone #3. |
+| P3-01 | Phase 3 | Conservation domain contracts and action taxonomy | Implemented locally | Issue #106, branch `feat/106-p3-01-conservation-contracts`; JSON Schemas and fixtures implemented in `data-contracts`, test suite passing (20/20 contracts tests, 395/395 simulator tests). |
+| P3-02 | Phase 3 | Deterministic action eligibility rules engine | Pending | Pure deterministic rules enforcing business, legal, and regulatory constraints (ADR 0002). |
+| P3-03 | Phase 3 | Cost-utility and uplift optimization matrix | Pending | Economic optimization allocating conservation actions under specialist capacity limits. |
+| P3-04 | Phase 3 | Model serving and inference gateway | Pending | High-throughput zero-dependency FastAPI REST gateway wrapping `BundledInferenceEngine`. |
+| P3-04A | Phase 3 | Model monitoring and drift detection architecture | Pending | Telemetry architecture for PSI/CSI input drift and rolling calibration tracking. |
+| P3-05 | Phase 3 | Bounded case intelligence assistant | Pending | Deterministic template foundation with optional grounded LLM narrative layer. |
+| P3-06 | Phase 3 | Human-in-the-loop workflow and audit trail engine | Pending | Mandatory specialist review workflow and append-only hash-chained audit ledger. |
+| P3-07 | Phase 3 | Interactive conservation intelligence dashboard | Pending | Lightweight Streamlit web application providing interactive decision support demonstration. |
+| P3-08 | Phase 3 | Counterfactual simulation and offline policy evaluation | Pending | Counterfactual simulation and OPE evaluating business impact against baseline policies. |
+| P3-09 | Phase 3 | End-to-end system qualification and integration gate | Pending | Automated pre-release qualification suite enforcing Gates S1–S6. |
+| P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Pending | Milestone closeout, release tag `v0.3.0-decision-engine`, and documentation. |
 
-Phase 2R remediation is officially complete following the merged `proceed` decision of Phase 2R.16A (PR #95, commit `4d7e9da`). Resumed Phase 2 Baseline ML is actively executing; Phase 2.08 (PR #97, commit `3abb044`), Phase 2.09 (PR #99, commit `29b9aca`), and Phase 2.10 (PR #101, commit `7112e82`) are completed and merged on `main`. Active increment: None (Phase 2 P2-11 ready to plan).
+Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is actively underway under milestone `v0.3.0-decision-engine` (Milestone #4), with Phase 3.01 implemented locally under Issue #106 on branch `feat/106-p3-01-conservation-contracts`.
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 42 |
-| In-progress / implemented locally changes | 0 |
+| Completed tracked changes | 44 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1) |
+| In-progress / implemented locally changes | 1 (P3-01) |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
-| Completed Phase 1 increments | 7 of 7 |
-| Completed Phase 2 increments | 10 of 12 (P2-01..P2-03, P2-05..P2-10 completed) |
-| Completed Phase 2R increments | 24 of 24 (R2-00 through R2-16A) |
-| In-progress Phase 2R increments | 0 of 24 |
-| Planned Phase 2R increments | 0 of 24 |
-| Active increment | None (Phase 2 P2-11 ready to plan) |
-| Next implementation increment | Phase 2 P2-11 (Final evaluation, model card, and decision note) |
-
+| Completed Phase 1 increments | 7 of 7 (100% complete) |
+| Completed Phase 2 increments | 12 of 12 (100% complete) |
+| Completed Phase 2R increments | 24 of 24 (100% complete) |
+| In-progress Phase 3 increments | 1 (P3-01) |
+| Planned Phase 3 increments | 0 |
+| Active increment | Phase 3 P3-01 (Conservation domain contracts and action taxonomy) |
+| Next implementation increment | Phase 3 P3-02 (Deterministic action eligibility rules engine) |
 
 | ID | Status | Impact | Resolution trigger |
 | --- | --- | --- | --- |
-| `LIM-002-001` | Scheduled | Billing frequency is confounded with first-billing observation time; R2-07 recorded `stop`, so temporal-generalization and model-release claims remain blocked. | Before interpreting held-out metrics as temporal generalization or approving a risk-model release. |
-| `LIM-002-002` | Scheduled | The v1 corpus has no designed pre-cutoff feature-conditioned risk mechanism; performance, calibration, and substantive explanation claims are blocked. | Before calibration, explanation, final evaluation, or release decisions. |
-| `LIM-002-003` | Scheduled, local repair complete | R2-03 repaired partition-relabeling and matrix-substitution scoring paths; the v1 fixture remains review-exposed and the future one-shot holdout protocol is still unproven. | Before materializing or accessing a new final release holdout. |
-| `LIM-002-004` | Scheduled, blocking | R2-14 implements substrate `4.0.0` but development qualification decides `redesign`; R2-15 remains blocked. | Before another acceptance run, limitation closure, or downstream performance-dependent work. |
+| `LIM-002-001` | Resolved | Billing frequency was confounded with observation time; resolved in Phase 2.11 via multi-cohort staggered issuance and recurring observation windows. | Formally verified and closed in Phase 2.11 (PR #103). |
+| `LIM-002-002` | Resolved | Simulator lacked pre-cutoff feature-conditioned risk; resolved in Phase 2.11 via Generation v6 bounded sigmoid hazard architecture. | Formally verified and closed in Phase 2.11 (PR #103). |
+| `LIM-002-003` | Resolved | Scoring authorization guard hardened with SHA-256 matrix digests; historical v1 fixture retired; resolved in Phase 2.11. | Formally verified and closed in Phase 2.11 (PR #103). |
+| `LIM-002-004` | Superseded | Post-cutoff ingestion leakage in v2; superseded by v3/v6 event-first bitemporal substrate. | Closed through Generation v6 substrate qualification. |
 
 The authoritative limitation details, permitted interim work, proposed resolution, and closure evidence are maintained in `docs/limitations.md`.
 

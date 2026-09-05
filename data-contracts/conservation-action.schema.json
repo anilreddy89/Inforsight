@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.example/contracts/conservation-action.schema.json",
+  "title": "Inforsight conservation action",
+  "description": "Versioned JSON Schema contract defining allowed policy conservation interventions, cost-resource parameters, and channel constraints.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "action_id",
+    "action_type",
+    "channel",
+    "direct_cost_usd",
+    "personnel_hours",
+    "regulatory_cooling_off_days",
+    "minimum_policy_tenure_days",
+    "requires_grace_period"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Version of this conservation-action contract.",
+      "const": "1.0.0"
+    },
+    "action_id": {
+      "description": "Unique identifier for this action specification.",
+      "type": "string",
+      "pattern": "^act_[a-z0-9_]{4,64}$"
+    },
+    "action_type": {
+      "description": "Standard enumerated conservation intervention type.",
+      "enum": [
+        "courtesy_reminder",
+        "grace_period_consultation",
+        "specialist_phone_outreach",
+        "payment_method_remediation",
+        "abstain"
+      ]
+    },
+    "channel": {
+      "description": "Operational communication channel used to deliver the intervention.",
+      "enum": [
+        "sms",
+        "email",
+        "phone",
+        "postal_mail",
+        "in_app_notification",
+        "none"
+      ]
+    },
+    "direct_cost_usd": {
+      "description": "Direct financial expense c(a) in USD required to execute the action.",
+      "type": "number",
+      "minimum": 0.0
+    },
+    "personnel_hours": {
+      "description": "Required staff personnel hours to execute the action.",
+      "type": "number",
+      "minimum": 0.0
+    },
+    "regulatory_cooling_off_days": {
+      "description": "Mandatory minimum calendar days required before re-contacting the policyholder.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "minimum_policy_tenure_days": {
+      "description": "Minimum policy age in days required to be eligible for this action.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "maximum_policy_tenure_days": {
+      "description": "Optional maximum policy age in days; null if unbounded.",
+      "oneOf": [
+        { "type": "null" },
+        { "type": "integer", "minimum": 0 }
+      ]
+    },
+    "requires_grace_period": {
+      "description": "Whether this action strictly requires the policy to be in active grace period.",
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "action_type": { "const": "abstain" } }
+      },
+      "then": {
+        "properties": {
+          "direct_cost_usd": { "const": 0.0 },
+          "personnel_hours": { "const": 0.0 },
+          "channel": { "const": "none" }
+        }
+      },
+      "else": {
+        "properties": {
+          "direct_cost_usd": { "exclusiveMinimum": 0.0 },
+          "channel": { "not": { "const": "none" } }
+        }
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "case_event_id": "cev_06918a2b3c4d5e6f7a8b9c0d",
+  "case_id": "case_01918a2b3c4d5e6f7a8b9c0d",
+  "policy_id": "pol_a1b2c3d4e5f60718",
+  "from_state": "HUMAN_REVIEWED",
+  "to_state": "EXECUTED",
+  "occurred_at": "2026-09-01T10:15:00Z",
+  "payload": {
+    "human_review": {
+      "reviewer_id": "usr_spec_8192",
+      "reviewed_at": "2026-09-01T09:30:00Z",
+      "decision": "APPROVED",
+      "rationale_code": "APPROVED_STANDARD_CONSULTATION",
+      "justification": "Outreach completed by licensed specialist via outbound phone call."
+    },
+    "execution_details": {
+      "action_type": "grace_period_consultation",
+      "channel": "phone",
+      "outreach_reference": "out_01918a2b3c4d5e6f"
+    }
+  }
+}
+

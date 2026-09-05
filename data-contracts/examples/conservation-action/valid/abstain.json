@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "action_id": "act_abstain_do_not_disturb_v1",
+  "action_type": "abstain",
+  "channel": "none",
+  "direct_cost_usd": 0.0,
+  "personnel_hours": 0.0,
+  "regulatory_cooling_off_days": 0,
+  "minimum_policy_tenure_days": 0,
+  "maximum_policy_tenure_days": null,
+  "requires_grace_period": false
+}
+

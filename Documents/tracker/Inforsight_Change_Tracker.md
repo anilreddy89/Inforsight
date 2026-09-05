@@ -1,6 +1,6 @@
 # Inforsight Change Tracker
 
-Last reviewed: 2026-09-03
+Last reviewed: 2026-09-05
 Current repository branch: `main`
 
 ## Purpose
@@ -9,7 +9,7 @@ This tracker records what changed, what is planned, when work completed or is ex
 
 GitHub Issues and merged pull requests remain the authoritative work-item record. Update this tracker after an issue is created, implementation begins, a pull request opens, and the pull request merges.
 
-Current release milestone: [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3). R2-00 through R2-11 and the focused R2-12 through R2-16 redesign extension are internal release gates within this milestone, not a separate milestone.
+Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilreddy89/Inforsight/milestone/4) (Milestone #4). Phase 2 was successfully released under [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/releases/tag/v0.2.0-risk-model) (Milestone #3 closed).
 
 ## Status definitions
 
@@ -72,43 +72,49 @@ Current release milestone: [**v0.2.0-risk-model**](https://github.com/anilreddy8
 | P2-08 | Phase 2 — Baseline ML | Fit probability calibration on designated non-test calibration data and evaluate operational decision thresholds. | Completed | [#96](https://github.com/anilreddy89/Inforsight/issues/96) | [#97](https://github.com/anilreddy89/Inforsight/pull/97) | 2026-09-04 | `3abb044` | Calibration contract 1.0.0, Platt/Isotonic engines in `calibration.py`, CLI runner, manifest, report, [phase document](../phase_docs/phase-02-08-probability-calibration-and-operational-thresholds.md) | Platt scaling selected (ECE 0.0115 <= 0.0300, slope 0.9498 in [0.85, 1.15], Brier 0.1211, AUC 0.6998 exact rank preservation); fit strictly on calibration partition (8,560 rows) of seed 20280201; evaluated out-of-sample on non_final_evaluation (8,782 rows); Top 1% review queue precision 34.09% (2.23x lift, NNR 2.9); Top 5% recall 11.57% (2.31x lift); 4 risk tiers; 1,000 policy-cluster bootstrap CIs; decision curves positive over cost ratios [0.02, 0.25]; final holdout strictly not_materialized; authorizes P2-09. |
 | P2-09 | Phase 2 — Baseline ML | Publish SHAP or equivalent attribution examples and feature sanity checks. | Completed | [#98](https://github.com/anilreddy89/Inforsight/issues/98) | [#99](https://github.com/anilreddy89/Inforsight/pull/99) | 2026-09-04 | `29b9aca` | Explanation contract 1.0.0, linear/SHAP engines in `explanations.py`, CLI runner, manifest, report, [phase document](../phase_docs/phase-02-09-model-behavior-explanations.md) | Exact additive log-odds decomposition and centered SHAP values evaluated; exact logit reconstruction residual < 1e-10 (observed 1.78e-15) across all 8,782 out-of-sample observations; 17/17 directional sanity checks passed; global rankings (`rolling_on_time_rate` top feature at 22.78%); local waterfall profiles across Tiers 1, 2, 3; ADR 0002 authority boundaries enforced; final holdout strictly not_materialized; authorizes P2-10. |
 | P2-10 | Phase 2 — Baseline ML | Version training configuration, dependencies, feature contract, split manifest, metrics, and model artifacts. | Completed | [#100](https://github.com/anilreddy89/Inforsight/issues/100) | [#101](https://github.com/anilreddy89/Inforsight/pull/101) | 2026-09-04 | `7112e82` | Model bundle contract 1.0.0, bundle exporter/engine in `bundle.py`, CLI runner, bundle JSON, manifest, report, [phase document](../phase_docs/phase-02-10-artifact-and-environment-reproducibility.md) | Unified fitted preprocessing (28 features), candidate weights, Platt calibrator, explainer reference, and operational decision policies into an immutable cryptographic release bundle; verified reload-and-score bit-for-bit ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$); 100% operational tier concordance; ADR 0002 authority compliance; 392 safety tests pass; final holdout strictly not_materialized; authorizes P2-11. |
-| P2-11 | Phase 2 — Baseline ML | Publish `MODEL_CARD.md`, experiment report, and Phase 2 model decision note. | Pending | TBD | TBD | TBD | — | Model comparison, limitations, calibration and threshold evidence, explanations, and acceptance-gate decision | Completes Phase 2 only when held-out temporal scoring is leakage-safe and reproducible. |
-| P2-12 | Phase 2 — Baseline ML | Publish the agreed risk-model release marker and release notes. | Pending | TBD | TBD | TBD | — | `v0.2.0-risk-model` tag, GitHub release, version evidence, limitations, and reproduction entry points | Complete the existing [**v0.2.0-risk-model**](https://github.com/anilreddy89/Inforsight/milestone/3) milestone; keep milestone, tag, and release title aligned. |
+| P2-11 | Phase 2 — Baseline ML | Publish `MODEL_CARD.md`, experiment report, and Phase 2 model decision note. | Completed | [#102](https://github.com/anilreddy89/Inforsight/issues/102) | [#103](https://github.com/anilreddy89/Inforsight/pull/103) | 2026-09-05 | `ec363d6` | `MODEL_CARD.md`, `docs/experiments/phase-02-11-*`, [phase document](../phase_docs/phase-02-11-final-evaluation-model-card-and-decision-note.md) | Contract 1.0.0; one-shot out-of-sample scoring of 8,782 observations; 100% passing acceptance gate scorecard (Gates G1–G6); decision note records RELEASE; LIM-002-001/002/003 formally resolved; authorizes P2-12. |
+| P2-12 | Phase 2 — Baseline ML | Publish the agreed risk-model release marker and release notes. | Completed | [#104](https://github.com/anilreddy89/Inforsight/issues/104) | [#105](https://github.com/anilreddy89/Inforsight/pull/105) | 2026-09-05 | `7797c09` | `docs/release-notes/v0.2.0-risk-model.md`, git tag `v0.2.0-risk-model`, GitHub release, [phase document](../phase_docs/phase-02-12-release-marker-and-notes.md) | Formally tags v0.2.0-risk-model, closes GitHub Milestone #3, publishes dual-audience release notes, and officially completes Phase 2 (12/12 Phase 2 and 24/24 Phase 2R increments complete); authorizes Phase 3 kick-off. |
+| P3-01 | Phase 3 — Conservation Decision Engine | Conservation domain contracts and action taxonomy (ADR 0002). | Implemented locally | [#106](https://github.com/anilreddy89/Inforsight/issues/106) | Pending | 2026-09-05 | — | `data-contracts/conservation-action.schema.json`, `conservation-case-event.schema.json`, `data-contracts/tests/test_conservation_contracts.py`, 21 valid/invalid fixtures, `data-contracts/README.md`, [phase document](../phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md) | Branch `feat/106-p3-01-conservation-contracts`; 5 intervention types, cost/resource rules, ADR 0002 state machine; 20 contract tests pass. Blocks P3-02, P3-04. |
+| P3-02 | Phase 3 — Conservation Decision Engine | Deterministic action eligibility rules engine (business, legal, regulatory constraints). | Pending | TBD | TBD | TBD | — | `simulator/rules/`, property-based eligibility tests | Depends on P3-01. Blocks P3-03, P3-05, P3-08. |
+| P3-03 | Phase 3 — Conservation Decision Engine | Cost-utility and uplift optimization matrix (constrained resource allocation). | Pending | TBD | TBD | TBD | — | `simulator/optimization/`, utility matrix tests | Depends on P3-02. Blocks P3-05, P3-07, P3-08. |
+| P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | Pending | TBD | TBD | TBD | — | `serving/`, Dockerfile, gateway integration tests | Depends on P3-01. Blocks P3-04A, P3-05, P3-07. |
+| P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Pending | TBD | TBD | TBD | — | `docs/architecture/model-monitoring.md`, `/v1/diagnostics` schema | Depends on P3-04. Blocks P3-05, P3-07. |
+| P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | Pending | TBD | TBD | TBD | — | `simulator/assistant/`, case brief generator, grounding guards | Depends on P3-02, P3-03, P3-04, P3-04A. Blocks P3-06, P3-07. |
+| P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Pending | TBD | TBD | TBD | — | `simulator/workflow/`, audit logger, replay verification tool | Depends on P3-05. Blocks P3-07, P3-09. |
+| P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Pending | TBD | TBD | TBD | — | `dashboard/`, interactive UI, triage consoles | Depends on P3-03, P3-04, P3-04A, P3-05, P3-06, P3-08. Blocks P3-09. |
+| P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Pending | TBD | TBD | TBD | — | `scripts/run_offline_policy_evaluation.py`, counterfactual generator | Depends on P3-02, P3-03. Blocks P3-07, P3-09. |
+| P3-09 | Phase 3 — Conservation Decision Engine | End-to-end system qualification and integration gate (Gates S1–S6). | Pending | TBD | TBD | TBD | — | `tests/qualification/`, qualification runner, scorecard report | Depends on P3-06, P3-07, P3-08. Blocks P3-10. |
+| P3-10 | Phase 3 — Conservation Decision Engine | Milestone release marker and release notes (`v0.3.0-decision-engine`). | Pending | TBD | TBD | TBD | — | `docs/release-notes/v0.3.0-decision-engine.md`, tag `v0.3.0-decision-engine` | Depends on P3-09. Closes Milestone #4. |
 
 ## Current summary
 
 ### High-level achievement summary
 
-Inforsight has a strong and repeatable v1 pipeline-engineering foundation. Phase 2R is now planned to repair correctness and statistical-design gaps before performance-dependent model work resumes:
+Inforsight successfully completed Phase 2 (Baseline ML) and is actively executing Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration):
 
 1. The simulator creates deterministic fictional insurance-policy histories containing billing, payment, notice, service, lapse, and surrender events.
-2. The same generation seed reproduces the same data, making tests and experiments repeatable.
-3. Point-in-time reconstruction shows what was known about a policy on a specific date without using future information.
-4. Modeling observations keep cutoff-visible policy information separate from the 90-day lapse-or-surrender label.
-5. Leakage guards prevent future outcomes, identifiers, simulator scenarios, and other shortcuts from entering model features.
-6. Policy-aware chronological train, validation, and test partitions include embargo controls that prevent time and outcome-episode overlap.
-7. The versioned feature pipeline converts approved observations into fixed numeric model inputs and learns preprocessing rules from training data only.
-8. `LIM-002-001` records that billing frequency is confounded with observation time, so the current corpus supports pipeline engineering but not realistic temporal-performance claims.
-9. `LIM-002-002` records that v1 has no designed pre-cutoff feature-conditioned risk mechanism, so its model metrics cannot support calibration or substantive explanation claims.
-10. `LIM-002-003` records that the v1 test fixture was prediction-accessed through a partition-relabeling bypass; no test metric was computed, but the fixture is not an untouched release holdout.
-11. `LIM-002-004` records that the historical v2 behavior features can include post-cutoff ingested values; R2-09 implements the event-first v3 correction, while evaluation and acceptance evidence remain pending through R2-10/R2-11.
-12. R2-07 records `stop` before model fitting; R2-08/R2-09 provide the historical v3.0 substrate; issues #60/#61 version remediation and downstream evidence to simulator `3.1.0`, evaluation `3.2.0`, and protocol `2.2.0`; P2-08 and P2-09 remain paused through R2-11.
+2. The Generation v6 bounded sigmoid hazard architecture broke the Proportional Hazards Trilemma, generating authentic behavioral signal while keeping monthly hazard bounded ($\le 0.15 < 0.20$).
+3. Resumed Phase 2 completed Platt scaling probability calibration (ECE 0.0115, slope 0.9498), centered SHAP explainability attributions with exact logit reconstruction, and packaged the entire pipeline into an immutable, pure-JSON release model bundle (`inforsight-v6-logistic-platt-20260817`).
+4. Standalone `BundledInferenceEngine` verified bit-for-bit reload reproduction ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$) and 100% operational tier concordance across 8,782 out-of-sample policies.
+5. All 6 Pre-registered Acceptance Gates (G1–G6) passed 100% with 1,000 policy-cluster bootstrap confidence intervals.
+6. Milestone `v0.2.0-risk-model` was formally tagged and released, resolving `LIM-002-001`, `LIM-002-002`, and `LIM-002-003`.
+7. Phase 3-01 is implemented locally on branch `feat/106-p3-01-conservation-contracts` under Issue #106; domain contracts, action taxonomy, and ADR 0002 state machine pass all 20 contract tests.
 
-In one sentence: Phase 2R.15 froze the Generation v6 evaluation pipeline and release candidate (Logistic Regression), and Phase 2R.16 is ready to execute replacement statistical acceptance testing.
-
+In one sentence: Phase 2 is 100% complete and released, and Phase 3-01 contracts are implemented locally ready for pull request review.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 42 |
-| Implemented locally changes | 0 |
+| Completed tracked changes | 44 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1) |
+| Implemented locally changes | 1 (P3-01) |
 | Planned changes | 0 |
-| Paused changes | 1 |
+| Paused changes | 0 |
 | In-progress changes | 0 |
-| Completed Phase 1 increments | 7 of 7 |
-| Completed Phase 2 increments | 10 of 12 (P2-01..P2-03, P2-05..P2-10 completed) |
-| Completed Phase 2R increments | 24 of 24 (R2-00 through R2-16A complete) |
-| Active increment | None (Phase 2 P2-11 ready to plan) |
-| Next implementation increment | Phase 2 P2-11 (Final evaluation, model card, and decision note) |
+| Completed Phase 1 increments | 7 of 7 (100% complete) |
+| Completed Phase 2 increments | 12 of 12 (100% complete) |
+| Completed Phase 2R increments | 24 of 24 (100% complete) |
+| Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
+| Active increment | Phase 3 P3-01 (Conservation Domain Contracts and Action Taxonomy) |
+| Next implementation increment | Phase 3 P3-01 (Conservation Domain Contracts and Action Taxonomy) |
 
 ## Latest verification baseline
 
@@ -292,6 +298,9 @@ Completion evidence:
 - Issue #56 closed when PR #57 merged as `89c2291`; hosted CI passed, R2-09 is complete, and R2-10 is ready.
 - Issue #59 opened R2-10; issue #60 amended the selection interval; issue #61 approved versioned arrears remediation. Local `3.2.0` evidence passes and selects XGBoost, while merge remains required before R2-11.
 - Issue #100 closed when PR #101 merged as `7112e82`; Phase 2.10 release model bundle and reproducibility engine complete on `main`.
+- Issue #102 closed when PR #103 merged as `ec363d6`; Phase 2.11 final evaluation, MODEL_CARD.md, and Phase 2 decision note (RELEASE) complete on `main`.
+- Issue #104 closed when PR #105 merged as `7797c09`; Phase 2.12 v0.2.0-risk-model release tag, notes, and Milestone #3 closure complete on `main`.
+- Phase 3.01 kicked off: phase specification authored in `Documents/phase_docs/phase-03-01-conservation-domain-contracts-and-action-taxonomy.md`; Milestone #4 (v0.3.0-decision-engine) active.
 
 ## Update procedure
 

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "action_id": "act_payment_remediation_v1",
+  "action_type": "payment_method_remediation",
+  "channel": "sms",
+  "direct_cost_usd": 3.0,
+  "personnel_hours": 0.1,
+  "regulatory_cooling_off_days": 14,
+  "minimum_policy_tenure_days": 30,
+  "maximum_policy_tenure_days": null,
+  "requires_grace_period": false
+}
+
