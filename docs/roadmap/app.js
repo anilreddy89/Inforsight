@@ -393,6 +393,17 @@ const timelineData = [
           simple: "Model-Behavior Explanations & Governance Guardrails: Created exact, mathematically transparent risk breakdowns (additive log-odds and centered SHAP values) explaining why any customer receives their risk score. Proved 100% directional sanity against actuarial rules (e.g. paying on time reduces risk, failed payments and arrears increase risk). Generated waterfall explanations for Low, Moderate, and High risk accounts. Enforced strict ADR 0002 boundaries: explanations show correlations, not causes, and AI can never make autonomous customer retention decisions without licensed human approval."
         },
         checks: "Issue #98 & PR #99 merged (commit 29b9aca); Contract 1.0.0; exact additive reconstruction < 1e-10 (observed 1.78e-15); 17/17 directional sanity checks passed; representative case studies across Tiers 1, 2, 3; ADR 0002 non-causal boundaries codified; final holdout strictly not_materialized; bit-for-bit check passes; authorizes P2-10."
+      },
+      {
+        id: "P2-10",
+        title: "Artifact and Environment Reproducibility (Release Model Bundle)",
+        status: "Completed",
+        commit: "Branch feat/100-p2-10-artifact-and-environment-reproducibility",
+        summary: {
+          tech: "Contract 1.0.0. Unified fitted preprocessor transformations (13 numeric scalers + 4 categorical one-hot encoders = 28 features), Logistic Regression weights (seed 20260817, C=1.0, L2), Platt calibration parameters (A=0.961849, B=-0.033420), explainer background baseline (E[z]=-0.7107, E[p]=0.3295), and operational decision policies (4 risk tiers, 3 review queues, ADR 0002 action boundaries) into an immutable, pure-JSON release model bundle (phase-02-10-model-bundle.json). Implemented standalone BundledInferenceEngine achieving bit-for-bit reload invariance across all 8,782 out-of-sample observations (max prob delta: 2.22e-16 <= 1.00e-12; max logit delta: 8.88e-16 <= 1.00e-12; 100% operational tier concordance). Locked Python runtime and dependency lock hashes. Final holdout strictly not_materialized.",
+          simple: "Artifact & Environment Reproducibility: Packaged the entire trained AI pipeline (preprocessor, linear weights, calibrator, explainer baselines, and risk rules) into a single, secure, transparent JSON bundle with zero external ML library dependencies at runtime. Proved bit-for-bit reload reproduction: the standalone bundle engine generates identical predictions across all 8,782 customer accounts with zero drift (divergence under 1 part in 10 quadrillion). Locked environment versions and cryptographic checksums."
+        },
+        checks: "Issue #100 & PR #101; Contract 1.0.0; pure-JSON serialization without pickle; standalone BundledInferenceEngine; bit-for-bit verification passes (max prob diff 2.22e-16 <= 1e-12); 100% operational tier concordance (8,782/8,782); ADR 0002 authority compliance; final holdout strictly not_materialized; make model-bundle-check passes."
       }
     ]
   }
@@ -909,6 +920,89 @@ function renderIterationMatrix() {
 // ============================================================
 
 const pipelineScenarios = {
+  p2_10_model_bundle: {
+    name: "Phase 2.10: Release Model Bundle & Bit-for-Bit Reproducibility",
+    stages: [
+      {
+        stage: 1,
+        title: "Stage 1: Preflight Boundary & Clean-Room Invariant Gate",
+        badge: "Passed",
+        icon: "🛡️",
+        command: "./scripts/check_repository_boundaries.sh",
+        log: "Scanning tracked files for boundary violations...\n[PASS] Clean-room boundary check passed with zero violations.\n[PASS] Repository boundaries intact (zero test set peeking, zero pickle serialization).\n[PASS] Final holdout status verified: not_materialized.",
+        explanation: {
+          simple: "Verifies that repository security boundaries remain pristine, that no test holdouts have been touched, and that binary pickles are completely prohibited.",
+          tech: "Verifies repository boundary integrity, clean-room isolation, and guarantees final_holdout_status remains strictly not_materialized."
+        },
+        status: "success"
+      },
+      {
+        stage: 2,
+        title: "Stage 2: Safe Pure-JSON Release Bundle Serialization",
+        badge: "SERIALIZED",
+        icon: "📦",
+        command: "python3 scripts/run_model_bundle.py --check",
+        log: "Verifying immutable release bundle: phase-02-10-model-bundle.json...\n- Preprocessor: 13 numeric standard scalers + 4 one-hot encoders (28 columns)\n- Base Model: LogisticRegression (L2, C=1.0, liblinear, seed 20260817)\n- Calibrator: Platt scaling (A=0.961849, B=-0.033420)\n- Explainer Baseline: E[z]=-0.710707, E[p]=0.329509\n- Operational Policy: 4 risk tiers, 3 review queues, ADR 0002 boundaries\n[PASS] Zero binary pickle dependencies; schema-validated pure JSON.",
+        explanation: {
+          simple: "Packages all feature math, model weights, probability curves, and business rules into a human-readable JSON file without unsafe pickle files.",
+          tech: "Validates immutable ModelBundle Contract 1.0.0 encapsulating all preprocessing parameters, linear weights, Platt calibrator, and baseline vectors."
+        },
+        status: "success"
+      },
+      {
+        stage: 3,
+        title: "Stage 3: Bit-for-Bit Reload-and-Score Invariant Verification",
+        badge: "BIT-FOR-BIT MATCH",
+        icon: "🔬",
+        command: "python3 scripts/run_model_bundle.py",
+        log: "Reloading exclusively from phase-02-10-model-bundle.json via BundledInferenceEngine...\nScoring 8,782 out-of-sample observations from non_final_evaluation:\n- Max probability divergence: 2.22e-16 <= 1.00e-12 -> [PASS]\n- Max logit divergence:       8.88e-16 <= 1.00e-12 -> [PASS]\n[PASS] Standalone inference reproduces original pipeline bit-for-bit to machine precision.",
+        explanation: {
+          simple: "Runs the standalone JSON bundle on all 8,782 real evaluation records. The predictions match the original model to 16 decimal places—true zero drift!",
+          tech: "Proves reload-and-score invariance |p_bundle - p_orig| < 1e-12 with observed divergence of 2.22e-16 across all 8,782 out-of-sample records."
+        },
+        status: "success"
+      },
+      {
+        stage: 4,
+        title: "Stage 4: Additive Logit Reconstruction & Centered SHAP Check",
+        badge: "RECONSTRUCTED",
+        icon: "🧮",
+        command: "python3 scripts/run_model_bundle.py",
+        log: "Reconstructing calibrated logits directly from bundle parameters:\n- z_cal = cal_intercept + sum(cal_coef * x)\n- Max logit reconstruction divergence: 8.88e-16 <= 1.00e-12 -> [PASS]\n- Explainer efficiency: sum(SHAP) = z_cal - E[z] -> [PASS]\n[PASS] Mathematical attribution reconstruction certified.",
+        explanation: {
+          simple: "Recomputes every customer's risk factors from the bundle's stored numbers and confirms they sum up exactly to the total score.",
+          tech: "Verifies additive logit reconstruction and centered SHAP efficiency directly from bundle parameters with sub-quadrillionth error tolerance."
+        },
+        status: "success"
+      },
+      {
+        stage: 5,
+        title: "Stage 5: Operational Risk Tier Concordance (100.00%)",
+        badge: "100.0% CONCORDANCE",
+        icon: "🎯",
+        command: "python3 scripts/run_model_bundle.py",
+        log: "Benchmarking operational decision tier assignments across 8,782 observations:\n- Tier 1: Low Risk      ([0.00, 0.10)) -> 5,595 / 5,595 matched (100.0%)\n- Tier 2: Moderate Risk ([0.10, 0.25)) -> 1,848 / 1,848 matched (100.0%)\n- Tier 3: High Risk     ([0.25, 0.50)) -> 1,029 / 1,029 matched (100.0%)\n- Tier 4: Critical Risk ([0.50, 1.00]) ->   310 /   310 matched (100.0%)\n- Total concordance: 8,782 / 8,782 (100.00%) -> [PERFECT CONCORDANCE]",
+        explanation: {
+          simple: "Every single customer gets assigned to the exact same risk tier and review queue in the production bundle as in the research model.",
+          tech: "Demonstrates 100.00% operational tier and review queue concordance across all 8,782 out-of-sample policies."
+        },
+        status: "success"
+      },
+      {
+        stage: 6,
+        title: "Stage 6: Runtime Environment & Lineage Digest Locking",
+        badge: "GOVERNED & LOCKED",
+        icon: "🏛️",
+        command: "make model-bundle-check",
+        log: "Asserting environment provenance and cryptographic lineage:\n- Python: 3.12.2 on macOS (Darwin)\n- scikit-learn: 1.4.1.post1 | numpy: 1.26.4 | scipy: 1.12.0\n- Dependency lock SHA-256: 7d643ffca1a7888ff4fa521f757fba305a41d0aa8c187514a66a7b73815049b4\n- Upstream Candidate (R2-15) + Calibration (P2-08) + Explanations (P2-09) bound\n- Final holdout status: not_materialized (Clean-room intact)\n=======================================================\nPHASE 2.10 CERTIFIED & COMPLETE (Model Ready for Deployment)\n=======================================================",
+        explanation: {
+          simple: "Locks exact software versions, operating system specs, and cryptographic fingerprints so anyone can reproduce these results anytime in the future.",
+          tech: "Binds SHA-256 digests of all upstream models, contracts, and dependency locks; enforces ADR 0002 authority guardrails and clean-room holdout isolation."
+        },
+        status: "success"
+      }
+    ]
+  },
   p2_09_model_explanations: {
     name: "Phase 2.09: Model Explanations & Action Boundaries (Exact Logit & Centered SHAP)",
     stages: [

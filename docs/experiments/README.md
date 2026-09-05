@@ -33,8 +33,19 @@ The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeli
 - `phase-02r-14bb-v5-redesign-diagnostic-*` — issue-#82 aggregate development evidence for all 20 development seeds (120 inventory units) and exhaustive 320-cell feasibility surface (`D16 / D17`) under Contract `1.1.0`. `H1_LOG_HAZARD_SPREAD` is supported (insufficient public observable spread); `H3_PROBABILITY_SCALE`, `H4_REFERENCE_SPECIFICATION`, and `H5_HAZARD_TAIL` are rejected; `H6_DESIGN_FEASIBILITY` is infeasible (0/320 cells satisfy simultaneous recovery and hazard bounds). The mechanical response is `stop_infeasible_design`; proposed ADR 0011 records the stop. R2-14C remains blocked; reserved acceptance and final holdout remain `not_materialized`.
 - `phase-02-08-probability-calibration-manifest.json` — deterministic Phase 2.08 probability calibration evidence, Platt scaling and isotonic regression parameters, out-of-sample calibration metrics (ECE: `0.0115`, slope: `0.9498`, intercept: `-0.1155`, Brier: `0.1211`, AUC: `0.6998`), operational review capacity trade-offs (Top 1% through 20%) with 1,000 policy-cluster bootstrap 95% CIs, Decision Curve Analysis across cost ratios, and risk tiers.
 - `phase-02-08-probability-calibration-report.md` — human-readable probability calibration report, reliability diagrams, model comparison tables, review capacity curves, and cost-benefit utility analysis.
+- `phase-02-10-model-bundle.json` — portable JSON-based release model bundle unifying fitted preprocessing transformations (13 numeric scalers + 4 categorical one-hot encoders = 28 features), linear model weights, Platt probability calibrator parameters, explainer background baselines ($\mathbb{E}[z] = -0.7107, \mathbb{E}[p] = 0.3295$), and operational decision policies (4 risk tiers, 3 review queues, ADR 0002 action-authority boundaries).
+- `phase-02-10-model-bundle-manifest.json` — cryptographic lineage digest bindings, runtime environment specifications (`scikit-learn`, `numpy`, `scipy`, Python version, platform, `pyproject.toml` lock hash), and bit-for-bit reload verification invariants ($\max |\Delta p| = 2.22 \times 10^{-16}$, 100% tier concordance).
+- `phase-02-10-model-bundle-report.md` — human-readable model bundle architecture report, bit-for-bit reload invariance verification results, operational policy encodings, and dependency lock provenance.
 - `phase-02-09-model-behavior-explanations-manifest.json` — deterministic Phase 2.09 model-behavior explanations evidence, exact additive logit decomposition ($|z_{\text{cal}} - (\phi_0 + \sum \Phi_k)| < 10^{-10}$), centered SHAP attributions relative to evaluation background ($\mathbb{E}[z] = -0.7107$), 17/17 directional sanity check audits against actuarial domain principles, global feature importance ranking (top feature: `rolling_on_time_rate` at 22.78%), representative local waterfall case studies for Risk Tiers 1, 2, and 3, and ADR 0002 action-authority boundary specifications.
 - `phase-02-09-model-behavior-explanations-report.md` — human-readable model-behavior explanations report, mathematical derivation, invariant validation tables, directional check audits, global feature ranking, local waterfall profiles, and governance guardrails.
+
+Regenerate or verify the Phase 2.10 model bundle and reproducibility evidence with:
+
+```bash
+python3 scripts/run_model_bundle.py --write
+python3 scripts/run_model_bundle.py --check
+make model-bundle-check
+```
 
 Regenerate or verify the Phase 2.09 model-behavior explanations evidence with:
 
