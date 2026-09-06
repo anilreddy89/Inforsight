@@ -671,12 +671,14 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 ### P3-09 - End-to-end system qualification and integration gate
 
+**Status:** Completed on 2026-09-06 through [issue #124](https://github.com/anilreddy89/Inforsight/issues/124) and [PR #125](https://github.com/anilreddy89/Inforsight/pull/125), merge commit `ae34848`. All 6 System Qualification Gates (S1–S6) passed 100% across 1,000 synthetic test policies with canonical pipeline digest `209a4c1f2b3fee5a551d724e5841cf857abecd3c669f797f17f130deaaf62d90`. The implementation scope and acceptance evidence are defined in `Documents/phase_docs/phase-03-09-end-to-end-system-qualification-and-integration-gate.md`.
+
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
 **Outcome:** A rigorous, automated pre-release qualification suite verifies that the integrated decision engine enforces all architectural invariants and passes all operational gates.
 
 **Scope:**
-- Build system-level integration test suite (`tests/qualification/test_phase_03_qualification.py`):
+- Build system-level integration test suite (`simulator/tests/test_phase_03_qualification.py`):
   - End-to-end flow: Raw Event Stream $\rightarrow$ Point-in-Time Reconstruction $\rightarrow$ Bundle Scoring $\rightarrow$ Deterministic Eligibility $\rightarrow$ Uplift Ranking $\rightarrow$ Case Brief Assembly $\rightarrow$ HITL Review $\rightarrow$ Audit Logging.
 - Pre-register and enforce 6 System Qualification Gates:
   - **Gate S1 (Authority Isolation):** 100% of automated outreach attempts without human credentials fail with security exception.
@@ -688,12 +690,12 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Publish formal Qualification Report and cryptographic artifact manifest.
 
 **Acceptance checks:**
-- [ ] All 6 System Qualification Gates (S1–S6) pass 100%.
-- [ ] Zero invariant violations across 1,000 synthetic test policies.
-- [ ] All unit, integration, and property tests pass in CI.
-- [ ] Qualification manifest generated with SHA-256 digests.
+- [x] All 6 System Qualification Gates (S1–S6) pass 100%.
+- [x] Zero invariant violations across 1,000 synthetic test policies.
+- [x] All unit, integration, and property tests pass in CI.
+- [x] Qualification manifest generated with SHA-256 digests.
 
-**Depends on:** P3-06, P3-07, P3-08. **Blocks:** P3-10.
+**Depends on:** P3-06, P3-07, P3-08. **Blocks:** None (P3-10 unblocked).
 
 ---
 

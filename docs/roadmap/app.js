@@ -535,13 +535,13 @@ const timelineData = [
       {
         id: "P3-09",
         title: "End-to-End System Qualification Gate",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "ae34848",
         summary: {
           tech: "Pre-registered 6 System Qualification Gates (S1 Authority Isolation, S2 Eligibility Invariant, S3 Budget/Capacity Adherence, S4 Audit Tamper Resistance, S5 Inference Latency <= 10ms, S6 Deterministic Reproducibility) across 1,000 synthetic test policies.",
           simple: "Final System Safety Test: A comprehensive automated certification run testing all 6 core safety and performance gates across 1,000 simulated policies to verify zero security leaks, zero rule violations, and sub-10ms response times."
         },
-        checks: "tests/qualification/ qualification suite; 100% pass across Gates S1–S6; qualification manifest with SHA-256 digests; blocks P3-10."
+        checks: "Issue #124 closed by PR #125 (ae34848); simulator/src/inforsight_simulator/qualification/; 7/7 tests pass; 100% pass across Gates S1–S6 on 1,000 synthetic test policies; canonical digest 209a4c1f2b3fee5a551d724e5841cf857abecd3c669f797f17f130deaaf62d90; unblocks P3-10."
       },
       {
         id: "P3-10",

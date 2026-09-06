@@ -158,6 +158,6 @@ graph TD
 - [x] Execute qualification pipeline across Gates S1–S6 and generate formal report and manifest.
 - [x] Add `phase-03-qualification-check` to `Makefile` and verify with `make check`.
 - [x] Verify repository boundaries (`./scripts/check_repository_boundaries.sh`).
-- [ ] Commit and submit Pull Request for Milestone #4 release gate review.
+- [x] Commit and submit Pull Request for Milestone #4 release gate review (Issue #124 closed via PR #125 merged as `ae34848`).
 
 
