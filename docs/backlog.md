@@ -610,6 +610,8 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
+**Status:** Completed on 2026-09-05 through [issue #120](https://github.com/anilreddy89/Inforsight/issues/120) and [PR #121](https://github.com/anilreddy89/Inforsight/pull/121), merge commit `dddf889`. 9/9 dashboard unit and smoke tests pass, cryptographic audit trail verification passes with 100% integrity, and repository boundaries pass. Specification and scorecard documented in `Documents/phase_docs/phase-03-07-interactive-conservation-intelligence-dashboard.md`.
+
 **Outcome:** A lightweight, interactive web application provides conservation teams with a living operational demonstration of the end-to-end decision intelligence platform, including triage queues, case dossiers, and counterfactual business impact.
 
 **Scope:**
@@ -624,13 +626,13 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Wire dashboard directly to `BundledInferenceEngine`, rules evaluator, P3-08 simulation results, and v6 synthetic cohort.
 
 **Acceptance checks:**
-- [ ] Dashboard loads and runs locally without external cloud dependencies.
-- [ ] Selecting different triage tiers dynamically updates queue tables and capacity meters.
-- [ ] Submitting a human decision immediately logs a valid, hash-chained audit entry.
-- [ ] Displays both point-in-time case intelligence and offline policy evaluation (OPE) metrics.
-- [ ] UI automated smoke tests pass.
+- [x] Dashboard loads and runs locally without external cloud dependencies.
+- [x] Selecting different triage tiers dynamically updates queue tables and capacity meters.
+- [x] Submitting a human decision immediately logs a valid, hash-chained audit entry.
+- [x] Displays both point-in-time case intelligence and offline policy evaluation (OPE) metrics.
+- [x] UI automated smoke tests pass.
 
-**Depends on:** P3-03, P3-04, P3-04A, P3-05, P3-06, P3-08. **Blocks:** P3-09.
+**Depends on:** P3-03, P3-04, P3-04A, P3-05, P3-06. **Blocks:** None (P3-08, P3-09 unblocked).
 
 ---
 

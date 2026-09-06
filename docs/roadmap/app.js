@@ -513,13 +513,13 @@ const timelineData = [
       {
         id: "P3-07",
         title: "Interactive Conservation Dashboard",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "dddf889",
         summary: {
           tech: "Interactive Streamlit web application providing executive portfolio risk distribution, capacity-constrained triage queue tables (Top 1%, 5%, 20%), deep-dive policy dossier views with SHAP waterfalls, and specialist decision console.",
           simple: "Interactive Decision Console: A live web dashboard for conservation teams to explore portfolio risk tiers, investigate individual policyholder histories, inspect AI explanations, and approve or adjust outreach recommendations."
         },
-        checks: "dashboard/ Streamlit app; real-time queue filtering; live audit logging; offline policy evaluation display; blocks P3-09."
+        checks: "Issue #120 closed by PR #121 (dddf889); dashboard/ Streamlit app (5 views); dashboard/services/ integration bridge; 9/9 dashboard tests pass; ADR 0002 compliance; cryptographic audit log append verified; unblocks P3-08, P3-09."
       },
       {
         id: "P3-08",

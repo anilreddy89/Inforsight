@@ -94,26 +94,26 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-04A | Phase 3 | Model monitoring and drift detection architecture | Completed | Issue #114 and [PR #115](https://github.com/anilreddy89/Inforsight/pull/115) merged as `920f943`; telemetry monitoring architecture for PSI/CSI input drift, rolling ECE/BSS calibration decay, latency percentiles, and `/v1/diagnostics` endpoint; 44/44 monitoring tests pass. |
 | P3-05 | Phase 3 | Bounded case intelligence assistant | Completed | Issue #116 and [PR #117](https://github.com/anilreddy89/Inforsight/pull/117) merged as `39c35c0`; dual-layer briefing engine (Layer 1 template + Layer 2 grounded narrative), Grounding Guard, fail-closed fallback, ADR 0002 boundary enforcement; 10 assistant tests pass, 10 contract tests pass. Authorizes P3-06 and P3-07. |
 | P3-06 | Phase 3 | Human-in-the-loop workflow and audit trail engine | Completed | Issue #118 and [PR #119](https://github.com/anilreddy89/Inforsight/pull/119) merged as `ec8b50a`; HITL finite state machine enforcing ADR 0002 boundary, override eligibility firewall, append-only cryptographic hash-chained audit ledger, CLI verification tool; 15/15 tests pass. Authorizes P3-07 and P3-09. |
-| P3-07 | Phase 3 | Interactive conservation intelligence dashboard | Planned | Lightweight Streamlit web application providing interactive decision support demonstration. Target Issue #120. |
+| P3-07 | Phase 3 | Interactive conservation intelligence dashboard | Completed | Issue #120 and [PR #121](https://github.com/anilreddy89/Inforsight/pull/121) merged as `dddf889`; Streamlit interactive decision intelligence dashboard (`dashboard/`) with 5 views (Portfolio, Queue, Dossier, Decision Console, Telemetry); full ADR 0002 boundary enforcement; 9/9 dashboard tests pass. Authorizes P3-08, P3-09. |
 | P3-08 | Phase 3 | Counterfactual simulation and offline policy evaluation | Pending | Counterfactual simulation and OPE evaluating business impact against baseline policies. |
 | P3-09 | Phase 3 | End-to-end system qualification and integration gate | Pending | Automated pre-release qualification suite enforcing Gates S1–S6. |
 | P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Pending | Milestone closeout, release tag `v0.3.0-decision-engine`, and documentation. |
 
-Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is actively underway under milestone `v0.3.0-decision-engine` (Milestone #4), with Phase 3.01 merged on `main` (PR #107, commit `7ed7efd`), Phase 3.02 merged on `main` (PR #109, commit `1177394`), Phase 3.03 merged on `main` (PR #111, commit `a1e97cb`), Phase 3.04 merged on `main` (PR #113, commit `87a66f9`), Phase 3.04A merged on `main` (PR #115, commit `920f943`), Phase 3.05 merged on `main` (PR #117, commit `39c35c0`), and Phase 3.06 merged on `main` (PR #119, commit `ec8b50a`).
+Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is actively underway under milestone `v0.3.0-decision-engine` (Milestone #4), with Phase 3.01 merged on `main` (PR #107, commit `7ed7efd`), Phase 3.02 merged on `main` (PR #109, commit `1177394`), Phase 3.03 merged on `main` (PR #111, commit `a1e97cb`), Phase 3.04 merged on `main` (PR #113, commit `87a66f9`), Phase 3.04A merged on `main` (PR #115, commit `920f943`), Phase 3.05 merged on `main` (PR #117, commit `39c35c0`), Phase 3.06 merged on `main` (PR #119, commit `ec8b50a`), and Phase 3.07 merged on `main` (PR #121, commit `dddf889`).
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 51 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 7) |
+| Completed tracked changes | 52 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 8) |
 | In-progress / implemented locally changes | 0 |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 7 of 10 |
+| Completed Phase 3 increments | 8 of 10 |
 | In-progress Phase 3 increments | 0 |
-| Active increment | Phase 3 P3-07 (Interactive conservation intelligence dashboard) |
-| Next implementation increment | Phase 3 P3-07 (Interactive conservation intelligence dashboard) |
+| Active increment | Phase 3 P3-08 (Counterfactual simulation and offline policy evaluation) |
+| Next implementation increment | Phase 3 P3-08 (Counterfactual simulation and offline policy evaluation) |
 
 | ID | Status | Impact | Resolution trigger |
 | --- | --- | --- | --- |

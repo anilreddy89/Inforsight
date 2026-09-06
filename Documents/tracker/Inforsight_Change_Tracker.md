@@ -81,7 +81,7 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Completed | [#114](https://github.com/anilreddy89/Inforsight/issues/114) | [#115](https://github.com/anilreddy89/Inforsight/pull/115) | 2026-09-05 | `920f943` | `serving/monitoring/`, `serving/tests/test_monitoring.py` (44 tests pass), `GET /v1/diagnostics` schema `1.0.0`, [phase document](../phase_docs/phase-03-04a-model-monitoring-and-drift-detection-architecture.md) | Merged in PR #115; PSI/CSI input drift with zero-proportion guard, rolling ECE (W=500, M=10) & BSS calibration tracking, latency telemetry ring-buffer, drift alert action matrix, ADR 0002 non-authority compliance. Authorizes P3-05, P3-07. |
 | P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | Completed | [#116](https://github.com/anilreddy89/Inforsight/issues/116) | [#117](https://github.com/anilreddy89/Inforsight/pull/117) | 2026-09-05 | `39c35c0` | `simulator/src/inforsight_simulator/assistant/`, `data-contracts/conservation-case-brief.schema.json`, `simulator/tests/test_assistant.py` (10 tests pass), [phase document](../phase_docs/phase-03-05-bounded-case-intelligence-assistant.md) | Merged in PR #117; dual-layer briefing engine (Layer 1 template + Layer 2 grounded narrative), Grounding Guard, fail-closed fallback, ADR 0002 boundary enforcement. Authorizes P3-06, P3-07. |
 | P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Completed | [#118](https://github.com/anilreddy89/Inforsight/issues/118) | [#119](https://github.com/anilreddy89/Inforsight/pull/119) | 2026-09-05 | `ec8b50a` | `simulator/src/inforsight_simulator/workflow/`, `simulator/src/inforsight_simulator/audit/`, `scripts/verify_conservation_audit_trail.py`, `simulator/tests/test_workflow.py`, `simulator/tests/test_audit_ledger.py` (15 tests pass), [phase document](../phase_docs/phase-03-06-human-in-the-loop-workflow-and-audit-trail-engine.md) | Merged in PR #119; HITL state machine enforcing ADR 0002 boundary, reviewer credentials and justification checks, append-only cryptographic hash-chained audit ledger (`conservation-audit-log.jsonl`), CLI verification tool; 15 unit/audit tests pass. Authorizes P3-07, P3-09. |
-| P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Planned | [#120](https://github.com/anilreddy89/Inforsight/issues/120) (Target) | TBD | TBD | — | `dashboard/`, interactive UI, triage consoles, [phase document](../phase_docs/phase-03-07-interactive-conservation-intelligence-dashboard.md) | Depends on P3-03, P3-04, P3-04A, P3-05, P3-06. Blocks P3-09. |
+| P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Completed | [#120](https://github.com/anilreddy89/Inforsight/issues/120) | [#121](https://github.com/anilreddy89/Inforsight/pull/121) | 2026-09-05 | `dddf889` | `dashboard/`, interactive UI, triage consoles, [phase document](../phase_docs/phase-03-07-interactive-conservation-intelligence-dashboard.md) | Merged in PR #121; 5 interactive views (Portfolio, Triage Queue, Dossier, Decision Console, Telemetry), end-to-end integration with inference bundle, rules, optimizer, assistant, and audit trail engine; 9/9 dashboard tests pass. Authorizes P3-08, P3-09. |
 | P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Pending | TBD | TBD | TBD | — | `scripts/run_offline_policy_evaluation.py`, counterfactual generator | Depends on P3-02, P3-03. Blocks P3-07, P3-09. |
 | P3-09 | Phase 3 — Conservation Decision Engine | End-to-end system qualification and integration gate (Gates S1–S6). | Pending | TBD | TBD | TBD | — | `tests/qualification/`, qualification runner, scorecard report | Depends on P3-06, P3-07, P3-08. Blocks P3-10. |
 | P3-10 | Phase 3 — Conservation Decision Engine | Milestone release marker and release notes (`v0.3.0-decision-engine`). | Pending | TBD | TBD | TBD | — | `docs/release-notes/v0.3.0-decision-engine.md`, tag `v0.3.0-decision-engine` | Depends on P3-09. Closes Milestone #4. |
@@ -105,12 +105,13 @@ Inforsight successfully completed Phase 2 (Baseline ML) and is actively executin
 11. Phase 3-04A is complete and merged to main in PR #115 (commit `920f943`); model monitoring and drift detection architecture passes all 44 tests and exposes `GET /v1/diagnostics` (schema `1.0.0`).
 12. Phase 3-05 is complete and merged to main in PR #117 (commit `39c35c0`); bounded case intelligence assistant and case brief contract pass all tests.
 13. Phase 3-06 is complete and merged to main in PR #119 (commit `ec8b50a`); human-in-the-loop workflow engine and hash-chained audit ledger pass all 15 tests.
+14. Phase 3-07 is complete and merged to main in PR #121 (commit `dddf889`); interactive conservation intelligence dashboard with 5 operational views passes all 9 tests.
 
-In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-06 on main unblocking P3-07, P3-08, and P3-09.
+In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-07 on main unblocking P3-08 and P3-09.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 51 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 7) |
+| Completed tracked changes | 52 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 8) |
 | Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
@@ -118,11 +119,11 @@ In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete 
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 7 of 10 |
+| Completed Phase 3 increments | 8 of 10 |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
-| Active increment | Phase 3 P3-07 (Interactive conservation intelligence dashboard) |
-| Next implementation increment | Phase 3 P3-07 (Interactive conservation intelligence dashboard) |
+| Active increment | Phase 3 P3-08 (Counterfactual simulation and offline policy evaluation) |
+| Next implementation increment | Phase 3 P3-08 (Counterfactual simulation and offline policy evaluation) |
 
 ## Latest verification baseline
 
