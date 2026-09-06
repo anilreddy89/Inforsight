@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "brief_id": "brf_20260905_bad02",
+  "case_id": "case_20260905_bad02",
+  "policy_id": "pol_10492",
+  "as_of_date": "2026-09-01T00:00:00Z",
+  "generated_at": "2026-09-05T12:00:00Z",
+  "synthesis_mode": "TEMPLATE_DETERMINISTIC",
+  "status": "PENDING_HUMAN_REVIEW",
+  "authorized_to_act": true,
+  "executive_summary": {
+    "headline": "Elevated Lapse Risk Headline",
+    "operational_urgency": "HIGH",
+    "narrative": "Policy pol_10492 exhibits high risk."
+  },
+  "risk_assessment": {
+    "calibrated_probability": 0.45,
+    "operational_tier": "Tier 3",
+    "top_risk_drivers": []
+  },
+  "factual_timeline": [],
+  "intervention_recommendations": {
+    "primary_action": "courtesy_reminder",
+    "uplift_quadrant": "PERSUADABLE",
+    "expected_net_utility": 100.0,
+    "talking_points": ["Point 1"],
+    "alternative_actions": []
+  },
+  "disqualified_actions": [],
+  "grounding_audit": {
+    "validation_status": "PASSED_CLEAN",
+    "verified_entity_count": 0,
+    "hallucination_detected": false,
+    "violations": []
+  },
+  "disclaimer": "ADVISORY ONLY: Mandatory disclaimer present."
+}
+

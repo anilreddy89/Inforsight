@@ -250,6 +250,28 @@ from .optimization import (
     evaluate_action_utilities,
     select_best_unconstrained_action,
 )
+from .assistant import (
+    DEFAULT_MANDATORY_DISCLAIMER,
+    BriefRecommendation,
+    CaseBrief,
+    CaseEvidenceContext,
+    CaseIntelligenceAssistant,
+    DeterministicMockNarrativeProvider,
+    DisqualifiedActionSummary,
+    ExecutiveSummary,
+    FactualTimelineEvent,
+    GroundingAudit,
+    GroundingGuard,
+    InjectableMockNarrativeProvider,
+    NarrativeProvider,
+    OperationalUrgency,
+    PromptBuilder,
+    RiskAssessment,
+    RiskDriver,
+    SynthesisMode,
+    ValidationStatus,
+    generate_template_brief,
+)
 
 
 __version__ = "0.1.0"
@@ -458,6 +480,26 @@ __all__ = [
     "estimate_treatment_effect",
     "evaluate_action_utilities",
     "select_best_unconstrained_action",
+    "DEFAULT_MANDATORY_DISCLAIMER",
+    "BriefRecommendation",
+    "CaseBrief",
+    "CaseEvidenceContext",
+    "CaseIntelligenceAssistant",
+    "DeterministicMockNarrativeProvider",
+    "DisqualifiedActionSummary",
+    "ExecutiveSummary",
+    "FactualTimelineEvent",
+    "GroundingAudit",
+    "GroundingGuard",
+    "InjectableMockNarrativeProvider",
+    "NarrativeProvider",
+    "OperationalUrgency",
+    "PromptBuilder",
+    "RiskAssessment",
+    "RiskDriver",
+    "SynthesisMode",
+    "ValidationStatus",
+    "generate_template_brief",
 ]
 
 

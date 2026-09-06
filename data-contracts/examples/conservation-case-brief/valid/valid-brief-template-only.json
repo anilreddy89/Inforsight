@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "brief_id": "brf_20260905_001_tmp",
+  "case_id": "case_20260905_001",
+  "policy_id": "pol_10492",
+  "as_of_date": "2026-09-01T00:00:00Z",
+  "generated_at": "2026-09-05T12:00:00Z",
+  "synthesis_mode": "TEMPLATE_DETERMINISTIC",
+  "status": "PENDING_HUMAN_REVIEW",
+  "authorized_to_act": false,
+  "executive_summary": {
+    "headline": "Elevated Lapse Risk (Tier 3) Driven by Recent Payment Method Failure",
+    "operational_urgency": "HIGH",
+    "narrative": "Policy pol_10492 exhibits a calibrated lapse probability of 38.42% (Tier 3: High Risk). The primary risk drivers are recent grace period entry and an electronic payment method failure occurring 12 days prior to cutoff. The policyholder has 18 months of tenure."
+  },
+  "risk_assessment": {
+    "calibrated_probability": 0.3842,
+    "operational_tier": "Tier 3: High Risk",
+    "top_risk_drivers": [
+      {
+        "feature_name": "grace_period_count",
+        "attribution": 0.32,
+        "display_text": "Grace period entry recorded within the last 30 days"
+      },
+      {
+        "feature_name": "payment_failure_flag",
+        "attribution": 0.28,
+        "display_text": "Failed electronic funds transfer (EFT) attempt"
+      }
+    ]
+  },
+  "factual_timeline": [
+    {
+      "occurred_at": "2025-03-01T00:00:00Z",
+      "event_type": "POLICY_ISSUED",
+      "summary": "Term life policy issued with monthly premium of $154.17."
+    },
+    {
+      "occurred_at": "2026-08-20T00:00:00Z",
+      "event_type": "PAYMENT_FAILED",
+      "summary": "Scheduled electronic payment failed due to expired banking details."
+    }
+  ],
+  "intervention_recommendations": {
+    "primary_action": "payment_method_remediation",
+    "uplift_quadrant": "PERSUADABLE",
+    "expected_net_utility": 345.50,
+    "talking_points": [
+      "Inquire if banking details were recently updated.",
+      "Offer self-service payment update portal link."
+    ],
+    "alternative_actions": [
+      "courtesy_reminder"
+    ]
+  },
+  "disqualified_actions": [
+    {
+      "action_id": "specialist_phone_outreach",
+      "reason_code": "DISQUALIFIED_CONTACT_COOLING_OFF_ACTIVE",
+      "description": "Customer was contacted 14 days ago; cooling-off period requires 30 days."
+    }
+  ],
+  "grounding_audit": {
+    "validation_status": "PASSED_CLEAN",
+    "verified_entity_count": 8,
+    "hallucination_detected": false,
+    "violations": []
+  },
+  "disclaimer": "ADVISORY ONLY: This brief is generated for decision support under ADR 0002. Automated execution of conservation outreach is prohibited without prior human specialist authorization."
+}
+

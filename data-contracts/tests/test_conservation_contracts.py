@@ -14,12 +14,16 @@ from jsonschema import Draft202012Validator, FormatChecker
 CONTRACTS_DIR = Path(__file__).resolve().parents[1]
 ACTION_SCHEMA_PATH = CONTRACTS_DIR / "conservation-action.schema.json"
 CASE_EVENT_SCHEMA_PATH = CONTRACTS_DIR / "conservation-case-event.schema.json"
+CASE_BRIEF_SCHEMA_PATH = CONTRACTS_DIR / "conservation-case-brief.schema.json"
 
 ACTION_VALID_DIR = CONTRACTS_DIR / "examples" / "conservation-action" / "valid"
 ACTION_INVALID_DIR = CONTRACTS_DIR / "examples" / "conservation-action" / "invalid"
 
 CASE_EVENT_VALID_DIR = CONTRACTS_DIR / "examples" / "conservation-case-event" / "valid"
 CASE_EVENT_INVALID_DIR = CONTRACTS_DIR / "examples" / "conservation-case-event" / "invalid"
+
+CASE_BRIEF_VALID_DIR = CONTRACTS_DIR / "examples" / "conservation-case-brief" / "valid"
+CASE_BRIEF_INVALID_DIR = CONTRACTS_DIR / "examples" / "conservation-case-brief" / "invalid"
 
 
 def load_json(path: Path) -> dict:
@@ -32,10 +36,12 @@ class ConservationContractsTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.action_schema = load_json(ACTION_SCHEMA_PATH)
         cls.case_event_schema = load_json(CASE_EVENT_SCHEMA_PATH)
+        cls.case_brief_schema = load_json(CASE_BRIEF_SCHEMA_PATH)
 
         # Check schema validity under Draft 2020-12
         Draft202012Validator.check_schema(cls.action_schema)
         Draft202012Validator.check_schema(cls.case_event_schema)
+        Draft202012Validator.check_schema(cls.case_brief_schema)
 
         cls.action_validator = Draft202012Validator(
             cls.action_schema,
@@ -45,11 +51,16 @@ class ConservationContractsTest(unittest.TestCase):
             cls.case_event_schema,
             format_checker=FormatChecker(),
         )
+        cls.case_brief_validator = Draft202012Validator(
+            cls.case_brief_schema,
+            format_checker=FormatChecker(),
+        )
 
     def test_schemas_are_valid_draft202012(self) -> None:
         """Verify schemas pass Draft202012Validator.check_schema."""
         Draft202012Validator.check_schema(self.action_schema)
         Draft202012Validator.check_schema(self.case_event_schema)
+        Draft202012Validator.check_schema(self.case_brief_schema)
 
     def test_all_valid_conservation_action_examples(self) -> None:
         """Verify all valid conservation action fixtures pass validation."""
@@ -101,6 +112,32 @@ class ConservationContractsTest(unittest.TestCase):
                 self.assertGreater(
                     len(errors), 0,
                     f"Invalid case event {fixture_path.name} unexpectedly passed validation"
+                )
+
+    def test_all_valid_conservation_case_brief_examples(self) -> None:
+        """Verify all valid conservation case brief fixtures pass validation."""
+        valid_files = sorted(CASE_BRIEF_VALID_DIR.glob("*.json"))
+        self.assertGreater(len(valid_files), 0, "No valid case brief fixtures found")
+        for fixture_path in valid_files:
+            with self.subTest(fixture=fixture_path.name):
+                data = load_json(fixture_path)
+                errors = list(self.case_brief_validator.iter_errors(data))
+                self.assertEqual(
+                    len(errors), 0,
+                    f"Valid case brief {fixture_path.name} had validation errors: {errors}"
+                )
+
+    def test_all_invalid_conservation_case_brief_examples(self) -> None:
+        """Verify all invalid conservation case brief fixtures fail validation."""
+        invalid_files = list(CASE_BRIEF_INVALID_DIR.glob("*.json"))
+        self.assertGreater(len(invalid_files), 0, "No invalid case brief fixtures found")
+        for fixture_path in invalid_files:
+            with self.subTest(fixture=fixture_path.name):
+                data = load_json(fixture_path)
+                errors = list(self.case_brief_validator.iter_errors(data))
+                self.assertGreater(
+                    len(errors), 0,
+                    f"Invalid case brief {fixture_path.name} unexpectedly passed validation"
                 )
 
     def test_direct_execution_forbidden_adr_0002(self) -> None:
