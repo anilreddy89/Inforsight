@@ -502,13 +502,13 @@ const timelineData = [
       {
         id: "P3-06",
         title: "Human-in-the-Loop Workflow & Audit Engine",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "ec8b50a",
         summary: {
           tech: "Specialist decision review state machine (Approve, Override, Dismiss) paired with an append-only, cryptographic hash-chained audit ledger (SHA-256) guaranteeing tamper-evidence and full point-in-time decision replay.",
           simple: "Human Review & Tamper-Proof Audit: Specialist decision dashboard and a tamper-evident audit ledger. Every human decision, override reason, and system recommendation is chained with cryptographic hashes so no records can ever be secretly altered."
         },
-        checks: "simulator/workflow/ review state machine; hash-chained audit logger; replay verification tool; blocks P3-07, P3-09."
+        checks: "Issue #118 closed by PR #119 (ec8b50a); simulator/src/inforsight_simulator/workflow/ state machine; simulator/src/inforsight_simulator/audit/ cryptographic hash-chained ledger; scripts/verify_conservation_audit_trail.py; 15/15 unit and audit tests pass; ADR 0002 mandatory human review enforced; unblocks P3-07, P3-09."
       },
       {
         id: "P3-07",

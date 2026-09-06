@@ -80,7 +80,7 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | Completed | [#112](https://github.com/anilreddy89/Inforsight/issues/112) | [#113](https://github.com/anilreddy89/Inforsight/pull/113) | 2026-09-05 | `87a66f9` | `serving/`, Dockerfile, `serving/tests/test_gateway.py` (8 tests pass), [phase document](../phase_docs/phase-03-04-model-serving-and-inference-gateway.md) | Merged in PR #113; FastAPI REST service, reload bit-for-bit verified, sub-millisecond CPU scoring, strict ADR 0002 boundary markers (`authorized_to_act: false`). Authorizes P3-04A, P3-05, P3-07. |
 | P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Completed | [#114](https://github.com/anilreddy89/Inforsight/issues/114) | [#115](https://github.com/anilreddy89/Inforsight/pull/115) | 2026-09-05 | `920f943` | `serving/monitoring/`, `serving/tests/test_monitoring.py` (44 tests pass), `GET /v1/diagnostics` schema `1.0.0`, [phase document](../phase_docs/phase-03-04a-model-monitoring-and-drift-detection-architecture.md) | Merged in PR #115; PSI/CSI input drift with zero-proportion guard, rolling ECE (W=500, M=10) & BSS calibration tracking, latency telemetry ring-buffer, drift alert action matrix, ADR 0002 non-authority compliance. Authorizes P3-05, P3-07. |
 | P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | Completed | [#116](https://github.com/anilreddy89/Inforsight/issues/116) | [#117](https://github.com/anilreddy89/Inforsight/pull/117) | 2026-09-05 | `39c35c0` | `simulator/src/inforsight_simulator/assistant/`, `data-contracts/conservation-case-brief.schema.json`, `simulator/tests/test_assistant.py` (10 tests pass), [phase document](../phase_docs/phase-03-05-bounded-case-intelligence-assistant.md) | Merged in PR #117; dual-layer briefing engine (Layer 1 template + Layer 2 grounded narrative), Grounding Guard, fail-closed fallback, ADR 0002 boundary enforcement. Authorizes P3-06, P3-07. |
-| P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Pending | TBD | TBD | TBD | — | `simulator/workflow/`, audit logger, replay verification tool | Depends on P3-05. Blocks P3-07, P3-09. |
+| P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Completed | [#118](https://github.com/anilreddy89/Inforsight/issues/118) | [#119](https://github.com/anilreddy89/Inforsight/pull/119) | 2026-09-05 | `ec8b50a` | `simulator/src/inforsight_simulator/workflow/`, `simulator/src/inforsight_simulator/audit/`, `scripts/verify_conservation_audit_trail.py`, `simulator/tests/test_workflow.py`, `simulator/tests/test_audit_ledger.py` (15 tests pass), [phase document](../phase_docs/phase-03-06-human-in-the-loop-workflow-and-audit-trail-engine.md) | Merged in PR #119; HITL state machine enforcing ADR 0002 boundary, reviewer credentials and justification checks, append-only cryptographic hash-chained audit ledger (`conservation-audit-log.jsonl`), CLI verification tool; 15 unit/audit tests pass. Authorizes P3-07, P3-09. |
 | P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Pending | TBD | TBD | TBD | — | `dashboard/`, interactive UI, triage consoles | Depends on P3-03, P3-04, P3-04A, P3-05, P3-06, P3-08. Blocks P3-09. |
 | P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Pending | TBD | TBD | TBD | — | `scripts/run_offline_policy_evaluation.py`, counterfactual generator | Depends on P3-02, P3-03. Blocks P3-07, P3-09. |
 | P3-09 | Phase 3 — Conservation Decision Engine | End-to-end system qualification and integration gate (Gates S1–S6). | Pending | TBD | TBD | TBD | — | `tests/qualification/`, qualification runner, scorecard report | Depends on P3-06, P3-07, P3-08. Blocks P3-10. |
@@ -98,17 +98,19 @@ Inforsight successfully completed Phase 2 (Baseline ML) and is actively executin
 4. Standalone `BundledInferenceEngine` verified bit-for-bit reload reproduction ($\max |\Delta p| = 2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$) and 100% operational tier concordance across 8,782 out-of-sample policies.
 5. All 6 Pre-registered Acceptance Gates (G1–G6) passed 100% with 1,000 policy-cluster bootstrap confidence intervals.
 6. Milestone `v0.2.0-risk-model` was formally tagged and released, resolving `LIM-002-001`, `LIM-002-002`, and `LIM-002-003`.
-7. Phase 3-01 is complete and merged to main in PR #107 (commit `7ed7efd`); domain contracts, action taxonomy, and ADR 0002 state machine pass all 20 contract tests.
-8. Phase 3-02 is complete and merged to main in PR #109 (commit `1177394`); deterministic action eligibility rules engine enforcing ADR 0002 boundaries passes all 17 tests.
+7. Phase 3-01 is complete and merged to main in PR #107 (commit `7ed7efd`); conservation domain contracts and ADR 0002 action taxonomy codified.
+8. Phase 3-02 is complete and merged to main in PR #109 (commit `1177394`); deterministic action eligibility rules engine passes all 17 tests.
 9. Phase 3-03 is complete and merged to main in PR #111 (commit `a1e97cb`); cost-utility and uplift optimization matrix passes all 9 tests.
-10. Phase 3-04 is complete and merged to main in PR #113 (commit `87a66f9`); model serving and inference gateway passes all 8 tests with reload invariance verified.
+10. Phase 3-04 is complete and merged to main in PR #113 (commit `87a66f9`); production model serving gateway passes all 8 tests with sub-millisecond CPU scoring.
 11. Phase 3-04A is complete and merged to main in PR #115 (commit `920f943`); model monitoring and drift detection architecture passes all 44 tests and exposes `GET /v1/diagnostics` (schema `1.0.0`).
+12. Phase 3-05 is complete and merged to main in PR #117 (commit `39c35c0`); bounded case intelligence assistant and case brief contract pass all tests.
+13. Phase 3-06 is complete and merged to main in PR #119 (commit `ec8b50a`); human-in-the-loop workflow engine and hash-chained audit ledger pass all 15 tests.
 
-In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-04A on main unblocking P3-05, P3-07, and P3-08.
+In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-06 on main unblocking P3-07, P3-08, and P3-09.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 50 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 6) |
+| Completed tracked changes | 51 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 7) |
 | Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
@@ -116,11 +118,11 @@ In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete 
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 6 of 10 |
+| Completed Phase 3 increments | 7 of 10 |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
-| Active increment | Phase 3 P3-06 (Human-in-the-loop workflow and audit trail engine) |
-| Next implementation increment | Phase 3 P3-06 (Human-in-the-loop workflow and audit trail engine) |
+| Active increment | Phase 3 P3-07 (Interactive conservation intelligence dashboard) |
+| Next implementation increment | Phase 3 P3-07 (Interactive conservation intelligence dashboard) |
 
 ## Latest verification baseline
 

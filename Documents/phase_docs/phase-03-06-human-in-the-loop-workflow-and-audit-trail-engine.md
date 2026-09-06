@@ -10,8 +10,8 @@
 | GitHub issue | [#118](https://github.com/anilreddy89/Inforsight/issues/118) |
 | Issue title | `[Implementation] P3-06: Human-in-the-loop workflow and audit trail engine` |
 | Branch | `feat/118-p3-06-hitl-workflow-audit-trail` |
-| Pull request | `[Pending PR Creation]` |
-| Status | Complete (Implementation & Test Suite Verified) |
+| Pull request | [#119](https://github.com/anilreddy89/Inforsight/pull/119) |
+| Status | Complete (Merged as `ec8b50a`) |
 | Milestone | [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4) |
 | Priority | Milestone blocking / Foundational |
 | Classification | Workflow Engine / Audit Trail / Governance / Compliance |

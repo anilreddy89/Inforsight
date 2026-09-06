@@ -596,13 +596,13 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Point-in-time audit replay: build verification tool `scripts/verify_conservation_audit_trail.py` proving full historical reconstruction.
 
 **Acceptance checks:**
-- [ ] Actions cannot transition to execution without recorded human approval and reviewer credentials.
-- [ ] Overrides without structured justification are rejected.
-- [ ] Tampering with historical audit log entries breaks hash-chain verification.
-- [ ] Audit trail reproduces exact decision context from historical point in time.
-- [ ] Workflow and audit tests pass.
+- [x] Actions cannot transition to execution without recorded human approval and reviewer credentials.
+- [x] Overrides without structured justification are rejected.
+- [x] Tampering with historical audit log entries breaks hash-chain verification.
+- [x] Audit trail reproduces exact decision context from historical point in time.
+- [x] Workflow and audit tests pass.
 
-**Depends on:** P3-05. **Blocks:** P3-07, P3-09.
+**Depends on:** P3-05. **Blocks:** None (P3-07, P3-09 unblocked).
 
 ---
 
