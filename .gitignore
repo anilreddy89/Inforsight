@@ -23,6 +23,8 @@ Thumbs.db
 # Editor-specific files
 .idea/
 .vscode/
+.agents/
+.claude/
 *.swp
 *~
 
