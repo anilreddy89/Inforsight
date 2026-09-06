@@ -7,6 +7,14 @@ and human-in-the-loop decision controls under ADR 0002.
 
 from __future__ import annotations
 
+from pathlib import Path
+import sys
+
+# Ensure repository root is on sys.path for standalone streamlit execution
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
 import streamlit as st
 
 from dashboard.components.decision_console import render_decision_console
