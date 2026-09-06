@@ -277,6 +277,40 @@ class WorkflowService:
 
         return event
 
+    def dismiss_case(
+        self,
+        *,
+        case_id: str,
+        reason: str,
+        occurred_at: Optional[str] = None,
+    ) -> CaseEvent:
+        """Dismisses an unselected or rejected case and logs event to audit ledger."""
+        ctx = self._cases.get(case_id)
+        if not ctx:
+            raise WorkflowError(f"Case '{case_id}' not found in active workflow contexts")
+
+        ts = occurred_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+        event = ctx.state_machine.dismiss(
+            reason=reason,
+            occurred_at=ts,
+        )
+
+        hr_dict = ctx.state_machine.human_review.to_dict() if ctx.state_machine.human_review else None
+
+        self.ledger.append(
+            case_id=case_id,
+            policy_id=ctx.policy_id,
+            case_event_id=event.case_event_id,
+            from_state=event.from_state.value,
+            to_state=event.to_state.value,
+            decision_context_digest=ctx.decision_digest.to_dict(),
+            human_review=hr_dict,
+            timestamp=ts,
+        )
+
+        return event
+
     def resolve_case(
         self,
         *,
@@ -310,4 +344,5 @@ class WorkflowService:
         )
 
         return event
+
 

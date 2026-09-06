@@ -81,6 +81,7 @@ wheels/
 data/raw/
 data/interim/
 data/processed/
+data/audit/
 artifacts/
 models/
 *.parquet
