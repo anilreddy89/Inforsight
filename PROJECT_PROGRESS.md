@@ -97,22 +97,22 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-07 | Phase 3 | Interactive conservation intelligence dashboard | Completed | Issue #120 and [PR #121](https://github.com/anilreddy89/Inforsight/pull/121) merged as `dddf889`; Streamlit interactive decision intelligence dashboard (`dashboard/`) with 5 views (Portfolio, Queue, Dossier, Decision Console, Telemetry); full ADR 0002 boundary enforcement; 9/9 dashboard tests pass. Authorizes P3-08, P3-09. |
 | P3-08 | Phase 3 | Counterfactual simulation and offline policy evaluation | Completed | Issue #122 and [PR #123](https://github.com/anilreddy89/Inforsight/pull/123) merged as `55f0415`; counterfactual simulation engine and OPE complete; Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs. Authorizes P3-09. |
 | P3-09 | Phase 3 | End-to-end system qualification and integration gate | Completed | Issue #124 and [PR #125](https://github.com/anilreddy89/Inforsight/pull/125) merged as `ae34848`; implemented qualification package, CLI runner, test suite (7/7 pass), and executed 1,000-policy test cohort passing 100% of Gates S1–S6 (Digest: 209a4c1f2b3f...). Authorizes P3-10. |
-| P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Implemented locally | Issue #126; comprehensive dual-audience release notes (`docs/release-notes/v0.3.0-decision-engine.md`), formal Phase 3 Decision Note (RELEASE), prepared release tag `v0.3.0-decision-engine`, closeout of Milestone #4. |
+| P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Completed | Issue #126 and [PR #127](https://github.com/anilreddy89/Inforsight/pull/127) merged as `dabc95b`; comprehensive dual-audience release notes (`docs/release-notes/v0.3.0-decision-engine.md`), formal Phase 3 Decision Note (RELEASE), release tag `v0.3.0-decision-engine`, Milestone #4 closed at 100% completion. Unblocks Phase 4. |
 
-Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is actively underway under milestone `v0.3.0-decision-engine` (Milestone #4), with Phase 3.01 merged on `main` (PR #107, commit `7ed7efd`), Phase 3.02 merged on `main` (PR #109, commit `1177394`), Phase 3.03 merged on `main` (PR #111, commit `a1e97cb`), Phase 3.04 merged on `main` (PR #113, commit `87a66f9`), Phase 3.04A merged on `main` (PR #115, commit `920f943`), Phase 3.05 merged on `main` (PR #117, commit `39c35c0`), Phase 3.06 merged on `main` (PR #119, commit `ec8b50a`), Phase 3.07 merged on `main` (PR #121, commit `dddf889`), Phase 3.08 merged on `main` (PR #123, commit `55f0415`), and Phase 3.09 merged on `main` (PR #125, commit `ae34848`).
+Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is 100% complete and formally released under milestone `v0.3.0-decision-engine` (PR #127, commit `dabc95b`), completing all 11 Phase 3 increments (P3-01 through P3-10). Phase 4 (Enterprise Distributed Infrastructure & Cloud Scale) is now unblocked and ready.
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 54 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 10) |
-| In-progress / implemented locally changes | 1 |
+| Completed tracked changes | 55 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11) |
+| In-progress / implemented locally changes | 0 |
 | Planned changes | 0 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 10 of 11 (P3-10 implemented locally) |
+| Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
-| Active increment | Phase 3 P3-10 (Milestone release marker and release notes) |
+| Active increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
 | Next implementation increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
 
 | ID | Status | Impact | Resolution trigger |

@@ -10,8 +10,8 @@
 | GitHub issue | [#126](https://github.com/anilreddy89/Inforsight/issues/126) |
 | Issue title | `[Implementation] P3-10: Milestone release marker and release notes (v0.3.0-decision-engine)` |
 | Branch | `feat/126-p3-10-milestone-release-marker` |
-| Pull request | [#127](https://github.com/anilreddy89/Inforsight/pull/127) (Target) |
-| Status | Implemented locally |
+| Pull request | [#127](https://github.com/anilreddy89/Inforsight/pull/127) |
+| Status | Completed; merged in commit `dabc95b` |
 | Milestone | `v0.3.0-decision-engine` (Milestone #4) |
 | Priority | Release blocking / Milestone Closeout |
 | Classification | Release Engineering / Governance Milestone Closure |
@@ -99,8 +99,8 @@ The `v0.3.0-decision-engine` release unifies 10 core engineering components:
   - Run `make check` and `./scripts/check_repository_boundaries.sh`.
   - Verify `git diff --check`.
   - Prepare annotated Git tag `v0.3.0-decision-engine`.
-- [ ] **Step 6: Pull Request & Milestone Closeout**:
-  - Commit changes, push branch, and provide PR submission instructions.
+- [x] **Step 6: Pull Request & Milestone Closeout**:
+  - PR #127 merged in commit `dabc95b`, Issue #126 closed, and Milestone #4 closed at 100% completion.
 
 ---
 
