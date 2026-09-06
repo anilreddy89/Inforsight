@@ -546,13 +546,13 @@ const timelineData = [
       {
         id: "P3-10",
         title: "Milestone Release Marker & Notes (v0.3.0-decision-engine)",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "v0.3.0-decision-engine",
         summary: {
           tech: "Milestone release documentation (docs/release-notes/v0.3.0-decision-engine.md), annotated Git tag v0.3.0-decision-engine, Phase 3 decision note, and transition roadmap for Phase 4 (Enterprise Integration & Scale).",
           simple: "Milestone 3.0 Completion: Publishing formal release notes, closing Milestone #4, and tagging v0.3.0-decision-engine to officially mark the Policy Conservation Decision Engine as complete!"
         },
-        checks: "Annotated Git tag v0.3.0-decision-engine; docs/release-notes/v0.3.0-decision-engine.md; Milestone #4 closed; Phase 4 transition plan."
+        checks: "Issue #126; docs/release-notes/v0.3.0-decision-engine.md; Phase 3 decision note RELEASE; 100% pass across Gates S1–S6; tag v0.3.0-decision-engine; Milestone #4 closed; unblocks Phase 4."
       }
     ]
   }

@@ -8,8 +8,8 @@ This report documents the formal pre-release system qualification of the **Infor
 - **Qualification Status**: ALL GATES PASSED (6 / 6)
 - **Evaluated Cohort**: 1,000 synthetic policies (5 cohorts x 200 policies)
 - **Frozen Model Bundle**: `inforsight-v6-logistic-platt-20260817` (SHA-256: `7ac292136d5201f1...`)
-- **Manifest Digest**: `485ec349ea831863aec1acd136e557140b5b4c4fd11d789dbc8ebd3bff287b61`
-- **Certification Timestamp**: `2026-09-06T04:25:57.614933Z`
+- **Manifest Digest**: `ed5fe28f17c8db1ead467630f621d79f93531371e73b53431188464dfea8dd8c`
+- **Certification Timestamp**: `2026-09-06T04:47:34.621641Z`
 
 ---
 
@@ -21,7 +21,7 @@ This report documents the formal pre-release system qualification of the **Infor
 | **GATE_S2** | Action Eligibility & Legal Dispute Firewall | 0 false-positive actions on legal disputes / claims / non-viable states | Firewall Pass Rate: 100.0% (0 False Positives / 800 tests) | **PASS** |
 | **GATE_S3** | Budget and Specialist Capacity Adherence | 0% overflow on specialist capacity (K <= 50) and budget (<= $5,000) | Specialist Allocations: 50/50 (0% overflow), Spend: $4,999.00/$5,000.00 (0% overflow) | **PASS** |
 | **GATE_S4** | Audit Trail Tamper Resistance | 100% tamper detection across mutation, deletion, reordering, and injection | Tamper Detection Rate: 100.0% (4/4 attacks flagged) | **PASS** |
-| **GATE_S5** | Inference and Pipeline Latency SLA | Single-policy P99 <= 10.0ms, 50-policy batch <= 100.0ms on local CPU | Single P99: 0.082ms (SLA <= 10.0ms), Batch(50): 2.75ms (SLA <= 100.0ms) | **PASS** |
+| **GATE_S5** | Inference and Pipeline Latency SLA | Single-policy P99 <= 10.0ms, 50-policy batch <= 100.0ms on local CPU | Single P99: 0.087ms (SLA <= 10.0ms), Batch(50): 2.72ms (SLA <= 100.0ms) | **PASS** |
 | **GATE_S6** | Deterministic Bit-for-Bit Reproducibility | 100% bit-for-bit digest identity across independent pipeline runs | Digest Match: IDENTICAL (SHA-256: 209a4c1f2b3fee5a...) | **PASS** |
 
 ---
@@ -55,7 +55,7 @@ Certifies that the cryptographic hash chain (`SHA-256`) immediately detects any 
 - **Pristine Chain Integrity**: VALID
 - **Tamper Attack Detection Rate**: 100.0% (4/4 attacks flagged)
 - **Evaluated Attack Vectors**:
-  - Vector `payload_mutation`: **DETECTED** (`Cryptographic hash tamper detected at seq 3: payload hash 8093351b7cd7c6856a6aefa1419a2196f8d591c02acea52207007bf1b92bf319 does not match record 4fae40417b6dfa3b13f7371a7696c544d2ac5e6512516deb0c4b5c010972d978`)
+  - Vector `payload_mutation`: **DETECTED** (`Cryptographic hash tamper detected at seq 3: payload hash 4aee9da83f08c34667d0e67e8bcda4160a3a65d388f709a73de3744ae754f8a9 does not match record 5072ec95c44f853a129a06dea55bca824c483e5e7150fb3d328f32efb290de0b`)
   - Vector `record_deletion`: **DETECTED** (`Non-monotonic sequence number at index 4: expected 4, got 5`)
   - Vector `record_reordering`: **DETECTED** (`Non-monotonic sequence number at index 2: expected 2, got 3`)
   - Vector `record_injection`: **DETECTED** (`Non-monotonic sequence number at index 3: expected 3, got 2`)
@@ -63,11 +63,11 @@ Certifies that the cryptographic hash chain (`SHA-256`) immediately detects any 
 ### Gate S5: Inference and Pipeline Latency SLA
 Evaluates high-throughput local CPU scoring latency without external cloud dependencies.
 - **Single-Policy Median (P50)**: 0.054 ms
-- **Single-Policy P95**: 0.065 ms
-- **Single-Policy P99**: 0.082 ms (SLA <= 10.0 ms -> **MET**)
-- **Single-Policy Maximum**: 0.082 ms
-- **Batch-50 Total Latency**: 2.75 ms (SLA <= 100.0 ms -> **MET**)
-- **Batch Per-Policy Average**: 0.055 ms/record
+- **Single-Policy P95**: 0.067 ms
+- **Single-Policy P99**: 0.087 ms (SLA <= 10.0 ms -> **MET**)
+- **Single-Policy Maximum**: 0.087 ms
+- **Batch-50 Total Latency**: 2.72 ms (SLA <= 100.0 ms -> **MET**)
+- **Batch Per-Policy Average**: 0.054 ms/record
 
 ### Gate S6: Deterministic Bit-for-Bit Reproducibility
 Certifies that independent pipeline executions given fixed seeds produce bit-for-bit identical outputs across policy scoring, rules filtering, knapsack allocation, and audit ledger serialization.

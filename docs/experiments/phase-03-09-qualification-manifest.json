@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "phase": "Phase 3.09",
   "title": "Inforsight Conservation Decision Engine System Qualification Manifest",
-  "created_at": "2026-09-06T04:25:57.614933Z",
+  "created_at": "2026-09-06T04:47:34.621641Z",
   "evaluation_seed": 20280201,
   "cohort_size": 1000,
   "model_bundle_id": "inforsight-v6-logistic-platt-20260817",
@@ -80,7 +80,7 @@
           {
             "attack": "payload_mutation",
             "detected": true,
-            "error": "Cryptographic hash tamper detected at seq 3: payload hash 8093351b7cd7c6856a6aefa1419a2196f8d591c02acea52207007bf1b92bf319 does not match record 4fae40417b6dfa3b13f7371a7696c544d2ac5e6512516deb0c4b5c010972d978"
+            "error": "Cryptographic hash tamper detected at seq 3: payload hash 4aee9da83f08c34667d0e67e8bcda4160a3a65d388f709a73de3744ae754f8a9 does not match record 5072ec95c44f853a129a06dea55bca824c483e5e7150fb3d328f32efb290de0b"
           },
           {
             "attack": "record_deletion",
@@ -105,18 +105,18 @@
       "gate_id": "GATE_S5",
       "name": "Inference and Pipeline Latency SLA",
       "passed": true,
-      "scorecard_metric": "Single P99: 0.082ms (SLA <= 10.0ms), Batch(50): 2.75ms (SLA <= 100.0ms)",
+      "scorecard_metric": "Single P99: 0.087ms (SLA <= 10.0ms), Batch(50): 2.72ms (SLA <= 100.0ms)",
       "details": {
         "sample_size": 100,
-        "latency_p50_ms": 0.054,
-        "latency_p90_ms": 0.06,
-        "latency_p95_ms": 0.065291,
-        "latency_p99_ms": 0.082292,
-        "latency_max_ms": 0.082292,
+        "latency_p50_ms": 0.053958,
+        "latency_p90_ms": 0.060167,
+        "latency_p95_ms": 0.067,
+        "latency_p99_ms": 0.0875,
+        "latency_max_ms": 0.0875,
         "single_policy_sla_ms": 10.0,
         "single_policy_sla_met": true,
-        "batch_50_elapsed_ms": 2.747666,
-        "batch_per_policy_ms": 0.05495332,
+        "batch_50_elapsed_ms": 2.715083,
+        "batch_per_policy_ms": 0.05430166,
         "batch_sla_ms": 100.0,
         "batch_sla_met": true
       },
@@ -150,10 +150,10 @@
     "budget_cap_usd": 5000.0
   },
   "performance_summary": {
-    "single_p99_latency_ms": 0.082292,
-    "batch_50_latency_ms": 2.747666,
+    "single_p99_latency_ms": 0.0875,
+    "batch_50_latency_ms": 2.715083,
     "firewall_pass_rate": 1.0,
     "tamper_detection_rate": 1.0
   },
-  "manifest_digest": "485ec349ea831863aec1acd136e557140b5b4c4fd11d789dbc8ebd3bff287b61"
+  "manifest_digest": "ed5fe28f17c8db1ead467630f621d79f93531371e73b53431188464dfea8dd8c"
 }

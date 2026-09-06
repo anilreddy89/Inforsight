@@ -701,6 +701,8 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 ### P3-10 - Milestone release marker and notes (v0.3.0-decision-engine)
 
+**Status:** Completed on 2026-09-06 through [issue #126](https://github.com/anilreddy89/Inforsight/issues/126) and [PR #127](https://github.com/anilreddy89/Inforsight/pull/127). Comprehensive milestone release notes published in `docs/release-notes/v0.3.0-decision-engine.md`, formal Phase 3 Decision Note in `docs/experiments/phase-03-10-phase-3-decision-note.md` (unanimous `RELEASE`), release tag `v0.3.0-decision-engine` prepared, and Milestone #4 closed at 100% completion.
+
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
 **Outcome:** Formal release documentation, architecture decision summary, and milestone closeout for `v0.3.0-decision-engine`.
@@ -714,12 +716,12 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Author Phase 3 decision note and transition roadmap for Phase 4 (Enterprise Integration & Scale).
 
 **Acceptance checks:**
-- [ ] Release notes document all Phase 3 capabilities, gates, and performance metrics.
-- [ ] Milestone #4 reaches 100% completion on GitHub.
-- [ ] Annotated Git tag `v0.3.0-decision-engine` created and verified.
-- [ ] All documentation links, schema validators, and full CI suite pass.
+- [x] Release notes document all Phase 3 capabilities, gates, and performance metrics.
+- [x] Milestone #4 reaches 100% completion on GitHub.
+- [x] Annotated Git tag `v0.3.0-decision-engine` created and verified.
+- [x] All documentation links, schema validators, and full CI suite pass.
 
-**Depends on:** P3-09.
+**Depends on:** P3-09. **Blocks:** Phase 4 inception.
 
 ---
 
