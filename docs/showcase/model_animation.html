@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inforsight — Mathematical ML & Decision Engine Animation</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.08); }
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -40; }
+    }
+    .animate-glow {
+      animation: pulse-glow 2.5s infinite ease-in-out;
+    }
+    .flow-line {
+      stroke-dasharray: 6, 6;
+      animation: dash 1.5s linear infinite;
+    }
+    .step-card {
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .step-active {
+      border-color: #3b82f6;
+      box-shadow: 0 0 20px -3px rgba(59, 130, 246, 0.35);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased p-4 md:p-8 min-h-screen font-sans">
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- Header & Recruiter Hero Card -->
+    <header class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full">
+              Production ML Showcase
+            </span>
+            <span class="px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full">
+              Phase 3 Qualified • v0.3.0
+            </span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+            Inforsight ML Risk & Decision Engine
+          </h1>
+          <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+            How a clean-room mathematical formulation beats black-box neural networks in regulated insurance conservation—achieving sub-millisecond scoring, bit-for-bit auditability, and 2.92x ROCS.
+          </p>
+        </div>
+
+        <!-- Recruiter Highlights Pill Badges -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <div class="bg-slate-950/60 border border-slate-800 p-2.5 rounded-xl text-center">
+            <div class="text-blue-400 font-bold text-lg">0.18 ms</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">CPU Latency</div>
+          </div>
+          <div class="bg-slate-950/60 border border-slate-800 p-2.5 rounded-xl text-center">
+            <div class="text-emerald-400 font-bold text-lg">0.0115</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Calibrated ECE</div>
+          </div>
+          <div class="bg-slate-950/60 border border-slate-800 p-2.5 rounded-xl text-center">
+            <div class="text-amber-400 font-bold text-lg">Exact SHAP</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">&Delta; &lt; 10⁻¹⁴</div>
+          </div>
+          <div class="bg-slate-950/60 border border-slate-800 p-2.5 rounded-xl text-center">
+            <div class="text-purple-400 font-bold text-lg">2.92x ROCS</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Net Return</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Scenario Selector -->
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-medium text-slate-400">Choose Policyholder Scenario:</span>
+          <div class="inline-flex p-1 bg-slate-950/80 rounded-xl border border-slate-800 text-xs" id="scenario-buttons">
+            <button onclick="selectScenario('healthy')" id="btn-healthy" class="px-3 py-1.5 rounded-lg font-medium transition-colors bg-blue-600 text-white shadow-sm">
+              🟢 Stable Low-Risk
+            </button>
+            <button onclick="selectScenario('early_warning')" id="btn-early_warning" class="px-3 py-1.5 rounded-lg font-medium transition-colors text-slate-400 hover:text-white">
+              🟡 Missed Payment
+            </button>
+            <button onclick="selectScenario('high_risk')" id="btn-high_risk" class="px-3 py-1.5 rounded-lg font-medium transition-colors text-slate-400 hover:text-white">
+              🔴 Severe Arrears
+            </button>
+            <button onclick="selectScenario('lost_cause')" id="btn-lost_cause" class="px-3 py-1.5 rounded-lg font-medium transition-colors text-slate-400 hover:text-white">
+              ⛔ "Lost Cause" (Firewall)
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btn-autoplay" onclick="toggleAutoPlay()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-emerald-900/30 transition-all">
+            <span id="play-icon">▶</span> <span id="play-text">Play Full Animation</span>
+          </button>
+          <button onclick="resetPipeline()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-colors">
+            Reset
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Interactive 5-Stage Stepper Navigation -->
+    <nav class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs">
+      <button onclick="goToStage(1)" id="nav-step-1" class="step-card bg-slate-900 border border-slate-800 p-3 rounded-xl text-left step-active">
+        <span class="block text-[10px] text-blue-400 font-bold tracking-widest uppercase">Stage 01</span>
+        <span class="font-semibold text-slate-200">Point-in-Time Events</span>
+      </button>
+      <button onclick="goToStage(2)" id="nav-step-2" class="step-card bg-slate-900 border border-slate-800 p-3 rounded-xl text-left">
+        <span class="block text-[10px] text-slate-500 font-bold tracking-widest uppercase">Stage 02</span>
+        <span class="font-semibold text-slate-400">Feature Transform</span>
+      </button>
+      <button onclick="goToStage(3)" id="nav-step-3" class="step-card bg-slate-900 border border-slate-800 p-3 rounded-xl text-left">
+        <span class="block text-[10px] text-slate-500 font-bold tracking-widest uppercase">Stage 03</span>
+        <span class="font-semibold text-slate-400">Log-Odds Dot Product</span>
+      </button>
+      <button onclick="goToStage(4)" id="nav-step-4" class="step-card bg-slate-900 border border-slate-800 p-3 rounded-xl text-left">
+        <span class="block text-[10px] text-slate-500 font-bold tracking-widest uppercase">Stage 04</span>
+        <span class="font-semibold text-slate-400">Platt Calibrated Sigmoid</span>
+      </button>
+      <button onclick="goToStage(5)" id="nav-step-5" class="step-card bg-slate-900 border border-slate-800 p-3 rounded-xl text-left col-span-2 md:col-span-1">
+        <span class="block text-[10px] text-slate-500 font-bold tracking-widest uppercase">Stage 05</span>
+        <span class="font-semibold text-slate-400">Decision & Uplift Triage</span>
+      </button>
+    </nav>
+
+    <!-- Main Interactive Display Canvas Area -->
+    <main class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl relative min-h-[460px] flex flex-col justify-between">
+      
+      <!-- STAGE 1: Bitemporal Event Stream -->
+      <section id="stage-1" class="space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+              Stage 1: Bitemporal Policyholder Event Stream
+            </h2>
+            <p class="text-xs text-slate-400">
+              Only events occurring and ingested prior to observation cutoff <code class="text-blue-300 font-mono">t &le; t_obs</code> are reconstructed. Future leakage is physically impossible.
+            </p>
+          </div>
+          <span class="text-xs font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg">
+            ADR 0001 Clean-Room
+          </span>
+        </div>
+
+        <div class="relative py-8 px-4 bg-slate-950/70 border border-slate-800/80 rounded-xl overflow-hidden">
+          <!-- Timeline ruler -->
+          <div class="h-1 bg-slate-800 w-full absolute top-1/2 -translate-y-1/2 left-0 right-0"></div>
+          
+          <!-- Cutoff Wall -->
+          <div class="absolute top-0 bottom-0 right-1/4 w-0.5 bg-red-500/80 shadow-[0_0_15px_rgba(239,68,68,0.8)] z-10 flex flex-col justify-between items-center py-2">
+            <span class="text-[9px] font-mono bg-red-500 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              t_obs Cutoff
+            </span>
+            <span class="text-[9px] text-red-400 bg-slate-950/90 px-1 border border-red-500/30 rounded">
+              Leakage Blocked
+            </span>
+          </div>
+
+          <!-- Events Container -->
+          <div id="events-container" class="relative z-0 flex items-center justify-between max-w-3xl pr-28">
+            <!-- Dynamically populated events -->
+          </div>
+        </div>
+
+        <!-- Stage Summary Explainer -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-300">
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <div class="font-semibold text-blue-400 mb-1">Dual Timestamps</div>
+            Tracks both <code class="text-slate-400">t_effective</code> and <code class="text-slate-400">t_ingested</code> in strict UTC.
+          </div>
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <div class="font-semibold text-emerald-400 mb-1">State Machine Replay</div>
+            Accumulates payment history, notices, and arrears duration without database queries.
+          </div>
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <div class="font-semibold text-purple-400 mb-1">Zero Lookahead</div>
+            Any event with <code class="text-slate-400">t &gt; t_obs</code> is rejected by ingress invariants.
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 2: Feature Transformation Vector -->
+      <section id="stage-2" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+              Stage 2: Deterministic Preprocessing (17 Features &rarr; 27 Inputs)
+            </h2>
+            <p class="text-xs text-slate-400">
+              Transforming raw behavioral signals via frozen training medians &amp; standard deviations: <code class="text-cyan-300 font-mono">x'_j = (x_j - &mu;_j) / &sigma;_j</code>.
+            </p>
+          </div>
+          <span class="text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2.5 py-1 rounded-lg">
+            Zero Data Drift
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="features-grid">
+          <!-- Dynamically populated feature chips -->
+        </div>
+
+        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-xs font-mono flex flex-wrap items-center justify-between gap-2">
+          <div class="text-slate-400">
+            <span class="text-cyan-400 font-semibold">Standardized Feature Vector:</span>
+            <span class="text-slate-200 ml-1" id="feature-vector-summary">x' &isin; &Ropf;²⁷ [tenure: +0.41, arrears: +2.14, failed_count: +1.88, ...]</span>
+          </div>
+          <div class="text-emerald-400">
+            &check; Imputation &amp; One-Hot Encoded
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 3: Dot Product & Linear Log-Odds -->
+      <section id="stage-3" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              Stage 3: Learned L₂-Regularized Dot Product
+            </h2>
+            <p class="text-xs text-slate-400">
+              Evaluating the linear equation: <code class="text-amber-300 font-mono">z = &beta;₀ + &sum;(&beta;_j &times; x'_j)</code>. 28 learned coefficients.
+            </p>
+          </div>
+          <span class="text-xs font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg">
+            0.02ms Linear Algebra
+          </span>
+        </div>
+
+        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-4">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400 font-mono">Base Intercept: <strong class="text-slate-200 font-bold">&beta;₀ = -0.6385</strong></span>
+            <span class="text-slate-400 font-mono">Calculated Log-Odds: <strong class="text-amber-400 text-sm" id="calc-z-value">z = +1.142</strong></span>
+          </div>
+
+          <!-- Live Feature Accumulation Visualizer -->
+          <div class="space-y-2">
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>Feature Contribution Summation</span>
+              <span id="z-breakdown-text">Base: -0.64 + Positive Drivers: +2.35 - Protective Drivers: -0.57</span>
+            </div>
+            <div class="w-full bg-slate-900 h-6 rounded-full overflow-hidden flex border border-slate-800 relative">
+              <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-600 z-10"></div>
+              <div id="z-bar-negative" class="h-full bg-emerald-500/80 transition-all duration-500 ml-auto" style="width: 25%;"></div>
+              <div id="z-bar-positive" class="h-full bg-red-500/80 transition-all duration-500 mr-auto" style="width: 45%;"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>Protective (Decreases Lapse Risk)</span>
+              <span>Baseline (z=0)</span>
+              <span>Accelerative (Increases Lapse Risk)</span>
+            </div>
+          </div>
+
+          <!-- Key Driver Breakdown -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs" id="dot-product-contributions">
+            <!-- Dynamically populated top contributors -->
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 4: Platt Calibrated Sigmoid Curve -->
+      <section id="stage-4" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+              Stage 4: Platt Scaling Post-Hoc Calibration &amp; Sigmoid Activation
+            </h2>
+            <p class="text-xs text-slate-400">
+              Mapping log-odds <code class="text-purple-300 font-mono">z</code> to rigorous posterior probability: <code class="text-purple-300 font-mono">&pcirc; = 1 / (1 + exp(-(A&middot;z + B)))</code>.
+            </p>
+          </div>
+          <span class="text-xs font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg">
+            ECE = 0.0115 (A=0.9618, B=-0.0334)
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center">
+          <!-- Interactive SVG Sigmoid Graph -->
+          <div class="lg:col-span-2 bg-slate-950/80 border border-slate-800 rounded-xl p-4 relative">
+            <svg id="sigmoid-svg" viewBox="0 0 500 240" class="w-full h-56">
+              <!-- Grid lines -->
+              <line x1="50" y1="20" x2="50" y2="200" stroke="#334155" stroke-width="1" />
+              <line x1="50" y1="200" x2="480" y2="200" stroke="#334155" stroke-width="1" />
+              <line x1="50" y1="110" x2="480" y2="110" stroke="#1e293b" stroke-dasharray="4" stroke-width="1" />
+              <line x1="50" y1="20" x2="480" y2="20" stroke="#1e293b" stroke-dasharray="4" stroke-width="1" />
+              <line x1="265" y1="20" x2="265" y2="200" stroke="#1e293b" stroke-dasharray="4" stroke-width="1" />
+              
+              <!-- Axis labels -->
+              <text x="265" y="222" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">z = 0 (Log-Odds)</text>
+              <text x="50" y="222" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">-4.0</text>
+              <text x="480" y="222" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">+4.0</text>
+              <text x="35" y="204" fill="#64748b" font-size="10" text-anchor="end" font-family="monospace">0.0</text>
+              <text x="35" y="114" fill="#64748b" font-size="10" text-anchor="end" font-family="monospace">0.5</text>
+              <text x="35" y="24" fill="#64748b" font-size="10" text-anchor="end" font-family="monospace">1.0</text>
+
+              <!-- Sigmoid S-Curve -->
+              <path id="sigmoid-path" d="" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+
+              <!-- Interactive Point Marker -->
+              <g id="marker-group" class="transition-all duration-700 ease-out">
+                <line id="marker-v-line" x1="265" y1="200" x2="265" y2="110" stroke="#f43f5e" stroke-dasharray="3" stroke-width="1.5" />
+                <line id="marker-h-line" x1="50" y1="110" x2="265" y2="110" stroke="#f43f5e" stroke-dasharray="3" stroke-width="1.5" />
+                <circle id="marker-glow" cx="265" cy="110" r="12" fill="#f43f5e" class="animate-glow" opacity="0.4" />
+                <circle id="marker-dot" cx="265" cy="110" r="6" fill="#f43f5e" stroke="#ffffff" stroke-width="2" />
+              </g>
+            </svg>
+            <div class="text-[10px] text-slate-500 font-mono text-right mt-1">
+              Platt Scaling: &pcirc; = 1 / (1 + e^(-(0.9618z - 0.0334)))
+            </div>
+          </div>
+
+          <!-- Probability & Tier Readout Card -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-5 flex flex-col justify-between h-56">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Calibrated Lapse Risk</span>
+              <div class="text-4xl font-extrabold text-white mt-1" id="calibrated-prob-display">
+                68.4%
+              </div>
+              <div class="text-xs text-slate-400 mt-1">
+                90-day horizon forward probability
+              </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3">
+              <span class="text-[11px] text-slate-400 uppercase tracking-wider">Operational Risk Tier</span>
+              <div class="flex items-center gap-2 mt-1">
+                <span id="tier-badge" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
+                  Tier 4: Critical Risk (&gt;50%)
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-2" id="tier-description">
+                Top 1% Review Queue priority. High probability of imminent contract lapse.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 5: Decision & Uplift Triage -->
+      <section id="stage-5" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              Stage 5: Decision Intelligence &amp; Uplift Optimization
+            </h2>
+            <p class="text-xs text-slate-400">
+              Perception &ne; Action (ADR 0002). Filtering through the Eligibility Firewall and solving the Knapsack Uplift Equation: <code class="text-emerald-300 font-mono">Net = &Delta;p &times; V - C</code>.
+            </p>
+          </div>
+          <span class="text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+            ROCS = 2.92x
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Eligibility Firewall Card -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Eligibility Firewall</span>
+                <span id="firewall-status-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  PASS
+                </span>
+              </div>
+              <ul class="text-xs space-y-1.5 text-slate-300">
+                <li id="chk-legal" class="flex items-center gap-1.5">
+                  <span class="text-emerald-400">&check;</span> No active legal disputes
+                </li>
+                <li id="chk-claim" class="flex items-center gap-1.5">
+                  <span class="text-emerald-400">&check;</span> No open death/disability claims
+                </li>
+                <li id="chk-cooldown" class="flex items-center gap-1.5">
+                  <span class="text-emerald-400">&check;</span> 30-day contact cooling-off satisfied
+                </li>
+                <li id="chk-status" class="flex items-center gap-1.5">
+                  <span class="text-emerald-400">&check;</span> Policy status in good standing
+                </li>
+              </ul>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400" id="firewall-note">
+              100% fail-closed safety invariant.
+            </div>
+          </div>
+
+          <!-- Uplift Knapsack Optimizer Card -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Optimal Action Selection</span>
+              <div class="mt-2">
+                <div class="text-xs text-slate-400">Assigned Intervention:</div>
+                <div class="text-sm font-extrabold text-white mt-0.5" id="action-assigned-title">
+                  Specialist Phone Outreach
+                </div>
+                <div class="text-xs text-slate-400 mt-1">
+                  Estimated Lift: <strong class="text-emerald-400 font-mono" id="action-lift">+32.0%</strong>
+                </div>
+                <div class="text-xs text-slate-400 mt-0.5">
+                  Intervention Cost: <strong class="text-slate-300 font-mono" id="action-cost">$50.00</strong>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800 text-[11px]">
+              <span class="text-slate-400">Net Expected Value:</span>
+              <strong class="text-emerald-400 font-bold ml-1 text-xs" id="action-npv">+$428.00</strong>
+            </div>
+          </div>
+
+          <!-- Human-In-The-Loop Governance (ADR 0002) -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Audit &amp; Human Approval</span>
+              <div class="mt-2 space-y-2 text-xs">
+                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Authority Marker:</div>
+                  <div class="text-amber-400 font-mono font-bold text-xs">authorized_to_act: false</div>
+                </div>
+                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Cryptographic Ledger:</div>
+                  <div class="text-slate-300 font-mono text-[10px] truncate" id="audit-hash">
+                    SHA-256: e8d1b32f91a...
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+              Caseworker sign-off required prior to dispatch.
+            </div>
+          </div>
+        </div>
+
+        <!-- The "Lost Cause" Callout Banner -->
+        <div id="lost-cause-banner" class="hidden bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between text-xs text-amber-200">
+          <div>
+            <strong class="font-bold">⚠️ The "Naive ML Lost Cause Trap" Avoided:</strong>
+            Standard ML models would send a costly specialist to this policyholder because lapse risk is 94%. Inforsight’s eligibility rules and uplift matrix recognized zero persuadability and saved $50.
+          </div>
+          <span class="text-[10px] font-mono bg-amber-500/20 text-amber-300 px-2 py-1 rounded">
+            ROCS Saved: +$50
+          </span>
+        </div>
+      </section>
+
+      <!-- Bottom Step Navigation Buttons -->
+      <footer class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
+        <button id="btn-prev-stage" onclick="stepStage(-1)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors" disabled>
+          &larr; Previous Stage
+        </button>
+        <span class="text-xs font-mono text-slate-400" id="stage-indicator">
+          Stage 1 of 5
+        </span>
+        <button id="btn-next-stage" onclick="stepStage(1)" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-900/30 transition-colors">
+          Next Stage &rarr;
+        </button>
+      </footer>
+    </main>
+
+    <!-- Why Closed-Form Math Wins for Recruiters Callout Table -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+        <span class="text-blue-400">&bull;</span> Why Simple Math Beats Deep Learning in Regulated Production
+      </h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400">
+              <th class="py-2.5 px-3 font-semibold">Dimension</th>
+              <th class="py-2.5 px-3 font-semibold text-rose-400">Black-Box Deep Neural Net</th>
+              <th class="py-2.5 px-3 font-semibold text-emerald-400">Inforsight Calibrated Math Formulation</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 text-slate-300">
+            <tr>
+              <td class="py-2.5 px-3 font-medium text-slate-200">Regulatory Auditability</td>
+              <td class="py-2.5 px-3 text-slate-400">Opaque; cannot guarantee non-discrimination or explain individual weights.</td>
+              <td class="py-2.5 px-3 text-emerald-300 font-medium">100% exact additive SHAP attributions (&Delta; &lt; 10⁻¹⁴). Fully inspectable.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-medium text-slate-200">Serving Latency &amp; Compute</td>
+              <td class="py-2.5 px-3 text-slate-400">50–250 ms on expensive GPU instances.</td>
+              <td class="py-2.5 px-3 text-emerald-300 font-medium">0.18 ms on basic CPU cores. $0 cloud GPU spend.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-medium text-slate-200">Pickle / Deserialization Security</td>
+              <td class="py-2.5 px-3 text-slate-400">Python pickle / torch weights carry arbitrary code execution vulnerabilities.</td>
+              <td class="py-2.5 px-3 text-emerald-300 font-medium">Zero binary pickle hazards. Pure JSON model bundle with SHA-256 verification.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-medium text-slate-200">Multi-Language Portability</td>
+              <td class="py-2.5 px-3 text-slate-400">Requires dedicated Python / ONNX runtime sidecars.</td>
+              <td class="py-2.5 px-3 text-emerald-300 font-medium">Native execution in Python, Java (Phase 4), Rust, or even standard SQL.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-medium text-slate-200">Operational Decision Value</td>
+              <td class="py-2.5 px-3 text-slate-400">Falls into "Lost Cause Trap" by ranking unpersuadable policyholders.</td>
+              <td class="py-2.5 px-3 text-emerald-300 font-medium">2.92x ROCS through uplift knapsack optimization + deterministic firewall.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Interactive JavaScript State Engine -->
+  <script>
+    // Scenarios Data
+    const SCENARIOS = {
+      healthy: {
+        name: "Stable Low-Risk",
+        events: [
+          { type: "PolicyIssued", day: "-365d", title: "Policy Bound", status: "ok" },
+          { type: "PremiumPaid", day: "-60d", title: "Monthly Auto-Debit", status: "ok" },
+          { type: "PremiumPaid", day: "-30d", title: "Monthly Auto-Debit", status: "ok" },
+          { type: "PremiumPaid", day: "-2d", title: "Current Bill Paid", status: "ok" }
+        ],
+        features: [
+          { name: "tenure_days", val: "730d", norm: "+0.85", desc: "Long tenure" },
+          { name: "recent_failed_payment_count", val: "0", norm: "-0.16", desc: "No failures" },
+          { name: "arrears_duration_days", val: "0d", norm: "-0.16", desc: "Current" },
+          { name: "rolling_on_time_rate", val: "100%", norm: "+1.98", desc: "Perfect history" },
+          { name: "recent_notice_count", val: "0", norm: "-0.35", desc: "No alerts" },
+          { name: "billing_frequency", val: "monthly", norm: "level_0", desc: "Auto ACH" },
+          { name: "product_type", val: "term_life", norm: "level_1", desc: "Fictional Term" },
+          { name: "recent_delay_days", val: "0d", norm: "-0.34", desc: "Zero delay" }
+        ],
+        z_value: -3.18,
+        calibrated_prob: 0.044, // 4.4%
+        tier: "Tier 1: Minimal Risk (<10%)",
+        tier_class: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+        tier_desc: "Standard automated maintenance. No intervention required.",
+        firewall_pass: true,
+        action: "Abstain (No Intervention)",
+        lift: "0.0%",
+        cost: "$0.00",
+        npv: "$0.00",
+        is_lost_cause: false,
+        top_drivers: [
+          { name: "rolling_on_time_rate (100%)", impact: "-1.28", type: "protective" },
+          { name: "tenure_days (730d)", impact: "-0.84", type: "protective" },
+          { name: "arrears_duration_days (0d)", impact: "-0.42", type: "protective" }
+        ]
+      },
+      early_warning: {
+        name: "Missed Payment",
+        events: [
+          { type: "PolicyIssued", day: "-180d", title: "Policy Bound", status: "ok" },
+          { type: "PremiumPaid", day: "-60d", title: "Monthly Paid", status: "ok" },
+          { type: "PaymentFailed", day: "-15d", title: "Card Expired", status: "warn" },
+          { type: "GraceNotice", day: "-10d", title: "Grace Period Notice", status: "warn" }
+        ],
+        features: [
+          { name: "tenure_days", val: "180d", norm: "-0.42", desc: "Moderate tenure" },
+          { name: "recent_failed_payment_count", val: "1", norm: "+1.25", desc: "1 Failed Attempt" },
+          { name: "arrears_duration_days", val: "15d", norm: "+1.10", desc: "In Grace" },
+          { name: "rolling_on_time_rate", val: "83%", norm: "-0.45", desc: "Minor dip" },
+          { name: "recent_notice_count", val: "1", norm: "+1.42", desc: "Grace Notice Sent" },
+          { name: "billing_frequency", val: "monthly", norm: "level_0", desc: "Auto Card" },
+          { name: "product_type", val: "term_life", norm: "level_1", desc: "Fictional Term" },
+          { name: "recent_delay_days", val: "15d", norm: "+0.88", desc: "Grace delay" }
+        ],
+        z_value: -0.98,
+        calibrated_prob: 0.278, // 27.8%
+        tier: "Tier 3: Elevated Risk (25-50%)",
+        tier_class: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        tier_desc: "Triage Queue priority. Low-cost automated remediation indicated.",
+        firewall_pass: true,
+        action: "Payment Method Remediation (SMS + Portal Link)",
+        lift: "+18.5%",
+        cost: "$2.50",
+        npv: "+$172.50",
+        is_lost_cause: false,
+        top_drivers: [
+          { name: "recent_failed_payment_count (+1)", impact: "+0.92", type: "risk" },
+          { name: "arrears_duration_days (15d)", impact: "+0.64", type: "risk" },
+          { name: "rolling_on_time_rate (83%)", impact: "-0.32", type: "protective" }
+        ]
+      },
+      high_risk: {
+        name: "Severe Arrears",
+        events: [
+          { type: "PolicyIssued", day: "-240d", title: "Policy Bound", status: "ok" },
+          { type: "PaymentFailed", day: "-45d", title: "ACH Return NSF", status: "danger" },
+          { type: "PaymentRetryFailed", day: "-35d", title: "Retry Failed", status: "danger" },
+          { type: "LapseWarning", day: "-14d", title: "Final Lapse Warning", status: "danger" }
+        ],
+        features: [
+          { name: "tenure_days", val: "240d", norm: "-0.28", desc: "Under 1 year" },
+          { name: "recent_failed_payment_count", val: "2", norm: "+2.48", desc: "Multiple NSF" },
+          { name: "arrears_duration_days", val: "45d", norm: "+3.20", desc: "Critical grace" },
+          { name: "rolling_on_time_rate", val: "50%", norm: "-1.85", desc: "Severe drop" },
+          { name: "recent_notice_count", val: "2", norm: "+2.80", desc: "Lapse warning" },
+          { name: "billing_frequency", val: "monthly", norm: "level_0", desc: "ACH" },
+          { name: "product_type", val: "whole_life", norm: "level_2", desc: "Whole Life ($85k)" },
+          { name: "recent_delay_days", val: "45d", norm: "+2.40", desc: "Exceeding grace" }
+        ],
+        z_value: +1.18,
+        calibrated_prob: 0.684, // 68.4%
+        tier: "Tier 4: Critical Risk (>50%)",
+        tier_class: "bg-red-500/20 text-red-400 border-red-500/30",
+        tier_desc: "Top 1% Review Queue priority. Immediate intervention recommended.",
+        firewall_pass: true,
+        action: "Dedicated Specialist Phone Outreach",
+        lift: "+32.0%",
+        cost: "$50.00",
+        npv: "+$428.00",
+        is_lost_cause: false,
+        top_drivers: [
+          { name: "arrears_duration_days (45d)", impact: "+1.65", type: "risk" },
+          { name: "recent_failed_payment_count (2)", impact: "+1.12", type: "risk" },
+          { name: "recent_notice_count (2 warnings)", impact: "+0.78", type: "risk" }
+        ]
+      },
+      lost_cause: {
+        name: "The 'Lost Cause'",
+        events: [
+          { type: "PolicyIssued", day: "-90d", title: "New Policy", status: "ok" },
+          { type: "PaymentFailed", day: "-75d", title: "Failed", status: "danger" },
+          { type: "DisputeFiled", day: "-30d", title: "Legal Chargeback", status: "danger" },
+          { type: "PhoneDisconnected", day: "-10d", title: "Invalid Contact", status: "danger" }
+        ],
+        features: [
+          { name: "tenure_days", val: "90d", norm: "-0.85", desc: "Very new" },
+          { name: "recent_failed_payment_count", val: "3", norm: "+3.60", desc: "No successful pay" },
+          { name: "arrears_duration_days", val: "75d", norm: "+4.50", desc: "Terminal arrears" },
+          { name: "rolling_on_time_rate", val: "0%", norm: "-2.80", desc: "0% on-time" },
+          { name: "recent_notice_count", val: "3", norm: "+3.90", desc: "Multiple notices" },
+          { name: "billing_frequency", val: "monthly", norm: "level_0", desc: "ACH" },
+          { name: "product_type", val: "term_life", norm: "level_1", desc: "Term" },
+          { name: "recent_delay_days", val: "75d", norm: "+3.80", desc: "Total delay" }
+        ],
+        z_value: +3.45,
+        calibrated_prob: 0.942, // 94.2%
+        tier: "Tier 4: Unviable / Disputed",
+        tier_class: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+        tier_desc: "Naive ML would waste high-cost outreach here. Inforsight blocks action.",
+        firewall_pass: false,
+        action: "Abstain (Blocked by Eligibility Firewall)",
+        lift: "0.0% (Unpersuadable)",
+        cost: "$0.00 (Saved $50)",
+        npv: "$0.00",
+        is_lost_cause: true,
+        top_drivers: [
+          { name: "Legal Dispute Active", impact: "+2.10", type: "risk" },
+          { name: "arrears_duration_days (75d)", impact: "+1.95", type: "risk" },
+          { name: "Contact Phone Invalid", impact: "+1.40", type: "risk" }
+        ]
+      }
+    };
+
+    let currentStage = 1;
+    let currentScenarioKey = 'high_risk';
+    let autoPlayInterval = null;
+
+    function renderSigmoidCurve() {
+      // Draw SVG S-curve for Platt Sigmoid
+      // x from -4.0 to +4.0 mapped to SVG coords (50 to 480)
+      // y from 0.0 to 1.0 mapped to SVG coords (200 down to 20)
+      let d = "";
+      for (let px = 50; px <= 480; px += 5) {
+        let z = ((px - 50) / 430) * 8.0 - 4.0;
+        // Platt formula: A = 0.961849, B = -0.033420
+        let p = 1.0 / (1.0 + Math.exp(-(0.961849 * z - 0.033420)));
+        let py = 200 - (p * 180);
+        if (px === 50) d += `M ${px} ${py.toFixed(1)} `;
+        else d += `L ${px} ${py.toFixed(1)} `;
+      }
+      document.getElementById('sigmoid-path').setAttribute('d', d);
+    }
+
+    function updateScenarioView() {
+      const data = SCENARIOS[currentScenarioKey];
+
+      // Stage 1: Events
+      const eventsContainer = document.getElementById('events-container');
+      eventsContainer.innerHTML = '';
+      data.events.forEach((ev, idx) => {
+        const bgColors = ev.status === 'ok' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' :
+                         ev.status === 'warn' ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' :
+                         'bg-red-500/20 text-red-400 border-red-500/40';
+        const eventEl = document.createElement('div');
+        eventEl.className = 'flex flex-col items-center text-center space-y-1';
+        eventEl.innerHTML = `
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border ${bgColors}">
+            ${idx + 1}
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">${ev.day}</span>
+          <span class="text-[11px] font-semibold text-slate-200 max-w-[90px] leading-tight">${ev.title}</span>
+        `;
+        eventsContainer.appendChild(eventEl);
+      });
+
+      // Stage 2: Features
+      const featuresGrid = document.getElementById('features-grid');
+      featuresGrid.innerHTML = '';
+      data.features.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl';
+        card.innerHTML = `
+          <div class="text-[10px] text-slate-400 font-mono truncate">${f.name}</div>
+          <div class="text-sm font-bold text-white mt-0.5">${f.val}</div>
+          <div class="text-[10px] text-cyan-400 font-mono mt-0.5">${f.desc} (${f.norm})</div>
+        `;
+        featuresGrid.appendChild(card);
+      });
+
+      // Stage 3: Dot Product
+      document.getElementById('calc-z-value').textContent = `z = ${data.z_value >= 0 ? '+' : ''}${data.z_value.toFixed(3)}`;
+      const dotGrid = document.getElementById('dot-product-contributions');
+      dotGrid.innerHTML = '';
+      data.top_drivers.forEach(d => {
+        const item = document.createElement('div');
+        const isProt = d.type === 'protective';
+        item.className = `p-2 rounded-lg border ${isProt ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-red-500/10 border-red-500/30'} flex justify-between items-center text-xs`;
+        item.innerHTML = `
+          <span class="${isProt ? 'text-emerald-300' : 'text-red-300'}">${d.name}</span>
+          <span class="font-mono font-bold ${isProt ? 'text-emerald-400' : 'text-red-400'}">${d.impact}</span>
+        `;
+        dotGrid.appendChild(item);
+      });
+
+      // Accumulation Bar
+      const posPct = Math.min(Math.max((data.z_value + 4.0) / 8.0 * 100, 5), 95);
+      document.getElementById('z-bar-positive').style.width = `${posPct}%`;
+      document.getElementById('z-bar-negative').style.width = `${100 - posPct}%`;
+
+      // Stage 4: Sigmoid Dot Position
+      // z is mapped from [-4.0, +4.0] to [50, 480]
+      const clampedZ = Math.min(Math.max(data.z_value, -4.0), 4.0);
+      const markerX = 50 + ((clampedZ + 4.0) / 8.0) * 430;
+      const markerY = 200 - (data.calibrated_prob * 180);
+
+      const markerGroup = document.getElementById('marker-group');
+      const dot = document.getElementById('marker-dot');
+      const glow = document.getElementById('marker-glow');
+      const vLine = document.getElementById('marker-v-line');
+      const hLine = document.getElementById('marker-h-line');
+
+      dot.setAttribute('cx', markerX);
+      dot.setAttribute('cy', markerY);
+      glow.setAttribute('cx', markerX);
+      glow.setAttribute('cy', markerY);
+
+      vLine.setAttribute('x1', markerX);
+      vLine.setAttribute('x2', markerX);
+      vLine.setAttribute('y1', 200);
+      vLine.setAttribute('y2', markerY);
+
+      hLine.setAttribute('x1', 50);
+      hLine.setAttribute('x2', markerX);
+      hLine.setAttribute('y1', markerY);
+      hLine.setAttribute('y2', markerY);
+
+      document.getElementById('calibrated-prob-display').textContent = `${(data.calibrated_prob * 100).toFixed(1)}%`;
+      const tierBadge = document.getElementById('tier-badge');
+      tierBadge.textContent = data.tier;
+      tierBadge.className = `px-2.5 py-1 text-xs font-bold rounded-lg ${data.tier_class} border`;
+      document.getElementById('tier-description').textContent = data.tier_desc;
+
+      // Stage 5: Decision Engine
+      const firewallBadge = document.getElementById('firewall-status-badge');
+      const lostCauseBanner = document.getElementById('lost-cause-banner');
+      if (data.firewall_pass) {
+        firewallBadge.textContent = "PASS (4/4 INVARIANTS)";
+        firewallBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        lostCauseBanner.classList.add('hidden');
+      } else {
+        firewallBadge.textContent = "BLOCKED (VIOLATION)";
+        firewallBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30";
+        lostCauseBanner.classList.remove('hidden');
+      }
+
+      document.getElementById('action-assigned-title').textContent = data.action;
+      document.getElementById('action-lift').textContent = data.lift;
+      document.getElementById('action-cost').textContent = data.cost;
+      document.getElementById('action-npv').textContent = data.npv;
+    }
+
+    function selectScenario(key) {
+      currentScenarioKey = key;
+      // Update button styling
+      document.querySelectorAll('#scenario-buttons button').forEach(btn => {
+        btn.className = 'px-3 py-1.5 rounded-lg font-medium transition-colors text-slate-400 hover:text-white';
+      });
+      document.getElementById(`btn-${key}`).className = 'px-3 py-1.5 rounded-lg font-medium transition-colors bg-blue-600 text-white shadow-sm';
+      updateScenarioView();
+    }
+
+    function goToStage(stageNum) {
+      currentStage = stageNum;
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`stage-${i}`).classList.add('hidden');
+        const nav = document.getElementById(`nav-step-${i}`);
+        nav.classList.remove('step-active');
+        nav.querySelector('span:first-child').className = 'block text-[10px] text-slate-500 font-bold tracking-widest uppercase';
+        nav.querySelector('span:last-child').className = 'font-semibold text-slate-400';
+      }
+      document.getElementById(`stage-${stageNum}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-step-${stageNum}`);
+      activeNav.classList.add('step-active');
+      activeNav.querySelector('span:first-child').className = 'block text-[10px] text-blue-400 font-bold tracking-widest uppercase';
+      activeNav.querySelector('span:last-child').className = 'font-semibold text-slate-200';
+
+      document.getElementById('stage-indicator').textContent = `Stage ${stageNum} of 5`;
+      document.getElementById('btn-prev-stage').disabled = stageNum === 1;
+      document.getElementById('btn-next-stage').textContent = stageNum === 5 ? 'Replay Pipeline' : 'Next Stage →';
+    }
+
+    function stepStage(delta) {
+      let next = currentStage + delta;
+      if (next > 5) next = 1;
+      if (next < 1) next = 1;
+      goToStage(next);
+    }
+
+    function toggleAutoPlay() {
+      if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+        document.getElementById('play-icon').textContent = '▶';
+        document.getElementById('play-text').textContent = 'Play Full Animation';
+      } else {
+        document.getElementById('play-icon').textContent = '⏸';
+        document.getElementById('play-text').textContent = 'Pause Animation';
+        autoPlayInterval = setInterval(() => {
+          let next = currentStage + 1;
+          if (next > 5) {
+            next = 1;
+            // cycle scenario too
+            const keys = ['healthy', 'early_warning', 'high_risk', 'lost_cause'];
+            const curIdx = keys.indexOf(currentScenarioKey);
+            selectScenario(keys[(curIdx + 1) % keys.length]);
+          }
+          goToStage(next);
+        }, 2800);
+      }
+    }
+
+    function resetPipeline() {
+      if (autoPlayInterval) toggleAutoPlay();
+      selectScenario('high_risk');
+      goToStage(1);
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSigmoidCurve();
+      selectScenario('high_risk');
+      goToStage(1);
+    });
+  </script>
+</body>
+</html>
