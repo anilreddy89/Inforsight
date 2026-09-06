@@ -82,7 +82,7 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | Completed | [#116](https://github.com/anilreddy89/Inforsight/issues/116) | [#117](https://github.com/anilreddy89/Inforsight/pull/117) | 2026-09-05 | `39c35c0` | `simulator/src/inforsight_simulator/assistant/`, `data-contracts/conservation-case-brief.schema.json`, `simulator/tests/test_assistant.py` (10 tests pass), [phase document](../phase_docs/phase-03-05-bounded-case-intelligence-assistant.md) | Merged in PR #117; dual-layer briefing engine (Layer 1 template + Layer 2 grounded narrative), Grounding Guard, fail-closed fallback, ADR 0002 boundary enforcement. Authorizes P3-06, P3-07. |
 | P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Completed | [#118](https://github.com/anilreddy89/Inforsight/issues/118) | [#119](https://github.com/anilreddy89/Inforsight/pull/119) | 2026-09-05 | `ec8b50a` | `simulator/src/inforsight_simulator/workflow/`, `simulator/src/inforsight_simulator/audit/`, `scripts/verify_conservation_audit_trail.py`, `simulator/tests/test_workflow.py`, `simulator/tests/test_audit_ledger.py` (15 tests pass), [phase document](../phase_docs/phase-03-06-human-in-the-loop-workflow-and-audit-trail-engine.md) | Merged in PR #119; HITL state machine enforcing ADR 0002 boundary, reviewer credentials and justification checks, append-only cryptographic hash-chained audit ledger (`conservation-audit-log.jsonl`), CLI verification tool; 15 unit/audit tests pass. Authorizes P3-07, P3-09. |
 | P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Completed | [#120](https://github.com/anilreddy89/Inforsight/issues/120) | [#121](https://github.com/anilreddy89/Inforsight/pull/121) | 2026-09-05 | `dddf889` | `dashboard/`, interactive UI, triage consoles, [phase document](../phase_docs/phase-03-07-interactive-conservation-intelligence-dashboard.md) | Merged in PR #121; 5 interactive views (Portfolio, Triage Queue, Dossier, Decision Console, Telemetry), end-to-end integration with inference bundle, rules, optimizer, assistant, and audit trail engine; 9/9 dashboard tests pass. Authorizes P3-08, P3-09. |
-| P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Implemented locally | [#122](https://github.com/anilreddy89/Inforsight/issues/122) | [#123](https://github.com/anilreddy89/Inforsight/pull/123) (Target) | 2026-09-05 | — | `simulator/src/inforsight_simulator/counterfactual/`, `scripts/run_offline_policy_evaluation.py`, `docs/experiments/phase-03-08-ope-*`, 11 focused tests pass, [phase document](../phase_docs/phase-03-08-counterfactual-simulation-and-offline-policy-evaluation.md) | Extends v6 bounded hazard link with synthetic treatment response; Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs. Authorizes P3-09. |
+| P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Completed | [#122](https://github.com/anilreddy89/Inforsight/issues/122) | [#123](https://github.com/anilreddy89/Inforsight/pull/123) | 2026-09-05 | `55f0415` | `simulator/src/inforsight_simulator/counterfactual/`, `scripts/run_offline_policy_evaluation.py`, `docs/experiments/phase-03-08-ope-*`, 11 focused tests pass, [phase document](../phase_docs/phase-03-08-counterfactual-simulation-and-offline-policy-evaluation.md) | Merged in PR #123; extends v6 bounded hazard link with synthetic treatment response; Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs. Authorizes P3-09. |
 | P3-09 | Phase 3 — Conservation Decision Engine | End-to-end system qualification and integration gate (Gates S1–S6). | Pending | TBD | TBD | TBD | — | `tests/qualification/`, qualification runner, scorecard report | Depends on P3-06, P3-07, P3-08. Blocks P3-10. |
 | P3-10 | Phase 3 — Conservation Decision Engine | Milestone release marker and release notes (`v0.3.0-decision-engine`). | Pending | TBD | TBD | TBD | — | `docs/release-notes/v0.3.0-decision-engine.md`, tag `v0.3.0-decision-engine` | Depends on P3-09. Closes Milestone #4. |
 
@@ -106,24 +106,25 @@ Inforsight successfully completed Phase 2 (Baseline ML) and is actively executin
 12. Phase 3-05 is complete and merged to main in PR #117 (commit `39c35c0`); bounded case intelligence assistant and case brief contract pass all tests.
 13. Phase 3-06 is complete and merged to main in PR #119 (commit `ec8b50a`); human-in-the-loop workflow engine and hash-chained audit ledger pass all 15 tests.
 14. Phase 3-07 is complete and merged to main in PR #121 (commit `dddf889`); interactive conservation intelligence dashboard with 5 operational views passes all 9 tests.
+15. Phase 3-08 is complete and merged to main in PR #123 (commit `55f0415`); counterfactual simulation engine and offline policy evaluation pass 11/11 tests, showing statistically significant Decision Engine superiority ($13,764 Net Preserved Value, 2.92x ROCS, p < 0.0001) over Naive ML and Heuristic baselines across 1,000 bootstrap resamples.
 
-In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-07 on main unblocking P3-08 and P3-09.
+In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete through P3-08 on main unblocking P3-09.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 52 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 8) |
-| Implemented locally changes | 1 |
+| Completed tracked changes | 53 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 9) |
+| Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
-| Completed Phase 3 increments | 8 of 10 |
+| Completed Phase 3 increments | 9 of 10 |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
-| Active increment | Phase 3 P3-08 (Counterfactual simulation and offline policy evaluation) |
-| Next implementation increment | Phase 3 P3-09 (End-to-end system qualification and integration gate) |
+| Active increment | Phase 3 P3-09 (End-to-end system qualification and integration gate) |
+| Next implementation increment | Phase 3 P3-10 (Milestone release marker and release notes) |
 
 ## Latest verification baseline
 
@@ -311,6 +312,13 @@ Completion evidence:
 - Issue #104 closed when PR #105 merged as `7797c09`; Phase 2.12 v0.2.0-risk-model release tag, notes, and Milestone #3 closure complete on `main`.
 - Issue #106 closed when PR #107 merged as `7ed7efd`; Phase 3.01 conservation domain contracts and action taxonomy complete on `main`.
 - Issue #108 closed when PR #109 merged as `1177394`; Phase 3.02 deterministic action eligibility rules engine complete on `main`; 17/17 focused eligibility tests pass, 412/412 simulator suite tests pass.
+- Issue #110 closed when PR #111 merged as `a1e97cb`; Phase 3.03 cost-utility and uplift optimization matrix complete on `main`; 9/9 tests pass.
+- Issue #112 closed when PR #113 merged as `87a66f9`; Phase 3.04 model serving and inference gateway complete on `main`; 8/8 tests pass.
+- Issue #114 closed when PR #115 merged as `920f943`; Phase 3.04A model monitoring and drift detection complete on `main`; 44/44 tests pass.
+- Issue #116 closed when PR #117 merged as `39c35c0`; Phase 3.05 bounded case intelligence assistant complete on `main`; 10/10 tests pass.
+- Issue #118 closed when PR #119 merged as `ec8b50a`; Phase 3.06 human-in-the-loop workflow and audit trail complete on `main`; 15/15 tests pass.
+- Issue #120 closed when PR #121 merged as `dddf889`; Phase 3.07 interactive conservation intelligence dashboard complete on `main`; 9/9 dashboard tests pass.
+- Issue #122 closed when PR #123 merged as `55f0415`; Phase 3.08 counterfactual simulation and offline policy evaluation complete on `main`; 11/11 counterfactual and OPE tests pass, Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs; P3-09 unblocked.
 
 ## Update procedure
 

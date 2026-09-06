@@ -524,13 +524,13 @@ const timelineData = [
       {
         id: "P3-08",
         title: "Counterfactual Simulation & Offline Policy Evaluation",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "55f0415",
         summary: {
           tech: "Counterfactual potential-outcomes simulation engine extending Generation v6 substrate to evaluate heterogeneous treatment effects, lapse rate reduction, Net Preserved Value, and Return on Conservation Spend (ROCS) against heuristic and naive ML policies.",
           simple: "What-If Business Impact Simulator: Mathematically tests how many policies and dollars the decision engine saves compared to simple rules or naive scoring, proving the business return before deploying to real customers."
         },
-        checks: "scripts/run_offline_policy_evaluation.py; 95% bootstrap CIs; Net Preserved Value comparison; blocks P3-07, P3-09."
+        checks: "Issue #122 closed by PR #123 (55f0415); simulator/counterfactual/ potential outcomes; 11/11 tests pass; 1,000 bootstrap CIs; Decision Engine achieves $13,764 Net Preserved Value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics); ADR 0002 compliance; unblocks P3-09."
       },
       {
         id: "P3-09",

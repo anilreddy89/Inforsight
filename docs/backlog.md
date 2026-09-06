@@ -640,6 +640,8 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
+**Status:** Completed on 2026-09-05 through [issue #122](https://github.com/anilreddy89/Inforsight/issues/122) and [PR #123](https://github.com/anilreddy89/Inforsight/pull/123), merge commit `55f0415`. 11/11 counterfactual and OPE unit tests pass, Decision Engine achieves $13,764 Net Preserved Value (2.92x ROCS, p < 0.0001 superiority vs baselines) across 1,000 bootstrap CIs, and repository boundaries pass. Specification and scorecard documented in `Documents/phase_docs/phase-03-08-counterfactual-simulation-and-offline-policy-evaluation.md`.
+
 **Outcome:** A counterfactual simulation framework rigorously evaluates the business impact and ROI of the conservation decision engine against baseline triage strategies prior to dashboard integration.
 
 **Scope:**
@@ -657,13 +659,13 @@ P3-01 (Domain Contracts & Action Taxonomy)
 - Export summary results for consumption by P3-07 dashboard.
 
 **Acceptance checks:**
-- [ ] Counterfactual simulation maintains strict temporal consistency and no future leakage.
-- [ ] Decision engine demonstrates statistically significant improvement in Net Preserved Value over naive ML and heuristic baselines.
-- [ ] Off-policy evaluation includes 95% bootstrap confidence intervals.
-- [ ] Produces exportable summary metrics consumed by P3-07 dashboard.
-- [ ] Simulation reproducibility tests pass across multiple seeds.
+- [x] Counterfactual simulation maintains strict temporal consistency and no future leakage.
+- [x] Decision engine demonstrates statistically significant improvement in Net Preserved Value over naive ML and heuristic baselines.
+- [x] Off-policy evaluation includes 95% bootstrap confidence intervals.
+- [x] Produces exportable summary metrics consumed by P3-07 dashboard.
+- [x] Simulation reproducibility tests pass across multiple seeds.
 
-**Depends on:** P3-02, P3-03. **Blocks:** P3-07, P3-09.
+**Depends on:** P3-02, P3-03. **Blocks:** None (P3-09 unblocked).
 
 ---
 

@@ -10,8 +10,10 @@
 | GitHub issue | [#122](https://github.com/anilreddy89/Inforsight/issues/122) |
 | Issue title | `[Implementation] P3-08: Counterfactual simulation and offline policy evaluation` |
 | Branch | `feat/122-p3-08-counterfactual-simulation-ope` |
-| Pull request | [#123](https://github.com/anilreddy89/Inforsight/pull/123) (Target) |
-| Status | In progress |
+| Pull request | [#123](https://github.com/anilreddy89/Inforsight/pull/123) |
+| Merge commit | `55f0415` |
+| Completed date | 2026-09-05 |
+| Status | Completed |
 | Milestone | [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4) |
 | Priority | Milestone blocking / Business Qualification |
 | Classification | Causal Inference / Counterfactual Simulation / Off-Policy Evaluation / Econometrics |
