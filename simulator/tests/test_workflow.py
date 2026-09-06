@@ -279,6 +279,47 @@ class TestWorkflowService(unittest.TestCase):
         self.assertEqual(ev_res.to_state, CaseState.RESOLVED)
         self.assertEqual(service.ledger.total_entries, 7)
 
+    def test_workflow_service_rejection_and_dismissal(self) -> None:
+        service = WorkflowService()
+        ctx = service.create_case(
+            policy_id="pol_839281726355",
+            as_of_date="2026-09-01",
+            reconstructed_state={"tenure_months": 14, "annual_premium": 1200.0},
+            scoring_result={"calibrated_probability": 0.38, "operational_tier": "TIER_3_HIGH"},
+            eligible_action_set={
+                "primary_action": "grace_period_consultation",
+                "eligible_actions": ["grace_period_consultation"],
+            },
+            case_brief={"primary_recommendation": {"action_type": "grace_period_consultation"}},
+            model_bundle_id="inforsight-v6-logistic-platt-20260817",
+            occurred_at="2026-09-01T10:00:00Z",
+        )
+        ev_rev = service.submit_review(
+            case_id=ctx.case_id,
+            reviewer_id="usr_evaluator_99",
+            action=SpecialistReviewAction.REJECT_AND_CLOSE,
+            rationale_code="REJECT_KNOWN_COMPLAINT_HOLD",
+            justification="Hold per customer service escalations.",
+            occurred_at="2026-09-01T10:15:00Z",
+        )
+        self.assertEqual(ev_rev.to_state, CaseState.HUMAN_REVIEWED)
+
+        ev_dism = service.dismiss_case(
+            case_id=ctx.case_id,
+            reason="Dismissed following specialist rejection.",
+            occurred_at="2026-09-01T10:20:00Z",
+        )
+        self.assertEqual(ev_dism.to_state, CaseState.DISMISSED)
+        self.assertEqual(service.ledger.total_entries, 6)
+
+        ev_res = service.resolve_case(
+            case_id=ctx.case_id,
+            resolution_notes="Case closed after dismissal.",
+            occurred_at="2026-09-01T10:30:00Z",
+        )
+        self.assertEqual(ev_res.to_state, CaseState.RESOLVED)
+        self.assertEqual(service.ledger.total_entries, 7)
+
 
 if __name__ == "__main__":
     unittest.main()
