@@ -272,6 +272,35 @@ from .assistant import (
     ValidationStatus,
     generate_template_brief,
 )
+from .workflow import (
+    CaseEvent,
+    CaseState,
+    CaseStateMachine,
+    DecisionContextDigest,
+    ExecutionDetails,
+    HumanReview,
+    IneligibleOverrideError,
+    InvalidReviewerCredentialsError,
+    InvalidTransitionError,
+    MissingJustificationError,
+    ReviewDecision,
+    SpecialistReviewAction,
+    UnauthorizedExecutionError,
+    WorkflowContext,
+    WorkflowError,
+    WorkflowService,
+)
+from .audit import (
+    AuditIntegrityError,
+    AuditLedger,
+    AuditRecord,
+    AuditTrailVerifier,
+    AuditVerificationResult,
+    GENESIS_HASH,
+    GENESIS_SEED,
+    canonical_json_dumps,
+    compute_sha256,
+)
 
 
 __version__ = "0.1.0"
@@ -500,6 +529,31 @@ __all__ = [
     "SynthesisMode",
     "ValidationStatus",
     "generate_template_brief",
+    "CaseEvent",
+    "CaseState",
+    "CaseStateMachine",
+    "DecisionContextDigest",
+    "ExecutionDetails",
+    "HumanReview",
+    "IneligibleOverrideError",
+    "InvalidReviewerCredentialsError",
+    "InvalidTransitionError",
+    "MissingJustificationError",
+    "ReviewDecision",
+    "SpecialistReviewAction",
+    "UnauthorizedExecutionError",
+    "WorkflowContext",
+    "WorkflowError",
+    "WorkflowService",
+    "AuditIntegrityError",
+    "AuditLedger",
+    "AuditRecord",
+    "AuditTrailVerifier",
+    "AuditVerificationResult",
+    "GENESIS_HASH",
+    "GENESIS_SEED",
+    "canonical_json_dumps",
+    "compute_sha256",
 ]
 
 
