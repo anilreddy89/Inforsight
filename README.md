@@ -146,7 +146,7 @@ An independent review after P2-07 identified three [claim-blocking limitations](
 
 > Detailed increments: [backlog](docs/backlog.md#phase-2r---modeling-foundation-remediation-gate) · [iteration ledger](docs/experiments/iteration-ledger.md) · [limitation register](docs/limitations.md)
 
-### 🚀 Phase 3 — Policy Conservation Decision Engine (Active)
+### 🚀 Phase 3 — Policy Conservation Decision Engine (Completed · Milestone `v0.3.0-decision-engine`)
 - Conservation domain contracts and action taxonomy ([ADR 0002](docs/adr/0002-separate-risk-from-action-eligibility.md))
 - Deterministic action eligibility rules engine (fail-closed business and regulatory filters)
 - Cost-utility and uplift optimization matrix (resource-constrained specialist triage)
@@ -154,12 +154,14 @@ An independent review after P2-07 identified three [claim-blocking limitations](
 - Model monitoring and drift detection architecture (PSI/CSI & rolling calibration tracking)
 - Bounded case intelligence assistant (deterministic template-first with grounded LLM layer)
 - Human-in-the-loop workflow and hash-chained audit trail engine
-- Counterfactual simulation and offline policy evaluation (OPE)
-- Interactive conservation intelligence dashboard (living demonstration)
+- Counterfactual simulation and offline policy evaluation (OPE: \$13,764 net value, 2.92x ROCS)
+- Interactive conservation intelligence dashboard (Streamlit living demonstration)
 - End-to-end system qualification and integration gate (Gates S1–S6 100% verified)
 
-### ⏳ Future phases (deferred to Phase 4)
-- Enterprise distributed infrastructure (Java/Spring microservices, Apache Kafka event streaming)
+> Detailed release notes: [v0.3.0-decision-engine](docs/release-notes/v0.3.0-decision-engine.md) · [qualification report](docs/experiments/phase-03-09-qualification-report.md) · [decision note](docs/experiments/phase-03-10-phase-3-decision-note.md)
+
+### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
+- Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)
 - Multi-region cloud infrastructure and container orchestration
 - Demographic fairness and bias assessment (requires real-world legal and demographic data)
 
