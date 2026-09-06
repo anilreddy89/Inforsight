@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "brief_id": "brf_20260905_002_llm",
+  "case_id": "case_20260905_002",
+  "policy_id": "pol_20815",
+  "as_of_date": "2026-09-01T00:00:00Z",
+  "generated_at": "2026-09-05T12:05:00Z",
+  "synthesis_mode": "LLM_AUGMENTED_GROUNDED",
+  "status": "PENDING_HUMAN_REVIEW",
+  "authorized_to_act": false,
+  "executive_summary": {
+    "headline": "Moderate Risk Account (Tier 2) With Long-Standing Loyalty Seeking Billing Flexibility",
+    "operational_urgency": "MEDIUM",
+    "narrative": "Policy pol_20815 represents a valued policyholder with 48 months of continuous tenure and zero prior payment lapses. A recent billing cycle adjustment caused a timing mismatch with premium due dates. The model estimates a calibrated lapse risk of 14.20% (Tier 2: Moderate Risk)."
+  },
+  "risk_assessment": {
+    "calibrated_probability": 0.1420,
+    "operational_tier": "Tier 2: Moderate Risk",
+    "top_risk_drivers": [
+      {
+        "feature_name": "billing_frequency_change",
+        "attribution": 0.18,
+        "display_text": "Recent switch from annual to quarterly billing"
+      }
+    ]
+  },
+  "factual_timeline": [
+    {
+      "occurred_at": "2022-08-15T00:00:00Z",
+      "event_type": "POLICY_ISSUED",
+      "summary": "Universal life policy issued with annual premium of $1200.00."
+    },
+    {
+      "occurred_at": "2026-07-01T00:00:00Z",
+      "event_type": "BILLING_FREQUENCY_CHANGED",
+      "summary": "Billing schedule modified to quarterly billing."
+    }
+  ],
+  "intervention_recommendations": {
+    "primary_action": "courtesy_reminder",
+    "uplift_quadrant": "PERSUADABLE",
+    "expected_net_utility": 182.40,
+    "talking_points": [
+      "Acknowledge and thank the policyholder for 4 years of relationship.",
+      "Highlight option to align quarterly billing with payday schedule."
+    ],
+    "alternative_actions": [
+      "abstain"
+    ]
+  },
+  "disqualified_actions": [
+    {
+      "action_id": "grace_period_consultation",
+      "reason_code": "DISQUALIFIED_GRACE_PERIOD_REQUIRED",
+      "description": "Policy is currently in active standing and not in grace period."
+    }
+  ],
+  "grounding_audit": {
+    "validation_status": "PASSED_WITH_REDACTION",
+    "verified_entity_count": 6,
+    "hallucination_detected": true,
+    "violations": [
+      "Redacted ungrounded claim regarding non-existent retirement rider."
+    ]
+  },
+  "disclaimer": "ADVISORY ONLY: This brief is generated for decision support under ADR 0002. Automated execution of conservation outreach is prohibited without prior human specialist authorization."
+}
+

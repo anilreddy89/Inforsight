@@ -79,7 +79,7 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P3-03 | Phase 3 — Conservation Decision Engine | Cost-utility and uplift optimization matrix (constrained resource allocation). | Completed | [#110](https://github.com/anilreddy89/Inforsight/issues/110) | [#111](https://github.com/anilreddy89/Inforsight/pull/111) | 2026-09-05 | `a1e97cb` | `simulator/src/inforsight_simulator/optimization/`, `simulator/tests/test_optimization.py` (9 tests pass), [phase document](../phase_docs/phase-03-03-cost-utility-and-uplift-optimization-matrix.md) | Merged in PR #111; 4-quadrant uplift, net expected utility, knapsack solver under specialist capacity caps, ADR 0002 compliance. Authorizes P3-05, P3-07, P3-08. |
 | P3-04 | Phase 3 — Conservation Decision Engine | Model serving and inference gateway (FastAPI, zero-dependency `BundledInferenceEngine`). | Completed | [#112](https://github.com/anilreddy89/Inforsight/issues/112) | [#113](https://github.com/anilreddy89/Inforsight/pull/113) | 2026-09-05 | `87a66f9` | `serving/`, Dockerfile, `serving/tests/test_gateway.py` (8 tests pass), [phase document](../phase_docs/phase-03-04-model-serving-and-inference-gateway.md) | Merged in PR #113; FastAPI REST service, reload bit-for-bit verified, sub-millisecond CPU scoring, strict ADR 0002 boundary markers (`authorized_to_act: false`). Authorizes P3-04A, P3-05, P3-07. |
 | P3-04A | Phase 3 — Conservation Decision Engine | Model monitoring and drift detection architecture (PSI/CSI, rolling calibration tracking). | Completed | [#114](https://github.com/anilreddy89/Inforsight/issues/114) | [#115](https://github.com/anilreddy89/Inforsight/pull/115) | 2026-09-05 | `920f943` | `serving/monitoring/`, `serving/tests/test_monitoring.py` (44 tests pass), `GET /v1/diagnostics` schema `1.0.0`, [phase document](../phase_docs/phase-03-04a-model-monitoring-and-drift-detection-architecture.md) | Merged in PR #115; PSI/CSI input drift with zero-proportion guard, rolling ECE (W=500, M=10) & BSS calibration tracking, latency telemetry ring-buffer, drift alert action matrix, ADR 0002 non-authority compliance. Authorizes P3-05, P3-07. |
-| P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | Pending | TBD | TBD | TBD | — | `simulator/assistant/`, case brief generator, grounding guards | Depends on P3-02, P3-03, P3-04, P3-04A. Blocks P3-06, P3-07. |
+| P3-05 | Phase 3 — Conservation Decision Engine | Bounded case intelligence assistant (deterministic template foundation, grounded LLM narrative). | In Progress | [#116](https://github.com/anilreddy89/Inforsight/issues/116) | Pending | 2026-09-05 | — | `simulator/src/inforsight_simulator/assistant/`, `data-contracts/conservation-case-brief.schema.json`, [phase document](../phase_docs/phase-03-05-bounded-case-intelligence-assistant.md) | In progress. Phase doc prepared. Implementing dual-layer briefing engine, grounding guard, ADR 0002 boundary enforcement. |
 | P3-06 | Phase 3 — Conservation Decision Engine | Human-in-the-loop workflow and hash-chained audit trail engine. | Pending | TBD | TBD | TBD | — | `simulator/workflow/`, audit logger, replay verification tool | Depends on P3-05. Blocks P3-07, P3-09. |
 | P3-07 | Phase 3 — Conservation Decision Engine | Interactive conservation intelligence dashboard (Streamlit living demonstration). | Pending | TBD | TBD | TBD | — | `dashboard/`, interactive UI, triage consoles | Depends on P3-03, P3-04, P3-04A, P3-05, P3-06, P3-08. Blocks P3-09. |
 | P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Pending | TBD | TBD | TBD | — | `scripts/run_offline_policy_evaluation.py`, counterfactual generator | Depends on P3-02, P3-03. Blocks P3-07, P3-09. |
@@ -112,12 +112,12 @@ In one sentence: Phase 2 is 100% complete and released, and Phase 3 is complete 
 | Implemented locally changes | 0 |
 | Planned changes | 0 |
 | Paused changes | 0 |
-| In-progress changes | 0 |
+| In-progress changes | 1 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 5 of 10 |
-| In-progress Phase 3 increments | 0 |
+| In-progress Phase 3 increments | 1 |
 | Active Phase | Phase 3 — Policy Conservation Decision Engine & Intervention Orchestration |
 | Active increment | Phase 3 P3-05 (Bounded case intelligence assistant) |
 | Next implementation increment | Phase 3 P3-05 (Bounded case intelligence assistant) |
