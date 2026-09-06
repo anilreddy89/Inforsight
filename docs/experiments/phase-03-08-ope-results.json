@@ -1,0 +1,314 @@
+{
+  "schema_version": "1.0.0",
+  "created_at": "2026-09-06T03:36:42.716261+00:00",
+  "evaluation_seed": 20280201,
+  "bootstrap_samples": 1000,
+  "cohort_size": 3600,
+  "specialist_capacity_hours": 50.0,
+  "budget_cap_usd": 5000.0,
+  "policy_metrics": {
+    "decision_engine": {
+      "policy_name": "decision_engine",
+      "cohort_size": 3600,
+      "total_lapses": 395.52,
+      "baseline_lapses": 407.1808,
+      "lapses_prevented": 11.6608,
+      "absolute_lift": 0.003239,
+      "relative_reduction_pct": 2.8638,
+      "total_spend_usd": 4707.5,
+      "gross_preserved_usd": 18471.93,
+      "net_preserved_usd": 13764.43,
+      "cost_per_conserved_policy_usd": 403.7,
+      "rocs": 2.9239,
+      "specialist_hours_used": 50.0,
+      "specialist_calls_count": 50,
+      "action_distribution": {
+        "abstain": 2967,
+        "payment_method_remediation": 583,
+        "specialist_phone_outreach": 50
+      }
+    },
+    "naive_ml": {
+      "policy_name": "naive_ml",
+      "cohort_size": 3600,
+      "total_lapses": 396.9005,
+      "baseline_lapses": 407.1808,
+      "lapses_prevented": 10.2802,
+      "absolute_lift": 0.002856,
+      "relative_reduction_pct": 2.5247,
+      "total_spend_usd": 5000.0,
+      "gross_preserved_usd": 4261.26,
+      "net_preserved_usd": -738.74,
+      "cost_per_conserved_policy_usd": 486.37,
+      "rocs": -0.1477,
+      "specialist_hours_used": 50.0,
+      "specialist_calls_count": 50,
+      "action_distribution": {
+        "abstain": 2850,
+        "payment_method_remediation": 700,
+        "specialist_phone_outreach": 50
+      }
+    },
+    "heuristic": {
+      "policy_name": "heuristic",
+      "cohort_size": 3600,
+      "total_lapses": 391.1969,
+      "baseline_lapses": 407.1808,
+      "lapses_prevented": 15.9839,
+      "absolute_lift": 0.00444,
+      "relative_reduction_pct": 3.9255,
+      "total_spend_usd": 5000.0,
+      "gross_preserved_usd": 12427.87,
+      "net_preserved_usd": 7427.87,
+      "cost_per_conserved_policy_usd": 312.81,
+      "rocs": 1.4856,
+      "specialist_hours_used": 50.0,
+      "specialist_calls_count": 50,
+      "action_distribution": {
+        "abstain": 2850,
+        "payment_method_remediation": 700,
+        "specialist_phone_outreach": 50
+      }
+    },
+    "random": {
+      "policy_name": "random",
+      "cohort_size": 3600,
+      "total_lapses": 392.5319,
+      "baseline_lapses": 407.1808,
+      "lapses_prevented": 14.6489,
+      "absolute_lift": 0.004069,
+      "relative_reduction_pct": 3.5976,
+      "total_spend_usd": 5000.0,
+      "gross_preserved_usd": 9844.59,
+      "net_preserved_usd": 4844.59,
+      "cost_per_conserved_policy_usd": 341.32,
+      "rocs": 0.9689,
+      "specialist_hours_used": 50.0,
+      "specialist_calls_count": 64,
+      "action_distribution": {
+        "payment_method_remediation": 654,
+        "abstain": 2232,
+        "courtesy_reminder": 650,
+        "grace_period_consultation": 28,
+        "specialist_phone_outreach": 36
+      }
+    },
+    "control": {
+      "policy_name": "control",
+      "cohort_size": 3600,
+      "total_lapses": 407.1808,
+      "baseline_lapses": 407.1808,
+      "lapses_prevented": 0.0,
+      "absolute_lift": 0.0,
+      "relative_reduction_pct": 0.0,
+      "total_spend_usd": 0.0,
+      "gross_preserved_usd": 0.0,
+      "net_preserved_usd": 0.0,
+      "cost_per_conserved_policy_usd": 0.0,
+      "rocs": 0.0,
+      "specialist_hours_used": 0.0,
+      "specialist_calls_count": 0,
+      "action_distribution": {
+        "abstain": 3600
+      }
+    }
+  },
+  "policy_intervals": {
+    "decision_engine": {
+      "net_preserved_usd": {
+        "median": 13779.863,
+        "ci_lower": 11938.7888,
+        "ci_upper": 15453.6435
+      },
+      "lapses_prevented": {
+        "median": 11.6729,
+        "ci_lower": 10.556,
+        "ci_upper": 12.7187
+      },
+      "rocs": {
+        "median": 2.937,
+        "ci_lower": 2.2842,
+        "ci_upper": 3.7654
+      },
+      "absolute_lift": {
+        "median": 0.0032,
+        "ci_lower": 0.0029,
+        "ci_upper": 0.0035
+      }
+    },
+    "naive_ml": {
+      "net_preserved_usd": {
+        "median": -749.8025,
+        "ci_lower": -1823.5682,
+        "ci_upper": 208.9517
+      },
+      "lapses_prevented": {
+        "median": 10.2807,
+        "ci_lower": 9.4058,
+        "ci_upper": 11.2619
+      },
+      "rocs": {
+        "median": -0.1487,
+        "ci_lower": -0.3106,
+        "ci_upper": 0.0505
+      },
+      "absolute_lift": {
+        "median": 0.0029,
+        "ci_lower": 0.0026,
+        "ci_upper": 0.0031
+      }
+    },
+    "heuristic": {
+      "net_preserved_usd": {
+        "median": 7395.1532,
+        "ci_lower": 6161.1917,
+        "ci_upper": 8862.7103
+      },
+      "lapses_prevented": {
+        "median": 15.959,
+        "ci_lower": 14.6694,
+        "ci_upper": 17.3167
+      },
+      "rocs": {
+        "median": 1.476,
+        "ci_lower": 1.1103,
+        "ci_upper": 2.0269
+      },
+      "absolute_lift": {
+        "median": 0.0044,
+        "ci_lower": 0.0041,
+        "ci_upper": 0.0048
+      }
+    },
+    "random": {
+      "net_preserved_usd": {
+        "median": 4829.7147,
+        "ci_lower": 3765.8063,
+        "ci_upper": 5921.6576
+      },
+      "lapses_prevented": {
+        "median": 14.7022,
+        "ci_lower": 13.6,
+        "ci_upper": 15.7903
+      },
+      "rocs": {
+        "median": 0.9649,
+        "ci_lower": 0.6806,
+        "ci_upper": 1.3254
+      },
+      "absolute_lift": {
+        "median": 0.0041,
+        "ci_lower": 0.0038,
+        "ci_upper": 0.0044
+      }
+    },
+    "control": {
+      "net_preserved_usd": {
+        "median": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0
+      },
+      "lapses_prevented": {
+        "median": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0
+      },
+      "rocs": {
+        "median": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0
+      },
+      "absolute_lift": {
+        "median": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0
+      }
+    }
+  },
+  "pairwise_contrasts": {
+    "naive_ml": {
+      "competitor_name": "naive_ml",
+      "delta_net_preserved_usd": {
+        "median": 14493.9993,
+        "ci_lower": 12640.4818,
+        "ci_upper": 16451.3167
+      },
+      "delta_lapses_prevented": {
+        "median": 1.3834,
+        "ci_lower": -0.0763,
+        "ci_upper": 2.6599
+      },
+      "delta_rocs": {
+        "median": 3.091,
+        "ci_lower": 2.3882,
+        "ci_upper": 3.9179
+      },
+      "p_value_superiority": 0.0
+    },
+    "heuristic": {
+      "competitor_name": "heuristic",
+      "delta_net_preserved_usd": {
+        "median": 6374.469,
+        "ci_lower": 4710.2192,
+        "ci_upper": 8039.8001
+      },
+      "delta_lapses_prevented": {
+        "median": -4.328,
+        "ci_lower": -5.7556,
+        "ci_upper": -2.9018
+      },
+      "delta_rocs": {
+        "median": 1.4609,
+        "ci_lower": 0.6667,
+        "ci_upper": 2.3727
+      },
+      "p_value_superiority": 0.0
+    },
+    "random": {
+      "competitor_name": "random",
+      "delta_net_preserved_usd": {
+        "median": 8907.4363,
+        "ci_lower": 7195.4884,
+        "ci_upper": 10645.0682
+      },
+      "delta_lapses_prevented": {
+        "median": -2.9854,
+        "ci_lower": -4.4922,
+        "ci_upper": -1.6144
+      },
+      "delta_rocs": {
+        "median": 1.9689,
+        "ci_lower": 1.2339,
+        "ci_upper": 2.7914
+      },
+      "p_value_superiority": 0.0
+    },
+    "control": {
+      "competitor_name": "control",
+      "delta_net_preserved_usd": {
+        "median": 13779.863,
+        "ci_lower": 11938.7888,
+        "ci_upper": 15453.6435
+      },
+      "delta_lapses_prevented": {
+        "median": 11.6729,
+        "ci_lower": 10.556,
+        "ci_upper": 12.7187
+      },
+      "delta_rocs": {
+        "median": 2.937,
+        "ci_lower": 2.2842,
+        "ci_upper": 3.7654
+      },
+      "p_value_superiority": 0.0
+    }
+  },
+  "verifications": {
+    "decision_engine_superior_to_naive_ml": true,
+    "decision_engine_superior_to_heuristic": true,
+    "specialist_capacity_adherence": true,
+    "hazard_bound_verified": true,
+    "zero_future_leakage_verified": true
+  },
+  "manifest_digest": "b77a5513fd97551debaca710eb1ed7c5fc7e49ff7187a1ff6fac5a97160f698c"
+}
