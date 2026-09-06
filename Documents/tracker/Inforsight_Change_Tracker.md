@@ -85,12 +85,19 @@ Current release milestone: [**v0.3.0-decision-engine**](https://github.com/anilr
 | P3-08 | Phase 3 — Conservation Decision Engine | Counterfactual simulation and offline policy evaluation (OPE). | Completed | [#122](https://github.com/anilreddy89/Inforsight/issues/122) | [#123](https://github.com/anilreddy89/Inforsight/pull/123) | 2026-09-05 | `55f0415` | `simulator/src/inforsight_simulator/counterfactual/`, `scripts/run_offline_policy_evaluation.py`, `docs/experiments/phase-03-08-ope-*`, 11 focused tests pass, [phase document](../phase_docs/phase-03-08-counterfactual-simulation-and-offline-policy-evaluation.md) | Merged in PR #123; extends v6 bounded hazard link with synthetic treatment response; Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs. Authorizes P3-09. |
 | P3-09 | Phase 3 — Conservation Decision Engine | End-to-end system qualification and integration gate (Gates S1–S6). | Completed | [#124](https://github.com/anilreddy89/Inforsight/issues/124) | [#125](https://github.com/anilreddy89/Inforsight/pull/125) | 2026-09-06 | `ae34848` | `simulator/src/inforsight_simulator/qualification/`, `scripts/run_phase_03_qualification.py`, `docs/experiments/phase-03-09-qualification-*`, [phase document](../phase_docs/phase-03-09-end-to-end-system-qualification-and-integration-gate.md) | Merged in PR #125; implemented qualification package, 7 unit/integration tests passing, CLI runner, and executed 1,000-policy test cohort passing 100% of Gates S1–S6 (Digest: 209a4c1f2b3fee5a551d724e5841cf857abecd3c669f797f17f130deaaf62d90). Authorizes P3-10. |
 | P3-10 | Phase 3 — Conservation Decision Engine | Milestone release marker and release notes (`v0.3.0-decision-engine`). | Completed | [#126](https://github.com/anilreddy89/Inforsight/issues/126) | [#127](https://github.com/anilreddy89/Inforsight/pull/127) | 2026-09-06 | `dabc95b` | `docs/release-notes/v0.3.0-decision-engine.md`, `docs/experiments/phase-03-10-phase-3-decision-note.md`, tag `v0.3.0-decision-engine`, [phase document](../phase_docs/phase-03-10-milestone-release-marker-and-notes.md) | Merged in PR #127; comprehensive dual-audience release notes, formal Phase 3 Decision Note (RELEASE), prepared release tag `v0.3.0-decision-engine`, closes Milestone #4. Unblocks Phase 4. |
+| P4-01 | Phase 4 — Enterprise Integration & Scale | Enterprise distributed architecture inception and ADR 0014. | Planned | TBD | TBD | TBD | TBD | `docs/adr/0014-enterprise-distributed-architecture.md`, gRPC / OpenAPI contracts, Docker Compose baseline | Author ADR 0014, define service boundaries (Python inference vs. Java control plane vs. Kafka streaming), establish sub-millisecond RPC contracts and ADR 0002 isolation. Blocks P4-02, P4-03. |
+| P4-02 | Phase 4 — Enterprise Integration & Scale | Apache Kafka streaming ingress and event contracts. | Planned | TBD | TBD | TBD | TBD | `data-contracts/streaming/`, Kafka producers/consumers, DLQ engine | Transition from batch JSONL to real-time bitemporal streaming event topics; enforce deduplication, schema validation, and DLQ. Blocks P4-03. |
+| P4-03 | Phase 4 — Enterprise Integration & Scale | Java 21 / Spring Boot control plane microservice. | Planned | TBD | TBD | TBD | TBD | `services/control-plane/`, Spring Boot 3 app, Virtual Threads, rules engine port | Port deterministic eligibility rules and knapsack uplift solver to Java; gRPC integration with Python inference; high-concurrency Virtual Threads. Blocks P4-04, P4-05. |
+| P4-04 | Phase 4 — Enterprise Integration & Scale | Enterprise persistence layer and cryptographic audit store. | Planned | TBD | TBD | TBD | TBD | Flyway migrations, PostgreSQL schema, cryptographic audit store | Relational persistence for cases and queues; append-only SHA-256 hash-chained audit store with KMS signing interface. Blocks P4-06. |
+| P4-05 | Phase 4 — Enterprise Integration & Scale | Enterprise CRM and contact center connectors. | Planned | TBD | TBD | TBD | TBD | `services/control-plane/connectors/`, Salesforce FSC & Genesys/Twilio adapters | Bi-directional CRM task queuing and telephony dialer sync with strict cooldown guardrails and `authorized_to_act: false` enforcement. Blocks P4-06. |
+| P4-06 | Phase 4 — Enterprise Integration & Scale | Cloud infrastructure, Helm charts, and container orchestration. | Planned | TBD | TBD | TBD | TBD | `infra/docker/`, `infra/helm/inforsight`, `infra/docker-compose.yml` | Multi-stage Docker containerization, Kubernetes Helm charts with HPA, unified one-command local Docker Compose orchestration. Blocks P4-07. |
+| P4-07 | Phase 4 — Enterprise Integration & Scale | Enterprise scale qualification and release (`v0.4.0-enterprise-scale`). | Planned | TBD | TBD | TBD | TBD | `docs/release-notes/v0.4.0-enterprise-scale.md`, `docs/experiments/phase-04-qualification-*`, tag `v0.4.0-enterprise-scale` | Execute 100,000-policy distributed stress test; pass Enterprise Performance Gates E1–E6; release marker and close Milestone #5. |
 
 ## Current summary
 
 ### High-level achievement summary
 
-Inforsight successfully completed Phase 2 (Baseline ML) and is actively executing Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration):
+Inforsight successfully completed Phase 2 (Baseline ML) and Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration):
 
 1. The simulator creates deterministic fictional insurance-policy histories containing billing, payment, notice, service, lapse, and surrender events.
 2. The Generation v6 bounded sigmoid hazard architecture broke the Proportional Hazards Trilemma, generating authentic behavioral signal while keeping monthly hazard bounded ($\le 0.15 < 0.20$).
@@ -109,14 +116,15 @@ Inforsight successfully completed Phase 2 (Baseline ML) and is actively executin
 15. Phase 3-08 is complete and merged to main in PR #123 (commit `55f0415`); counterfactual simulation engine and offline policy evaluation pass 11/11 tests, showing statistically significant Decision Engine superiority ($13,764 Net Preserved Value, 2.92x ROCS, p < 0.0001) over Naive ML and Heuristic baselines across 1,000 bootstrap resamples.
 16. Phase 3-09 is complete and merged to main in PR #125 (commit `ae34848`); 6 qualification gates S1–S6 evaluated across 1,000 policies with 100% pass rate and canonical digest `209a4c1f2b3fee5a551d724e5841cf857abecd3c669f797f17f130deaaf62d90`.
 17. Phase 3-10 is complete and merged to main in PR #127 (commit `dabc95b`); milestone release notes (`docs/release-notes/v0.3.0-decision-engine.md`), Phase 3 decision note (`docs/experiments/phase-03-10-phase-3-decision-note.md`), and tag `v0.3.0-decision-engine` formally close Milestone #4.
+18. Phase 4 roadmap established with 7 planned engineering increments (P4-01 through P4-07) for Milestone #5 (`v0.4.0-enterprise-scale`).
 
-In one sentence: Phase 2 is 100% complete and released, and Phase 3 is 100% complete and released under milestone v0.3.0-decision-engine unblocking Phase 4.
+In one sentence: Phase 2 and Phase 3 are 100% complete and released; Phase 4 (Enterprise Integration & Scale) is now planned and unblocked.
 
 | Measure | Value |
 | --- | --- |
 | Completed tracked changes | 55 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11) |
 | Implemented locally changes | 0 |
-| Planned changes | 0 |
+| Planned changes | 7 (P4-01 through P4-07) |
 | Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
@@ -124,7 +132,7 @@ In one sentence: Phase 2 is 100% complete and released, and Phase 3 is 100% comp
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
-| Active Phase | Phase 4 — Enterprise Distributed Infrastructure & Cloud Scale (Roadmap) |
+| Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
 | Active increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
 | Next implementation increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
 

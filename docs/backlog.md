@@ -725,9 +725,207 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 ---
 
+## Phase 4 - Enterprise Integration & Scale
+
+Phase 4 transitions Inforsight from a verified local mathematical decision engine into an enterprise-ready distributed platform. Operating under [**ADR 0003**](adr/0003-start-local-and-defer-distributed-infrastructure.md), all enterprise distributed infrastructure, multi-language microservices, and cloud deployments were deferred until the mathematical formulation and local decision-intelligence layers passed full system qualification.
+
+With the Capstone Milestone `v0.3.0-decision-engine` certified with 100% passing gates (S1–S6), Phase 4 executes the productionization roadmap across 7 governed increments. Assign every P4-01 through P4-07 issue to GitHub Milestone #5 (**`v0.4.0-enterprise-scale`**).
+
+### Dependency and execution flow
+
+```text
+P4-01 (Architecture Inception & ADR 0014)
+  ├──> P4-02 (Apache Kafka Streaming Ingress & Contracts)
+  │      └──> P4-03 (Java 21 / Spring Boot Control Plane)
+  │             ├──> P4-04 (Persistence Layer & Cryptographic Audit Store)
+  │             └──> P4-05 (Enterprise Connectors: CRM & Telephony)
+  │                    └──> P4-06 (Cloud Infrastructure & Container Orchestration)
+  │                           └──> P4-07 (End-to-End Enterprise Scale Qualification & Release v0.4.0)
+```
+
+---
+
+### P4-01 - Enterprise distributed architecture inception and ADR 0014
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Status:** Planned (Next active increment).
+
+**Outcome:** Reviewed Architecture Decision Record (ADR 0014) and interface contracts define microservice decomposition, inter-service protocols, and runtime isolation before distributed code is written.
+
+**Scope:**
+- Author [ADR 0014: Enterprise Distributed Architecture & Microservice Decomposition](adr/0014-enterprise-distributed-architecture.md).
+- Define service boundaries:
+  - **Inference Runtime:** Python/FastAPI `BundledInferenceEngine` container providing low-latency, zero-dependency scoring via gRPC/REST.
+  - **Control Plane:** Java 21 / Spring Boot 3 enterprise service orchestrating queues, deterministic eligibility rules, and knapsack optimization.
+  - **Streaming Gateway:** Apache Kafka cluster managing bitemporal event topics.
+- Formalize gRPC and OpenAPI contracts between control plane and inference engine.
+- Define developer environment specification (Docker Compose baseline).
+
+**Acceptance checks:**
+- [ ] ADR 0014 documents context, alternatives (monolith vs. microservices, REST vs. gRPC), tradeoffs, and security boundaries.
+- [ ] Sub-millisecond scoring SLA ($\le 5\text{ms}$ RPC roundtrip) contractually established.
+- [ ] ADR 0002 authority isolation invariants (`authorized_to_act: false`) explicitly codified in inter-service schemas.
+- [ ] Docker Compose topology scaffold passes local validation.
+
+**Blocks:** P4-02, P4-03.
+
+---
+
+### P4-02 - Apache Kafka streaming ingress and event contracts
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Outcome:** High-throughput streaming event ingress replaces static JSONL batch playback, supporting real-time bitemporal policy event streams with schema validation and dead-letter queues.
+
+**Scope:**
+- Create versioned streaming contracts in `data-contracts/streaming/` (JSON Schema / Avro):
+  - `policy-lifecycle-events`: Issuance, status transitions, endorsements.
+  - `billing-payment-events`: Invoices, debit attempts, NSF returns, retries.
+  - `customer-service-events`: Inquiries, notices, disputes, preference updates.
+- Implement Kafka producers and consumers in streaming ingress module.
+- Enforce strict point-in-time ordering, event deduplication by `(event_id, idempotency_key)`, and poison-pill Dead Letter Queue (DLQ).
+- Implement local Kafka test harness using Testcontainers.
+
+**Acceptance checks:**
+- [ ] Streaming consumer handles out-of-order ingestion while preserving point-in-time state invariants.
+- [ ] Malformed or unversioned event payloads route to DLQ without crashing the consumer.
+- [ ] End-to-end integration tests process 10,000 streaming events with zero data loss or state corruption.
+- [ ] Unit and container integration tests pass.
+
+**Depends on:** P4-01. **Blocks:** P4-03.
+
+---
+
+### P4-03 - Java 21 / Spring Boot control plane microservice
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Outcome:** Production-grade Java 21 / Spring Boot microservice hosts the deterministic eligibility rules engine, knapsack uplift optimizer, and case triage queues with high concurrency.
+
+**Scope:**
+- Scaffold `services/control-plane/` using Spring Boot 3, Java 21, and Virtual Threads (Project Loom).
+- Port deterministic action eligibility rules engine (ADR 0002) and knapsack uplift optimizer to Java:
+  - Strict parity validation with Python `simulator/rules/` and `simulator/optimization/`.
+- Implement gRPC/REST client invoking Python `BundledInferenceEngine` for risk scoring and attribution.
+- Expose enterprise control-plane endpoints:
+  - `POST /api/v1/cases/triage`: Executes batch intake, scoring, filtering, and knapsack allocation.
+  - `GET /api/v1/cases/{id}`: Returns structured Case Brief with grounding verification.
+  - `POST /api/v1/cases/{id}/decision`: Records licensed caseworker authorization sign-off.
+- Implement resilience patterns: circuit breaker, rate limiting, and retry policies.
+
+**Acceptance checks:**
+- [ ] Java rules engine produces 100% identical eligibility decisions to Python implementation on canonical fixture.
+- [ ] Java knapsack solver matches Python net-utility optimization allocation bit-for-bit.
+- [ ] Project Loom virtual threads demonstrate handling 1,000 concurrent case triage requests without thread pool exhaustion.
+- [ ] Service integration tests pass using Testcontainers.
+
+**Depends on:** P4-01, P4-02. **Blocks:** P4-04, P4-05.
+
+---
+
+### P4-04 - Enterprise persistence layer and cryptographic audit store
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Outcome:** Robust relational persistence and immutable cryptographic audit ledger storage supporting high-concurrency caseworker operations and compliance verification.
+
+**Scope:**
+- Implement PostgreSQL persistence layer with Flyway schema migrations:
+  - Relational tables for policy snapshots, active triage queues, and case states.
+- Implement immutable append-only audit store with SHA-256 cryptographic hash chaining (`parent_hash` $\to$ `current_hash`).
+- Add hardware/cloud KMS key signing interface for tamper-proof compliance certification.
+- Implement automated verification query detecting ledger tampering, deletions, or reordering.
+
+**Acceptance checks:**
+- [ ] Flyway migrations execute cleanly and rollback idempotently.
+- [ ] Audit ledger cryptographic integrity verification detects 100% of injected mutations or row deletions.
+- [ ] ACID transaction boundaries guarantee no case decision is recorded without corresponding audit ledger commit.
+- [ ] Database integration tests pass.
+
+**Depends on:** P4-03. **Blocks:** P4-06.
+
+---
+
+### P4-05 - Enterprise CRM and contact center connectors
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Outcome:** Bi-directional integration adapters connect Inforsight to enterprise customer relationship management (CRM) and contact center telephony platforms.
+
+**Scope:**
+- Implement CRM connector framework in `services/control-plane/connectors/`:
+  - **Salesforce Financial Services Cloud (FSC) Adapter:** Syncs prioritized cases to caseworker task queues and captures customer interaction outcomes.
+  - **Genesys Cloud / Twilio Dialer Adapter:** Formats specialist outreach batches for agent dialers with contact cooling-off guardrails.
+- Enforce strict ADR 0002 boundary: connector payloads explicitly mandate `authorized_to_act: false` until human caseworker clicks approve.
+- Provide webhook ingress for asynchronous outreach disposition callbacks (e.g. `PROMISE_TO_PAY`, `PAYMENT_RESOLVED`, `UNREACHABLE`).
+
+**Acceptance checks:**
+- [ ] Connector mocks verify bi-directional payload mapping and retry on upstream 5xx errors.
+- [ ] Cooldown compliance invariants reject outreach to policyholders contacted within the prior 30 days.
+- [ ] Unauthorized automated dispatch attempts fail at the connector boundary.
+- [ ] Unit and mock server integration tests pass.
+
+**Depends on:** P4-03. **Blocks:** P4-06.
+
+---
+
+### P4-06 - Cloud infrastructure, Helm charts, and container orchestration
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Outcome:** Production containerization, Kubernetes deployment manifests, and Helm charts enable reliable, scalable cloud deployment (AWS/GCP/local).
+
+**Scope:**
+- Multi-stage minimal Dockerfiles for:
+  - Python inference gateway (`infra/docker/Dockerfile.inference`).
+  - Java control plane microservice (`infra/docker/Dockerfile.control-plane`).
+- Build comprehensive Helm chart `infra/helm/inforsight`:
+  - Deployments, Services, ConfigMaps, Secrets, and Ingress routing.
+  - Horizontal Pod Autoscaler (HPA) based on CPU/memory and queue depth.
+  - Readiness, liveness, and startup health probes.
+- Provide unified local development stack via Docker Compose (`infra/docker-compose.yml`) spinning up Kafka, PostgreSQL, Python Inference, and Java Control Plane.
+
+**Acceptance checks:**
+- [ ] Container images build cleanly with zero high/critical CVE vulnerabilities.
+- [ ] Helm lint and dry-run validation pass cleanly.
+- [ ] Local Docker Compose stack launches with a single command and passes end-to-end health checks.
+- [ ] HPA configuration scales pods under synthetic load.
+
+**Depends on:** P4-04, P4-05. **Blocks:** P4-07.
+
+---
+
+### P4-07 - Enterprise scale qualification and release (v0.4.0-enterprise-scale)
+
+**Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Outcome:** Formal distributed system qualification under high-volume synthetic load, verification of Enterprise Performance Gates (E1–E6), and milestone release closeout.
+
+**Scope:**
+- Execute distributed stress qualification runner on 100,000 synthetic policies across Kafka streaming cluster.
+- Pre-register and verify Enterprise Performance Gates:
+  - **Gate E1 (Streaming Ingestion Throughput):** $\ge 5,000\text{ events/sec}$ with zero drop rate.
+  - **Gate E2 (End-to-End Latency SLA):** Event ingress to scored case brief $P_{99} \le 50.0\text{ms}$.
+  - **Gate E3 (Authority Isolation):** 100% rejection of unapproved outreach in enterprise connectors.
+  - **Gate E4 (Audit Ledger Immutability):** 100% tamper detection across distributed database nodes.
+  - **Gate E5 (Fault Tolerance & Recovery):** Zero data loss during simulated worker pod kill / restart.
+  - **Gate E6 (Reproducibility & Parity):** Bit-for-bit decision and allocation parity between Java and Python runtimes.
+- Author milestone release documentation: `docs/release-notes/v0.4.0-enterprise-scale.md`.
+- Prepare annotated Git release tag `v0.4.0-enterprise-scale` and close GitHub Milestone #5.
+
+**Acceptance checks:**
+- [ ] All 6 Enterprise Performance Gates (E1–E6) pass 100%.
+- [ ] Enterprise Qualification Report and cryptographic manifest published.
+- [ ] Release notes document deployment topologies, scaling benchmarks, and operator guides.
+- [ ] Milestone #5 reaches 100% completion on GitHub.
+
+**Depends on:** P4-06. **Blocks:** Future Phase 5 initiatives.
+
+---
+
 ## Deferred intentionally
 
-- **Enterprise Distributed Infrastructure (Phase 4):** Java/Spring microservices, Apache Kafka event streaming, Cloud deployment (AWS/GCP), multi-region active-active persistence, and container orchestration (Kubernetes) remain intentionally deferred until the core decision intelligence contracts and workflows are validated locally under [ADR 0003](adr/0003-start-local-and-defer-distributed-infrastructure.md).
-- **Richer Lifecycle Contracts:** Issue age, face amount, acquisition channel, recurring exposure, payment retries, reinstatement, maturity, policy loans, cash surrender value, address updates, and prior conservation attempts will be incorporated when storage and servicing integrations demand them.
-- **Fairness and Demographic Bias Assessment:** Open a separately governed fairness assessment only when a defined legal jurisdiction, legitimate privacy-reviewed subgroup attributes, regulatory compliance mandate, and adequate sample sizes are available. Do not invent synthetic demographic proxy variables or claim bias mitigation without representative data.
-- **Enterprise Storage & SQL Persistence:** Dedicated SQL/relational schemas and database migrations remain deferred until enterprise storage consumers require persistence beyond event-first JSONL and hash-chained audit ledgers.
+- **Direct Causal Uplift ML Models (Phase 5):** Direct causal estimators (Causal Forests, X-Learners, or Double Machine Learning) predicting treatment effects $\tau_i = \mathbb{E}[Y(1) - Y(0) \mid X_i]$ directly from experimental intervention histories remain deferred until real-world intervention outcome datasets are connected.
+- **Richer Lifecycle Contracts:** Issue age, face amount, acquisition channel, recurring multi-year exposure, reinstatement, policy loans, and cash surrender values will be incorporated as enterprise Policy Administration System (PAS) connectors require them.
+- **Fairness and Demographic Bias Assessment:** A separately governed fairness assessment requires real-world demographic and regulatory compliance benchmarks. We strictly avoid inventing synthetic proxy variables or claiming demographic parity without representative data.
