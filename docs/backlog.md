@@ -569,14 +569,14 @@ P3-01 (Domain Contracts & Action Taxonomy)
   - **Mandatory Disclaimer:** Draft status clearly displayed (`status: PENDING_HUMAN_REVIEW`).
 
 **Acceptance checks:**
-- [ ] Layer 1 deterministic template produces 100% reproducible, testable briefs with zero hallucination.
-- [ ] Layer 2 LLM post-processing validator rejects or redacts ungrounded entities not present in event history.
-- [ ] Disqualified actions never appear as recommended interventions in the brief.
-- [ ] Brief outputs clearly state advisory status and prohibit automated outreach execution.
-- [ ] Factual grounding verification tests pass on representative synthetic cases.
-- [ ] Unit tests and `make check` pass.
+- [x] Layer 1 deterministic template produces 100% reproducible, testable briefs with zero hallucination.
+- [x] Layer 2 LLM post-processing validator rejects or redacts ungrounded entities not present in event history.
+- [x] Disqualified actions never appear as recommended interventions in the brief.
+- [x] Brief outputs clearly state advisory status and prohibit automated outreach execution.
+- [x] Factual grounding verification tests pass on representative synthetic cases.
+- [x] Unit tests and `make check` pass.
 
-**Depends on:** P3-02, P3-03, P3-04, P3-04A. **Blocks:** P3-06, P3-07.
+**Depends on:** P3-02, P3-03, P3-04, P3-04A. **Blocks:** None (P3-06, P3-07 unblocked).
 
 ---
 

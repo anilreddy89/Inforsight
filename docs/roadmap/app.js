@@ -491,13 +491,13 @@ const timelineData = [
       {
         id: "P3-05",
         title: "Bounded Case Intelligence Assistant",
-        status: "Pending",
-        commit: "Pending",
+        status: "Completed",
+        commit: "39c35c0",
         summary: {
           tech: "Evidence-assembly assistant synthesizing structured Case Briefs using a deterministic template engine as core foundation, augmented by an optional grounded LLM narrative layer with automated grounding validators that reject ungrounded entities.",
           simple: "Specialist Dossier Assistant: Generates a clear, one-page case brief for customer service specialists explaining why a policy is at risk, summarizing payment history, and suggesting talking points. Guaranteed zero hallucinations via strict factual grounding guards."
         },
-        checks: "simulator/assistant/ briefing engine; deterministic templates; LLM grounding validator; draft advisory status marker; blocks P3-06, P3-07."
+        checks: "Issue #116 closed by PR #117 (39c35c0); data-contracts/conservation-case-brief.schema.json; simulator/src/inforsight_simulator/assistant/ briefing engine; 10/10 test_assistant.py passing; 10/10 test_conservation_contracts.py passing; Layer 1 deterministic templates; Layer 2 grounded narrative; Grounding Guard post-processing validator; fail-closed fallback; ADR 0002 advisory status marker; unblocks P3-06, P3-07."
       },
       {
         id: "P3-06",
