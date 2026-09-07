@@ -1,0 +1,822 @@
+{
+  "fixture_version": "1.0.0",
+  "scope": "adapter-level fictional fixtures; runtime assertions belong to RH-01I",
+  "cases": [
+    {
+      "id": "future_effective",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "future",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-25T00:00:00Z",
+          "ingested_at": "2026-01-05T00:00:00Z",
+          "occurred_at": "2026-01-25T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "status": "active",
+        "in_grace_period": false,
+        "days_in_grace": 0
+      }
+    },
+    {
+      "id": "delayed_ingestion",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "late",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-25T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "status": "active"
+      }
+    },
+    {
+      "id": "ingestion_boundary",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-25T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "late",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-25T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued",
+          "late"
+        ],
+        "status": "grace_period",
+        "days_in_grace": 15
+      }
+    },
+    {
+      "id": "both_equal",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "equal",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-20T00:00:00Z",
+          "ingested_at": "2026-01-20T00:00:00Z",
+          "occurred_at": "2026-01-20T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued",
+          "equal"
+        ],
+        "status": "grace_period",
+        "days_in_grace": 0
+      }
+    },
+    {
+      "id": "shuffled",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "reentry",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-18T00:00:00Z",
+          "ingested_at": "2026-01-18T00:00:00Z",
+          "occurred_at": "2026-01-18T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "exit",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-15T00:00:00Z",
+          "ingested_at": "2026-01-15T00:00:00Z",
+          "occurred_at": "2026-01-15T00:00:00Z",
+          "payload": {
+            "previous_status": "grace_period",
+            "new_status": "active",
+            "reason": "payment_current"
+          }
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "entry",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-10T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued",
+          "entry",
+          "exit",
+          "reentry"
+        ],
+        "status": "grace_period",
+        "days_in_grace": 2
+      },
+      "identity_relation": "same as sorted events"
+    },
+    {
+      "id": "grace_exit",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "entry",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-10T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "exit",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-15T00:00:00Z",
+          "ingested_at": "2026-01-15T00:00:00Z",
+          "occurred_at": "2026-01-15T00:00:00Z",
+          "payload": {
+            "previous_status": "grace_period",
+            "new_status": "active",
+            "reason": "payment_current"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued",
+          "entry",
+          "exit"
+        ],
+        "status": "active",
+        "days_in_grace": 0,
+        "grace_entered_at": null
+      }
+    },
+    {
+      "id": "unclipped_tenure",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "tenure_days": 2211,
+        "premium_amount_cents": 10000,
+        "annual_premium_cents": 120000
+      },
+      "model_expectation": {
+        "coefficient_transformed_tenure_days": 5.0
+      }
+    },
+    {
+      "id": "billing_monthly",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10001,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "premium_amount_cents": 10001,
+        "annual_premium_cents": 120012,
+        "billing_frequency": "monthly"
+      }
+    },
+    {
+      "id": "billing_quarterly",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "quarterly",
+            "premium_amount_cents": 30002,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "premium_amount_cents": 30002,
+        "annual_premium_cents": 120008,
+        "billing_frequency": "quarterly"
+      }
+    },
+    {
+      "id": "billing_semiannual",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "semiannual",
+            "premium_amount_cents": 60003,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "premium_amount_cents": 60003,
+        "annual_premium_cents": 120006,
+        "billing_frequency": "semiannual"
+      }
+    },
+    {
+      "id": "billing_annual",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "annual",
+            "premium_amount_cents": 120005,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "premium_amount_cents": 120005,
+        "annual_premium_cents": 120005,
+        "billing_frequency": "annual"
+      }
+    },
+    {
+      "id": "v6_unknown",
+      "source_profile": "v6-policy-events/6.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "6.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_type": "fictional_term_life"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "status": "unknown",
+        "in_grace_period": null,
+        "days_in_grace": null,
+        "days_past_due": null,
+        "coverage_amount_cents": null,
+        "total_premiums_paid_cents": null,
+        "all_safety_fields": null
+      }
+    },
+    {
+      "id": "invisible_payload",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "future",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-25T00:00:00Z",
+          "ingested_at": "2026-01-05T00:00:00Z",
+          "occurred_at": "2026-01-25T00:00:00Z",
+          "payload": {
+            "broken": true
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "status": "active"
+      },
+      "identity_relation": "same as issuance alone at same cutoff",
+      "consumer_assertion": "snapshot, dossier, rules context, narrative context, workflow context and valuation inputs unchanged"
+    },
+    {
+      "id": "duplicate_visible",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "error": "DUPLICATE_EVENT"
+      }
+    },
+    {
+      "id": "ambiguous_status",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "entry",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-10T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "other",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-10T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "surrendered",
+            "reason": "payment_current"
+          }
+        }
+      ],
+      "expected": {
+        "error": "AMBIGUOUS_STATUS"
+      }
+    },
+    {
+      "id": "legacy_dual_time_difference",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        },
+        {
+          "schema_version": "1.0.0",
+          "event_id": "late",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-25T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "visible_ids": [
+          "issued"
+        ],
+        "status": "active"
+      },
+      "legacy_api_expected": {
+        "status": "grace_period"
+      }
+    },
+    {
+      "id": "catalog_mismatch",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "error": "INCOMPATIBLE_CONTRACT"
+      },
+      "catalog_version": "99.0.0"
+    },
+    {
+      "id": "preissuance",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2026-01-25T00:00:00Z",
+          "ingested_at": "2026-01-25T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2026-01-25T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "result": null,
+        "visible_ids": []
+      }
+    },
+    {
+      "id": "missing_issuance",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "entry",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.status_changed",
+          "effective_at": "2026-01-10T00:00:00Z",
+          "ingested_at": "2026-01-10T00:00:00Z",
+          "occurred_at": "2026-01-10T00:00:00Z",
+          "payload": {
+            "previous_status": "active",
+            "new_status": "grace_period",
+            "reason": "payment_overdue"
+          }
+        }
+      ],
+      "expected": {
+        "error": "MISSING_ISSUANCE"
+      }
+    },
+    {
+      "id": "preprocessing_mismatch",
+      "source_profile": "legacy-policy-events/1.0.0",
+      "policy_id": "fictional-policy",
+      "as_of": "2026-01-20T00:00:00Z",
+      "events": [
+        {
+          "schema_version": "1.0.0",
+          "event_id": "issued",
+          "policy_id": "fictional-policy",
+          "event_type": "policy.issued",
+          "effective_at": "2020-01-01T00:00:00Z",
+          "ingested_at": "2020-01-01T00:00:00Z",
+          "payload": {
+            "billing_frequency": "monthly",
+            "premium_amount_cents": 10000,
+            "currency": "USD",
+            "product_variant": "fictional_term_life",
+            "initial_status": "active"
+          },
+          "occurred_at": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "adapter_error": "INCOMPATIBLE_CONTRACT"
+      },
+      "preprocessing_profile": "unknown/9.0.0"
+    }
+  ]
+}

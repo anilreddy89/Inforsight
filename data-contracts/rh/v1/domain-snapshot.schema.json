@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/rh/domain-snapshot/1.0.0",
+  "title": "RH domain snapshot 1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "snapshot_version",
+    "catalog_version",
+    "catalog_sha256",
+    "source_profile",
+    "snapshot_id",
+    "policy_id",
+    "as_of",
+    "issued_at",
+    "product_type",
+    "status",
+    "billing_frequency",
+    "premium_amount_cents",
+    "currency",
+    "annual_premium_cents",
+    "tenure_days",
+    "in_grace_period",
+    "days_in_grace",
+    "grace_entered_at",
+    "days_past_due",
+    "coverage_amount_cents",
+    "total_premiums_paid_cents",
+    "safety",
+    "provenance",
+    "field_evidence"
+  ],
+  "properties": {
+    "snapshot_version": {
+      "const": "1.0.0"
+    },
+    "catalog_version": {
+      "const": "1.0.0"
+    },
+    "catalog_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_profile": {
+      "enum": [
+        "legacy-policy-events/1.0.0",
+        "v6-policy-events/6.0.0"
+      ]
+    },
+    "snapshot_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "policy_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "product_type": {
+      "enum": [
+        "fictional_term_life",
+        "fictional_whole_life"
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "grace_period",
+        "lapsed",
+        "surrendered",
+        "unknown"
+      ]
+    },
+    "billing_frequency": {
+      "enum": [
+        "monthly",
+        "quarterly",
+        "semiannual",
+        "annual"
+      ]
+    },
+    "premium_amount_cents": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "currency": {
+      "const": "USD"
+    },
+    "annual_premium_cents": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tenure_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "in_grace_period": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "days_in_grace": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "grace_entered_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "days_past_due": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "coverage_amount_cents": {
+      "type": "null"
+    },
+    "total_premiums_paid_cents": {
+      "type": "null"
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "has_active_claim",
+        "has_legal_hold",
+        "has_registered_dispute",
+        "sms_opt_out",
+        "email_opt_out",
+        "phone_opt_out",
+        "dnc_registered"
+      ],
+      "properties": {
+        "has_active_claim": {
+          "type": "null"
+        },
+        "has_legal_hold": {
+          "type": "null"
+        },
+        "has_registered_dispute": {
+          "type": "null"
+        },
+        "sms_opt_out": {
+          "type": "null"
+        },
+        "email_opt_out": {
+          "type": "null"
+        },
+        "phone_opt_out": {
+          "type": "null"
+        },
+        "dnc_registered": {
+          "type": "null"
+        }
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_sha256"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "event_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "field_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuance",
+        "status",
+        "grace",
+        "days_past_due"
+      ],
+      "properties": {
+        "issuance": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "status": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "grace": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "days_past_due": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "grace_period"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "in_grace_period": {
+            "const": true
+          },
+          "days_in_grace": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "grace_entered_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "unknown"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "in_grace_period": {
+            "type": "null"
+          },
+          "days_in_grace": {
+            "type": "null"
+          },
+          "grace_entered_at": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "active",
+              "lapsed",
+              "surrendered"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "in_grace_period": {
+            "const": false
+          },
+          "days_in_grace": {
+            "const": 0
+          },
+          "grace_entered_at": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -827,6 +827,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-01 - Establish the canonical point-in-time domain snapshot and semantic catalog
 
+**Status:** RH-01D in progress through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136), branch `docs/136-rh-01d-canonical-domain-snapshot`. The [proposed design](hardening/rh-01-domain-snapshot-contract.md) and ADR 0015 define the snapshot/catalog boundary. RH-01I has not started and must follow the design merge; parent acceptance checks remain open.
+
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
 **Priority:** Release blocking
