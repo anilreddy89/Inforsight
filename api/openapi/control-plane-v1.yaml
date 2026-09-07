@@ -1,0 +1,335 @@
+openapi: 3.1.0
+info:
+  title: Inforsight Enterprise Control Plane API
+  version: 1.0.0
+  description: >
+    Enterprise control plane microservice orchestrating point-in-time policy triage,
+    deterministic eligibility firewalls, knapsack uplift optimization, and governed
+    human-in-the-loop caseworker decisions.
+paths:
+  /api/v1/cases/triage:
+    post:
+      summary: Execute batch policy triage and portfolio optimization
+      description: >
+        Consumes policy snapshot IDs, scores risk via Inference Runtime, applies deterministic
+        eligibility rules, and solves constrained knapsack uplift allocation.
+      operationId: executeTriageBatch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriageBatchRequest'
+      responses:
+        '200':
+          description: Batch triage successfully executed and cases allocated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageBatchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/cases/{case_id}:
+    get:
+      summary: Retrieve case brief and grounded evidence
+      description: >
+        Returns structured point-in-time case brief including factual summary, policy state,
+        calibrated risk tier, recommended action, and grounding verification hash.
+      operationId: getCaseBrief
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the conservation case
+      responses:
+        '200':
+          description: Case brief retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseBrief'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/v1/cases/{case_id}/decision:
+    post:
+      summary: Record licensed caseworker review decision
+      description: >
+        Enforces ADR 0002 human-in-the-loop sign-off. Records approval, override, or dismissal
+        and appends an immutable record to the SHA-256 hash-chained audit ledger.
+      operationId: recordCaseDecision
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseDecisionRequest'
+      responses:
+        '200':
+          description: Decision successfully recorded in cryptographic audit ledger
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDecisionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Forbidden - Reviewer not licensed or authorized
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/v1/cases/{case_id}/audit-trail:
+    get:
+      summary: Retrieve immutable cryptographic audit ledger for a case
+      description: >
+        Returns the sequential SHA-256 hash-chained audit events demonstrating complete
+        lineage from case creation to final caseworker execution.
+      operationId: getCaseAuditTrail
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cryptographic audit trail returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditTrailResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  schemas:
+    TriageBatchRequest:
+      type: object
+      required:
+        - as_of_date
+        - policy_ids
+      properties:
+        as_of_date:
+          type: string
+          format: date-time
+          example: '2026-09-06T00:00:00Z'
+        policy_ids:
+          type: array
+          items:
+            type: string
+          example: ['POL-001', 'POL-002']
+        specialist_capacity_hours:
+          type: number
+          default: 50.0
+        budget_limit_usd:
+          type: number
+          default: 5000.00
+
+    TriageBatchResponse:
+      type: object
+      required:
+        - batch_id
+        - total_evaluated
+        - allocated_cases
+        - total_spend_usd
+        - total_specialist_hours
+      properties:
+        batch_id:
+          type: string
+        total_evaluated:
+          type: integer
+        allocated_cases:
+          type: integer
+        total_spend_usd:
+          type: number
+        total_specialist_hours:
+          type: number
+        cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseSummary'
+
+    CaseSummary:
+      type: object
+      required:
+        - case_id
+        - policy_id
+        - operational_tier
+        - recommended_action
+        - state
+      properties:
+        case_id:
+          type: string
+        policy_id:
+          type: string
+        operational_tier:
+          type: string
+          enum: [TIER_1_CRITICAL, TIER_2_ELEVATED, TIER_3_MODERATE, TIER_4_LOW]
+        calibrated_probability:
+          type: number
+        recommended_action:
+          type: string
+        state:
+          type: string
+          enum: [CREATED, TRIAGED, EVIDENCE_ASSEMBLED, RECOMMENDED, HUMAN_REVIEWED, EXECUTED, DISMISSED, RESOLVED]
+
+    CaseBrief:
+      type: object
+      required:
+        - case_id
+        - policy_id
+        - as_of_date
+        - current_state
+        - factual_narrative
+        - grounding_hash
+        - recommended_action
+      properties:
+        case_id:
+          type: string
+        policy_id:
+          type: string
+        as_of_date:
+          type: string
+          format: date-time
+        current_state:
+          type: string
+        calibrated_probability:
+          type: number
+        operational_tier:
+          type: string
+        factual_narrative:
+          type: string
+        grounding_hash:
+          type: string
+          description: SHA-256 digest of underlying policy features guaranteeing factual alignment
+        recommended_action:
+          type: string
+        authorized_to_act:
+          type: boolean
+          description: >
+            ADR 0002 boundary. Remains false until licensed caseworker decision is approved.
+
+    CaseDecisionRequest:
+      type: object
+      required:
+        - reviewer_id
+        - decision
+        - timestamp
+      properties:
+        reviewer_id:
+          type: string
+          example: 'usr_spec_4091'
+        decision:
+          type: string
+          enum: [APPROVED, OVERRIDDEN, REJECTED]
+        selected_action:
+          type: string
+          description: Mandatory if decision is OVERRIDDEN
+        rationale_code:
+          type: string
+          description: Standardized code for review decision
+        notes:
+          type: string
+          description: Required free text if recommendation is OVERRIDDEN
+        timestamp:
+          type: string
+          format: date-time
+
+    CaseDecisionResponse:
+      type: object
+      required:
+        - case_id
+        - transition_status
+        - audit_record_hash
+        - authorized_to_act
+      properties:
+        case_id:
+          type: string
+        transition_status:
+          type: string
+        audit_record_hash:
+          type: string
+          description: Cryptographic hash of the committed audit event
+        authorized_to_act:
+          type: boolean
+          description: True if caseworker approved or overridden; false if rejected/dismissed
+
+    AuditTrailResponse:
+      type: object
+      required:
+        - case_id
+        - events
+        - chain_valid
+      properties:
+        case_id:
+          type: string
+        chain_valid:
+          type: boolean
+        events:
+          type: array
+          items:
+            type: object
+            required:
+              - event_id
+              - state_transition
+              - timestamp
+              - parent_hash
+              - current_hash
+            properties:
+              event_id:
+                type: string
+              state_transition:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              parent_hash:
+                type: string
+              current_hash:
+                type: string
+
+  responses:
+    BadRequestError:
+      description: Invalid request payload or parameter
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error_code:
+                type: string
+              message:
+                type: string
+    NotFoundError:
+      description: Requested case or resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error_code:
+                type: string
+              message:
+                type: string
+    InternalServerError:
+      description: Unexpected internal system error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error_code:
+                type: string
+              message:
+                type: string

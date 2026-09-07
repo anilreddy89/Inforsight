@@ -1,0 +1,25 @@
+# ==============================================================================
+# Multi-stage Dockerfile for Inforsight Control Plane (Java 21 / Spring Boot 3)
+# ==============================================================================
+
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
+
+WORKDIR /build
+
+# Placeholder for pom.xml and source build in P4-03
+# Multi-stage scaffolding for container image builds
+RUN echo "Scaffold build stage for Java 21 Control Plane"
+
+# Final minimal runtime image
+FROM eclipse-temurin:21-jre-alpine AS runner
+
+WORKDIR /app
+
+RUN addgroup -S inforsight && adduser -S inforsight -G inforsight
+USER inforsight:inforsight
+
+ENV JAVA_OPTS="-XX:+UseZGC -XX:+ZGenerational -Djava.security.egd=file:/dev/./urandom"
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]
