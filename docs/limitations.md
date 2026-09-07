@@ -38,6 +38,50 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 
 ## Active limitations
 
+### LIM-RH-001 — Review findings constrain current product, evidence, and Phase 4 claims
+
+| Field | Value |
+| --- | --- |
+| Status | Scheduled |
+| Severity | Claim-blocking |
+| Discovered in | `Documents/Project_Review_Through_P4-01.md`, reviewed at commit `b15a9ba` |
+| Owner | Review hardening initiative RH-00 through RH-13; charter [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) |
+| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 phase document |
+| Detailed plan | `Documents/phase_docs/phase-rh-00-hardening-release-charter-and-overlap-triage.md` |
+| Resolution trigger | RH-13 must record an evidence-backed `PROCEED` before P4-02 or P4-03 implementation resumes |
+
+#### Finding
+
+The Phase 0–3 local reference implementation and P4-01 architecture-inception contracts contain correctness, evidence, durability, packaging, and claim-boundary gaps that must be repaired before the behavior is ported into dependent Phase 4 services. Earlier evidence remains historical and is not erased, but several active descriptions exceed what it directly proves.
+
+#### Work that may continue
+
+- Bounded RH work whose declared predecessors are merged.
+- Synthetic-only, local reference implementation work within clean-room, dual-time, holdout, and human-authority boundaries.
+- Reversible Phase 4 research or spikes that freeze no contract and make no release claim.
+- Reproduction of historical evidence when it is labeled with its original scope and current limitation context.
+
+#### Work or claims blocked
+
+- P4-02 and P4-03 implementation before RH-13 records `PROCEED`.
+- Production-ready, enterprise-certified, customer-ready, or externally validated claims.
+- Claims of realized profit, customers saved, or empirically causal treatment uplift from modeled synthetic action effects.
+- Claims of complete factual grounding, universal hallucination prevention, immutable or universally tamper-proof storage, or measured distributed/network/cloud performance.
+- Treating P4-01 latency, topology, authority, audit, or compatibility statements as verified production behavior before RH-09 and RH-11 reconcile and test them.
+
+#### Approved resolution
+
+Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve historical artifacts, version corrected evidence, reconcile active documentation, pass clean read-only qualification, and require RH-13 to record `PROCEED`, `REMEDIATE`, or `STOP` on the final merged state.
+
+#### Closure evidence
+
+- [x] RH-00 records `ADOPT` in issue #133 and creates Milestone #6.
+- [x] Stable RH identifiers, dependency gates, overlap dispositions, and the temporary claim freeze are documented.
+- [ ] All RH predecessor issues are merged and closed.
+- [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
+- [ ] A clean, read-only qualification passes on the final hardening commit.
+- [ ] RH-13 records the final release and Phase 4 resume decision.
+
 ### LIM-002-001 — Billing frequency is confounded with observation time
 
 | Field | Value |

@@ -2,8 +2,8 @@
 
 Personal review document. This file is intentionally excluded from version control and is not an official project status record.
 
-Last reviewed: 2026-09-05
-Current branch: `main`
+Last reviewed: 2026-09-07
+Current branch: `docs/133-rh-00-hardening-charter`
 
 ## How progress is tracked
 
@@ -99,20 +99,25 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-09 | Phase 3 | End-to-end system qualification and integration gate | Completed | Issue #124 and [PR #125](https://github.com/anilreddy89/Inforsight/pull/125) merged as `ae34848`; implemented qualification package, CLI runner, test suite (7/7 pass), and executed 1,000-policy test cohort passing 100% of Gates S1–S6 (Digest: 209a4c1f2b3f...). Authorizes P3-10. |
 | P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Completed | Issue #126 and [PR #127](https://github.com/anilreddy89/Inforsight/pull/127) merged as `dabc95b`; comprehensive dual-audience release notes (`docs/release-notes/v0.3.0-decision-engine.md`), formal Phase 3 Decision Note (RELEASE), release tag `v0.3.0-decision-engine`, Milestone #4 closed at 100% completion. Unblocks Phase 4. |
 | P4-01 | Phase 4 | Enterprise distributed architecture inception and ADR 0014 | Completed | Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131) and [PR #132](https://github.com/anilreddy89/Inforsight/pull/132) merged as `a897300`; authored ADR 0014, defined service boundaries, Protobuf v3 scoring contract (`proto/v1/inference_service.proto`), OpenAPI 3.1 specification (`api/openapi/control-plane-v1.yaml`), and Docker Compose topology (`infra/docker-compose.yml`). Unblocks P4-02, P4-03. |
-| P4-02 | Phase 4 | Apache Kafka streaming ingress and event contracts | Planned | Transition from batch JSONL to real-time bitemporal streaming event topics; enforce deduplication, schema validation, and DLQ. Blocks P4-03. |
-| P4-03 | Phase 4 | Java 21 / Spring Boot control plane microservice | Planned | Port deterministic eligibility rules and knapsack uplift solver to Java; gRPC integration with Python inference; high-concurrency Virtual Threads. Blocks P4-04, P4-05. |
+| RH-00 | Review hardening | Charter, temporary claim freeze, and overlap triage | Implemented locally | Issue [#133](https://github.com/anilreddy89/Inforsight/issues/133) records `ADOPT`; Milestone #6 and overlap dispositions are live; all check targets pass with the local headless plotting override; PR and merge remain. |
+| RH-01–RH-10 | Review hardening | Correctness, contract, packaging, monitoring, grounding, and audit repairs | Planned | Governed by the dependency graph in `docs/backlog.md`; open only predecessor-satisfied work. |
+| RH-11 | Review hardening | Expanded CI and read-only qualification | Planned | Begins after the declared implementation predecessors close. |
+| RH-12 | Review hardening | Evidence regeneration and documentation reconciliation | Planned | Issue #128 will be amended when predecessor-ready; issue #130 remains independent pending reconciliation. |
+| RH-13 | Review hardening | Hardening release and Phase 4 resume decision | Planned | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
+| P4-02 | Phase 4 | Apache Kafka streaming ingress and event contracts | Paused | Blocked by RH-13 `PROCEED`; P4-01 remains historical architecture-inception evidence. |
+| P4-03 | Phase 4 | Java 21 / Spring Boot control plane microservice | Paused | Blocked by RH-13 `PROCEED` and then depends on P4-02. |
 | P4-04 | Phase 4 | Enterprise persistence layer and cryptographic audit store | Planned | Relational persistence for cases and queues; append-only SHA-256 hash-chained audit store with KMS signing interface. Blocks P4-06. |
 | P4-05 | Phase 4 | Enterprise CRM and contact center connectors | Planned | Bi-directional CRM task queuing and telephony dialer sync with strict cooldown guardrails and `authorized_to_act: false` enforcement. Blocks P4-06. |
 | P4-06 | Phase 4 | Cloud infrastructure, Helm charts, and container orchestration | Planned | Multi-stage Docker containerization, Kubernetes Helm charts with HPA, unified one-command local Docker Compose orchestration. Blocks P4-07. |
 | P4-07 | Phase 4 | Enterprise scale qualification and release (`v0.4.0-enterprise-scale`) | Planned | Execute 100,000-policy distributed stress test; pass Enterprise Performance Gates E1–E6; release marker and close Milestone #5. |
 
-Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is 100% complete and formally released under milestone `v0.3.0-decision-engine` (PR #127, commit `dabc95b`), completing all 11 Phase 3 increments (P3-01 through P3-10). Phase 4 (Enterprise Integration & Scale) roadmap is active across 7 increments (P4-01 through P4-07) for Milestone #5 (`v0.4.0-enterprise-scale`).
+Phase 2 and Phase 3 remain completed releases. P4-01 is completed architecture-inception history, but its affected contracts are provisional. The active track is Milestone #6, `v0.3.1-decision-engine-hardening`; P4-02/P4-03 implementation is paused until RH-13 records `PROCEED`.
 
 | Measure | Value |
 | --- | ---: |
 | Completed tracked changes | 56 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11, Phase 4: 1) |
-| In-progress / implemented locally changes | 0 |
-| Planned changes | 6 (P4-02 through P4-07) |
+| In-progress / implemented locally changes | 1 (RH-00) |
+| Planned changes | RH-01 through RH-13 plus P4-04 through P4-07 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
@@ -120,12 +125,13 @@ Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | Completed Phase 4 increments | 1 of 7 (14.3% complete) |
 | In-progress Phase 4 increments | 0 |
-| Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
-| Active increment | Phase 4 P4-02 (Apache Kafka Streaming Ingress and Event Contracts) |
-| Next implementation increment | Phase 4 P4-02 (Apache Kafka Streaming Ingress and Event Contracts) |
+| Active Phase | Review hardening initiative (Milestone #6) |
+| Active increment | RH-00 implemented locally; awaiting pull request and merge |
+| Next implementation increment | RH-01D and other predecessor-satisfied RH work after RH-00 merges |
 
 | ID | Status | Impact | Resolution trigger |
 | --- | --- | --- | --- |
+| `LIM-RH-001` | Scheduled | Review findings constrain current correctness, product, evidence, durability, and Phase 4 claims. | RH-13 must record an evidence-backed `PROCEED` before P4-02/P4-03 implementation resumes. |
 | `LIM-002-001` | Resolved | Billing frequency was confounded with observation time; resolved in Phase 2.11 via multi-cohort staggered issuance and recurring observation windows. | Formally verified and closed in Phase 2.11 (PR #103). |
 | `LIM-002-002` | Resolved | Simulator lacked pre-cutoff feature-conditioned risk; resolved in Phase 2.11 via Generation v6 bounded sigmoid hazard architecture. | Formally verified and closed in Phase 2.11 (PR #103). |
 | `LIM-002-003` | Resolved | Scoring authorization guard hardened with SHA-256 matrix digests; historical v1 fixture retired; resolved in Phase 2.11. | Formally verified and closed in Phase 2.11 (PR #103). |
