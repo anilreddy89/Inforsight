@@ -75,7 +75,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 
 #### Closure evidence
 
-- [x] RH-00 records `ADOPT` in issue #133 and creates Milestone #6.
+- [x] RH-00 records `ADOPT` in issue #133, creates Milestone #6, and merges through PR #134 as `ce2e6de`.
 - [x] Stable RH identifiers, dependency gates, overlap dispositions, and the temporary claim freeze are documented.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.

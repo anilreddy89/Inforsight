@@ -10,8 +10,8 @@
 | GitHub issue | [#133](https://github.com/anilreddy89/Inforsight/issues/133) |
 | Issue title | `ADR: RH-00 — Charter the decision-engine hardening release` |
 | Branch | `docs/133-rh-00-hardening-charter` |
-| Pull request | Pending |
-| Status | Implemented locally — `ADOPT` recorded; awaiting pull request |
+| Pull request | [#134](https://github.com/anilreddy89/Inforsight/pull/134) (merged as `ce2e6de`) |
+| Status | Completed |
 | Milestone | [`v0.3.1-decision-engine-hardening`](https://github.com/anilreddy89/Inforsight/milestone/6) (Milestone #6) |
 | Priority | Release blocking |
 | Classification | Architecture decision / governance |
@@ -19,7 +19,7 @@
 | Reviewer approval | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md` (2026-09-07) |
 | Governing plan | `docs/backlog.md`, Review hardening initiative |
 | Enables | RH-01D and other independent RH issues whose specifications are ready |
-| Blocks | Creation of the hardening milestone and all dependent RH implementation work |
+| Blocks | None; downstream RH work remains governed by its own declared predecessors |
 | Phase 4 boundary | P4-01 remains historical; P4-02/P4-03 implementation remains blocked through RH-13 |
 | Last reviewed | 2026-09-07 |
 
@@ -228,4 +228,10 @@ Use `.github/ISSUE_TEMPLATE/decision.yml` and populate it from this document:
 - **Decision acceptance checks:** Section 9.
 - **Dependencies and downstream work:** Sections 8 and 10.
 
-Issue #133 recorded `ADOPT` on 2026-09-07 before Milestone #6 was created and assigned. Implementation proceeds on `docs/133-rh-00-hardening-charter`.
+Issue #133 recorded `ADOPT` on 2026-09-07 before Milestone #6 was created and assigned. The primary implementation merged from `docs/133-rh-00-hardening-charter` through PR #134.
+
+## 13. Closeout
+
+RH-00 completed on 2026-09-07 when [PR #134](https://github.com/anilreddy89/Inforsight/pull/134) merged to `main` as `ce2e6de34c119018e27e2bc3651b5dc420463227`. Issue #133 closed automatically. Milestone #6 remains active for the downstream hardening work.
+
+The merge establishes the initiative charter, temporary claim freeze, overlap dispositions, separate roadmap lane, limitation ownership, and Phase 4 pause boundary. It does not establish that downstream defects are fixed or authorize P4-02/P4-03 implementation. RH-01D and other explicitly predecessor-satisfied RH work may now be prepared from updated `main`.

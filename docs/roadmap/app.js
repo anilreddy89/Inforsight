@@ -563,13 +563,13 @@ const timelineData = [
       {
         id: "RH-00",
         title: "Initiative Charter, Claim Freeze & Overlap Triage",
-        status: "Implemented Locally",
-        commit: "Issue #133",
+        status: "Completed",
+        commit: "ce2e6de",
         summary: {
           tech: "Adopts the bounded hardening release, stable RH identifiers, dependency graph, temporary claim restrictions, and dispositions for open issues #128–#130. Milestone #6 is active; no runtime behavior changes are included.",
           simple: "Hardening kickoff: Agree on what must be repaired, what evidence can honestly claim today, and what must finish before enterprise implementation resumes."
         },
-        checks: "Issue #133 records ADOPT; Milestone #6 created; #128/#129/#130 dispositions applied; limitation register, backlog, tracker, project status, and roadmap reconciled; all check targets pass with the headless plotting override; merge pending."
+        checks: "Issue #133 closed by PR #134 (ce2e6de); ADOPT recorded; Milestone #6 created; #128/#129/#130 dispositions applied; limitation register, backlog, tracker, project status, roadmap, Phase 4 pause boundary, and verification evidence reconciled."
       },
       {
         id: "RH-01",

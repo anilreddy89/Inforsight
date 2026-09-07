@@ -813,7 +813,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Architecture decision / governance
 **Priority:** Release blocking
 
-**Status:** Implemented locally through [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) on branch `docs/133-rh-00-hardening-charter`; the issue records `ADOPT`, Milestone #6 is active, overlap issues are amended, documentation is reconciled, and verification passes with the documented headless plotting override. Merge remains required.
+**Status:** Completed on 2026-09-07 through [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) and [PR #134](https://github.com/anilreddy89/Inforsight/pull/134), merge `ce2e6de`. The issue records `ADOPT`, Milestone #6 is active, overlap issues are amended, documentation is reconciled, and verification passes with the documented headless plotting override. RH-01D and other predecessor-satisfied RH work are unblocked.
 
 **Outcome:** Approve this initiative as an independent `v0.3.1-decision-engine-hardening` release, freeze overstated claims while work is open, and decide how open issues #128, #129, and #130 participate.
 
