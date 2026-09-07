@@ -557,6 +557,89 @@ const timelineData = [
     ]
   },
   {
+    phase: "Review Hardening: Decision Engine Correctness & Contracts",
+    milestone: "v0.3.1-decision-engine-hardening",
+    items: [
+      {
+        id: "RH-00",
+        title: "Initiative Charter, Claim Freeze & Overlap Triage",
+        status: "Implemented Locally",
+        commit: "Issue #133",
+        summary: {
+          tech: "Adopts the bounded hardening release, stable RH identifiers, dependency graph, temporary claim restrictions, and dispositions for open issues #128–#130. Milestone #6 is active; no runtime behavior changes are included.",
+          simple: "Hardening kickoff: Agree on what must be repaired, what evidence can honestly claim today, and what must finish before enterprise implementation resumes."
+        },
+        checks: "Issue #133 records ADOPT; Milestone #6 created; #128/#129/#130 dispositions applied; limitation register, backlog, tracker, project status, and roadmap reconciled; all check targets pass with the headless plotting override; merge pending."
+      },
+      {
+        id: "RH-01",
+        title: "Canonical Point-in-Time Snapshot & Semantic Catalog",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Define and implement one bitemporal domain snapshot and versioned catalog for statuses, risk tiers, actions, costs, features, and duration units.",
+          simple: "Create one trustworthy, time-correct view of each policy and one shared dictionary for every downstream component."
+        },
+        checks: "Design child RH-01D precedes implementation child RH-01I; delayed-ingestion and future-effective fixtures required."
+      },
+      {
+        id: "RH-02–RH-03",
+        title: "Fail-Closed Safety & Human Authority",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Require explicit safety evidence and enforce case-, snapshot-, action-, version-, and actor-bound approval at the common execution transition.",
+          simple: "Missing safety facts stop outreach, and an approval only applies to the exact case and action a trusted reviewer examined."
+        },
+        checks: "RH-02 follows RH-01; RH-03 follows RH-02; stale, missing, mismatched, replayed, and concurrent decisions fail closed."
+      },
+      {
+        id: "RH-04–RH-05",
+        title: "Signed Economics & Capacity-Constrained Allocation",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Preserve harmful treatment effects, unify versioned economics and resource units, enforce allocation before display, and validate the chosen algorithm against exact small instances.",
+          simple: "Count both benefit and harm, use consistent costs and hours, and never recommend more work than the team or budget can support."
+        },
+        checks: "RH-04D/I follows RH-01; RH-05D/I follows RH-04; comparable operational baselines and predeclared algorithm acceptance required."
+      },
+      {
+        id: "RH-06–RH-07",
+        title: "Inference-Only Runtime & Evidence-Bearing Monitoring",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Package scoring without training dependencies, verify bundle identity at startup, and make drift/calibration states depend on bounded scoring and resolved-outcome evidence.",
+          simple: "Make scoring independently runnable and ensure monitoring says “insufficient data” until real test evidence exists."
+        },
+        checks: "RH-06D/I follows RH-01; RH-07 follows RH-06 and reconciles issue #129."
+      },
+      {
+        id: "RH-08–RH-10",
+        title: "Structured Grounding, Corrected Interfaces & Durable Audit Semantics",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
+          simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
+        },
+        checks: "Design precedes implementation; RH-09I waits for settled authority, economics, runtime, and audit specifications."
+      },
+      {
+        id: "RH-11–RH-13",
+        title: "Qualification, Evidence Reconciliation & Resume Decision",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Run expanded CI and read-only qualification, regenerate versioned evidence, reconcile active claims, and record PROCEED, REMEDIATE, or STOP for the hardening release.",
+          simple: "Retest the repaired system, publish honest updated evidence, and make the final decision about resuming enterprise work."
+        },
+        checks: "Sequential closeout: RH-11 → RH-12 → RH-13. Only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
+      }
+    ]
+  },
+  {
     phase: "Phase 4: Enterprise Integration & Cloud Scale",
     milestone: "v0.4.0-enterprise-scale",
     items: [
@@ -566,32 +649,32 @@ const timelineData = [
         status: "Completed",
         commit: "a897300",
         summary: {
-          tech: "Decomposed architecture into polyglot microservices: Python/FastAPI/gRPC inference runtime (<= 5ms SLA), Java 21 / Spring Boot 3 control plane (Project Loom), Apache Kafka streaming gateway, and PostgreSQL audit store. Codified Protobuf v3 and OpenAPI 3.1 contracts with ADR 0002 non-authority markers.",
-          simple: "Enterprise Blueprints: Designed the multi-server cloud architecture connecting high-speed Python AI scoring with high-concurrency Java 21 business engines and Kafka streaming, while strictly locking down the AI so it can never contact customers without human review."
+          tech: "Historical architecture-inception evidence for a proposed Python inference runtime, Java control plane, Kafka gateway, and PostgreSQL audit store. Affected contracts and latency statements are provisional pending RH-09 and RH-11.",
+          simple: "Enterprise blueprints remain useful history, but the hardening initiative must correct and test their key contracts before implementation begins."
         },
         checks: "Issue #131 closed by PR #132 (a897300); ADR 0014; proto/v1/inference_service.proto; api/openapi/control-plane-v1.yaml; infra/docker-compose.yml; Dockerfile scaffolds; 22 contract tests pass; boundary checks pass; unblocks P4-02 & P4-03."
       },
       {
         id: "P4-02",
         title: "Apache Kafka Streaming Ingress & Event Contracts",
-        status: "Planned",
+        status: "Paused",
         commit: "Pending",
         summary: {
           tech: "Real-time bitemporal streaming event ingress replacing batch playback; versioned Kafka topics, event deduplication, schema validation, and poison-pill dead letter queue (DLQ).",
           simple: "Real-Time Event Stream: Connecting live customer event data through Apache Kafka with automated duplicate filtering and error quarantine queues."
         },
-        checks: "data-contracts/streaming/; Testcontainers integration harness; zero event loss under out-of-order arrival."
+        checks: "Blocked until RH-13 records PROCEED; then requires updated P4 contracts and a Testcontainers integration harness."
       },
       {
         id: "P4-03",
         title: "Java 21 / Spring Boot 3 Control Plane Microservice",
-        status: "Planned",
+        status: "Paused",
         commit: "Pending",
         summary: {
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "services/control-plane/; 100% rule and knapsack parity with Python reference suite; Testcontainers integration tests pass."
+        checks: "Blocked until RH-13 records PROCEED and P4-02 is predecessor-ready; amended P4 contracts govern implementation."
       },
       {
         id: "P4-04",
@@ -600,7 +683,7 @@ const timelineData = [
         commit: "Pending",
         summary: {
           tech: "PostgreSQL relational persistence with Flyway migrations and immutable append-only SHA-256 cryptographic audit ledger with KMS signing interface.",
-          simple: "Tamper-Proof Audit Vault: Secure database tracking policy snapshots and an unalterable cryptographic ledger guaranteeing complete auditability."
+          simple: "Planned audit storage: Track policy snapshots and detect unauthorized history changes within an explicitly documented trust and recovery model."
         },
         checks: "Flyway migrations; 100% tamper detection across injected ledger mutations; ACID case state transactions."
       },
@@ -2074,4 +2157,3 @@ initApp = function() {
 
 // Boot application
 document.addEventListener('DOMContentLoaded', initApp);
-

@@ -725,11 +725,423 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 ---
 
+## Review hardening initiative
+
+### Purpose
+
+This initiative converts the findings in `Documents/Project_Review_Through_P4-01.md` into a governed correctness and contract-hardening program. It is a separate maintenance release track, not Phase 4 work. This backlog section is the canonical source for RH scope, order, status, and acceptance gates.
+
+The initiative protects the Phase 0-3 reference implementation before Phase 4 ports or distributes its behavior. P4-01 remains a completed architecture-inception increment, but its affected contracts are provisional until this initiative amends them. P4-02 through P4-07 remain in the Phase 4 backlog and do not absorb the work below.
+
+### Release and work identifiers
+
+- **GitHub milestone:** [`v0.3.1-decision-engine-hardening`](https://github.com/anilreddy89/Inforsight/milestone/6) (Milestone #6)
+- **Stable work prefix:** `RH`
+- **Release type:** post-Phase 3 maintenance and correctness release
+- **Source review:** `Documents/Project_Review_Through_P4-01.md`, reviewed at commit `b15a9ba`
+- **Relationship to Phase 4:** independent track and prerequisite gate for P4-02/P4-03; not a renumbering or extension of Phase 4
+- **Plan approval:** approved to begin on 2026-09-07 in `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`, subject to the acceptance refinements incorporated below
+- **Charter decision:** `ADOPT` recorded in [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) on 2026-09-07
+
+Milestone #6 was created after RH-00 recorded `ADOPT`. Keep the milestone title, eventual Git tag, release title, and release-notes filename aligned.
+
+### Governing boundaries
+
+All RH work follows `CONTRIBUTING.md`, `.github` issue and pull-request templates, and `docs/engineering-improvement-workflow.md`.
+
+1. GitHub Issues own active work; this document owns initiative order and dependency gates.
+2. One stable RH ID maps to one issue, one branch, and one primary pull request.
+3. Every implementation issue starts with a failing or missing focused test where practical.
+4. Contract or durable architecture changes require a design or decision issue before implementation.
+5. Historical artifacts remain immutable. Corrected results receive new versions and explicit supersession notes.
+6. No issue may claim production certification, external validity, realized profit, complete factual grounding, universal tamper resistance, or measured distributed performance without evidence that directly establishes that claim.
+7. Clean-room, point-in-time, human-authority, and holdout boundaries remain mandatory.
+8. Phase 4 branches must not copy semantics that are still under RH revision.
+9. Implement only the minimum bounded reference behavior needed to establish each invariant; this initiative must not become a second platform build.
+10. Where an RH outcome requires separate design and implementation, use linked child IDs `<RH-ID>D` and `<RH-ID>I`. Each child has its own issue, branch, and primary pull request; the parent outcome closes only after both children close.
+
+For example, `RH-01D` owns the canonical snapshot design and `RH-01I` owns its implementation. Design children merge before implementation children. This resolves the one-ID/one-PR rule without combining distinct design and implementation changes.
+
+### Scope and exit criteria
+
+The initiative covers every technical, scientific-interpretation, maintainability, CI, and documentation finding in the review. It does not implement Kafka, Java control-plane services, production connectors, PostgreSQL, Kubernetes, or cloud deployment.
+
+The initiative is complete only when:
+
+- all RH issues are merged and closed;
+- the canonical domain snapshot, authority, safety, economics, allocation, serving, monitoring, grounding, audit, and contract invariants have adversarial regression coverage;
+- release-relevant dashboard, serving, simulator, contract, and artifact-verification checks run in CI;
+- affected evidence is regenerated under new versions or explicitly retained with corrected claim boundaries;
+- README, backlog, roadmap, limitation register, model card, release notes, and phase documents agree on current status;
+- a read-only qualification run passes from a clean environment; and
+- a formal RH-13 decision records `PROCEED` before P4-02 or P4-03 implementation starts.
+
+### Dependency and merge flow
+
+```text
+RH-00  Initiative charter, claim freeze, and overlap triage
+  |
+RH-01D/I  Canonical domain snapshot and shared semantic contracts
+  |\
+  | +--> RH-02  Fail-closed safety evidence
+  | +--> RH-04D/I  Shared economics and signed treatment effects
+  | +--> RH-06D/I  Inference-only runtime packaging
+  | +--> RH-09D    P4-01 interface amendment draft
+  |
+RH-02 --> RH-03  Transition-boundary authority enforcement
+RH-04 --> RH-05D/I  Portfolio allocation and optimizer validation
+RH-06 --> RH-07  Evidence-bearing monitoring
+RH-01 --> RH-08D/I  Structured grounding and bounded narratives
+RH-03 --> RH-10D/I  Durable audit semantics and recovery contract
+
+RH-03 + RH-04 + RH-05 + RH-06 + RH-08 + RH-10
+  --> RH-09I  Final reconciled P4-01 contracts
+
+RH-03 + RH-05 + RH-07 + RH-08 + RH-09I + RH-10
+  --> RH-11  Qualification, CI, and read-only verification
+  --> RH-12  Evidence regeneration and documentation reconciliation
+  --> RH-13  Hardening release decision and Phase 4 resume gate
+```
+
+Independent issues may be prepared in parallel, but a dependent implementation branch starts from updated `main` only after its predecessor merges. RH-11, RH-12, and RH-13 are sequential closeout gates.
+
+### Work breakdown
+
+#### RH-00 - Charter the hardening release and reconcile existing work
+
+**Issue template:** Architecture decision
+**Classification:** Architecture decision / governance
+**Priority:** Release blocking
+
+**Status:** Implemented locally through [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) on branch `docs/133-rh-00-hardening-charter`; the issue records `ADOPT`, Milestone #6 is active, overlap issues are amended, documentation is reconciled, and verification passes with the documented headless plotting override. Merge remains required.
+
+**Outcome:** Approve this initiative as an independent `v0.3.1-decision-engine-hardening` release, freeze overstated claims while work is open, and decide how open issues #128, #129, and #130 participate.
+
+**Acceptance checks:**
+
+- [x] The milestone, stable IDs, dependency graph, and Phase 4 pause boundary are approved.
+- [x] Issues #128-#130 are reviewed field by field and assigned explicit RH dispositions in the RH-00 phase document.
+- [x] Claim restrictions while RH is open are recorded in `docs/limitations.md`.
+- [x] P4-01 remains historical evidence; P4-02/P4-03 are marked blocked by RH-13.
+- [x] No application or distributed-infrastructure implementation is included.
+
+#### RH-01 - Establish the canonical point-in-time domain snapshot and semantic catalog
+
+**Issue template:** Design specification followed by Implementation task
+**Classification:** Current defect and durable contract
+**Priority:** Release blocking
+
+**Outcome:** Reconstruct a typed domain snapshot from original events using `effective_at` and `ingested_at`, while separating untransformed domain values from model features. Version one canonical catalog for risk tiers, policy statuses, action identifiers, feature units, action costs, and durations.
+
+**Acceptance checks:**
+
+- [ ] Events not visible at an observation cutoff cannot affect a snapshot, dossier, rule, narrative, or valuation.
+- [ ] Premium frequency, tenure, grace state, and other domain values derive from source events without model clipping or transforms.
+- [ ] `IN_GRACE`/`grace_period`, risk-tier direction, combined-termination/lapse naming, feature preprocessing identity, costs, and duration units have canonical definitions.
+- [ ] Heterogeneous-policy, future-effective, and delayed-ingestion fixtures fail before the repair and pass after it.
+- [ ] Compatibility and version migration are documented.
+
+#### RH-02 - Make missing safety evidence fail closed
+
+**Issue template:** Implementation task
+**Classification:** Current defect
+**Priority:** Release blocking
+
+**Outcome:** Distinguish unknown safety facts from confirmed false values and require sufficient evidence before an action or channel becomes eligible. Permissive defaults remain only in explicitly labeled synthetic fixtures.
+
+**Acceptance checks:**
+
+- [ ] Missing claim, legal-hold, dispute, opt-out, and DNC facts cannot be interpreted as permission.
+- [ ] Rules declare which evidence each action/channel requires.
+- [ ] Minimal and partial contexts have fail-closed regression tests.
+- [ ] Dashboard and service adapters stop manufacturing false safety facts.
+- [ ] Positive eligibility fixtures contain explicit evidence rather than relying on defaults.
+- [ ] New holds, opt-outs, disputes, safety facts, or snapshot changes invalidate affected approval and execution eligibility.
+
+#### RH-03 - Enforce human authority at the common transition boundary
+
+**Issue template:** Implementation task
+**Classification:** Current defect / authority invariant
+**Priority:** Release blocking
+
+**Outcome:** Make every path to `EXECUTED` enforce eligible action, authenticated review, authorization, freshness, capacity, and authoritative action/channel metadata at the common state transition boundary.
+
+**Acceptance checks:**
+
+- [ ] Direct and wrapper-based transition bypasses fail.
+- [ ] Missing, stale, mismatched, replayed, and concurrent approvals fail deterministically.
+- [ ] Caller metadata cannot override authoritative action or channel fields.
+- [ ] Library tests and the strengthened authority qualification gate cover every public execution path.
+- [ ] Trusted actor identity remains a server-context contract; request-supplied identity alone is insufficient.
+- [ ] Approval binds the case version, reviewed snapshot/evidence digest, action, channel, recommendation/model version, and trusted actor.
+- [ ] Execution preserves the historical reviewed snapshot while separately revalidating current eligibility and evidence.
+- [ ] Changed action, incompatible case revision, expired approval, or newly received hold/opt-out requires renewed approval.
+- [ ] The local actor adapter and its trust assumptions are explicit; production identity federation remains Phase 4 work.
+
+#### RH-04 - Preserve signed treatment effects and unify economics
+
+**Issue template:** Design specification followed by Implementation task
+**Classification:** Current defect and durable contract
+**Priority:** Release blocking
+
+**Outcome:** Preserve harmful as well as beneficial treatment effects, use versioned shared cost/resource assumptions, and explicitly map combined termination risk to lapse and surrender economics.
+
+**Acceptance checks:**
+
+- [ ] Harmful treatment contributes a negative gross value rather than being clipped to zero.
+- [ ] Rules, OPE, optimizer, dashboard, and reports consume or explicitly bridge one versioned economics/resource contract.
+- [ ] Personnel capacity is represented in a single unit without integer truncation.
+- [ ] Annual premium preserved is distinguished from profit and modeled expected value from realized value.
+- [ ] Harmful, neutral, and beneficial treatment fixtures pass.
+- [ ] The primary economic estimand is predeclared before regenerated results are inspected: uncertainty conditional on frozen assignments, performance of the allocation procedure on new portfolios, or both as separately labeled results.
+- [ ] Reallocated-portfolio resampling defines cluster identity, duplicate handling, and whether budgets/hours remain fixed or scale with portfolio size.
+- [ ] Predictive models are never refit on evaluation resamples.
+- [ ] Sensitivity analysis varies intervention efficacy, costs, and harmful effects; fixed-effect bootstrap intervals are not presented as uncertainty in those assumptions.
+
+#### RH-05 - Enforce capacity and validate the allocation algorithm
+
+**Issue template:** Design specification followed by Implementation task
+**Classification:** Current defect and algorithm clarification
+**Priority:** High
+
+**Outcome:** Apply portfolio allocation before dashboard recommendations and cases are emitted; either validate a deterministic greedy heuristic against an exact small-instance reference or replace it with an exact solver appropriate to the declared scope.
+
+**Acceptance checks:**
+
+- [ ] Dashboard allocation never silently exceeds hours or budget; any infeasibility/overflow is shown numerically.
+- [ ] Summaries refresh after decisions and derive from actual allocations.
+- [ ] Exhaustive small fixtures quantify optimality gap and marginal opportunity cost.
+- [ ] Fractional personnel hours and shared budgets are enforced consistently.
+- [ ] Documentation names the implemented algorithm truthfully.
+- [ ] Before evaluation, the issue declares either an acceptable small-instance optimality gap or acceptance of a feasibility-preserving heuristic without an optimality claim.
+- [ ] The engine is compared with non-intervention, operational rules-only, and risk-ranked strategies using the same cohort, decision cutoff, eligibility rules, action catalog, budget, and personnel units.
+- [ ] Specialist overrides recheck eligibility and atomically reserve/release hours and money; concurrent decisions cannot consume the same capacity twice.
+
+#### RH-06 - Extract and verify an inference-only runtime package
+
+**Issue template:** Design specification followed by Implementation task
+**Classification:** Packaging defect / refactor
+**Priority:** High
+
+**Outcome:** Provide an independently installable inference runtime whose import, startup, health, and score paths do not import or require training/evaluation packages.
+
+**Acceptance checks:**
+
+- [ ] A clean environment can import and score without scikit-learn, training modules, or evaluation modules.
+- [ ] Explicitly configured missing bundle paths fail loudly.
+- [ ] Startup verifies the loaded bundle against a trusted expected digest/version.
+- [ ] The serving Dockerfile targets the real application, contains required runtime assets, and exposes matching routes and environment variables.
+- [ ] Scaffold-only Java/gRPC services remain labeled non-runnable until implemented.
+
+#### RH-07 - Make monitoring states evidence-bearing
+
+**Issue template:** Implementation task
+**Classification:** Current defect / test gap
+**Priority:** High
+
+**Outcome:** Retain bounded scored-feature windows, ingest resolved outcomes through an operational interface, and report `insufficient_data` until drift or calibration claims have adequate evidence.
+
+**Acceptance checks:**
+
+- [ ] Actual scoring traffic populates version-keyed drift windows.
+- [ ] Outcomes join by policy, observation, and model version through an exposed interface.
+- [ ] Empty or undersized windows cannot report `well_calibrated` or perfect skill.
+- [ ] Tests demonstrate drift after scoring traffic and calibration after resolved outcomes.
+- [ ] Scope is reconciled with open monitoring issue #129.
+
+#### RH-08 - Bind narratives to structured evidence
+
+**Issue template:** Design specification followed by Implementation task
+**Classification:** Current defect / safety boundary
+**Priority:** High
+
+**Outcome:** Render factual case-brief fields deterministically from the canonical snapshot and restrict generated prose to a constrained statement grammar whose claims resolve to typed evidence identifiers. Unsupported statement types reject or fall back to deterministic templates.
+
+**Acceptance checks:**
+
+- [ ] Unsupported identifiers, amounts, dates, durations, percentages, actions, authorizations, causal claims, and status assertions fail validation.
+- [ ] A grounding hash is described only as input/text consistency evidence, not proof that the input is true.
+- [ ] Adversarial external-provider fixtures are required before enabling a non-deterministic provider.
+- [ ] The documented validator coverage exactly matches enforced checks.
+- [ ] Keeping the external provider disabled is an acceptable outcome; no issue is required to prove arbitrary generated prose true.
+- [ ] Adversarial results are described as evidence for declared grammar/field coverage, never as a universal hallucination guarantee.
+
+#### RH-09 - Amend P4-01 contracts before dependent implementation
+
+**Issue template:** Architecture decision and Design specification
+**Classification:** Architecture decision / contract defect
+**Priority:** Release blocking for P4-02/P4-03
+
+**Outcome:** Amend ADR 0014, Protobuf, and OpenAPI contracts so authority presence, tier semantics, authentication, concurrency, idempotency, override rules, preprocessing identity, economics/resource versions, audit semantics, errors, and deployment claims are explicit before Java or Kafka work begins. RH-09D may draft after RH-01; RH-09I must reconcile the settled RH-03, RH-04, RH-06, and RH-10 specifications before merge.
+
+**Acceptance checks:**
+
+- [ ] Authority uses presence-aware representation (`optional` or explicit enum) and rejects absent/unknown authorization states.
+- [ ] Risk tiers map identically across the released model, Protobuf, OpenAPI, and canonical catalog.
+- [ ] Authentication/security schemes, trusted reviewer identity, idempotency keys, expected case versions, conditional override requirements, and errors are machine-verifiable where feasible.
+- [ ] Network/identity enforcement is specified separately from topology.
+- [ ] RPC latency remains a target until measured through a deployed path.
+- [ ] Contract compilation, linting, and compatibility tests pass.
+
+#### RH-10 - Specify and harden audit durability semantics
+
+**Issue template:** Design specification followed by bounded Implementation task
+**Classification:** Latent/current defect and P4 prerequisite
+**Priority:** High
+
+**Outcome:** Accurately bound current integrity claims and implement a concrete reference persistence mechanism selected in RH-10D: either a transactional local store, or a deliberately single-writer append protocol with documented crash recovery. Define trusted checkpoints, suffix-truncation detection, writer coordination, atomic state/audit persistence, and recovery semantics without requiring P4 PostgreSQL/KMS infrastructure.
+
+**Acceptance checks:**
+
+- [ ] Current unkeyed hash-chain behavior is described as integrity checking relative to a trusted tip/length.
+- [ ] Suffix deletion, middle mutation, reorder, replay, and concurrent-writer cases are tested.
+- [ ] Workflow state and audit history recover consistently after restart/failure in the reference implementation.
+- [ ] P4-04 owns PostgreSQL/KMS realization; RH owns semantics, reference behavior, and adversarial fixtures.
+- [ ] Failure between state and audit updates, restart, stale checkpoint, suffix truncation, and second-writer rejection/coordination are covered.
+- [ ] The trusted checkpoint is protected by a separately stated trust boundary; a tip stored beside the writable log is not claimed to resist an attacker controlling both.
+
+#### RH-11 - Expand qualification, CI, and read-only artifact verification
+
+**Issue template:** Implementation task
+**Classification:** Test gap / tooling defect
+**Priority:** Release blocking
+
+**Outcome:** Make CI and qualification establish the revised release claims across contracts, simulator, serving, dashboard, runtime packaging, and adversarial boundaries without mutating published evidence in check mode.
+
+**Acceptance checks:**
+
+- [ ] CI installs and runs dashboard and serving suites plus all release-relevant `make check` targets.
+- [ ] Streamlit AppTest covers meaningful interactions, capacity, point-in-time, and post-decision refresh behavior.
+- [ ] Clean-image runtime smoke, API/interface tests, contract compile/lint, authority bypass, audit truncation, monitoring evidence, harmful-treatment, and grounding adversarial tests run in CI.
+- [ ] `--check` and artifact verification are read-only and compare against published evidence.
+- [ ] Each qualification gate states precisely what it proves; in-process timing is not described as network or sustained-load evidence.
+- [ ] The README badge reflects the actual workflow rather than a static passing image.
+- [ ] Verification checks working-tree cleanliness, runs in a clean environment, and uses a documented headless plotting backend.
+
+#### RH-12 - Regenerate evidence and reconcile scientific and product claims
+
+**Issue template:** Implementation task
+**Classification:** Documentation and evidence correction
+**Priority:** Release blocking
+
+**Outcome:** Recompute affected economic and qualification evidence after fixes and reconcile all public claims and status documents without rewriting historical results. The evaluation must answer a predeclared estimand and use comparable operational baselines.
+
+**Acceptance checks:**
+
+- [ ] Corrected OPE reports the predeclared primary estimand. Fixed-assignment resampling is labeled conditional on the frozen allocation; portfolio resampling reruns the policy and states cluster, duplication, and capacity treatment. If both are reported, they remain separate.
+- [ ] Non-intervention, rules-only, risk-ranked, and engine strategies use identical cohort, cutoff, eligibility, catalog, budget, and personnel assumptions.
+- [ ] Lead time, recall at capacity, unnecessary contacts, expected harm, premium-value, and policy-count objectives are reported where supported.
+- [ ] Predictive discrimination, calibration, treatment effect, modeled business value, and external validity are presented as separate claims.
+- [ ] Queue precision/recall, value-versus-count tradeoff, fairness/access implications, and combined lapse/surrender target mapping are explicit.
+- [ ] The v5 infeasibility statement is bounded to the examined design/search space.
+- [ ] The Protocol 3.1.0 post-result amendment and acceptance-seed reuse remain visible; any fresh-seed confirmation is predeclared in a separate experiment issue before execution.
+- [ ] README, model card, backlog, roadmap, limitations, release notes, ADR count, phase totals, and P4 scaffold status agree.
+- [ ] Scope is reconciled with open documentation and simulator issues #128 and #130.
+
+#### RH-13 - Qualify and release the hardening initiative
+
+**Issue template:** Implementation task
+**Classification:** Release evidence / decision
+**Priority:** Release blocking
+
+**Outcome:** Publish `v0.3.1-decision-engine-hardening` evidence and make a formal `PROCEED`, `REMEDIATE`, or `STOP` decision for P4-02/P4-03.
+
+**Acceptance checks:**
+
+- [ ] All predecessor RH issues are merged and closed.
+- [ ] A clean, read-only full qualification run passes and its environment and commit are recorded.
+- [ ] The recorded qualification starts from a clean working tree and uses the documented headless plotting configuration.
+- [ ] Release notes distinguish repaired behavior, superseded evidence, preserved historical artifacts, and remaining limitations.
+- [ ] Annotated tag and GitHub release are prepared only after the decision is `PROCEED`.
+- [ ] Phase 4 dependencies and amended P4-01 contracts are updated from the final merged state.
+
+### Finding coverage matrix
+
+| Review finding | Primary RH work | Supporting work |
+| --- | --- | --- |
+| 1. Dashboard loses point-in-time truth | RH-01 | RH-02, RH-08, RH-11 |
+| 2. Human-review transition bypass | RH-03 | RH-09, RH-11 |
+| 3. Missing safety facts mean permission | RH-02 | RH-01, RH-03 |
+| 4. Dashboard capacity is not enforced | RH-05 | RH-04, RH-11 |
+| 5. Harm is discarded; costs conflict | RH-04 | RH-05, RH-12 |
+| 6. Monitoring appears healthy without evidence | RH-07 | RH-11 |
+| 7. Serving is not independently packaged | RH-06 | RH-11 |
+| 8. P4-01 contracts disagree | RH-09 | RH-01, RH-03 |
+| 9. Audit claims exceed verification | RH-10 | RH-03, RH-11 |
+| 10. Solver and resource units are inconsistent | RH-05 | RH-04 |
+| 11. Qualification and CI are too narrow | RH-11 | RH-13 |
+| 12. Grounding is lexical and incomplete | RH-08 | RH-01, RH-11 |
+| Scientific/business interpretation | RH-12 | RH-04, RH-05, RH-13 |
+| Maintainability and presentation | RH-01, RH-06, RH-12 | RH-00, RH-09 |
+
+### GitHub execution conventions
+
+#### Issue creation
+
+- Use `.github/ISSUE_TEMPLATE/decision.yml` for RH-00 and any separately required durable decision attached to RH-09D.
+- Use `.github/ISSUE_TEMPLATE/design.yml` for every `D` child where the work breakdown calls for a design specification.
+- Use `.github/ISSUE_TEMPLATE/implementation.yml` for code, tests, evidence, and documentation changes.
+- Put the stable RH ID, classification, priority, and `v0.3.1-decision-engine-hardening` milestone in Work metadata.
+- Copy the issue-specific outcome, scope, claim/contract/artifact impact, acceptance checks, evidence, dependencies, and boundaries from this plan, refining them before marking the issue ready.
+
+#### Branches and pull requests
+
+Use the existing branch grammar with the GitHub issue number and stable work ID:
+
+```text
+docs/<issue>-rh-<id>-<slug>
+fix/<issue>-rh-<id>-<slug>
+feat/<issue>-rh-<id>-<slug>
+test/<issue>-rh-<id>-<slug>
+```
+
+Examples:
+
+```text
+docs/134-rh-00-hardening-charter
+fix/136-rh-02-fail-closed-safety
+test/145-rh-11-qualification-ci
+```
+
+PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safety evidence`. PR bodies use the repository template, `Closes #<issue>`, and the hardening milestone. Use merge commits, delete merged branches, and start dependent branches from updated `origin/main`.
+
+#### Required evidence for every implementation PR
+
+- Focused regression output demonstrating the protected invariant.
+- Relevant component-suite output.
+- `make check`, `git diff --check`, `git status --short`, and reviewed diff evidence.
+- Contract/artifact compatibility or intentional version/migration evidence.
+- Updated limitation and claim status when the merge changes what may be stated.
+- Confirmation that no final holdout, real customer data, credentials, or proprietary material entered scope.
+
+### Phase 4 operating rule while RH is open
+
+- P4-01 stays completed as architecture-inception history; RH-09 amends rather than rewrites it.
+- Do not start P4-02 or P4-03 implementation until RH-13 records `PROCEED`.
+- P4-04 may refine its future design against RH-10, but must not implement against unsettled audit semantics.
+- P4-05 through P4-07 remain planned and inherit the amended contracts and qualification language after RH-13.
+- If schedule pressure requires independent Phase 4 preparation, limit it to reversible research or spike work with no frozen contracts and no release claim.
+- PostgreSQL/KMS deployment, production identity federation, CRM/telephony connectors, Kafka, Kubernetes, multi-region scaling, a new deep-learning or causal/uplift model, and a live LLM are explicitly outside RH.
+- Fresh acceptance seeds are optional: they strengthen confirmation but do not block RH-13 when the post-result protocol change remains disclosed and no fresh-confirmation claim is made.
+
+### Recommended first GitHub actions
+
+1. [Completed] RH-00 was created as issue #133 with the decision template, links the 2026-09-07 reviewer approval, and records `ADOPT`.
+2. [Completed] GitHub Milestone #6, `v0.3.1-decision-engine-hardening`, was created after adoption and assigned to RH-00.
+3. [Completed] The RH initiative is represented in the interactive roadmap as a separate lane between Phase 3 and resumed Phase 4; this backlog remains canonical.
+4. [Completed] Open issues #128-#130 were triaged; #128 maps to future RH-12, #129 maps to future RH-07, and #130 remains independent pending RH-12 reconciliation.
+5. Initially create RH-01D and the independent implementation issues whose scopes are already ready after RH-00; create `I` children and downstream issues only when their predecessor designs and contracts are stable.
+6. Keep P4-02/P4-03 unassigned or explicitly blocked until RH-13.
+
+---
+
 ## Phase 4 - Enterprise Integration & Scale
 
 Phase 4 transitions Inforsight from a verified local mathematical decision engine into an enterprise-ready distributed platform. Operating under [**ADR 0003**](adr/0003-start-local-and-defer-distributed-infrastructure.md), all enterprise distributed infrastructure, multi-language microservices, and cloud deployments were deferred until the mathematical formulation and local decision-intelligence layers passed full system qualification.
 
 With the Capstone Milestone `v0.3.0-decision-engine` certified with 100% passing gates (S1–S6), Phase 4 executes the productionization roadmap across 7 governed increments. Assign every P4-01 through P4-07 issue to GitHub Milestone #5 (**`v0.4.0-enterprise-scale`**).
+
+P4-01 remains completed architecture-inception history. Its affected contracts are provisional under RH-09. P4-02 and P4-03 implementation are paused until the separate review-hardening initiative closes and RH-13 records `PROCEED`.
 
 ### Dependency and execution flow
 
@@ -776,6 +1188,8 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
+**Status:** Paused — blocked by RH-13 `PROCEED`.
+
 **Outcome:** High-throughput streaming event ingress replaces static JSONL batch playback, supporting real-time bitemporal policy event streams with schema validation and dead-letter queues.
 
 **Scope:**
@@ -800,6 +1214,8 @@ P4-01 (Architecture Inception & ADR 0014)
 ### P4-03 - Java 21 / Spring Boot control plane microservice
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
+
+**Status:** Paused — blocked by RH-13 `PROCEED`.
 
 **Outcome:** Production-grade Java 21 / Spring Boot microservice hosts the deterministic eligibility rules engine, knapsack uplift optimizer, and case triage queues with high concurrency.
 
