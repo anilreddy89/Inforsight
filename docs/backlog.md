@@ -749,7 +749,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Planned (Next active increment).
+**Status:** In progress (Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131), branch `feat/131-p4-01-enterprise-architecture-adr-0014`).
 
 **Outcome:** Reviewed Architecture Decision Record (ADR 0014) and interface contracts define microservice decomposition, inter-service protocols, and runtime isolation before distributed code is written.
 
@@ -763,10 +763,10 @@ P4-01 (Architecture Inception & ADR 0014)
 - Define developer environment specification (Docker Compose baseline).
 
 **Acceptance checks:**
-- [ ] ADR 0014 documents context, alternatives (monolith vs. microservices, REST vs. gRPC), tradeoffs, and security boundaries.
-- [ ] Sub-millisecond scoring SLA ($\le 5\text{ms}$ RPC roundtrip) contractually established.
-- [ ] ADR 0002 authority isolation invariants (`authorized_to_act: false`) explicitly codified in inter-service schemas.
-- [ ] Docker Compose topology scaffold passes local validation.
+- [x] ADR 0014 documents context, alternatives (monolith vs. microservices, REST vs. gRPC), tradeoffs, and security boundaries.
+- [x] Sub-millisecond scoring SLA ($\le 5\text{ms}$ RPC roundtrip) contractually established.
+- [x] ADR 0002 authority isolation invariants (`authorized_to_act: false`) explicitly codified in inter-service schemas.
+- [x] Docker Compose topology scaffold passes local validation.
 
 **Blocks:** P4-02, P4-03.
 

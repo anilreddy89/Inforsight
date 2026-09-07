@@ -98,7 +98,7 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-08 | Phase 3 | Counterfactual simulation and offline policy evaluation | Completed | Issue #122 and [PR #123](https://github.com/anilreddy89/Inforsight/pull/123) merged as `55f0415`; counterfactual simulation engine and OPE complete; Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs. Authorizes P3-09. |
 | P3-09 | Phase 3 | End-to-end system qualification and integration gate | Completed | Issue #124 and [PR #125](https://github.com/anilreddy89/Inforsight/pull/125) merged as `ae34848`; implemented qualification package, CLI runner, test suite (7/7 pass), and executed 1,000-policy test cohort passing 100% of Gates S1–S6 (Digest: 209a4c1f2b3f...). Authorizes P3-10. |
 | P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Completed | Issue #126 and [PR #127](https://github.com/anilreddy89/Inforsight/pull/127) merged as `dabc95b`; comprehensive dual-audience release notes (`docs/release-notes/v0.3.0-decision-engine.md`), formal Phase 3 Decision Note (RELEASE), release tag `v0.3.0-decision-engine`, Milestone #4 closed at 100% completion. Unblocks Phase 4. |
-| P4-01 | Phase 4 | Enterprise distributed architecture inception and ADR 0014 | Planned | Author ADR 0014, define service boundaries (Python inference vs. Java control plane vs. Kafka streaming), establish sub-millisecond RPC contracts and ADR 0002 isolation. Blocks P4-02, P4-03. |
+| P4-01 | Phase 4 | Enterprise distributed architecture inception and ADR 0014 | In progress | Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131), branch `feat/131-p4-01-enterprise-architecture-adr-0014`; authored ADR 0014, defined service boundaries, Protobuf v3 scoring contract (`proto/v1/inference_service.proto`), OpenAPI 3.1 specification (`api/openapi/control-plane-v1.yaml`), and Docker Compose topology (`infra/docker-compose.yml`). Blocks P4-02, P4-03. |
 | P4-02 | Phase 4 | Apache Kafka streaming ingress and event contracts | Planned | Transition from batch JSONL to real-time bitemporal streaming event topics; enforce deduplication, schema validation, and DLQ. Blocks P4-03. |
 | P4-03 | Phase 4 | Java 21 / Spring Boot control plane microservice | Planned | Port deterministic eligibility rules and knapsack uplift solver to Java; gRPC integration with Python inference; high-concurrency Virtual Threads. Blocks P4-04, P4-05. |
 | P4-04 | Phase 4 | Enterprise persistence layer and cryptographic audit store | Planned | Relational persistence for cases and queues; append-only SHA-256 hash-chained audit store with KMS signing interface. Blocks P4-06. |
@@ -106,13 +106,13 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P4-06 | Phase 4 | Cloud infrastructure, Helm charts, and container orchestration | Planned | Multi-stage Docker containerization, Kubernetes Helm charts with HPA, unified one-command local Docker Compose orchestration. Blocks P4-07. |
 | P4-07 | Phase 4 | Enterprise scale qualification and release (`v0.4.0-enterprise-scale`) | Planned | Execute 100,000-policy distributed stress test; pass Enterprise Performance Gates E1–E6; release marker and close Milestone #5. |
 
-Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is 100% complete and formally released under milestone `v0.3.0-decision-engine` (PR #127, commit `dabc95b`), completing all 11 Phase 3 increments (P3-01 through P3-10). Phase 4 (Enterprise Integration & Scale) roadmap is established across 7 planned increments (P4-01 through P4-07) for Milestone #5 (`v0.4.0-enterprise-scale`).
+Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2.0-risk-model` (PR #105, commit `7797c09`). Phase 3 (Policy Conservation Decision Engine & Intervention Orchestration) is 100% complete and formally released under milestone `v0.3.0-decision-engine` (PR #127, commit `dabc95b`), completing all 11 Phase 3 increments (P3-01 through P3-10). Phase 4 (Enterprise Integration & Scale) roadmap is active across 7 increments (P4-01 through P4-07) for Milestone #5 (`v0.4.0-enterprise-scale`).
 
 | Measure | Value |
 | --- | ---: |
 | Completed tracked changes | 55 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11) |
-| In-progress / implemented locally changes | 0 |
-| Planned changes | 7 |
+| In-progress / implemented locally changes | 1 (Phase 4: P4-01) |
+| Planned changes | 6 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
@@ -121,7 +121,7 @@ Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
 | Active increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
-| Next implementation increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
+| Next implementation increment | Phase 4 P4-02 (Apache Kafka Streaming Ingress and Event Contracts) |
 
 | ID | Status | Impact | Resolution trigger |
 | --- | --- | --- | --- |

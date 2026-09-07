@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package inforsight.inference.v1;
+
+option java_multiple_files = true;
+option java_package = "com.inforsight.inference.v1";
+option java_outer_classname = "InferenceServiceProto";
+
+// InferenceService provides low-latency risk scoring and local feature attribution
+// powered by the frozen zero-dependency BundledInferenceEngine.
+service InferenceService {
+  // Score a single policy's point-in-time feature vector.
+  rpc ScorePolicy (PolicyFeaturesRequest) returns (PolicyScoreResponse);
+
+  // Score a batch of policy feature vectors with high-throughput vectorization.
+  rpc BatchScorePolicies (BatchPolicyFeaturesRequest) returns (BatchPolicyScoreResponse);
+
+  // Retrieve active model bundle metadata, cryptographic digests, and versioning info.
+  rpc GetModelMetadata (MetadataRequest) returns (ModelMetadataResponse);
+
+  // Standard healthcheck probe for liveness and readiness probes.
+  rpc HealthCheck (HealthRequest) returns (HealthResponse);
+}
+
+message PolicyFeaturesRequest {
+  string policy_id = 1;
+  string as_of_date = 2; // RFC 3339 UTC date/timestamp
+  map<string, double> numeric_features = 3;
+  map<string, string> categorical_features = 4;
+}
+
+message FeatureContribution {
+  string feature_name = 1;
+  double feature_value = 2;
+  double contribution = 3; // Additive log-odds attribution (SHAP-equivalent)
+}
+
+message PolicyScoreResponse {
+  string policy_id = 1;
+  double raw_score = 2;              // Uncalibrated model logit
+  double calibrated_probability = 3; // Platt-calibrated lapse probability
+  
+  // ADR 0002 Authority Boundary Marker:
+  // Must be explicitly set to false by application code to guarantee perception-only authority.
+  bool authorized_to_act = 4;
+  
+  string operational_tier = 5;       // e.g. TIER_1_CRITICAL, TIER_2_ELEVATED, TIER_3_MODERATE, TIER_4_LOW
+  repeated FeatureContribution top_drivers = 6;
+  string bundle_version = 7;
+  string bundle_digest = 8;          // SHA-256 digest of active model bundle
+}
+
+message BatchPolicyFeaturesRequest {
+  string batch_id = 1;
+  repeated PolicyFeaturesRequest items = 2;
+}
+
+message BatchPolicyScoreResponse {
+  string batch_id = 1;
+  repeated PolicyScoreResponse items = 2;
+  double scoring_duration_ms = 3;
+}
+
+message MetadataRequest {}
+
+message ModelMetadataResponse {
+  string bundle_name = 1;
+  string bundle_version = 2;
+  string model_family = 3;
+  string calibration_method = 4;
+  string sha256_digest = 5;
+  int32 feature_count = 6;
+  repeated string expected_features = 7;
+  string qualification_status = 8;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+  string uptime = 2;
+  string version = 3;
+}

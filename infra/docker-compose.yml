@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # Streaming Gateway: Apache Kafka (KRaft mode, zero ZooKeeper dependency)
+  # ============================================================================
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: inforsight-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inforsight-network
+
+  # ============================================================================
+  # Relational Persistence & Cryptographic Audit Store: PostgreSQL 16
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: inforsight-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: inforsight_enterprise
+      POSTGRES_USER: inforsight_app
+      POSTGRES_PASSWORD: dev_insecure_local_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inforsight_app -d inforsight_enterprise"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inforsight-network
+
+  # ============================================================================
+  # Perception Layer: Python / FastAPI / gRPC Bundled Inference Engine
+  # ============================================================================
+  inference-runtime:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.inference
+    container_name: inforsight-inference-runtime
+    ports:
+      - "8000:8000"   # FastAPI HTTP/REST & Diagnostics
+      - "50051:50051" # gRPC Low-Latency Scoring RPC
+    environment:
+      INFERENCE_HOST: "0.0.0.0"
+      INFERENCE_REST_PORT: "8000"
+      INFERENCE_GRPC_PORT: "50051"
+      MODEL_BUNDLE_PATH: "serving/model_bundle_v6_logistic.json"
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/v1/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - inforsight-network
+
+  # ============================================================================
+  # Control Plane: Java 21 / Spring Boot 3 Orchestration Microservice
+  # ============================================================================
+  control-plane:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.control-plane
+    container_name: inforsight-control-plane
+    ports:
+      - "8080:8080"   # Spring Boot REST API
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/inforsight_enterprise"
+      SPRING_DATASOURCE_USERNAME: "inforsight_app"
+      SPRING_DATASOURCE_PASSWORD: "dev_insecure_local_password"
+      INFERENCE_SERVICE_HOST: "inference-runtime"
+      INFERENCE_SERVICE_PORT: "50051"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      inference-runtime:
+        condition: service_healthy
+    networks:
+      - inforsight-network
+
+networks:
+  inforsight-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
