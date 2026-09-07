@@ -555,6 +555,89 @@ const timelineData = [
         checks: "Issue #126; docs/release-notes/v0.3.0-decision-engine.md; Phase 3 decision note RELEASE; 100% pass across Gates S1–S6; tag v0.3.0-decision-engine; Milestone #4 closed; unblocks Phase 4."
       }
     ]
+  },
+  {
+    phase: "Phase 4: Enterprise Integration & Cloud Scale",
+    milestone: "v0.4.0-enterprise-scale",
+    items: [
+      {
+        id: "P4-01",
+        title: "Enterprise Distributed Architecture Inception & ADR 0014",
+        status: "Completed",
+        commit: "a897300",
+        summary: {
+          tech: "Decomposed architecture into polyglot microservices: Python/FastAPI/gRPC inference runtime (<= 5ms SLA), Java 21 / Spring Boot 3 control plane (Project Loom), Apache Kafka streaming gateway, and PostgreSQL audit store. Codified Protobuf v3 and OpenAPI 3.1 contracts with ADR 0002 non-authority markers.",
+          simple: "Enterprise Blueprints: Designed the multi-server cloud architecture connecting high-speed Python AI scoring with high-concurrency Java 21 business engines and Kafka streaming, while strictly locking down the AI so it can never contact customers without human review."
+        },
+        checks: "Issue #131 closed by PR #132 (a897300); ADR 0014; proto/v1/inference_service.proto; api/openapi/control-plane-v1.yaml; infra/docker-compose.yml; Dockerfile scaffolds; 22 contract tests pass; boundary checks pass; unblocks P4-02 & P4-03."
+      },
+      {
+        id: "P4-02",
+        title: "Apache Kafka Streaming Ingress & Event Contracts",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Real-time bitemporal streaming event ingress replacing batch playback; versioned Kafka topics, event deduplication, schema validation, and poison-pill dead letter queue (DLQ).",
+          simple: "Real-Time Event Stream: Connecting live customer event data through Apache Kafka with automated duplicate filtering and error quarantine queues."
+        },
+        checks: "data-contracts/streaming/; Testcontainers integration harness; zero event loss under out-of-order arrival."
+      },
+      {
+        id: "P4-03",
+        title: "Java 21 / Spring Boot 3 Control Plane Microservice",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
+          simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
+        },
+        checks: "services/control-plane/; 100% rule and knapsack parity with Python reference suite; Testcontainers integration tests pass."
+      },
+      {
+        id: "P4-04",
+        title: "Enterprise Persistence & Cryptographic Audit Ledger",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "PostgreSQL relational persistence with Flyway migrations and immutable append-only SHA-256 cryptographic audit ledger with KMS signing interface.",
+          simple: "Tamper-Proof Audit Vault: Secure database tracking policy snapshots and an unalterable cryptographic ledger guaranteeing complete auditability."
+        },
+        checks: "Flyway migrations; 100% tamper detection across injected ledger mutations; ACID case state transactions."
+      },
+      {
+        id: "P4-05",
+        title: "Enterprise CRM & Contact Center Connectors",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Bi-directional adapters for Salesforce Financial Services Cloud and telephony dialers (Genesys/Twilio) with strict ADR 0002 boundary and 30-day cooling-off guardrails.",
+          simple: "CRM & Phone Adapters: Connecting triage queues to caseworker screens and dialers with strict anti-harassment safeguards and human authorization locks."
+        },
+        checks: "services/control-plane/connectors/; mock integration tests; 100% rejection of unauthorized dispatch attempts."
+      },
+      {
+        id: "P4-06",
+        title: "Cloud Infrastructure, Helm Charts & Orchestration",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Multi-stage minimal Docker containerization, Kubernetes Helm charts with Horizontal Pod Autoscaling (HPA), and unified local Docker Compose orchestration.",
+          simple: "Cloud & Kubernetes Packaging: Production container images and Kubernetes deployment charts with automatic scaling under load."
+        },
+        checks: "infra/helm/inforsight; Docker Compose healthchecks; zero high/critical CVEs in container scans."
+      },
+      {
+        id: "P4-07",
+        title: "Enterprise Scale Qualification Gate & Release (v0.4.0)",
+        status: "Planned",
+        commit: "Pending",
+        summary: {
+          tech: "Distributed stress qualification across 100,000 synthetic policies; verification of Enterprise Performance Gates E1–E6; release notes and milestone closeout.",
+          simple: "Milestone 4.0 Release: Running a 100,000-customer stress test across all cloud services to prove speed, fault tolerance, and bit-for-bit mathematical parity."
+        },
+        checks: "100% pass on Gates E1–E6; 100,000 synthetic policies; docs/release-notes/v0.4.0-enterprise-scale.md; tag v0.4.0-enterprise-scale."
+      }
+    ]
   }
 ];
 

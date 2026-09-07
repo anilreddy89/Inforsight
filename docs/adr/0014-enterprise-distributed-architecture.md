@@ -1,6 +1,6 @@
 # ADR 0014: Enterprise Distributed Architecture & Microservice Decomposition
 
-- Status: Proposed / In Review
+- Status: Accepted through [issue #131](https://github.com/anilreddy89/Inforsight/issues/131) and [PR #132](https://github.com/anilreddy89/Inforsight/pull/132) (commit `a897300`)
 - Date: 2026-09-06
 - Decision owner: Anil Jonnala
 - Trigger: Inception of Phase 4 (Enterprise Integration & Scale) following Phase 3 system qualification

@@ -98,7 +98,7 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-08 | Phase 3 | Counterfactual simulation and offline policy evaluation | Completed | Issue #122 and [PR #123](https://github.com/anilreddy89/Inforsight/pull/123) merged as `55f0415`; counterfactual simulation engine and OPE complete; Decision Engine achieves $13,764 net preserved value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics) across 1,000 bootstrap CIs. Authorizes P3-09. |
 | P3-09 | Phase 3 | End-to-end system qualification and integration gate | Completed | Issue #124 and [PR #125](https://github.com/anilreddy89/Inforsight/pull/125) merged as `ae34848`; implemented qualification package, CLI runner, test suite (7/7 pass), and executed 1,000-policy test cohort passing 100% of Gates S1–S6 (Digest: 209a4c1f2b3f...). Authorizes P3-10. |
 | P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Completed | Issue #126 and [PR #127](https://github.com/anilreddy89/Inforsight/pull/127) merged as `dabc95b`; comprehensive dual-audience release notes (`docs/release-notes/v0.3.0-decision-engine.md`), formal Phase 3 Decision Note (RELEASE), release tag `v0.3.0-decision-engine`, Milestone #4 closed at 100% completion. Unblocks Phase 4. |
-| P4-01 | Phase 4 | Enterprise distributed architecture inception and ADR 0014 | In progress | Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131), branch `feat/131-p4-01-enterprise-architecture-adr-0014`; authored ADR 0014, defined service boundaries, Protobuf v3 scoring contract (`proto/v1/inference_service.proto`), OpenAPI 3.1 specification (`api/openapi/control-plane-v1.yaml`), and Docker Compose topology (`infra/docker-compose.yml`). Blocks P4-02, P4-03. |
+| P4-01 | Phase 4 | Enterprise distributed architecture inception and ADR 0014 | Completed | Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131) and [PR #132](https://github.com/anilreddy89/Inforsight/pull/132) merged as `a897300`; authored ADR 0014, defined service boundaries, Protobuf v3 scoring contract (`proto/v1/inference_service.proto`), OpenAPI 3.1 specification (`api/openapi/control-plane-v1.yaml`), and Docker Compose topology (`infra/docker-compose.yml`). Unblocks P4-02, P4-03. |
 | P4-02 | Phase 4 | Apache Kafka streaming ingress and event contracts | Planned | Transition from batch JSONL to real-time bitemporal streaming event topics; enforce deduplication, schema validation, and DLQ. Blocks P4-03. |
 | P4-03 | Phase 4 | Java 21 / Spring Boot control plane microservice | Planned | Port deterministic eligibility rules and knapsack uplift solver to Java; gRPC integration with Python inference; high-concurrency Virtual Threads. Blocks P4-04, P4-05. |
 | P4-04 | Phase 4 | Enterprise persistence layer and cryptographic audit store | Planned | Relational persistence for cases and queues; append-only SHA-256 hash-chained audit store with KMS signing interface. Blocks P4-06. |
@@ -110,17 +110,18 @@ Phase 2 Baseline ML is 100% complete and formally released under milestone `v0.2
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 55 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11) |
-| In-progress / implemented locally changes | 1 (Phase 4: P4-01) |
-| Planned changes | 6 |
+| Completed tracked changes | 56 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11, Phase 4: 1) |
+| In-progress / implemented locally changes | 0 |
+| Planned changes | 6 (P4-02 through P4-07) |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
-| In-progress Phase 3 increments | 0 |
+| Completed Phase 4 increments | 1 of 7 (14.3% complete) |
+| In-progress Phase 4 increments | 0 |
 | Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
-| Active increment | Phase 4 P4-01 (Enterprise Distributed Architecture Inception) |
+| Active increment | Phase 4 P4-02 (Apache Kafka Streaming Ingress and Event Contracts) |
 | Next implementation increment | Phase 4 P4-02 (Apache Kafka Streaming Ingress and Event Contracts) |
 
 | ID | Status | Impact | Resolution trigger |

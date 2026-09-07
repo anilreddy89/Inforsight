@@ -749,7 +749,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** In progress (Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131), branch `feat/131-p4-01-enterprise-architecture-adr-0014`).
+**Status:** Completed (Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131), [PR #132](https://github.com/anilreddy89/Inforsight/pull/132), commit `a897300`).
 
 **Outcome:** Reviewed Architecture Decision Record (ADR 0014) and interface contracts define microservice decomposition, inter-service protocols, and runtime isolation before distributed code is written.
 
