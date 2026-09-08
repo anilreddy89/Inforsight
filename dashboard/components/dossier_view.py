@@ -96,7 +96,7 @@ def render_dossier_view(
             base_value_logit=-0.7107,
             calibrated_logit=item.scoring_result.calibrated_logit,
         )
-        st.pyplot(fig_waterfall, use_container_width=True)
+        st.pyplot(fig_waterfall, width="stretch")
 
     st.markdown("---")
 
@@ -162,7 +162,7 @@ def render_dossier_view(
             }
             for e in item.timeline_events
         ])
-        st.dataframe(t_df, use_container_width=True, hide_index=True)
+        st.dataframe(t_df, width="stretch", hide_index=True)
     else:
         st.info("No prior events recorded before the observation cutoff.")
 
@@ -174,5 +174,5 @@ def render_dossier_view(
     with b1:
         st.write("Review complete. Open the Human-in-the-Loop decision console to approve, override, or decline this case.")
     with b2:
-        if st.button("Open Decision Console ⚖️", type="primary", use_container_width=True):
+        if st.button("Open Decision Console ⚖️", type="primary", width="stretch"):
             on_proceed_to_decision(item.policy_id)

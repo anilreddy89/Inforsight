@@ -161,7 +161,7 @@ def render_decision_console(
 
     # 4. Commit Button & Execution Handler
     st.write("")
-    if st.button("🔐 Commit Decision to Cryptographic Audit Ledger", type="primary", use_container_width=True):
+    if st.button("🔐 Commit Decision to Cryptographic Audit Ledger", type="primary", width="stretch"):
         # 1. Validate Reviewer ID
         if not REVIEWER_ID_REGEX.match(rev_id):
             st.error(f"Invalid Reviewer ID: '{rev_id}'. Must match pattern `usr_[a-z0-9_]{{3,32}}`.")

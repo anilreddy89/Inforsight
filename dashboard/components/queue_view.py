@@ -99,7 +99,7 @@ def render_queue_view(
     df = pd.DataFrame(table_rows)
     st.dataframe(
         df,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "Priority Rank": st.column_config.TextColumn("Rank", width="small"),
@@ -130,6 +130,6 @@ def render_queue_view(
     with select_col2:
         st.write("")
         st.write("")
-        if st.button("Open Dossier ➡️", type="primary", use_container_width=True):
+        if st.button("Open Dossier ➡️", type="primary", width="stretch"):
             if selected_pid:
                 on_select_policy(selected_pid)

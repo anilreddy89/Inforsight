@@ -33,7 +33,7 @@ def plot_shap_waterfall(
     bars = ax.barh(names, values, color=colors, height=0.6, alpha=0.9, edgecolor="none")
 
     ax.axvline(0, color="#64748B", linestyle="--", linewidth=1.0, alpha=0.7)
-    ax.set_xlabel("Impact on Log-Odds of Lapse (Δ logit)", fontsize=10, fontweight="medium", color="#334155")
+    ax.set_xlabel("Impact on Log-Odds of Lapse (Δ logit)", fontsize=10, fontweight="normal", color="#334155")
     ax.set_title(
         f"Feature Attributions (Base Logit: {base_value_logit:.2f} → Score: {calibrated_logit:.2f})",
         fontsize=11,
@@ -88,7 +88,7 @@ def plot_risk_distribution(tier_counts: Mapping[str, int]) -> plt.Figure:
         colors=colors,
         wedgeprops=dict(width=0.45, edgecolor="white", linewidth=2),
     )
-    plt.setp(texts, size=8.5, color="#1E293B", weight="medium")
+    plt.setp(texts, size=8.5, color="#1E293B", weight="normal")
     plt.setp(autotexts, size=8.5, weight="bold", color="white")
     ax.set_title("Portfolio Risk Tiers", fontsize=11, fontweight="bold", color="#1E293B", pad=10)
     fig.tight_layout()
@@ -116,7 +116,7 @@ def plot_intervention_mix(action_counts: Mapping[str, int]) -> plt.Figure:
     ax.spines["left"].set_color("#CBD5E1")
     ax.spines["bottom"].set_color("#CBD5E1")
     ax.tick_params(colors="#475569", labelsize=8.5)
-    ax.set_xlabel("Policy Count", fontsize=9, fontweight="medium", color="#334155")
+    ax.set_xlabel("Policy Count", fontsize=9, fontweight="normal", color="#334155")
     ax.set_title("Optimal Intervention Mix", fontsize=11, fontweight="bold", color="#1E293B", pad=10)
 
     for bar, val in zip(bars, counts):

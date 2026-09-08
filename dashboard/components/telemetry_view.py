@@ -64,7 +64,7 @@ def render_telemetry_view() -> None:
         {"Feature": "policy_age_months", "Importance": "6.15%", "CSI": "0.0152", "Status": "🟢 HEALTHY", "Threshold": "0.100"},
         {"Feature": "grace_notice_count", "Importance": "5.20%", "CSI": "0.0198", "Status": "🟢 HEALTHY", "Threshold": "0.100"},
     ]
-    st.dataframe(feature_data, use_container_width=True, hide_index=True)
+    st.dataframe(feature_data, width="stretch", hide_index=True)
 
     st.markdown("---")
 
