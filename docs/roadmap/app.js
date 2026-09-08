@@ -574,13 +574,13 @@ const timelineData = [
       {
         id: "RH-01",
         title: "Canonical Point-in-Time Snapshot & Semantic Catalog",
-        status: "Planned",
-        commit: "Pending",
+        status: "Design Completed",
+        commit: "fde664ec",
         summary: {
           tech: "Define and implement one bitemporal domain snapshot and versioned catalog for statuses, risk tiers, actions, costs, features, and duration units.",
           simple: "Create one trustworthy, time-correct view of each policy and one shared dictionary for every downstream component."
         },
-        checks: "Design child RH-01D precedes implementation child RH-01I; delayed-ingestion and future-effective fixtures required."
+        checks: "RH-01D issue #136 closed through PR #137 (fde664ec); ADR 0015, snapshot/catalog 1.0.0, and 20 acceptance fixtures are settled. RH-01I is next and must prove delayed-ingestion, future-effective, heterogeneous-policy, compatibility, and consumer-migration behavior."
       },
       {
         id: "RH-02–RH-03",

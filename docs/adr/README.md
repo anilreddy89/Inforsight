@@ -17,4 +17,4 @@ ADRs capture decisions that are costly or confusing to rediscover. Use the next 
 - [0011 — Record v5 design infeasibility stop from post-v4 redesign diagnostics](0011-record-v5-design-infeasibility-and-stop.md) — accepted through issue #82 and PR #83, merge commit `464a4fd`
 - [0012 — Authorize bounded sigmoid hazard link architecture for Generation v6](0012-authorize-bounded-sigmoid-hazard-link-v6.md) — accepted through issue #86 and PR #87, merge commit `18ce32f`
 
-- [0015 — Canonical dual-time domain snapshot](0015-canonical-dual-time-domain-snapshot.md) — proposed in RH-01D, issue #136
+- [0015 — Canonical dual-time domain snapshot](0015-canonical-dual-time-domain-snapshot.md) — accepted through issue #136 and PR #137, merge `fde664ec`

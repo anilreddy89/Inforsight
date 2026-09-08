@@ -100,7 +100,8 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | P3-10 | Phase 3 | Milestone release marker and release notes (`v0.3.0-decision-engine`) | Completed | Issue #126 and [PR #127](https://github.com/anilreddy89/Inforsight/pull/127) merged as `dabc95b`; comprehensive dual-audience release notes (`docs/release-notes/v0.3.0-decision-engine.md`), formal Phase 3 Decision Note (RELEASE), release tag `v0.3.0-decision-engine`, Milestone #4 closed at 100% completion. Unblocks Phase 4. |
 | P4-01 | Phase 4 | Enterprise distributed architecture inception and ADR 0014 | Completed | Issue [#131](https://github.com/anilreddy89/Inforsight/issues/131) and [PR #132](https://github.com/anilreddy89/Inforsight/pull/132) merged as `a897300`; authored ADR 0014, defined service boundaries, Protobuf v3 scoring contract (`proto/v1/inference_service.proto`), OpenAPI 3.1 specification (`api/openapi/control-plane-v1.yaml`), and Docker Compose topology (`infra/docker-compose.yml`). Unblocks P4-02, P4-03. |
 | RH-00 | Review hardening | Charter, temporary claim freeze, and overlap triage | Completed | Issue [#133](https://github.com/anilreddy89/Inforsight/issues/133) closed through [PR #134](https://github.com/anilreddy89/Inforsight/pull/134), merged as `ce2e6de`; Milestone #6 and overlap dispositions are active. |
-| RH-01–RH-10 | Review hardening | Correctness, contract, packaging, monitoring, grounding, and audit repairs | Planned | Governed by the dependency graph in `docs/backlog.md`; open only predecessor-satisfied work. |
+| RH-01D | Review hardening | Canonical dual-time domain snapshot and semantic-catalog design | Completed | Issue [#136](https://github.com/anilreddy89/Inforsight/issues/136) closed through [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merged as `fde664ec`; ADR 0015 and contract version 1.0.0 are accepted. |
+| RH-01I–RH-10 | Review hardening | Runtime correctness, packaging, monitoring, grounding, and audit repairs | Planned | RH-01I is next; remaining work follows the dependency graph in `docs/backlog.md`. |
 | RH-11 | Review hardening | Expanded CI and read-only qualification | Planned | Begins after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Evidence regeneration and documentation reconciliation | Planned | Issue #128 will be amended when predecessor-ready; issue #130 remains independent pending reconciliation. |
 | RH-13 | Review hardening | Hardening release and Phase 4 resume decision | Planned | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
@@ -115,9 +116,9 @@ Phase 2 and Phase 3 remain completed releases. P4-01 is completed architecture-i
 
 | Measure | Value |
 | --- | ---: |
-| Completed tracked changes | 56 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11, Phase 4: 1) |
+| Completed tracked changes | 57 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11, Phase 4: 1, Review hardening: 1) |
 | In-progress / implemented locally changes | 0 |
-| Planned changes | RH-01 through RH-13 plus P4-04 through P4-07 |
+| Planned changes | RH-01I through RH-13 plus P4-04 through P4-07 |
 | Changes needing confirmation | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
@@ -126,8 +127,8 @@ Phase 2 and Phase 3 remain completed releases. P4-01 is completed architecture-i
 | Completed Phase 4 increments | 1 of 7 (14.3% complete) |
 | In-progress Phase 4 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | RH-01D preparation and other predecessor-satisfied RH work |
-| Next implementation increment | RH-01D canonical snapshot and semantic-catalog design |
+| Active increment | RH-01I preparation from the accepted RH-01D contract |
+| Next implementation increment | RH-01I canonical dual-time snapshot and consumer migration |
 
 | ID | Status | Impact | Resolution trigger |
 | --- | --- | --- | --- |
