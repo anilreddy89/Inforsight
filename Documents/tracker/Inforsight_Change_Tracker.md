@@ -86,7 +86,8 @@ Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github
 | P3-09 | Phase 3 — Conservation Decision Engine | End-to-end system qualification and integration gate (Gates S1–S6). | Completed | [#124](https://github.com/anilreddy89/Inforsight/issues/124) | [#125](https://github.com/anilreddy89/Inforsight/pull/125) | 2026-09-06 | `ae34848` | `simulator/src/inforsight_simulator/qualification/`, `scripts/run_phase_03_qualification.py`, `docs/experiments/phase-03-09-qualification-*`, [phase document](../phase_docs/phase-03-09-end-to-end-system-qualification-and-integration-gate.md) | Merged in PR #125; implemented qualification package, 7 unit/integration tests passing, CLI runner, and executed 1,000-policy test cohort passing 100% of Gates S1–S6 (Digest: 209a4c1f2b3fee5a551d724e5841cf857abecd3c669f797f17f130deaaf62d90). Authorizes P3-10. |
 | P4-01 | Phase 4 — Enterprise Integration & Scale | Enterprise distributed architecture inception and ADR 0014. | Completed | [#131](https://github.com/anilreddy89/Inforsight/issues/131) | [#132](https://github.com/anilreddy89/Inforsight/pull/132) | 2026-09-06 | `a897300` | `docs/adr/0014-enterprise-distributed-architecture.md`, `proto/v1/inference_service.proto`, `api/openapi/control-plane-v1.yaml`, `infra/docker-compose.yml`, [phase document](../phase_docs/phase-04-01-enterprise-distributed-architecture-and-adr-0014.md) | Author ADR 0014, define service boundaries (Python inference vs. Java control plane vs. Kafka streaming), establish sub-millisecond RPC contracts and ADR 0002 isolation. Blocks P4-02, P4-03. |
 | RH-00 | Review hardening | Adopt the maintenance-release charter, freeze unsupported claims, and triage existing issues. | Completed | [#133](https://github.com/anilreddy89/Inforsight/issues/133) | [#134](https://github.com/anilreddy89/Inforsight/pull/134) | 2026-09-07 | `ce2e6de` | [phase document](../phase_docs/phase-rh-00-hardening-release-charter-and-overlap-triage.md), `docs/backlog.md`, `docs/limitations.md`, roadmap | `ADOPT` recorded; Milestone #6 created; #128 amended to RH-12, #129 amended to RH-07, #130 left independent pending RH-12; P4-02/P4-03 paused through RH-13. |
-| RH-01–RH-10 | Review hardening | Repair canonical snapshot, safety, authority, economics, allocation, runtime, monitoring, grounding, P4 contracts, and audit semantics through the governed dependency graph. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | Open only predecessor-satisfied `D`, `I`, or implementation issues; historical artifacts remain immutable. |
+| RH-01D | Review hardening | Define the canonical dual-time domain snapshot and shared semantic catalog. | Completed | [#136](https://github.com/anilreddy89/Inforsight/issues/136) | [#137](https://github.com/anilreddy89/Inforsight/pull/137) | 2026-09-08 | `fde664ec` | `docs/hardening/rh-01-domain-snapshot-contract.md`, ADR 0015, `data-contracts/rh/v1/`, 20 fixtures, 5 focused design tests | Design and migration contract accepted; all five CI jobs passed. Authorizes RH-01I from updated `main`; parent RH-01 remains open. |
+| RH-01I–RH-10 | Review hardening | Implement the canonical snapshot and complete safety, authority, economics, allocation, runtime, monitoring, grounding, P4-contract, and audit repairs through the governed dependency graph. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | RH-01I is next; open only predecessor-satisfied work and preserve historical artifacts. |
 | RH-11 | Review hardening | Expand CI and perform read-only qualification of revised claims and boundaries. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-11 | Begins only after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Regenerate affected evidence and reconcile public documentation and scientific/product claims. | Planned | [#128](https://github.com/anilreddy89/Inforsight/issues/128) (to amend when ready) | TBD | TBD | — | `docs/backlog.md` RH-12 | Sequentially follows RH-11; reconciles independent issue #130 without rewriting historical evidence. |
 | RH-13 | Review hardening | Qualify and release the hardening initiative; decide whether Phase 4 may resume. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-13 | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
@@ -128,7 +129,7 @@ In one sentence: Phase 2 and Phase 3 are 100% complete and released; Phase 4 (En
 | --- | --- |
 | Completed tracked changes | 57 (Phase 0: 2, Phase 1: 7, Phase 2: 12, Phase 2R: 24, CI: 1, Phase 3: 11, Phase 4: 1, Review hardening: 1) |
 | Implemented locally changes | 0 |
-| Planned changes | 7 (P4-01 through P4-07) |
+| Planned changes | RH-01I through RH-13 plus P4-04 through P4-07 |
 | Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
@@ -137,8 +138,8 @@ In one sentence: Phase 2 and Phase 3 are 100% complete and released; Phase 4 (En
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | RH-01D preparation and other predecessor-satisfied RH work |
-| Next implementation increment | RH-01D canonical snapshot and semantic-catalog design |
+| Active increment | RH-01I preparation from the accepted RH-01D contract |
+| Next implementation increment | RH-01I canonical dual-time snapshot and consumer migration |
 
 ## Latest verification baseline
 
