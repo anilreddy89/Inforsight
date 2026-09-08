@@ -40,6 +40,7 @@ from inforsight_simulator.semantic_catalog import (
     SemanticCatalog,
     load_semantic_catalog,
 )
+from inforsight_simulator.safety_evidence import SafetyEvidence
 from inforsight_simulator.workflow.models import (
     CaseEvent,
     CaseState,
@@ -109,10 +110,14 @@ class EngineBridge:
         """Determines legal and regulatory action eligibility under ADR 0002."""
         return self.rules_engine.evaluate(policy_context)
 
-    def evaluate_snapshot(self, snapshot: DomainSnapshot) -> EligibleActionSet:
+    def evaluate_snapshot(
+        self, snapshot: DomainSnapshot, safety_evidence: SafetyEvidence | None = None
+    ) -> EligibleActionSet:
         """Evaluate a validated snapshot without coercing unknown facts to permission."""
 
-        return self.rules_engine.evaluate_snapshot(snapshot, self.semantic_catalog)
+        return self.rules_engine.evaluate_snapshot(
+            snapshot, self.semantic_catalog, safety_evidence
+        )
 
     def optimize_action(
         self,
@@ -215,6 +220,9 @@ class EngineBridge:
             top_risk_drivers=tuple(top_drivers),
             disqualified_actions=tuple(disqualified_summaries),
             eligible_actions=tuple(eligible_action_set.eligible_actions),
+            has_active_claim=(snapshot.safety.has_active_claim if snapshot else policy_context.has_active_claim),
+            has_legal_hold=(snapshot.safety.has_legal_hold if snapshot else policy_context.has_legal_hold),
+            has_registered_dispute=(snapshot.safety.has_registered_dispute if snapshot else policy_context.has_registered_dispute),
         )
 
         return self.assistant.generate_brief(evidence)
@@ -244,6 +252,9 @@ class EngineBridge:
             eligible_action_set={
                 "eligible_actions": list(eligible_action_set.eligible_actions),
                 "primary_action": case_brief.intervention_recommendations.primary_action,
+                "snapshot_id": eligible_action_set.snapshot_id,
+                "safety_evidence_id": eligible_action_set.safety_evidence_id,
+                "requirements_version": eligible_action_set.requirements_version,
             },
             case_brief=case_brief.to_dict(),
             model_bundle_id=self.bundle.bundle_id,

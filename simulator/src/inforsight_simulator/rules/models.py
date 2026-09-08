@@ -23,14 +23,14 @@ class PolicyContext:
     status: str
     tenure_days: int
     in_grace_period: bool
-    days_past_due: int
-    has_active_claim: bool = False
-    has_legal_hold: bool = False
-    has_registered_dispute: bool = False
-    sms_opt_out: bool = False
-    email_opt_out: bool = False
-    phone_opt_out: bool = False
-    dnc_registered: bool = False
+    days_past_due: int | None
+    has_active_claim: bool | None = None
+    has_legal_hold: bool | None = None
+    has_registered_dispute: bool | None = None
+    sms_opt_out: bool | None = None
+    email_opt_out: bool | None = None
+    phone_opt_out: bool | None = None
+    dnc_registered: bool | None = None
     last_contact_date: datetime | None = None
 
     def __post_init__(self) -> None:
@@ -43,8 +43,14 @@ class PolicyContext:
             raise ValueError("as_of must be timezone-aware and use UTC")
         if self.tenure_days < 0:
             raise ValueError("tenure_days cannot be negative")
-        if self.days_past_due < 0:
+        if self.days_past_due is not None and self.days_past_due < 0:
             raise ValueError("days_past_due cannot be negative")
+        for name in (
+            "has_active_claim", "has_legal_hold", "has_registered_dispute",
+            "sms_opt_out", "email_opt_out", "phone_opt_out", "dnc_registered",
+        ):
+            if (value := getattr(self, name)) is not None and type(value) is not bool:
+                raise TypeError(f"{name} must be boolean or None")
         if self.last_contact_date is not None:
             if not isinstance(self.last_contact_date, datetime):
                 raise TypeError("last_contact_date must be a datetime instance or None")
@@ -75,14 +81,14 @@ class PolicyContext:
             status=data["status"],
             tenure_days=int(data["tenure_days"]),
             in_grace_period=bool(data["in_grace_period"]),
-            days_past_due=int(data["days_past_due"]),
-            has_active_claim=bool(data.get("has_active_claim", False)),
-            has_legal_hold=bool(data.get("has_legal_hold", False)),
-            has_registered_dispute=bool(data.get("has_registered_dispute", False)),
-            sms_opt_out=bool(data.get("sms_opt_out", False)),
-            email_opt_out=bool(data.get("email_opt_out", False)),
-            phone_opt_out=bool(data.get("phone_opt_out", False)),
-            dnc_registered=bool(data.get("dnc_registered", False)),
+            days_past_due=(None if data.get("days_past_due") is None else int(data["days_past_due"])),
+            has_active_claim=data.get("has_active_claim"),
+            has_legal_hold=data.get("has_legal_hold"),
+            has_registered_dispute=data.get("has_registered_dispute"),
+            sms_opt_out=data.get("sms_opt_out"),
+            email_opt_out=data.get("email_opt_out"),
+            phone_opt_out=data.get("phone_opt_out"),
+            dnc_registered=data.get("dnc_registered"),
             last_contact_date=last_contact,
         )
 
@@ -100,6 +106,7 @@ class ConservationActionDefinition:
     minimum_policy_tenure_days: int
     maximum_policy_tenure_days: int | None = None
     requires_grace_period: bool = False
+    required_safety_evidence: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if self.action_type == "abstain":
@@ -145,6 +152,9 @@ class EligibleActionSet:
     freeze_reason: str | None
     results: dict[str, ActionEligibilityResult]
     eligible_actions: tuple[str, ...]
+    snapshot_id: str | None = None
+    safety_evidence_id: str | None = None
+    requirements_version: str = "safety-action-requirements/1.0.0"
 
     def is_eligible(self, action_type: str) -> bool:
         """Check if a specific action type is eligible."""
@@ -165,5 +175,7 @@ class EligibleActionSet:
             "freeze_reason": self.freeze_reason,
             "results": {k: v.to_dict() for k, v in sorted(self.results.items())},
             "eligible_actions": list(self.eligible_actions),
+            "snapshot_id": self.snapshot_id,
+            "safety_evidence_id": self.safety_evidence_id,
+            "requirements_version": self.requirements_version,
         }
-

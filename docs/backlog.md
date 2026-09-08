@@ -845,6 +845,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-02 - Make missing safety evidence fail closed
 
+**Status:** In progress through [issue #142](https://github.com/anilreddy89/Inforsight/issues/142) on `fix/142-rh-02-fail-closed-safety-evidence`. RH-01 and its closeout are merged; LIM-RH-002 remains scheduled until explicit source evidence and consumer regressions satisfy its closure requirements.
+
 **Issue template:** Implementation task
 **Classification:** Current defect
 **Priority:** Release blocking

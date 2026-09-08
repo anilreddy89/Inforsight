@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/rh/safety-event/1.0.0",
+  "title": "Fictional safety evidence event 1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "policy_id", "event_type", "effective_at", "ingested_at", "payload"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "event_id": {"type": "string", "minLength": 1},
+    "policy_id": {"type": "string", "minLength": 1},
+    "event_type": {"enum": ["safety.facts_recorded", "safety.facts_corrected"]},
+    "effective_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "ingested_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "payload": {"type": "object"}
+  }
+}

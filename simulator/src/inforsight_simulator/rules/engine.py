@@ -12,6 +12,7 @@ from typing import Any, Mapping, Sequence
 
 from inforsight_simulator.domain_snapshot import DomainSnapshot
 from inforsight_simulator.semantic_catalog import SemanticCatalog, load_semantic_catalog
+from inforsight_simulator.safety_evidence import SafetyEvidence
 
 from .invariants import (
     evaluate_channel_consent,
@@ -36,6 +37,15 @@ def get_standard_action_catalog(
     """Adapt the canonical RH catalog into the legacy Phase 3 action type."""
 
     semantic_catalog = catalog or load_semantic_catalog()
+    global_requirements = (
+        "has_active_claim", "has_legal_hold", "has_registered_dispute"
+    )
+    channel_requirements = {
+        "sms": ("sms_opt_out",),
+        "email": ("email_opt_out",),
+        "phone": ("phone_opt_out", "dnc_registered"),
+        "none": (),
+    }
     return tuple(
         ConservationActionDefinition(
             action_id=str(item["action_id"]),
@@ -50,6 +60,10 @@ def get_standard_action_catalog(
                 else int(item["maximum_policy_tenure_days"])
             ),
             requires_grace_period=bool(item["requires_grace_period"]),
+            required_safety_evidence=(
+                () if item["action_type"] == "abstain" else
+                global_requirements + channel_requirements[str(item["channel"])]
+            ),
         )
         for item in semantic_catalog.data["actions"]
     )
@@ -105,6 +119,21 @@ class EligibilityRulesEngine:
 
         results: dict[str, ActionEligibilityResult] = {}
         eligible_actions_list: list[str] = []
+
+        global_safety = (
+            context.has_active_claim, context.has_legal_hold,
+            context.has_registered_dispute,
+        )
+        # A confirmed global block dominates missing companion fields. This keeps
+        # an affirmative hold effective even when the rest of the record is partial.
+        if not any(value is True for value in global_safety) and any(
+            value is None for value in global_safety
+        ):
+            return self._build_unavailable_set(
+                context.policy_id,
+                context.as_of.isoformat().replace("+00:00", "Z"),
+                reason=DisqualificationReasonCode.DISQUALIFIED_MISSING_SAFETY_EVIDENCE.value,
+            )
 
         # 1. Check Legal / Claim / Dispute Freeze
         is_frozen, freeze_code, freeze_detail = evaluate_legal_freeze(context)
@@ -178,9 +207,20 @@ class EligibilityRulesEngine:
             details: list[str] = []
 
             # Channel consent
-            passed_chan, chan_code, chan_detail = evaluate_channel_consent(
-                context, action.channel
+            required_channel_facts = tuple(
+                getattr(context, field) for field in action.required_safety_evidence
+                if field not in {"has_active_claim", "has_legal_hold", "has_registered_dispute"}
             )
+            if any(value is None for value in required_channel_facts):
+                passed_chan, chan_code, chan_detail = (
+                    False,
+                    DisqualificationReasonCode.DISQUALIFIED_MISSING_SAFETY_EVIDENCE.value,
+                    f"Confirmed {action.channel} consent evidence is required.",
+                )
+            else:
+                passed_chan, chan_code, chan_detail = evaluate_channel_consent(
+                    context, action.channel
+                )
             if not passed_chan and chan_code:
                 reasons.append(chan_code)
                 if chan_detail:
@@ -236,44 +276,56 @@ class EligibilityRulesEngine:
         )
 
     def evaluate_snapshot(
-        self, snapshot: DomainSnapshot, catalog: SemanticCatalog
+        self, snapshot: DomainSnapshot, catalog: SemanticCatalog,
+        safety_evidence: SafetyEvidence | None = None,
     ) -> EligibleActionSet:
         """Bridge a canonical snapshot into legacy rules, failing unavailable facts closed."""
 
         snapshot.validate_identity(catalog)
-        required = (
+        required_domain = (
             snapshot.status,
             snapshot.in_grace_period,
-            snapshot.days_past_due,
-            snapshot.safety.has_active_claim,
-            snapshot.safety.has_legal_hold,
-            snapshot.safety.has_registered_dispute,
-            snapshot.safety.sms_opt_out,
-            snapshot.safety.email_opt_out,
-            snapshot.safety.phone_opt_out,
-            snapshot.safety.dnc_registered,
         )
-        if any(value is None or value == "unknown" for value in required):
-            return self._build_unavailable_set(snapshot.policy_id, snapshot.as_of)
+        if any(value is None or value == "unknown" for value in required_domain):
+            return self._build_unavailable_set(
+                snapshot.policy_id, snapshot.as_of, snapshot_id=snapshot.snapshot_id
+            )
+        if safety_evidence is None:
+            return self._build_unavailable_set(
+                snapshot.policy_id, snapshot.as_of,
+                reason=DisqualificationReasonCode.DISQUALIFIED_MISSING_SAFETY_EVIDENCE.value,
+                snapshot_id=snapshot.snapshot_id,
+            )
+        safety_evidence.validate_context(
+            policy_id=snapshot.policy_id, as_of=snapshot.as_of,
+            snapshot_id=snapshot.snapshot_id,
+        )
         context = PolicyContext(
             policy_id=snapshot.policy_id,
             as_of=datetime.fromisoformat(snapshot.as_of.replace("Z", "+00:00")),
             status=snapshot.status,
             tenure_days=snapshot.tenure_days,
             in_grace_period=bool(snapshot.in_grace_period),
-            days_past_due=int(snapshot.days_past_due),
-            has_active_claim=bool(snapshot.safety.has_active_claim),
-            has_legal_hold=bool(snapshot.safety.has_legal_hold),
-            has_registered_dispute=bool(snapshot.safety.has_registered_dispute),
-            sms_opt_out=bool(snapshot.safety.sms_opt_out),
-            email_opt_out=bool(snapshot.safety.email_opt_out),
-            phone_opt_out=bool(snapshot.safety.phone_opt_out),
-            dnc_registered=bool(snapshot.safety.dnc_registered),
+            days_past_due=snapshot.days_past_due,
+            has_active_claim=safety_evidence.has_active_claim,
+            has_legal_hold=safety_evidence.has_legal_hold,
+            has_registered_dispute=safety_evidence.has_registered_dispute,
+            sms_opt_out=safety_evidence.sms_opt_out,
+            email_opt_out=safety_evidence.email_opt_out,
+            phone_opt_out=safety_evidence.phone_opt_out,
+            dnc_registered=safety_evidence.dnc_registered,
         )
-        return self.evaluate(context)
+        result = self.evaluate(context)
+        return EligibleActionSet(
+            **{**result.__dict__, "snapshot_id": snapshot.snapshot_id,
+               "safety_evidence_id": safety_evidence.evidence_id}
+        )
 
-    def _build_unavailable_set(self, policy_id: str, as_of: str) -> EligibleActionSet:
-        reason = "insufficient_domain_evidence"
+    def _build_unavailable_set(
+        self, policy_id: str, as_of: str, *,
+        reason: str = "insufficient_domain_evidence",
+        snapshot_id: str | None = None,
+    ) -> EligibleActionSet:
         results = {
             action.action_type: ActionEligibilityResult(
                 action_type=action.action_type,
@@ -292,6 +344,7 @@ class EligibilityRulesEngine:
             freeze_reason=reason,
             results=results,
             eligible_actions=(),
+            snapshot_id=snapshot_id,
         )
 
     def _build_fail_closed_error_set(
