@@ -827,7 +827,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-01 - Establish the canonical point-in-time domain snapshot and semantic catalog
 
-**Status:** RH-01D completed on 2026-09-08 through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`. RH-01I implementation is in progress through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) on `feat/139-rh-01i-domain-snapshot`. The [settled design](hardening/rh-01-domain-snapshot-contract.md), ADR 0015, schema, semantic catalog, and acceptance fixtures govern the work; parent acceptance checks remain open until the implementation merges.
+**Status:** Completed on 2026-09-08. RH-01D closed through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`; RH-01I closed through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e`. The merged runtime reconstructs immutable dual-time snapshots for both supported source profiles, validates the semantic catalog and preprocessing identity, migrates bounded consumers, preserves unknown facts, and fails closed when servicing evidence is insufficient. All PR CI checks passed. RH-02 and other downstream work proceed only under their own gates; P4-02/P4-03 remain blocked through RH-13.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
@@ -837,11 +837,11 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Acceptance checks:**
 
-- [ ] Events not visible at an observation cutoff cannot affect a snapshot, dossier, rule, narrative, or valuation.
-- [ ] Premium frequency, tenure, grace state, and other domain values derive from source events without model clipping or transforms.
-- [ ] `IN_GRACE`/`grace_period`, risk-tier direction, combined-termination/lapse naming, feature preprocessing identity, costs, and duration units have canonical definitions.
-- [ ] Heterogeneous-policy, future-effective, and delayed-ingestion fixtures fail before the repair and pass after it.
-- [ ] Compatibility and version migration are documented.
+- [x] Events not visible at an observation cutoff cannot affect a snapshot, dossier, rule, narrative, or valuation.
+- [x] Premium frequency, tenure, grace state, and other domain values derive from source events without model clipping or transforms; unsupported source facts remain unknown.
+- [x] `IN_GRACE`/`grace_period`, risk-tier direction, combined-termination/lapse naming, feature preprocessing identity, costs, and duration units have canonical definitions.
+- [x] Heterogeneous-policy, future-effective, and delayed-ingestion fixtures pass after the repair.
+- [x] Compatibility and version migration are documented.
 
 #### RH-02 - Make missing safety evidence fail closed
 

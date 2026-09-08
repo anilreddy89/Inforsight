@@ -1,6 +1,6 @@
 # RH-01D: Domain snapshot and semantic catalog 1.0.0
 
-Status: accepted on 2026-09-08 through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`. This specification is the RH-01I baseline. No runtime repair is claimed.
+Status: accepted on 2026-09-08 through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`; implemented through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e`.
 
 ## Boundary and artifacts
 
@@ -85,4 +85,4 @@ The concrete fixture file uses synthetic adapter-level envelopes; legacy IDs are
 
 Run full `make check` in the project virtual environment with `MPLBACKEND=Agg` for headless plotting. The historical function named `execute_final_evaluation` selects `role == "non_final_evaluation"`; this verification does not authorize final-holdout materialization or access. Keep verification read-only with respect to historical artifacts and record the actual output.
 
-RH-01D merge `fde664ec` settles the design only. RH-01I may be created from updated `main`. Parent RH-01 and downstream implementation gates remain open until runtime regressions and migration evidence merge. No Phase 4 resume or release claim follows from this design.
+RH-01D merge `fde664ec` settled the design, and RH-01I merge `f0be47e` supplied the runtime regressions and bounded consumer migration. Parent RH-01 is complete. Downstream work proceeds only through its declared gates, and no Phase 4 resume or release claim follows before RH-13 records `PROCEED`.
