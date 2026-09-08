@@ -1,6 +1,6 @@
 # ADR 0015 — Canonical dual-time domain snapshot
 
-- Status: Accepted through [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`.
+- Status: Accepted through [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`; implemented through [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e`.
 - Date: 2026-09-07
 - Work: [RH-01D / #136](https://github.com/anilreddy89/Inforsight/issues/136)
 
@@ -23,4 +23,4 @@ Preserve the legacy effective-only API and historical artifacts. Migrate local c
 
 ## Consequences
 
-The demo will explicitly lack some facts and recommendations until supported evidence exists. One shared identity and catalog make disagreement detectable but do not provide authentication, causal evidence or execution authority. RH-01I may now begin from updated `main`; the accepted design itself does not repair runtime behavior or unblock Phase 4.
+The demo explicitly lacks some facts and recommendations until supported evidence exists. One shared identity and catalog make disagreement detectable but do not provide authentication, causal evidence or execution authority. RH-01I now implements this decision in the bounded local runtime; RH-02 owns the remaining safety-evidence contract, and Phase 4 remains blocked through RH-13.
