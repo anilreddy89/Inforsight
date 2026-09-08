@@ -49,12 +49,14 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
 
 ### 2.3 Single Policy Point-in-Time Scoring
 - **Route**: `POST /v1/score`
-- **Purpose**: Scores an individual policyholder observation record and returns calibrated lapse probabilities, risk tier classification, and exact additive SHAP attributions.
+- **Purpose**: Scores one explicitly identified raw-v6 feature record and returns calibrated 90-day adverse-termination probability, canonical risk-tier identity, and exact additive SHAP attributions. This inference-only endpoint does not reconstruct domain facts.
 - **Request Body**:
   ```json
   {
     "policy_id": "POL-10492",
     "as_of_date": "2026-09-01T00:00:00Z",
+    "feature_stage": "raw-v6-features",
+    "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
     "features": {
       "tenure_days": 1.5,
       "premium_amount_cents": 1.2,
@@ -85,6 +87,7 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
     "raw_logit": -0.612041,
     "calibrated_logit": -0.621213,
     "risk_tier": "Tier 3: High Risk",
+    "risk_tier_id": "TIER_3_HIGH",
     "review_queue_eligibility": {
       "top_1_pct": false,
       "top_5_pct": true,
@@ -137,8 +140,8 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
   ```json
   {
     "requests": [
-      { "policy_id": "POL-1", "as_of_date": "...", "features": { ... } },
-      { "policy_id": "POL-2", "as_of_date": "...", "features": { ... } }
+      { "policy_id": "POL-1", "as_of_date": "...", "feature_stage": "raw-v6-features", "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0", "features": { ... } },
+      { "policy_id": "POL-2", "as_of_date": "...", "feature_stage": "raw-v6-features", "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0", "features": { ... } }
     ]
   }
   ```

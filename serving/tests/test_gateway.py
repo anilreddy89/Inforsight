@@ -11,6 +11,7 @@ from inforsight_simulator.v6_corpus import generate_v6_corpus, V6CorpusConfig
 from inforsight_simulator.v6_evaluation import _feature_map
 from serving.app import create_app, DEFAULT_BUNDLE_PATH
 from serving.models import ADR_0002_AUTHORITY_BOUNDARY_NOTICE
+from inforsight_simulator.semantic_catalog import PREPROCESSING_PROFILE_ID
 
 
 class TestServingGateway(unittest.TestCase):
@@ -61,6 +62,8 @@ class TestServingGateway(unittest.TestCase):
         payload = {
             "policy_id": obs.policy_id,
             "as_of_date": obs.as_of,
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
             "features": fmap,
         }
         resp = self.client.post("/v1/score", json=payload)
@@ -70,6 +73,7 @@ class TestServingGateway(unittest.TestCase):
         # Invariance check: probability must match exactly to 6 decimal places (and within 1e-12 of float)
         self.assertEqual(data["policy_id"], obs.policy_id)
         self.assertEqual(data["risk_tier"], expected_result.risk_tier)
+        self.assertTrue(data["risk_tier_id"].startswith("TIER_"))
         self.assertAlmostEqual(data["calibrated_probability"], expected_result.calibrated_probability, places=6)
         self.assertAlmostEqual(data["calibrated_logit"], expected_result.calibrated_logit, places=6)
 
@@ -78,6 +82,8 @@ class TestServingGateway(unittest.TestCase):
         payload = {
             "policy_id": "POL-TEST-001",
             "as_of_date": "2026-09-01T00:00:00Z",
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
             "features": self.sample_feature_maps[0],
         }
         resp = self.client.post("/v1/score", json=payload)
@@ -92,6 +98,8 @@ class TestServingGateway(unittest.TestCase):
             {
                 "policy_id": obs.policy_id,
                 "as_of_date": obs.as_of,
+                "feature_stage": "raw-v6-features",
+                "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
                 "features": fmap,
             }
             for obs, fmap in zip(self.sample_obs, self.sample_feature_maps)
@@ -116,6 +124,8 @@ class TestServingGateway(unittest.TestCase):
         payload = {
             "policy_id": "POL-INVALID",
             "as_of_date": "2026-09-01T00:00:00Z",
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
             "features": fmap_invalid,
         }
         resp = self.client.post("/v1/score", json=payload)
@@ -129,6 +139,8 @@ class TestServingGateway(unittest.TestCase):
         payload = {
             "policy_id": "POL-INVALID",
             "as_of_date": "2026-09-01T00:00:00Z",
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
             "features": fmap_invalid,
         }
         resp = self.client.post("/v1/score", json=payload)
@@ -139,6 +151,8 @@ class TestServingGateway(unittest.TestCase):
         payload = {
             "policy_id": "POL-LATENCY",
             "as_of_date": "2026-09-01T00:00:00Z",
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
             "features": self.sample_feature_maps[0],
         }
         # Warmup

@@ -49,10 +49,10 @@ def render_queue_view(
         if selected_grace == "In Grace Period Only" and not item.in_grace_period:
             continue
         elif selected_grace == "Urgent Grace (≤ 10 days)":
-            if not item.in_grace_period or item.days_in_grace < 20:
+            if item.in_grace_period is not True or item.days_in_grace is None or item.days_in_grace < 20:
                 continue
         elif selected_grace == "Critical Grace (≤ 5 days)":
-            if not item.in_grace_period or item.days_in_grace < 25:
+            if item.in_grace_period is not True or item.days_in_grace is None or item.days_in_grace < 25:
                 continue
         # Action filter
         if selected_action != "All Actions" and item.recommended_action != selected_action:
@@ -78,7 +78,10 @@ def render_queue_view(
         tier_meta = RISK_TIERS.get(it.risk_tier)
         tier_short = tier_meta.short_label if tier_meta else it.risk_tier
 
-        grace_str = f"⚠️ {it.days_in_grace}d / 30d" if it.in_grace_period else "Active"
+        grace_str = (
+            f"⚠️ {it.days_in_grace}d / 30d"
+            if it.in_grace_period is True else "Unknown" if it.in_grace_period is None else "Outside grace"
+        )
 
         table_rows.append({
             "Priority Rank": f"#{idx}",

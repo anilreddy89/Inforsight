@@ -37,7 +37,10 @@ def render_dossier_view(
         st.markdown("**Product Type**")
         st.write(item.product_type.replace("_", " ").title())
         st.markdown("**Coverage Face Amount**")
-        st.write(f"${item.coverage_amount:,.0f}")
+        st.write(
+            f"${item.coverage_amount:,.0f}"
+            if item.coverage_amount is not None else "Unknown"
+        )
 
     with dcol2:
         st.markdown("**Monthly Premium**")
@@ -53,9 +56,11 @@ def render_dossier_view(
 
     with dcol4:
         st.markdown("**Grace Period Status**")
-        if item.in_grace_period:
+        if item.in_grace_period is True and item.days_in_grace is not None:
             days_left = max(0, 30 - item.days_in_grace)
             st.error(f"⚠️ Active Grace: {item.days_in_grace}d elapsed ({days_left}d remaining)")
+        elif item.in_grace_period is None:
+            st.warning("Grace status is unknown from available source evidence.")
         else:
             st.success("🟢 Active / In Good Standing")
         st.markdown("**Uplift Segment**")

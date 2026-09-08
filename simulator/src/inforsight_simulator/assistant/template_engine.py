@@ -52,7 +52,9 @@ ACTION_TALKING_POINTS = {
 
 def compute_operational_urgency(context: CaseEvidenceContext) -> OperationalUrgency:
     """Determine operational triage urgency deterministically."""
-    if context.calibrated_probability >= 0.50 or context.days_past_due > 20:
+    if context.calibrated_probability >= 0.50 or (
+        context.days_past_due is not None and context.days_past_due > 20
+    ):
         return OperationalUrgency.CRITICAL
     elif context.calibrated_probability >= 0.30 or context.in_grace_period:
         return OperationalUrgency.HIGH
@@ -75,13 +77,22 @@ def synthesize_deterministic_narrative(context: CaseEvidenceContext) -> str:
         f"(attribution weight +{context.top_risk_drivers[0].attribution:.4f}). "
         if context.top_risk_drivers else ""
     )
-    grace_str = f"Policy is in grace period with {context.days_past_due} days past due." if context.in_grace_period else "Policy is currently in good standing."
+    if context.in_grace_period is True:
+        grace_str = f"Policy is in grace period with {context.days_past_due} days past due."
+    elif context.in_grace_period is False:
+        grace_str = "Policy is confirmed outside a grace period."
+    else:
+        grace_str = "Lifecycle and grace status are unavailable at this cutoff."
+    paid_str = (
+        f"The source ledger records ${context.total_premiums_paid:.2f} in cumulative premiums paid. "
+        if context.total_premiums_paid is not None else ""
+    )
 
     return (
         f"Policy {context.policy_id} ({context.product_type}) exhibits an estimated calibrated "
         f"lapse risk of {context.calibrated_probability * 100:.2f}% ({context.operational_tier}). "
-        f"The account maintains {context.tenure_months} months of continuous tenure with "
-        f"${context.total_premiums_paid:.2f} in total cumulative premiums paid. "
+        f"The account has {context.tenure_months} elapsed months of tenure. "
+        f"{paid_str}"
         f"{driver_mention}{grace_str} "
         f"Recommended intervention is {context.primary_action} under uplift quadrant {context.uplift_quadrant}."
     )
@@ -164,4 +175,3 @@ def generate_template_brief(
         authorized_to_act=False,
         disclaimer=DEFAULT_MANDATORY_DISCLAIMER,
     )
-

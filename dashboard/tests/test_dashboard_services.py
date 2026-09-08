@@ -73,37 +73,37 @@ class TestDashboardServices(unittest.TestCase):
             self.assertIsNotNone(it.case_brief)
             self.assertTrue(it.case_brief.authorized_to_act is False)
             self.assertEqual(it.case_brief.status, "PENDING_HUMAN_REVIEW")
+            self.assertEqual(it.snapshot.status, "unknown")
+            self.assertIsNone(it.coverage_amount)
+            self.assertEqual(it.eligible_action_set.eligible_actions, ())
+            self.assertEqual(
+                it.eligible_action_set.freeze_reason, "insufficient_domain_evidence"
+            )
 
     def test_specialist_approval_workflow(self) -> None:
         """Verifies human specialist approval transitions case to HUMAN_REVIEWED and EXECUTED."""
         item = self.items[0]
-        rev_ev, exec_ev = self.bridge.submit_specialist_decision(
-            case_id=item.case_id,
-            reviewer_id="usr_lead_analyst_1",
-            action=SpecialistReviewAction.APPROVE_RECOMMENDATION,
-            rationale_code="APPROVE_OPTIMAL_RECOMMENDATION",
-            justification="Review verified policy risk and optimal action.",
-        )
-        self.assertEqual(rev_ev.to_state, CaseState.HUMAN_REVIEWED)
-        self.assertIsNotNone(exec_ev)
-        self.assertIn(exec_ev.to_state, (CaseState.EXECUTED, CaseState.DISMISSED))
+        with self.assertRaises(IneligibleOverrideError):
+            self.bridge.submit_specialist_decision(
+                case_id=item.case_id,
+                reviewer_id="usr_lead_analyst_1",
+                action=SpecialistReviewAction.APPROVE_RECOMMENDATION,
+                rationale_code="APPROVE_OPTIMAL_RECOMMENDATION",
+                justification="Review verified policy risk and optimal action.",
+            )
 
     def test_specialist_override_workflow(self) -> None:
         """Verifies specialist override with eligible action succeeds and logs to audit ledger."""
         item = self.items[1]
-        eligible_actions = list(item.eligible_action_set.eligible_actions)
-        override_action = eligible_actions[0]
-
-        rev_ev, exec_ev = self.bridge.submit_specialist_decision(
-            case_id=item.case_id,
-            reviewer_id="usr_specialist_482",
-            action=SpecialistReviewAction.OVERRIDE_ACTION,
-            rationale_code="OVERRIDE_SPECIALIST_DISCRETION_PREMIUM_DISPUTE",
-            justification="Policyholder requested alternative communication channel.",
-            selected_action=override_action,
-        )
-        self.assertEqual(rev_ev.to_state, CaseState.HUMAN_REVIEWED)
-        self.assertIsNotNone(exec_ev)
+        with self.assertRaises(IneligibleOverrideError):
+            self.bridge.submit_specialist_decision(
+                case_id=item.case_id,
+                reviewer_id="usr_specialist_482",
+                action=SpecialistReviewAction.OVERRIDE_ACTION,
+                rationale_code="OVERRIDE_SPECIALIST_DISCRETION_PREMIUM_DISPUTE",
+                justification="Policyholder requested alternative communication channel.",
+                selected_action="courtesy_reminder",
+            )
 
     def test_specialist_rejection_workflow(self) -> None:
         """Verifies specialist rejection transitions case to HUMAN_REVIEWED, DISMISSED, and RESOLVED."""

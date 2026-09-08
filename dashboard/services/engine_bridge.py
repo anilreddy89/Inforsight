@@ -20,6 +20,7 @@ from inforsight_simulator.assistant import (
 )
 from inforsight_simulator.audit.ledger import AuditLedger
 from inforsight_simulator.bundle import BundledInferenceEngine, ModelBundle, ScoringResult
+from inforsight_simulator.domain_snapshot import DomainSnapshot
 from inforsight_simulator.optimization import (
     OptimalRecommendation,
     PolicyValuation,
@@ -33,6 +34,11 @@ from inforsight_simulator.rules import (
     EligibilityRulesEngine,
     EligibleActionSet,
     PolicyContext,
+)
+from inforsight_simulator.semantic_catalog import (
+    PREPROCESSING_PROFILE_ID,
+    SemanticCatalog,
+    load_semantic_catalog,
 )
 from inforsight_simulator.workflow.models import (
     CaseEvent,
@@ -70,6 +76,7 @@ class EngineBridge:
         self.bundle_sha256 = hashlib.sha256(self.bundle_path.read_bytes()).hexdigest()
         self.bundle = ModelBundle.load(self.bundle_path)
         self.inference_engine = BundledInferenceEngine(self.bundle)
+        self.semantic_catalog = load_semantic_catalog()
 
         # 2. Initialize Audit Ledger and Workflow Service
         self.audit_ledger = AuditLedger(log_path=self.audit_log_path)
@@ -79,13 +86,33 @@ class EngineBridge:
         self.rules_engine = EligibilityRulesEngine()
         self.assistant = CaseIntelligenceAssistant()
 
-    def score_observation(self, observation_map: Mapping[str, Any]) -> ScoringResult:
+    def score_observation(
+        self,
+        observation_map: Mapping[str, Any],
+        *,
+        preprocessing_profile: str = PREPROCESSING_PROFILE_ID,
+        snapshot: DomainSnapshot | None = None,
+        policy_id: str | None = None,
+        as_of: datetime | str | None = None,
+    ) -> ScoringResult:
         """Scores a single raw observation map with calibrated probability and SHAP decomposition."""
+        self.semantic_catalog.require_preprocessing_profile(preprocessing_profile)
+        if snapshot is not None:
+            if policy_id is None or as_of is None:
+                raise ValueError("snapshot scoring requires policy_id and as_of")
+            snapshot.validate_context(
+                policy_id=policy_id, as_of=as_of, catalog=self.semantic_catalog
+            )
         return self.inference_engine.score_record(dict(observation_map))
 
     def evaluate_eligibility(self, policy_context: PolicyContext) -> EligibleActionSet:
         """Determines legal and regulatory action eligibility under ADR 0002."""
         return self.rules_engine.evaluate(policy_context)
+
+    def evaluate_snapshot(self, snapshot: DomainSnapshot) -> EligibleActionSet:
+        """Evaluate a validated snapshot without coercing unknown facts to permission."""
+
+        return self.rules_engine.evaluate_snapshot(snapshot, self.semantic_catalog)
 
     def optimize_action(
         self,
@@ -111,13 +138,14 @@ class EngineBridge:
         scoring_result: ScoringResult,
         eligible_action_set: EligibleActionSet,
         optimal_rec: OptimalRecommendation,
-        policy_context: PolicyContext,
+        policy_context: PolicyContext | None,
         timeline_events: Sequence[Mapping[str, Any]],
         annual_premium: float = 1800.0,
         monthly_premium: float = 150.0,
-        coverage_amount: float = 250000.0,
-        total_premiums_paid: float = 2700.0,
+        coverage_amount: float | None = 250000.0,
+        total_premiums_paid: float | None = 2700.0,
         case_id: str = "case_brief_gen",
+        snapshot: DomainSnapshot | None = None,
     ) -> CaseBrief:
         """Generates a Grounding Guard-verified CaseBrief for specialist review."""
         # Convert timeline events
@@ -150,23 +178,32 @@ class EngineBridge:
             if not res.is_eligible
         ]
 
-        tenure_months = max(1, policy_context.tenure_days // 30)
+        if snapshot is not None:
+            snapshot.validate_context(
+                policy_id=policy_id, as_of=as_of_date, catalog=self.semantic_catalog
+            )
+        if snapshot is None and policy_context is None:
+            raise ValueError("snapshot or policy_context is required")
+        tenure_days = snapshot.tenure_days if snapshot else policy_context.tenure_days
+        tenure_months = max(1, tenure_days // 30)
 
         evidence = CaseEvidenceContext(
             policy_id=policy_id,
             as_of_date=as_of_date,
             case_id=case_id,
-            product_type="term_life",
+            product_type=snapshot.product_type if snapshot else "term_life",
             annual_premium=annual_premium,
             monthly_premium=monthly_premium,
             coverage_amount=coverage_amount,
             tenure_months=tenure_months,
             total_premiums_paid=total_premiums_paid,
-            policy_status=policy_context.status,
-            in_grace_period=policy_context.in_grace_period,
-            days_past_due=policy_context.days_past_due,
-            payment_frequency="monthly",
-            initial_payment_method="direct_debit",
+            policy_status=snapshot.status if snapshot else policy_context.status,
+            in_grace_period=(
+                snapshot.in_grace_period if snapshot else policy_context.in_grace_period
+            ),
+            days_past_due=snapshot.days_past_due if snapshot else policy_context.days_past_due,
+            payment_frequency=snapshot.billing_frequency if snapshot else "monthly",
+            initial_payment_method="unknown" if snapshot else "direct_debit",
             risk_class="STANDARD",
             servicing_advisor_id="adv_conservation_pool",
             calibrated_probability=scoring_result.calibrated_probability,

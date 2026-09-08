@@ -827,7 +827,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-01 - Establish the canonical point-in-time domain snapshot and semantic catalog
 
-**Status:** RH-01D completed on 2026-09-08 through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`. The [settled design](hardening/rh-01-domain-snapshot-contract.md), ADR 0015, schema, semantic catalog, and acceptance fixtures now govern RH-01I. Runtime repair has not started, so the parent acceptance checks remain open.
+**Status:** RH-01D completed on 2026-09-08 through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`. RH-01I implementation is in progress through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) on `feat/139-rh-01i-domain-snapshot`. The [settled design](hardening/rh-01-domain-snapshot-contract.md), ADR 0015, schema, semantic catalog, and acceptance fixtures govern the work; parent acceptance checks remain open until the implementation merges.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
