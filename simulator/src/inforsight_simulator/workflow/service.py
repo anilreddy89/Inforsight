@@ -14,6 +14,7 @@ from inforsight_simulator.workflow.models import (
     CaseState,
     DecisionContextDigest,
     HumanReview,
+    IneligibleOverrideError,
     ReviewDecision,
     SpecialistReviewAction,
     WorkflowError,
@@ -190,6 +191,14 @@ class WorkflowService:
         if not ctx:
             raise WorkflowError(f"Case '{case_id}' not found in active workflow contexts")
 
+        if (
+            action == SpecialistReviewAction.APPROVE_RECOMMENDATION
+            and ctx.recommended_action not in ctx.eligible_actions
+        ):
+            raise IneligibleOverrideError(
+                f"Recommended action '{ctx.recommended_action}' is unavailable for approval"
+            )
+
         ts = occurred_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
         # Map SpecialistReviewAction to ReviewDecision
@@ -344,5 +353,3 @@ class WorkflowService:
         )
 
         return event
-
-

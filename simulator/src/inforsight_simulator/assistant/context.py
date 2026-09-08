@@ -30,12 +30,12 @@ class CaseEvidenceContext:
     product_type: str
     annual_premium: float
     monthly_premium: float
-    coverage_amount: float
+    coverage_amount: float | None
     tenure_months: int
-    total_premiums_paid: float
+    total_premiums_paid: float | None
     policy_status: str
-    in_grace_period: bool
-    days_past_due: int
+    in_grace_period: bool | None
+    days_past_due: int | None
     payment_frequency: str
     initial_payment_method: str
     risk_class: str
@@ -82,10 +82,11 @@ class CaseEvidenceContext:
         currency_numbers: set[float] = {
             round(float(self.annual_premium), 2),
             round(float(self.monthly_premium), 2),
-            round(float(self.coverage_amount), 2),
-            round(float(self.total_premiums_paid), 2),
             round(float(self.expected_net_utility), 2),
         }
+        for optional_value in (self.coverage_amount, self.total_premiums_paid):
+            if optional_value is not None:
+                currency_numbers.add(round(float(optional_value), 2))
 
         # Gather text representation of currencies (e.g. 154.17, "154.17", "1850", "250000")
         currency_strings: set[str] = set()
@@ -112,4 +113,3 @@ class CaseEvidenceContext:
             "calibrated_probability": self.calibrated_probability,
             "operational_tier": self.operational_tier,
         }
-

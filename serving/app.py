@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 
 from inforsight_simulator.bundle import ModelBundle, BundledInferenceEngine, ScoringResult
+from inforsight_simulator.semantic_catalog import SemanticCatalog, load_semantic_catalog
 from serving.models import (
     ADR_0002_AUTHORITY_BOUNDARY_NOTICE,
     BatchScoreRequest,
@@ -31,6 +32,7 @@ _bundle: ModelBundle | None = None
 _engine: BundledInferenceEngine | None = None
 _bundle_sha256: str = ""
 _monitor: DriftMonitor | None = None
+_catalog: SemanticCatalog | None = None
 
 
 def get_bundle_path() -> Path:
@@ -55,9 +57,10 @@ def load_engine(bundle_path: Path | str | None = None) -> tuple[ModelBundle, Bun
 
 
 def create_app(bundle_path: Path | str | None = None) -> FastAPI:
-    global _bundle, _engine, _bundle_sha256, _monitor
+    global _bundle, _engine, _bundle_sha256, _monitor, _catalog
     _bundle, _engine, _bundle_sha256 = load_engine(bundle_path)
     _monitor = DriftMonitor(_bundle)
+    _catalog = load_semantic_catalog()
 
     app = FastAPI(
         title="Inforsight Model Serving Gateway",
@@ -107,6 +110,11 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         )
 
     def _format_scoring_response(req: ScoreRequest, result: ScoringResult) -> ScoreResponse:
+        if _catalog is None:
+            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Catalog not loaded")
+        tier_id = _catalog.map_risk_tier(
+            result.risk_tier, adapter_profile="historical-bundle-display/1.0.0"
+        )
         return ScoreResponse(
             policy_id=req.policy_id,
             as_of_date=req.as_of_date,
@@ -114,6 +122,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
             raw_logit=round(result.raw_logit, 6),
             calibrated_logit=round(result.calibrated_logit, 6),
             risk_tier=result.risk_tier,
+            risk_tier_id=tier_id,
             review_queue_eligibility=result.review_queue_eligibility,
             root_attributions_log_odds={k: round(v, 6) for k, v in result.root_attributions_log_odds.items()},
             root_centered_shap={k: round(v, 6) for k, v in result.root_centered_shap.items()},

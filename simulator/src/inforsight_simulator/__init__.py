@@ -91,6 +91,24 @@ from .diagnostics import (
     validate_dispositions,
 )
 from .reconstruction import PolicyState, reconstruct_policy_state
+from .domain_snapshot import (
+    DomainSnapshot,
+    EventProvenance,
+    FieldEvidence,
+    SafetyFacts,
+    SnapshotContractError,
+    load_json_events,
+    reconstruct_domain_snapshot,
+    select_visible_events,
+)
+from .semantic_catalog import (
+    CATALOG_VERSION,
+    PREPROCESSING_PROFILE_ID,
+    SNAPSHOT_VERSION,
+    CatalogContractError,
+    SemanticCatalog,
+    load_semantic_catalog,
+)
 from .preprocessing import (
     UNKNOWN_CATEGORY,
     FeaturePipelineResult,
@@ -483,6 +501,20 @@ __all__ = [
     "validate_dispositions",
     "transform_partition",
     "XGBOOST_PINNED_VERSION",
+    "CATALOG_VERSION",
+    "PREPROCESSING_PROFILE_ID",
+    "SNAPSHOT_VERSION",
+    "CatalogContractError",
+    "SemanticCatalog",
+    "load_semantic_catalog",
+    "DomainSnapshot",
+    "EventProvenance",
+    "FieldEvidence",
+    "SafetyFacts",
+    "SnapshotContractError",
+    "load_json_events",
+    "reconstruct_domain_snapshot",
+    "select_visible_events",
     "ActionEligibilityResult",
     "ConservationActionDefinition",
     "DisqualificationReasonCode",

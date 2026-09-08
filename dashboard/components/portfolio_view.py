@@ -75,13 +75,13 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
         st.markdown("### 🎯 Risk Tier Distribution")
         st.caption("Calibrated lapse probabilities segmented by operational intervention tiers.")
         fig_donut = plot_risk_distribution(summary["tier_counts"])
-        st.pyplot(fig_donut, use_container_width=True)
+        st.pyplot(fig_donut, width="stretch")
 
     with chart_col2:
         st.markdown("### 🛠️ Optimal Intervention Mix")
         st.caption("Greedy cost-utility allocation maximizing net preserved premium.")
         fig_bar = plot_intervention_mix(summary["action_counts"])
-        st.pyplot(fig_bar, use_container_width=True)
+        st.pyplot(fig_bar, width="stretch")
 
     st.markdown("---")
 

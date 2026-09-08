@@ -7,7 +7,11 @@ scores, probability thresholds, or loss matrices.
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any, Mapping, Sequence
+
+from inforsight_simulator.domain_snapshot import DomainSnapshot
+from inforsight_simulator.semantic_catalog import SemanticCatalog, load_semantic_catalog
 
 from .invariants import (
     evaluate_channel_consent,
@@ -26,64 +30,28 @@ from .models import (
 from .reasons import DisqualificationReasonCode
 
 
-def get_standard_action_catalog() -> tuple[ConservationActionDefinition, ...]:
-    """Return standard conservation actions conforming to Phase 3.01 schema."""
-    return (
+def get_standard_action_catalog(
+    catalog: SemanticCatalog | None = None,
+) -> tuple[ConservationActionDefinition, ...]:
+    """Adapt the canonical RH catalog into the legacy Phase 3 action type."""
+
+    semantic_catalog = catalog or load_semantic_catalog()
+    return tuple(
         ConservationActionDefinition(
-            action_id="act_courtesy_reminder_v1",
-            action_type="courtesy_reminder",
-            channel="sms",
-            direct_cost_usd=1.50,
-            personnel_hours=0.0,
-            regulatory_cooling_off_days=30,
-            minimum_policy_tenure_days=30,
-            maximum_policy_tenure_days=None,
-            requires_grace_period=False,
-        ),
-        ConservationActionDefinition(
-            action_id="act_grace_period_consultation_v1",
-            action_type="grace_period_consultation",
-            channel="phone",
-            direct_cost_usd=25.00,
-            personnel_hours=0.5,
-            regulatory_cooling_off_days=30,
-            minimum_policy_tenure_days=60,
-            maximum_policy_tenure_days=None,
-            requires_grace_period=True,
-        ),
-        ConservationActionDefinition(
-            action_id="act_specialist_phone_outreach_v1",
-            action_type="specialist_phone_outreach",
-            channel="phone",
-            direct_cost_usd=65.00,
-            personnel_hours=1.0,
-            regulatory_cooling_off_days=30,
-            minimum_policy_tenure_days=90,
-            maximum_policy_tenure_days=None,
-            requires_grace_period=False,
-        ),
-        ConservationActionDefinition(
-            action_id="act_payment_remediation_v1",
-            action_type="payment_method_remediation",
-            channel="sms",
-            direct_cost_usd=3.00,
-            personnel_hours=0.1,
-            regulatory_cooling_off_days=14,
-            minimum_policy_tenure_days=30,
-            maximum_policy_tenure_days=None,
-            requires_grace_period=False,
-        ),
-        ConservationActionDefinition(
-            action_id="act_abstain_do_not_disturb_v1",
-            action_type="abstain",
-            channel="none",
-            direct_cost_usd=0.00,
-            personnel_hours=0.0,
-            regulatory_cooling_off_days=0,
-            minimum_policy_tenure_days=0,
-            maximum_policy_tenure_days=None,
-            requires_grace_period=False,
-        ),
+            action_id=str(item["action_id"]),
+            action_type=str(item["action_type"]),
+            channel=str(item["channel"]),
+            direct_cost_usd=int(item["direct_cost_cents"]) / 100,
+            personnel_hours=int(item["personnel_seconds"]) / 3600,
+            regulatory_cooling_off_days=int(item["regulatory_cooling_off_days"]),
+            minimum_policy_tenure_days=int(item["minimum_policy_tenure_days"]),
+            maximum_policy_tenure_days=(
+                None if item["maximum_policy_tenure_days"] is None
+                else int(item["maximum_policy_tenure_days"])
+            ),
+            requires_grace_period=bool(item["requires_grace_period"]),
+        )
+        for item in semantic_catalog.data["actions"]
     )
 
 
@@ -267,6 +235,65 @@ class EligibilityRulesEngine:
             eligible_actions=tuple(eligible_actions_list),
         )
 
+    def evaluate_snapshot(
+        self, snapshot: DomainSnapshot, catalog: SemanticCatalog
+    ) -> EligibleActionSet:
+        """Bridge a canonical snapshot into legacy rules, failing unavailable facts closed."""
+
+        snapshot.validate_identity(catalog)
+        required = (
+            snapshot.status,
+            snapshot.in_grace_period,
+            snapshot.days_past_due,
+            snapshot.safety.has_active_claim,
+            snapshot.safety.has_legal_hold,
+            snapshot.safety.has_registered_dispute,
+            snapshot.safety.sms_opt_out,
+            snapshot.safety.email_opt_out,
+            snapshot.safety.phone_opt_out,
+            snapshot.safety.dnc_registered,
+        )
+        if any(value is None or value == "unknown" for value in required):
+            return self._build_unavailable_set(snapshot.policy_id, snapshot.as_of)
+        context = PolicyContext(
+            policy_id=snapshot.policy_id,
+            as_of=datetime.fromisoformat(snapshot.as_of.replace("Z", "+00:00")),
+            status=snapshot.status,
+            tenure_days=snapshot.tenure_days,
+            in_grace_period=bool(snapshot.in_grace_period),
+            days_past_due=int(snapshot.days_past_due),
+            has_active_claim=bool(snapshot.safety.has_active_claim),
+            has_legal_hold=bool(snapshot.safety.has_legal_hold),
+            has_registered_dispute=bool(snapshot.safety.has_registered_dispute),
+            sms_opt_out=bool(snapshot.safety.sms_opt_out),
+            email_opt_out=bool(snapshot.safety.email_opt_out),
+            phone_opt_out=bool(snapshot.safety.phone_opt_out),
+            dnc_registered=bool(snapshot.safety.dnc_registered),
+        )
+        return self.evaluate(context)
+
+    def _build_unavailable_set(self, policy_id: str, as_of: str) -> EligibleActionSet:
+        reason = "insufficient_domain_evidence"
+        results = {
+            action.action_type: ActionEligibilityResult(
+                action_type=action.action_type,
+                is_eligible=False,
+                disqualification_reasons=(reason,),
+                disqualification_details=(
+                    "Required domain or safety evidence is unavailable at the snapshot cutoff.",
+                ),
+            )
+            for action in self._action_catalog
+        }
+        return EligibleActionSet(
+            policy_id=policy_id,
+            as_of=datetime.fromisoformat(as_of.replace("Z", "+00:00")),
+            is_frozen=True,
+            freeze_reason=reason,
+            results=results,
+            eligible_actions=(),
+        )
+
     def _build_fail_closed_error_set(
         self,
         policy_id: str,
@@ -309,4 +336,3 @@ def evaluate_action_eligibility(
     """Convenience function evaluating policy context using standard rules engine."""
     engine = EligibilityRulesEngine(action_catalog=action_catalog)
     return engine.evaluate(context)
-

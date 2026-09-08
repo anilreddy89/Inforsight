@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
+from inforsight_simulator.semantic_catalog import PREPROCESSING_PROFILE_ID
+
 
 ADR_0002_AUTHORITY_BOUNDARY_NOTICE = "ADR_0002_REQUIRES_HUMAN_REVIEW"
 
@@ -44,6 +46,8 @@ class ScoreRequest(BaseModel):
 
     policy_id: str = Field(..., min_length=1, description="Unique policy identifier")
     as_of_date: str = Field(..., description="Point-in-time timestamp (ISO 8601 UTC)")
+    feature_stage: Literal["raw-v6-features"]
+    preprocessing_profile_id: Literal[PREPROCESSING_PROFILE_ID]
     features: RawFeatures
 
 
@@ -69,6 +73,7 @@ class ScoreResponse(BaseModel):
     raw_logit: float
     calibrated_logit: float
     risk_tier: str
+    risk_tier_id: str
     review_queue_eligibility: dict[str, bool]
     root_attributions_log_odds: dict[str, float]
     root_centered_shap: dict[str, float]

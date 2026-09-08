@@ -444,7 +444,13 @@ class TestDiagnosticsEndpoint(unittest.TestCase):
         corpus = generate_v6_corpus(V6CorpusConfig(base_seed=20280201))
         obs = [r for r in corpus.observations if r.role == "non_final_evaluation"][0]
         fmap = _feature_map(obs)
-        payload = {"policy_id": obs.policy_id, "as_of_date": obs.as_of, "features": fmap}
+        payload = {
+            "policy_id": obs.policy_id,
+            "as_of_date": obs.as_of,
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
+            "features": fmap,
+        }
         self.client.post("/v1/score", json=payload)
         resp = self.client.get("/v1/diagnostics")
         data = resp.json()

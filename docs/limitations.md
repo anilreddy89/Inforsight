@@ -82,6 +82,30 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [ ] A clean, read-only qualification passes on the final hardening commit.
 - [ ] RH-13 records the final release and Phase 4 resume decision.
 
+### LIM-RH-002 — The v6 source stream lacks servicing eligibility evidence
+
+| Field | Value |
+| --- | --- |
+| Status | Scheduled |
+| Severity | Material |
+| Discovered in | RH-01I canonical domain snapshot implementation |
+| Owner | RH-01 and downstream source-contract work; [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) |
+| Evidence | Canonical snapshot contract and dashboard integration tests |
+| Resolution trigger | Before the v6 dashboard may recommend or approve a servicing action |
+
+#### Finding
+
+The v6 event stream provides issuance and payment history, but it does not provide authoritative policy lifecycle, grace-period, arrears, claim, legal-dispute, or deceased-policy facts. Those facts cannot be safely inferred from missing events.
+
+#### Current behavior
+
+The canonical snapshot records these fields as unknown. Rules return `insufficient_domain_evidence` with no eligible actions, and workflow approval fails closed. Risk scoring and evidence-grounded review may continue because they do not grant servicing authority.
+
+#### Resolution evidence required
+
+- A versioned source contract supplies the missing lifecycle and safety facts with dual-time provenance.
+- Snapshot reconstruction, eligibility, dashboard, and workflow tests prove that action authorization uses those facts without fallback defaults.
+
 ### LIM-002-001 — Billing frequency is confounded with observation time
 
 | Field | Value |
