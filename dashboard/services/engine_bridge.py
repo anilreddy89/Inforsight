@@ -21,6 +21,7 @@ from inforsight_simulator.assistant import (
 from inforsight_simulator.audit.ledger import AuditLedger
 from inforsight_simulator.bundle import BundledInferenceEngine, ModelBundle, ScoringResult
 from inforsight_simulator.domain_snapshot import DomainSnapshot
+from inforsight_simulator.economics import load_economics_resource_contract
 from inforsight_simulator.optimization import (
     OptimalRecommendation,
     PolicyValuation,
@@ -54,12 +55,10 @@ from inforsight_simulator.workflow.service import (
 )
 
 from dashboard.config import (
-    ACTION_METADATA,
     DEFAULT_BUDGET,
     DEFAULT_AUDIT_LOG_PATH,
     DEFAULT_BUNDLE_PATH,
     DEFAULT_MAX_SPECIALIST_HOURS,
-    DEFAULT_SPECIALIST_HOURLY_COST,
 )
 
 
@@ -82,6 +81,7 @@ class EngineBridge:
         self.bundle = ModelBundle.load(self.bundle_path)
         self.inference_engine = BundledInferenceEngine(self.bundle)
         self.semantic_catalog = load_semantic_catalog()
+        self.economics_contract = load_economics_resource_contract(catalog=self.semantic_catalog)
 
         # 2. Initialize Audit Ledger and Workflow Service
         self.audit_ledger = AuditLedger(log_path=self.audit_log_path)
@@ -134,7 +134,6 @@ class EngineBridge:
         policy_valuation: PolicyValuation,
         calibrated_probability: float,
         days_past_due: int = 0,
-        specialist_hourly_cost: float = DEFAULT_SPECIALIST_HOURLY_COST,
     ) -> OptimalRecommendation:
         """Computes cost-utility uplift matrix and selects optimal unconstrained intervention."""
         utilities = evaluate_action_utilities(
@@ -268,18 +267,14 @@ class EngineBridge:
             case_brief=case_brief.to_dict(),
             model_bundle_id=self.bundle.bundle_id,
             action_channels={
-                action: str(ACTION_METADATA.get(action, {}).get("channel", "unknown"))
-                for action in eligible_action_set.eligible_actions
+                action.action_type: action.channel
+                for action in self.rules_engine.action_catalog
+                if action.action_type in eligible_action_set.eligible_actions
             },
             action_resources={
                 action: ActionResourceRequirement(
-                    personnel_hours=float(
-                        ACTION_METADATA.get(action, {}).get("duration_minutes", 0.0)
-                    )
-                    / 60.0,
-                    direct_cost_usd=float(
-                        ACTION_METADATA.get(action, {}).get("direct_cost", 0.0)
-                    ),
+                    personnel_hours=self.economics_contract.action(action).personnel_hours,
+                    direct_cost_usd=self.economics_contract.action(action).direct_cost_usd,
                 )
                 for action in eligible_action_set.eligible_actions
             },

@@ -13,7 +13,6 @@ DEFAULT_MONITORING_SCHEMA = ROOT_DIR / "serving" / "monitoring" / "diagnostics-s
 
 # Operational Capacity Defaults
 DEFAULT_MAX_SPECIALIST_HOURS = 50.0
-DEFAULT_SPECIALIST_HOURLY_COST = 35.00
 DEFAULT_BUDGET = 2500.00
 
 
@@ -31,7 +30,7 @@ RISK_TIERS = {
         short_label="Tier 4 (Critical)",
         color_hex="#DC2626",
         bg_hex="#FEE2E2",
-        description="Immediate specialist phone outreach required. Imminent lapse threat.",
+        description="Immediate specialist review required. Imminent combined termination risk.",
     ),
     "Tier 3: High Risk": RiskTierDisplay(
         label="Tier 3: High Risk (Top 5%)",
@@ -58,44 +57,34 @@ RISK_TIERS = {
 
 # Action Taxonomy Metadata
 ACTION_METADATA = {
+    "courtesy_reminder": {
+        "title": "Courtesy Reminder",
+        "icon": "📱",
+        "channel": "SMS",
+        "description": "Send a bounded courtesy reminder through the permitted channel.",
+    },
+    "grace_period_consultation": {
+        "title": "Grace Period Consultation",
+        "icon": "☎️",
+        "channel": "PHONE",
+        "description": "Provide a structured consultation while the policy is in grace.",
+    },
     "specialist_phone_outreach": {
         "title": "Specialist Phone Consultation",
         "icon": "📞",
-        "channel": "OUTBOUND_CALL",
-        "duration_minutes": 25,
-        "direct_cost": 20.0,
+        "channel": "PHONE",
         "description": "High-touch empathetic phone consultation by a certified retention specialist.",
     },
-    "payment_restructuring_plan": {
-        "title": "Payment Restructuring Plan",
+    "payment_method_remediation": {
+        "title": "Payment Method Remediation",
         "icon": "💳",
-        "channel": "SECURE_SMS_EMAIL",
-        "duration_minutes": 15,
-        "direct_cost": 12.0,
-        "description": "Offer flexible catch-up payment schedule, split premium, or altered billing frequency.",
-    },
-    "self_service_portal_link": {
-        "title": "Self-Service Digital Nudge",
-        "icon": "📱",
-        "channel": "AUTOMATED_SMS",
-        "duration_minutes": 2,
-        "direct_cost": 2.0,
-        "description": "Automated digital notification containing 1-click secure payment method update link.",
-    },
-    "agent_conservation_alert": {
-        "title": "Dedicated Agent Alert",
-        "icon": "🤝",
-        "channel": "CRM_DISPATCH",
-        "duration_minutes": 10,
-        "direct_cost": 15.0,
-        "description": "Escalate priority alert to writing agent for relationship-based client conservation.",
+        "channel": "SMS",
+        "description": "Offer a bounded payment-method correction path through the permitted channel.",
     },
     "abstain": {
         "title": "Abstain / No Intervention",
         "icon": "⏸️",
-        "channel": "NONE",
-        "duration_minutes": 0,
-        "direct_cost": 0.0,
+        "channel": "none",
         "description": "Decline active outreach to conserve resources and avoid customer fatigue.",
     },
 }

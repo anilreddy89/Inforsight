@@ -107,8 +107,20 @@ class ConservationActionDefinition:
     maximum_policy_tenure_days: int | None = None
     requires_grace_period: bool = False
     required_safety_evidence: tuple[str, ...] = ()
+    direct_cost_usd_micros: int | None = None
+    personnel_seconds: int | None = None
 
     def __post_init__(self) -> None:
+        if self.direct_cost_usd_micros is not None:
+            if self.direct_cost_usd_micros < 0:
+                raise ValueError("direct_cost_usd_micros cannot be negative")
+            if self.direct_cost_usd != self.direct_cost_usd_micros / 1_000_000:
+                raise ValueError("direct cost display bridge disagrees with USD micros")
+        if self.personnel_seconds is not None:
+            if self.personnel_seconds < 0:
+                raise ValueError("personnel_seconds cannot be negative")
+            if self.personnel_hours != self.personnel_seconds / 3600:
+                raise ValueError("personnel hours display bridge disagrees with seconds")
         if self.action_type == "abstain":
             if self.direct_cost_usd != 0.0:
                 raise ValueError("abstain action must have direct_cost_usd == 0.0")

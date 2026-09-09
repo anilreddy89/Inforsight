@@ -44,7 +44,9 @@ def compute_policy_metrics(
         # If no baseline given, compute baseline as sum of (counterfactual + saved)
         baseline_lapses = sum(a.counterfactual_lapse_prob + a.expected_saved_lapse for a in assignments)
 
-    lapses_prevented = max(0.0, baseline_lapses - total_lapses)
+    # Legacy field name retained for frozen serializers; value is signed and no
+    # longer clipped. New RH-04 fields below carry the honest combined target.
+    lapses_prevented = sum(a.combined_termination_effect for a in assignments)
     abs_lift = lapses_prevented / n
     rel_reduction = (lapses_prevented / max(1e-6, baseline_lapses)) * 100.0
 
@@ -55,8 +57,14 @@ def compute_policy_metrics(
     cpcp = total_spend / max(1e-6, lapses_prevented)
     rocs = net_preserved / max(1e-6, total_spend) if total_spend > 0 else 0.0
 
-    spec_hours = sum(a.resource_hours for a in assignments)
+    # Historical specialist-hours field remains scoped to the two legacy
+    # specialist actions. RH-04 personnel_seconds_used covers every action.
+    spec_hours = sum(a.resource_hours for a in assignments if a.consumes_specialist)
     spec_calls = sum(1 for a in assignments if a.consumes_specialist)
+    total_spend_micros = sum(a.direct_cost_usd_micros for a in assignments)
+    gross_micros = sum(a.gross_expected_value_usd_micros for a in assignments)
+    net_micros = sum(a.net_expected_value_usd_micros for a in assignments)
+    personnel_seconds = sum(a.personnel_seconds for a in assignments)
 
     action_counts: dict[str, int] = {}
     for a in assignments:
@@ -78,6 +86,11 @@ def compute_policy_metrics(
         specialist_hours_used=spec_hours,
         specialist_calls_count=spec_calls,
         action_distribution=action_counts,
+        combined_terminations_avoided=lapses_prevented,
+        total_spend_usd_micros=total_spend_micros,
+        gross_expected_value_usd_micros=gross_micros,
+        net_expected_value_usd_micros=net_micros,
+        personnel_seconds_used=personnel_seconds,
     )
 
 
@@ -159,8 +172,8 @@ def run_cluster_bootstrap(
     for p_name in policy_names:
         assigns = eval_results[p_name][1]
         arrays_by_pol[p_name] = {
-            "net": np.array([a.expected_net_preserved_usd for a in assigns], dtype=float),
-            "saved": np.array([a.expected_saved_lapse for a in assigns], dtype=float),
+            "net": np.array([a.net_expected_value_usd_micros / 1_000_000 for a in assigns], dtype=float),
+            "saved": np.array([a.combined_termination_effect for a in assigns], dtype=float),
             "spend": np.array([a.direct_cost_usd for a in assigns], dtype=float),
             "lapse": np.array([a.counterfactual_lapse_prob for a in assigns], dtype=float),
         }
@@ -349,4 +362,3 @@ def build_ope_manifest(
         verifications=manifest.verifications,
         manifest_digest=digest,
     )
-

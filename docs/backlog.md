@@ -886,7 +886,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-04 - Preserve signed treatment effects and unify economics
 
-**Status:** RH-04D completed on 2026-09-09 through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`. Economics/resource contract 1.0.0, ADR 0016, eight fictional fixtures, the two separately labeled evaluation estimands, and the sensitivity protocol are accepted; all five CI jobs passed. RH-04I is predecessor-ready and remains responsible for runtime migration. Parent RH-04 and its acceptance checks remain open until RH-04I merges.
+**Status:** RH-04D completed on 2026-09-09 through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`. RH-04I is in progress through [issue #151](https://github.com/anilreddy89/Inforsight/issues/151) on `fix/151-rh-04i-signed-economics`. Contract 1.0.0 runtime models, signed valuation, shared catalog economics/resources, and governed consumer migrations are under verification. Parent RH-04 and its acceptance checks remain open until RH-04I merges.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract

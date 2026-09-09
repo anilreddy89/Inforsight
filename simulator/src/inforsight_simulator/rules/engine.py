@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import Any, Mapping, Sequence
 
 from inforsight_simulator.domain_snapshot import DomainSnapshot
+from inforsight_simulator.economics import load_economics_resource_contract
 from inforsight_simulator.semantic_catalog import SemanticCatalog, load_semantic_catalog
 from inforsight_simulator.safety_evidence import SafetyEvidence
 
@@ -37,6 +38,7 @@ def get_standard_action_catalog(
     """Adapt the canonical RH catalog into the legacy Phase 3 action type."""
 
     semantic_catalog = catalog or load_semantic_catalog()
+    economics_contract = load_economics_resource_contract(catalog=semantic_catalog)
     global_requirements = (
         "has_active_claim", "has_legal_hold", "has_registered_dispute"
     )
@@ -51,8 +53,8 @@ def get_standard_action_catalog(
             action_id=str(item["action_id"]),
             action_type=str(item["action_type"]),
             channel=str(item["channel"]),
-            direct_cost_usd=int(item["direct_cost_cents"]) / 100,
-            personnel_hours=int(item["personnel_seconds"]) / 3600,
+            direct_cost_usd=economics_contract.action(str(item["action_id"])).direct_cost_usd,
+            personnel_hours=economics_contract.action(str(item["action_id"])).personnel_hours,
             regulatory_cooling_off_days=int(item["regulatory_cooling_off_days"]),
             minimum_policy_tenure_days=int(item["minimum_policy_tenure_days"]),
             maximum_policy_tenure_days=(
@@ -64,6 +66,12 @@ def get_standard_action_catalog(
                 () if item["action_type"] == "abstain" else
                 global_requirements + channel_requirements[str(item["channel"])]
             ),
+            direct_cost_usd_micros=economics_contract.action(
+                str(item["action_id"])
+            ).direct_cost_usd_micros,
+            personnel_seconds=economics_contract.action(
+                str(item["action_id"])
+            ).personnel_seconds,
         )
         for item in semantic_catalog.data["actions"]
     )

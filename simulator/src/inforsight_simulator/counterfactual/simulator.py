@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Iterable, Mapping, Sequence
 
 from inforsight_simulator.v6_corpus import V6Features, V6Observation, V6OracleRecord
+from inforsight_simulator.economics import load_economics_resource_contract
 
 from .hazard import (
     counterfactual_cumulative_incidence,
@@ -14,6 +15,9 @@ from .models import (
     CANONICAL_INTERVENTIONS,
     CounterfactualOutcome,
 )
+
+
+_ECONOMICS = load_economics_resource_contract()
 
 
 class CounterfactualSimulator:
@@ -58,6 +62,7 @@ class CounterfactualSimulator:
             m_0_surr = (0.0, 0.0, 0.0)
 
         outcomes: dict[str, CounterfactualOutcome] = {}
+        economics = _ECONOMICS
 
         for action_name, params in CANONICAL_INTERVENTIONS.items():
             if action_name == "abstain":
@@ -72,6 +77,8 @@ class CounterfactualSimulator:
                     monthly_lapse_hazards=m_0_lapse,
                     monthly_surrender_hazards=m_0_surr,
                     direct_cost_usd=0.0,
+                    combined_termination_treatment_effect=0.0,
+                    direct_cost_usd_micros=0,
                 )
                 continue
 
@@ -95,7 +102,13 @@ class CounterfactualSimulator:
                 m_a_lapse = (0.0, 0.0, 0.0)
                 m_a_surr = (0.0, 0.0, 0.0)
 
-            uplift = max(-1.0, min(1.0, p_0_lapse - p_a_lapse))
+            # RH-04 estimand: control minus action probability for the combined
+            # lapse-or-surrender target. Preserve negative (harmful) effects.
+            uplift = max(
+                -1.0,
+                min(1.0, (p_0_lapse + p_0_surr) - (p_a_lapse + p_a_surr)),
+            )
+            action_economics = economics.action(action_name)
 
             outcomes[action_name] = CounterfactualOutcome(
                 policy_id=policy_id,
@@ -107,7 +120,9 @@ class CounterfactualSimulator:
                 treatment_effect_uplift=uplift,
                 monthly_lapse_hazards=m_a_lapse,
                 monthly_surrender_hazards=m_a_surr,
-                direct_cost_usd=params.direct_cost_usd,
+                direct_cost_usd=action_economics.direct_cost_usd,
+                combined_termination_treatment_effect=uplift,
+                direct_cost_usd_micros=action_economics.direct_cost_usd_micros,
             )
 
         return outcomes
@@ -141,4 +156,3 @@ class CounterfactualSimulator:
             cohort_outcomes[pid] = outcomes
 
         return cohort_outcomes
-
