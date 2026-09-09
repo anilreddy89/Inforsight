@@ -1,6 +1,6 @@
 # RH-04D: Signed treatment effects and shared economics 1.0.0
 
-Status: accepted on 2026-09-09 through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`. This document is the RH-04I implementation baseline; runtime migration remains pending.
+Status: accepted through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`; implemented on 2026-09-09 through [issue #151](https://github.com/anilreddy89/Inforsight/issues/151) and [PR #152](https://github.com/anilreddy89/Inforsight/pull/152), merge `04d3e59`. Corrected historical evidence remains deferred to RH-12.
 
 ## Boundary and normative artifacts
 
@@ -98,6 +98,6 @@ Compatibility adapters may read a named legacy profile but must immediately conv
 
 ## Verification and rollout
 
-RH-04D validates the closed schema, catalog pin, action conversions, exact signed fixture arithmetic, nontruncating personnel conversion, metric labels, and evaluation declarations. All five PR CI jobs passed before merge `c9eddcf`. These tests do not prove runtime repair. RH-04I adds failing runtime regressions first, implements models/adapters, and verifies rules, optimization, OPE, dashboard, reports, qualification, and workflow consumers without regenerating historical evidence.
+RH-04D validated the closed schema, catalog pin, action conversions, exact signed fixture arithmetic, nontruncating personnel conversion, metric labels, and evaluation declarations before merge `c9eddcf`. RH-04I then added runtime fixture and adversarial regressions, implemented the models and adapters, and verified rules, optimization, OPE, dashboard, reports, qualification, and workflow consumers before merge `04d3e59`. Historical evidence was not regenerated and remains pending RH-12.
 
 Run focused contract tests, full `make check` with headless plotting, repository boundary checks, and `git diff --check`. Restore any timing-only historical artifact rewrite and confirm frozen files remain byte-identical. No final-holdout access, model fitting, or corrected result inspection is authorized by RH-04D.

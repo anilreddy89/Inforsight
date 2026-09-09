@@ -81,7 +81,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-02 enforces fail-closed safety evidence through issue #142 and PR #143, merge `3eb74b5`.
 - [x] RH-03 enforces human authority at the common execution boundary through issue #145 and PR #146, merge `c5fa76c`; all five CI jobs passed.
 - [x] RH-04D accepts the signed economics/resource contract, evaluation estimands, and sensitivity protocol through issue #148 and PR #149, merge `c9eddcf`; all five CI jobs passed.
-- [ ] RH-04I runtime migration is in progress through issue #151; parent RH-04 remains open until reviewed implementation evidence merges.
+- [x] RH-04I and parent RH-04 completed through issue #151 and PR #152, merge `04d3e59`; runtime consumers now preserve signed effects and share versioned economics/resources. Corrected historical evidence remains deferred to RH-12.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.
