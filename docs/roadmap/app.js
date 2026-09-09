@@ -597,12 +597,12 @@ const timelineData = [
         id: "RH-04–RH-05",
         title: "Signed Economics & Capacity-Constrained Allocation",
         status: "Planned",
-        commit: "Pending",
+        commit: "RH-04D c9eddcf; implementation pending",
         summary: {
-          tech: "Preserve harmful treatment effects, unify versioned economics and resource units, enforce allocation before display, and validate the chosen algorithm against exact small instances.",
-          simple: "Count both benefit and harm, use consistent costs and hours, and never recommend more work than the team or budget can support."
+          tech: "RH-04D is accepted: contract 1.0.0 preserves signed combined-termination effects, integer USD micros, personnel seconds, explicit annual-premium-preserved semantics, two evaluation estimands, and assumption sensitivity. RH-04I runtime migration and all RH-05 allocation work remain pending.",
+          simple: "The shared rules for counting benefit, harm, money, and staff time are approved. Applying them throughout the product—and proving the allocator respects capacity—comes next."
         },
-        checks: "RH-04D/I follows RH-01; RH-05D/I follows RH-04; comparable operational baselines and predeclared algorithm acceptance required."
+        checks: "RH-04D issue #148 closed through PR #149 (c9eddcf); all five CI jobs passed. ADR 0016, contract/schema 1.0.0, eight fixtures, consumer migration plan, dual estimands, duplicate/budget/model-freeze rules, and sensitivity axes accepted. RH-04I is predecessor-ready; RH-05 waits for parent RH-04 completion."
       },
       {
         id: "RH-06–RH-07",

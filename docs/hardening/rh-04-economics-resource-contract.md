@@ -1,6 +1,6 @@
 # RH-04D: Signed treatment effects and shared economics 1.0.0
 
-Status: proposed through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148). This document is a design contract; runtime migration is RH-04I.
+Status: accepted on 2026-09-09 through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`. This document is the RH-04I implementation baseline; runtime migration remains pending.
 
 ## Boundary and normative artifacts
 
@@ -98,6 +98,6 @@ Compatibility adapters may read a named legacy profile but must immediately conv
 
 ## Verification and rollout
 
-RH-04D validates the closed schema, catalog pin, action conversions, exact signed fixture arithmetic, nontruncating personnel conversion, metric labels, and evaluation declarations. These tests do not prove runtime repair. RH-04I adds failing runtime regressions first, implements models/adapters, and verifies rules, optimization, OPE, dashboard, reports, qualification, and workflow consumers without regenerating historical evidence.
+RH-04D validates the closed schema, catalog pin, action conversions, exact signed fixture arithmetic, nontruncating personnel conversion, metric labels, and evaluation declarations. All five PR CI jobs passed before merge `c9eddcf`. These tests do not prove runtime repair. RH-04I adds failing runtime regressions first, implements models/adapters, and verifies rules, optimization, OPE, dashboard, reports, qualification, and workflow consumers without regenerating historical evidence.
 
 Run focused contract tests, full `make check` with headless plotting, repository boundary checks, and `git diff --check`. Restore any timing-only historical artifact rewrite and confirm frozen files remain byte-identical. No final-holdout access, model fitting, or corrected result inspection is authorized by RH-04D.
