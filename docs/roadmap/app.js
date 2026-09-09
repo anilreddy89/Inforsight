@@ -597,12 +597,12 @@ const timelineData = [
         id: "RH-04–RH-05",
         title: "Signed Economics & Capacity-Constrained Allocation",
         status: "In Progress",
-        commit: "RH-04 complete at 04d3e59; RH-05D issue #154 in progress",
+        commit: "RH-04 complete at 04d3e59; RH-05D accepted at 3645fae",
         summary: {
-          tech: "RH-04 is complete: contract 1.0.0 governs signed valuation, integer USD micros, personnel seconds, source annual premium, explicit unavailable states, and optimization/OPE/workflow/dashboard bridges. RH-05D issue #154 is specifying the exact allocation problem, deterministic algorithm boundary, reference validation, and capacity lifecycle before implementation.",
-          simple: "The product now applies one approved set of rules for benefit, harm, money, and staff time. The active RH-05 design defines how a feasible portfolio is selected and how allocation quality will be tested before the dashboard changes."
+          tech: "RH-04 is complete and RH-05D allocation contract 1.0.0 is accepted. It defines the exact two-resource portfolio problem, deterministic tie-breaking, exhaustive bounded reference, zero additive-gap gate, dashboard allocation lifecycle, and atomic override semantics. RH-05I runtime implementation remains pending.",
+          simple: "The benefit, harm, money, staff-time, and portfolio-selection rules are now approved. The next step is implementing those allocation rules in the dashboard and workflow."
         },
-        checks: "RH-04D issue #148 closed through PR #149 (c9eddcf); RH-04I issue #151 closed through PR #152 (04d3e59). RH-05D started through issue #154; RH-05I remains blocked until its design merges. Historical evidence remains frozen pending RH-12."
+        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae); six focused tests, 39 contract tests, full make check with 498 simulator tests, and all five CI jobs passed. RH-05I is predecessor-ready; historical evidence remains frozen pending RH-12."
       },
       {
         id: "RH-06–RH-07",

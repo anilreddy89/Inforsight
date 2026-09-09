@@ -1,6 +1,6 @@
 # RH-05D: Portfolio allocation contract 1.0.0
 
-Status: proposed through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154). RH-05I is blocked until this design is accepted.
+Status: accepted on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`. All five required CI jobs passed. This document is the RH-05I implementation baseline; runtime migration remains pending.
 
 ## Purpose and claim boundary
 

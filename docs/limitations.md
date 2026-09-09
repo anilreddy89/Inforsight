@@ -82,7 +82,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-03 enforces human authority at the common execution boundary through issue #145 and PR #146, merge `c5fa76c`; all five CI jobs passed.
 - [x] RH-04D accepts the signed economics/resource contract, evaluation estimands, and sensitivity protocol through issue #148 and PR #149, merge `c9eddcf`; all five CI jobs passed.
 - [x] RH-04I and parent RH-04 completed through issue #151 and PR #152, merge `04d3e59`; runtime consumers now preserve signed effects and share versioned economics/resources. Corrected historical evidence remains deferred to RH-12.
-- [ ] RH-05D issue #154 specifies and validates the portfolio-allocation contract before RH-05I changes runtime behavior.
+- [x] RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155, merge `3645fae`; all five required CI jobs passed. RH-05I is predecessor-ready and parent RH-05 remains open.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.
