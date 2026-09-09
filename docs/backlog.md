@@ -886,7 +886,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-04 - Preserve signed treatment effects and unify economics
 
-**Status:** RH-04D completed on 2026-09-09 through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`. RH-04I is in progress through [issue #151](https://github.com/anilreddy89/Inforsight/issues/151) on `fix/151-rh-04i-signed-economics`. Contract 1.0.0 runtime models, signed valuation, shared catalog economics/resources, and governed consumer migrations are under verification. Parent RH-04 and its acceptance checks remain open until RH-04I merges.
+**Status:** Completed on 2026-09-09. RH-04D closed through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`; RH-04I closed through [issue #151](https://github.com/anilreddy89/Inforsight/issues/151) and [PR #152](https://github.com/anilreddy89/Inforsight/pull/152), merge `04d3e59`, with all five required CI jobs passing. Contract 1.0.0 now governs signed runtime valuation, integer USD micros, personnel seconds, action economics/resources, and honest dashboard/OPE bridges. Historical evidence remains frozen pending RH-12. RH-05 is predecessor-ready.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
@@ -896,15 +896,15 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Acceptance checks:**
 
-- [ ] Harmful treatment contributes a negative gross value rather than being clipped to zero.
-- [ ] Rules, OPE, optimizer, dashboard, and reports consume or explicitly bridge one versioned economics/resource contract.
-- [ ] Personnel capacity is represented in a single unit without integer truncation.
-- [ ] Annual premium preserved is distinguished from profit and modeled expected value from realized value.
-- [ ] Harmful, neutral, and beneficial treatment fixtures pass.
-- [ ] The primary economic estimand is predeclared before regenerated results are inspected: uncertainty conditional on frozen assignments, performance of the allocation procedure on new portfolios, or both as separately labeled results.
-- [ ] Reallocated-portfolio resampling defines cluster identity, duplicate handling, and whether budgets/hours remain fixed or scale with portfolio size.
-- [ ] Predictive models are never refit on evaluation resamples.
-- [ ] Sensitivity analysis varies intervention efficacy, costs, and harmful effects; fixed-effect bootstrap intervals are not presented as uncertainty in those assumptions.
+- [x] Harmful treatment contributes a negative gross value rather than being clipped to zero.
+- [x] Rules, OPE, optimizer, dashboard, and reports consume or explicitly bridge one versioned economics/resource contract.
+- [x] Personnel capacity is represented in a single unit without integer truncation.
+- [x] Annual premium preserved is distinguished from profit and modeled expected value from realized value.
+- [x] Harmful, neutral, and beneficial treatment fixtures pass.
+- [x] The primary economic estimand is predeclared before regenerated results are inspected: uncertainty conditional on frozen assignments, performance of the allocation procedure on new portfolios, or both as separately labeled results.
+- [x] Reallocated-portfolio resampling defines cluster identity, duplicate handling, and whether budgets/hours remain fixed or scale with portfolio size.
+- [x] Predictive models are never refit on evaluation resamples.
+- [x] Sensitivity analysis varies intervention efficacy, costs, and harmful effects; fixed-effect bootstrap intervals are not presented as uncertainty in those assumptions.
 
 #### RH-05 - Enforce capacity and validate the allocation algorithm
 

@@ -597,12 +597,12 @@ const timelineData = [
         id: "RH-04–RH-05",
         title: "Signed Economics & Capacity-Constrained Allocation",
         status: "In Progress",
-        commit: "RH-04D c9eddcf; RH-04I issue #151 active",
+        commit: "RH-04 complete at 04d3e59; RH-05 pending",
         summary: {
-          tech: "RH-04D is accepted and RH-04I issue #151 is migrating contract 1.0.0 through signed valuation, integer USD micros, personnel seconds, optimization, OPE, workflow, and dashboard bridges. RH-05 allocation validation remains pending.",
-          simple: "The approved rules for benefit, harm, money, and staff time are now being applied throughout the product. Proving portfolio capacity and allocation quality remains the next separate step."
+          tech: "RH-04 is complete: contract 1.0.0 now governs signed valuation, integer USD micros, personnel seconds, source annual premium, explicit unavailable states, and optimization/OPE/workflow/dashboard bridges. RH-05 allocation validation remains pending.",
+          simple: "The product now applies one approved set of rules for benefit, harm, money, and staff time. Proving portfolio capacity and allocation quality remains the next separate step."
         },
-        checks: "RH-04D issue #148 closed through PR #149 (c9eddcf). RH-04I issue #151 is active on fix/151-rh-04i-signed-economics; parent RH-04 and RH-05 remain open pending reviewed runtime evidence."
+        checks: "RH-04D issue #148 closed through PR #149 (c9eddcf); RH-04I issue #151 closed through PR #152 (04d3e59). Nine runtime fixture/adversarial tests and full make check with 497 simulator tests passed. Historical evidence remains frozen pending RH-12; RH-05 is predecessor-ready."
       },
       {
         id: "RH-06–RH-07",
