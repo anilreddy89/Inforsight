@@ -1,7 +1,7 @@
 {
   "contract_id": "inforsight.portfolio-allocation",
   "contract_version": "1.0.0",
-  "status": "proposed",
+  "status": "accepted",
   "economics_contract": {"contract_id": "inforsight.economics-resource", "contract_version": "1.0.0"},
   "objective_metric": "modeled_expected_net_value_usd_micros",
   "choice_rule": "exactly_one_action_per_occurrence_including_abstain",
