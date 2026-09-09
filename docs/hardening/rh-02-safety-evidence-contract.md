@@ -1,6 +1,6 @@
 # RH-02 safety evidence contract 1.0.0
 
-Status: implementation in progress through [issue #142](https://github.com/anilreddy89/Inforsight/issues/142).
+Status: implemented through [issue #142](https://github.com/anilreddy89/Inforsight/issues/142) and [PR #143](https://github.com/anilreddy89/Inforsight/pull/143), merged as `3eb74b5` on 2026-09-08. All PR CI checks passed.
 
 ## Boundary
 

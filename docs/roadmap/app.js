@@ -585,13 +585,13 @@ const timelineData = [
       {
         id: "RH-02–RH-03",
         title: "Fail-Closed Safety & Human Authority",
-        status: "RH-02 In Progress",
-        commit: "Pending",
+        status: "RH-02 Complete · RH-03 Ready",
+        commit: "3eb74b5",
         summary: {
           tech: "Require explicit safety evidence and enforce case-, snapshot-, action-, version-, and actor-bound approval at the common execution transition.",
           simple: "Missing safety facts stop outreach, and an approval only applies to the exact case and action a trusted reviewer examined."
         },
-        checks: "RH-02 issue #142 is implementing explicit tri-state safety evidence and per-action/channel requirements after RH-01. RH-03 follows RH-02 and owns authenticated, fresh approval at execution; Phase 4 remains blocked through RH-13."
+        checks: "RH-02 issue #142 closed through PR #143 (3eb74b5); all CI checks passed. Tri-state dual-time safety evidence, per-action/channel requirements, and snapshot/evidence identity binding are implemented. RH-03 is ready and owns authenticated, fresh approval at execution; Phase 4 remains blocked through RH-13."
       },
       {
         id: "RH-04–RH-05",

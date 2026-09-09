@@ -845,7 +845,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-02 - Make missing safety evidence fail closed
 
-**Status:** In progress through [issue #142](https://github.com/anilreddy89/Inforsight/issues/142) on `fix/142-rh-02-fail-closed-safety-evidence`. RH-01 and its closeout are merged; LIM-RH-002 remains scheduled until explicit source evidence and consumer regressions satisfy its closure requirements.
+**Status:** Completed on 2026-09-08 through [issue #142](https://github.com/anilreddy89/Inforsight/issues/142) and [PR #143](https://github.com/anilreddy89/Inforsight/pull/143), merge `3eb74b5`. The runtime now preserves tri-state safety facts, reconstructs versioned dual-time evidence, declares per-action and per-channel requirements, binds eligibility to snapshot and evidence identities, and fails closed when required evidence is missing. All PR CI checks passed. LIM-RH-002 is narrowed to the current v6 stream's lack of those source facts and deferred to post-RH-13 source integration; RH-03 may proceed from updated `main`.
 
 **Issue template:** Implementation task
 **Classification:** Current defect
@@ -855,12 +855,12 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Acceptance checks:**
 
-- [ ] Missing claim, legal-hold, dispute, opt-out, and DNC facts cannot be interpreted as permission.
-- [ ] Rules declare which evidence each action/channel requires.
-- [ ] Minimal and partial contexts have fail-closed regression tests.
-- [ ] Dashboard and service adapters stop manufacturing false safety facts.
-- [ ] Positive eligibility fixtures contain explicit evidence rather than relying on defaults.
-- [ ] New holds, opt-outs, disputes, safety facts, or snapshot changes invalidate affected approval and execution eligibility.
+- [x] Missing claim, legal-hold, dispute, opt-out, and DNC facts cannot be interpreted as permission.
+- [x] Rules declare which evidence each action/channel requires.
+- [x] Minimal and partial contexts have fail-closed regression tests.
+- [x] Dashboard and service adapters stop manufacturing false safety facts.
+- [x] Positive eligibility fixtures contain explicit evidence rather than relying on defaults.
+- [x] New holds, opt-outs, disputes, safety facts, or snapshot changes invalidate affected approval and execution eligibility.
 
 #### RH-03 - Enforce human authority at the common transition boundary
 
