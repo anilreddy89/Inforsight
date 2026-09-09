@@ -886,6 +886,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-04 - Preserve signed treatment effects and unify economics
 
+**Status:** RH-04D started on 2026-09-09 through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) on branch `docs/148-rh-04d-signed-effects-economics`. Design is in progress; runtime behavior, historical evidence, and acceptance checks remain unchanged. RH-04I will be opened separately after the design merges.
+
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
 **Priority:** Release blocking
