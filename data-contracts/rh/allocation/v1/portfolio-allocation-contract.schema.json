@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.example/contracts/rh/allocation/v1/portfolio-allocation-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_id", "contract_version", "status", "economics_contract", "objective_metric", "choice_rule", "resource_constraints", "abstain_action_id", "algorithm_claim", "tie_break", "reference", "acceptance", "canonical_serialization", "required_failure_codes", "strategy_comparison"],
+  "properties": {
+    "contract_id": {"const": "inforsight.portfolio-allocation"},
+    "contract_version": {"const": "1.0.0"},
+    "status": {"enum": ["proposed", "accepted", "retired"]},
+    "economics_contract": {"type": "object", "additionalProperties": false, "required": ["contract_id", "contract_version"], "properties": {"contract_id": {"const": "inforsight.economics-resource"}, "contract_version": {"const": "1.0.0"}}},
+    "objective_metric": {"const": "modeled_expected_net_value_usd_micros"},
+    "choice_rule": {"const": "exactly_one_action_per_occurrence_including_abstain"},
+    "resource_constraints": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["capacity", "consumption", "type"], "properties": {"capacity": {"enum": ["budget_capacity_usd_micros", "personnel_capacity_seconds"]}, "consumption": {"enum": ["direct_cost_usd_micros", "personnel_seconds"]}, "type": {"const": "nonnegative_integer"}}}},
+    "abstain_action_id": {"const": "act_abstain_do_not_disturb_v1"},
+    "algorithm_claim": {"const": "deterministic_feasibility_preserving_allocation"},
+    "tie_break": {"const": "lexicographically_smallest_ordered_occurrence_action_vector"},
+    "reference": {"type": "object", "additionalProperties": false, "required": ["method", "max_occurrences", "max_non_abstain_actions_per_occurrence"], "properties": {"method": {"const": "cartesian_product_enumeration"}, "max_occurrences": {"type": "integer", "minimum": 1}, "max_non_abstain_actions_per_occurrence": {"type": "integer", "minimum": 1}}},
+    "acceptance": {"type": "object", "additionalProperties": false, "required": ["gap_metric", "maximum_gap_usd_micros", "relative_gap_authoritative", "feasibility_required"], "properties": {"gap_metric": {"const": "additive_usd_micros"}, "maximum_gap_usd_micros": {"const": 0}, "relative_gap_authoritative": {"const": false}, "feasibility_required": {"const": true}}},
+    "canonical_serialization": {"type": "object", "additionalProperties": false, "required": ["format", "encoding", "sorted_keys", "compact_separators", "allow_nonfinite"], "properties": {"format": {"const": "json"}, "encoding": {"const": "utf-8"}, "sorted_keys": {"const": true}, "compact_separators": {"const": true}, "allow_nonfinite": {"const": false}}},
+    "required_failure_codes": {"type": "array", "uniqueItems": true, "minItems": 10, "items": {"type": "string"}},
+    "strategy_comparison": {"const": ["non_intervention", "operational_rules_only", "risk_ranked", "allocation_engine"]}
+  }
+}

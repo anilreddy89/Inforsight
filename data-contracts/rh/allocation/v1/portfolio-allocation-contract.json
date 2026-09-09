@@ -1,0 +1,20 @@
+{
+  "contract_id": "inforsight.portfolio-allocation",
+  "contract_version": "1.0.0",
+  "status": "proposed",
+  "economics_contract": {"contract_id": "inforsight.economics-resource", "contract_version": "1.0.0"},
+  "objective_metric": "modeled_expected_net_value_usd_micros",
+  "choice_rule": "exactly_one_action_per_occurrence_including_abstain",
+  "resource_constraints": [
+    {"capacity": "budget_capacity_usd_micros", "consumption": "direct_cost_usd_micros", "type": "nonnegative_integer"},
+    {"capacity": "personnel_capacity_seconds", "consumption": "personnel_seconds", "type": "nonnegative_integer"}
+  ],
+  "abstain_action_id": "act_abstain_do_not_disturb_v1",
+  "algorithm_claim": "deterministic_feasibility_preserving_allocation",
+  "tie_break": "lexicographically_smallest_ordered_occurrence_action_vector",
+  "reference": {"method": "cartesian_product_enumeration", "max_occurrences": 6, "max_non_abstain_actions_per_occurrence": 4},
+  "acceptance": {"gap_metric": "additive_usd_micros", "maximum_gap_usd_micros": 0, "relative_gap_authoritative": false, "feasibility_required": true},
+  "canonical_serialization": {"format": "json", "encoding": "utf-8", "sorted_keys": true, "compact_separators": true, "allow_nonfinite": false},
+  "required_failure_codes": ["INCOMPATIBLE_ALLOCATOR", "INCOMPATIBLE_ECONOMICS_CONTRACT", "CONTEXT_MISMATCH", "VALUATION_UNAVAILABLE", "INVALID_RESOURCE", "INVALID_CAPACITY", "INFEASIBLE_SELECTION", "STALE_ALLOCATION", "CAPACITY_VERSION_CONFLICT", "CAPACITY_EXCEEDED"],
+  "strategy_comparison": ["non_intervention", "operational_rules_only", "risk_ranked", "allocation_engine"]
+}

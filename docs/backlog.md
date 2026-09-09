@@ -908,6 +908,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-05 - Enforce capacity and validate the allocation algorithm
 
+**Status:** In progress. RH-05D started on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) on branch `docs/154-rh-05d-portfolio-allocation`. The design child is specifying the exact portfolio problem, deterministic algorithm boundary, independent small-instance reference, predeclared gap policy, dashboard allocation lifecycle, and atomic override semantics. RH-05I remains blocked until the design merges; no runtime or historical evidence change is authorized by RH-05D.
+
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and algorithm clarification
 **Priority:** High

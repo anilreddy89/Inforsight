@@ -1,0 +1,44 @@
+{
+  "fixture_version": "1.0.0",
+  "allocator_version": "1.0.0",
+  "cases": [
+    {
+      "id": "mixed-duration-exact-fit",
+      "budget_capacity_usd_micros": 90000000,
+      "personnel_capacity_seconds": 5400,
+      "choices": {
+        "occ-001": [{"action_id": "act_abstain_do_not_disturb_v1", "value": 0, "cost": 0, "seconds": 0}, {"action_id": "act_grace_period_consultation_v1", "value": 70000000, "cost": 25000000, "seconds": 1800}],
+        "occ-002": [{"action_id": "act_abstain_do_not_disturb_v1", "value": 0, "cost": 0, "seconds": 0}, {"action_id": "act_specialist_phone_outreach_v1", "value": 100000000, "cost": 65000000, "seconds": 3600}]
+      },
+      "expected": {"selected": {"occ-001": "act_grace_period_consultation_v1", "occ-002": "act_specialist_phone_outreach_v1"}, "objective": 170000000, "cost": 90000000, "seconds": 5400}
+    },
+    {
+      "id": "joint-choice-greedy-counterexample",
+      "budget_capacity_usd_micros": 100,
+      "personnel_capacity_seconds": 100,
+      "choices": {
+        "occ-001": [{"action_id": "abstain", "value": 0, "cost": 0, "seconds": 0}, {"action_id": "large", "value": 100, "cost": 100, "seconds": 100}, {"action_id": "small", "value": 61, "cost": 50, "seconds": 50}],
+        "occ-002": [{"action_id": "abstain", "value": 0, "cost": 0, "seconds": 0}, {"action_id": "small", "value": 61, "cost": 50, "seconds": 50}]
+      },
+      "expected": {"selected": {"occ-001": "small", "occ-002": "small"}, "objective": 122, "cost": 100, "seconds": 100, "legacy_unconstrained_first_objective": 100, "legacy_gap": 22}
+    },
+    {
+      "id": "deterministic-tie",
+      "budget_capacity_usd_micros": 1,
+      "personnel_capacity_seconds": 0,
+      "choices": {
+        "occ-001": [{"action_id": "abstain", "value": 0, "cost": 0, "seconds": 0}, {"action_id": "action-a", "value": 10, "cost": 1, "seconds": 0}, {"action_id": "action-b", "value": 10, "cost": 1, "seconds": 0}]
+      },
+      "expected": {"selected": {"occ-001": "action-a"}, "objective": 10, "cost": 1, "seconds": 0}
+    },
+    {
+      "id": "zero-capacity-harmful",
+      "budget_capacity_usd_micros": 0,
+      "personnel_capacity_seconds": 0,
+      "choices": {
+        "occ-001": [{"action_id": "abstain", "value": 0, "cost": 0, "seconds": 0}, {"action_id": "harmful", "value": -5, "cost": 0, "seconds": 0}, {"action_id": "costly", "value": 50, "cost": 1, "seconds": 0}]
+      },
+      "expected": {"selected": {"occ-001": "abstain"}, "objective": 0, "cost": 0, "seconds": 0}
+    }
+  ]
+}
