@@ -864,7 +864,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-03 - Enforce human authority at the common transition boundary
 
-**Status:** In progress on 2026-09-09 through [issue #145](https://github.com/anilreddy89/Inforsight/issues/145) and branch `fix/145--rh-03-enforce-human-authority`. The first implementation slice centralizes execution authority, binds approvals to reviewed identities, rejects stale or tampered execution attempts, serializes local capacity consumption, and routes dashboard and qualification callers through the common boundary. Merge and closeout evidence remain pending.
+**Status:** Completed on 2026-09-09 through [issue #145](https://github.com/anilreddy89/Inforsight/issues/145) and [PR #146](https://github.com/anilreddy89/Inforsight/pull/146), merge `c5fa76c`. The bounded local runtime centralizes every public `EXECUTED` path behind trusted actor, exact approval/case/evidence/action binding, freshness, idempotency, current eligibility, protected metadata, concurrency, audit-handoff, and hours/money capacity checks. Dashboard and Phase 3 qualification callers use the boundary; focused integration coverage, the full repository check, and all five PR CI jobs passed without changing historical qualification artifacts. RH-10D/I is now predecessor-ready; P4-02 and P4-03 remain paused through RH-13.
 
 **Issue template:** Implementation task
 **Classification:** Current defect / authority invariant
@@ -874,15 +874,15 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Acceptance checks:**
 
-- [ ] Direct and wrapper-based transition bypasses fail.
-- [ ] Missing, stale, mismatched, replayed, and concurrent approvals fail deterministically.
-- [ ] Caller metadata cannot override authoritative action or channel fields.
-- [ ] Library tests and the strengthened authority qualification gate cover every public execution path.
-- [ ] Trusted actor identity remains a server-context contract; request-supplied identity alone is insufficient.
-- [ ] Approval binds the case version, reviewed snapshot/evidence digest, action, channel, recommendation/model version, and trusted actor.
-- [ ] Execution preserves the historical reviewed snapshot while separately revalidating current eligibility and evidence.
-- [ ] Changed action, incompatible case revision, expired approval, or newly received hold/opt-out requires renewed approval.
-- [ ] The local actor adapter and its trust assumptions are explicit; production identity federation remains Phase 4 work.
+- [x] Direct and wrapper-based transition bypasses fail.
+- [x] Missing, stale, mismatched, replayed, and concurrent approvals fail deterministically.
+- [x] Caller metadata cannot override authoritative action or channel fields.
+- [x] Library tests and the strengthened authority qualification gate cover every public execution path.
+- [x] Trusted actor identity remains a server-context contract; request-supplied identity alone is insufficient.
+- [x] Approval binds the case version, reviewed snapshot/evidence digest, action, channel, recommendation/model version, and trusted actor.
+- [x] Execution preserves the historical reviewed snapshot while separately revalidating current eligibility and evidence.
+- [x] Changed action, incompatible case revision, expired approval, or newly received hold/opt-out requires renewed approval.
+- [x] The local actor adapter and its trust assumptions are explicit; production identity federation remains Phase 4 work.
 
 #### RH-04 - Preserve signed treatment effects and unify economics
 
