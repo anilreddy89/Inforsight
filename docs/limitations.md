@@ -46,7 +46,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Severity | Claim-blocking |
 | Discovered in | `Documents/Project_Review_Through_P4-01.md`, reviewed at commit `b15a9ba` |
 | Owner | Review hardening initiative RH-00 through RH-13; charter [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) |
-| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 phase document |
+| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 through RH-03 phase records; `docs/hardening/rh-03-authority-boundary.md` |
 | Detailed plan | `Documents/phase_docs/phase-rh-00-hardening-release-charter-and-overlap-triage.md` |
 | Resolution trigger | RH-13 must record an evidence-backed `PROCEED` before P4-02 or P4-03 implementation resumes |
 
@@ -77,6 +77,9 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 
 - [x] RH-00 records `ADOPT` in issue #133, creates Milestone #6, and merges through PR #134 as `ce2e6de`.
 - [x] Stable RH identifiers, dependency gates, overlap dispositions, and the temporary claim freeze are documented.
+- [x] RH-01 defines and implements the canonical dual-time snapshot and semantic catalog through issues #136/#139 and PRs #137/#140.
+- [x] RH-02 enforces fail-closed safety evidence through issue #142 and PR #143, merge `3eb74b5`.
+- [x] RH-03 enforces human authority at the common execution boundary through issue #145 and PR #146, merge `c5fa76c`; all five CI jobs passed.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.
