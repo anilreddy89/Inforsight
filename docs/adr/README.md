@@ -18,3 +18,4 @@ ADRs capture decisions that are costly or confusing to rediscover. Use the next 
 - [0012 — Authorize bounded sigmoid hazard link architecture for Generation v6](0012-authorize-bounded-sigmoid-hazard-link-v6.md) — accepted through issue #86 and PR #87, merge commit `18ce32f`
 
 - [0015 — Canonical dual-time domain snapshot](0015-canonical-dual-time-domain-snapshot.md) — accepted through issue #136 and PR #137, merge `fde664ec`
+- [0016 — Preserve signed treatment effects through shared versioned economics](0016-signed-treatment-effects-and-shared-economics.md) — proposed through issue #148

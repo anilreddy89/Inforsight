@@ -1,0 +1,14 @@
+{
+  "fixture_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "cases": [
+    {"id": "harmful-treatment", "action_id": "act_courtesy_reminder_v1", "annual_premium_cents": 120000, "effect": "-0.100000", "expected": {"classification": "harmful", "gross_expected_value_usd_micros": -120000000, "direct_cost_usd_micros": 1500000, "net_expected_value_usd_micros": -121500000, "selected_action_id": "act_abstain_do_not_disturb_v1"}},
+    {"id": "neutral-treatment", "action_id": "act_courtesy_reminder_v1", "annual_premium_cents": 120000, "effect": "0.000000", "expected": {"classification": "neutral", "gross_expected_value_usd_micros": 0, "direct_cost_usd_micros": 1500000, "net_expected_value_usd_micros": -1500000, "selected_action_id": "act_abstain_do_not_disturb_v1"}},
+    {"id": "beneficial-treatment", "action_id": "act_courtesy_reminder_v1", "annual_premium_cents": 120000, "effect": "0.100000", "expected": {"classification": "beneficial", "gross_expected_value_usd_micros": 120000000, "direct_cost_usd_micros": 1500000, "net_expected_value_usd_micros": 118500000, "selected_action_id": "act_courtesy_reminder_v1"}},
+    {"id": "fractional-personnel-hour", "action_id": "act_payment_remediation_v1", "annual_premium_cents": 120000, "effect": "0.010000", "personnel_capacity_seconds": 360, "expected": {"personnel_seconds": 360, "display_hours": "0.100000", "fits_capacity": true}},
+    {"id": "combined-target-equal-outcome-values", "action_id": "act_grace_period_consultation_v1", "annual_premium_cents": 200000, "effect": "0.075000", "diagnostic_cause_effects": {"lapse": "0.050000", "surrender": "0.025000"}, "expected": {"combined_effect": "0.075000", "lapse_gross_expected_value_usd_micros": 100000000, "surrender_gross_expected_value_usd_micros": 50000000, "gross_expected_value_usd_micros": 150000000}},
+    {"id": "missing-annual-premium", "action_id": "act_courtesy_reminder_v1", "annual_premium_cents": null, "effect": "0.100000", "expected_error": "VALUATION_UNAVAILABLE"},
+    {"id": "unknown-contract-version", "contract_version": "2.0.0", "action_id": "act_courtesy_reminder_v1", "annual_premium_cents": 120000, "effect": "0.100000", "expected_error": "INCOMPATIBLE_ECONOMICS_CONTRACT"},
+    {"id": "expected-not-realized", "action_id": "act_courtesy_reminder_v1", "annual_premium_cents": 120000, "effect": "0.100000", "expected": {"metric_id": "modeled_expected_annual_premium_preserved_usd_micros", "forbidden_labels": ["profit", "realized_value", "revenue"]}}
+  ]
+}

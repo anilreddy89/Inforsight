@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.local/contracts/rh/economics/v1/economics-resource-contract.schema.json",
+  "title": "Inforsight synthetic economics and resource contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_id", "contract_version", "status", "currency", "money_unit", "usd_micros_per_cent", "usd_micros_per_usd", "expected_value_rounding", "personnel_unit", "seconds_per_hour", "semantic_catalog", "estimand", "value_basis", "actions", "evaluation_protocol", "compatibility"],
+  "properties": {
+    "contract_id": {"const": "inforsight.synthetic-economics-resource"},
+    "contract_version": {"const": "1.0.0"},
+    "status": {"const": "design_baseline"},
+    "currency": {"const": "USD"},
+    "money_unit": {"const": "usd_micro"},
+    "usd_micros_per_cent": {"const": 10000},
+    "usd_micros_per_usd": {"const": 1000000},
+    "expected_value_rounding": {"const": "ROUND_HALF_EVEN"},
+    "personnel_unit": {"const": "second"},
+    "seconds_per_hour": {"const": 3600},
+    "semantic_catalog": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "path", "sha256"],
+      "properties": {"version": {"const": "1.0.0"}, "path": {"const": "data-contracts/rh/v1/semantic-catalog.json"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+    },
+    "estimand": {"$ref": "#/$defs/estimand"},
+    "value_basis": {"$ref": "#/$defs/valueBasis"},
+    "actions": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/action"}},
+    "evaluation_protocol": {"$ref": "#/$defs/evaluationProtocol"},
+    "compatibility": {"type": "object", "additionalProperties": {"type": "string"}, "required": ["unknown_contract_version", "unknown_action_id", "legacy_money_bridge", "legacy_resource_bridge", "historical_artifacts"]}
+  },
+  "$defs": {
+    "decimalProbability": {"type": "string", "pattern": "^-?(0|1)\\.[0-9]{6}$"},
+    "estimand": {
+      "type": "object", "additionalProperties": false,
+      "required": ["effect_id", "orientation", "target_event", "horizon_days", "minimum", "neutral", "maximum", "harmful_when", "beneficial_when", "missing_behavior"],
+      "properties": {
+        "effect_id": {"const": "absolute_combined_termination_risk_reduction_90d"},
+        "orientation": {"const": "p_combined_termination_control_minus_p_combined_termination_action"},
+        "target_event": {"const": "lapse_or_surrender"}, "horizon_days": {"const": 90},
+        "minimum": {"const": "-1.000000"}, "neutral": {"const": "0.000000"}, "maximum": {"const": "1.000000"},
+        "harmful_when": {"const": "effect_lt_zero"}, "beneficial_when": {"const": "effect_gt_zero"}, "missing_behavior": {"const": "valuation_unavailable"}
+      }
+    },
+    "valueBasis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "source_field", "lapse_multiplier", "surrender_multiplier", "combined_effect_rule", "gross_expected_value_formula", "net_expected_value_formula", "meaning", "missing_source_behavior"],
+      "properties": {
+        "id": {"const": "one_year_annual_premium_preserved_per_avoided_termination"}, "source_field": {"const": "domain_snapshot.annual_premium_cents"},
+        "lapse_multiplier": {"const": "1.000000"}, "surrender_multiplier": {"const": "1.000000"},
+        "combined_effect_rule": {"type": "string", "minLength": 1}, "gross_expected_value_formula": {"type": "string", "minLength": 1}, "net_expected_value_formula": {"type": "string", "minLength": 1}, "meaning": {"type": "string", "minLength": 1}, "missing_source_behavior": {"const": "valuation_unavailable"}
+      }
+    },
+    "action": {
+      "type": "object", "additionalProperties": false, "required": ["action_id", "direct_cost_usd_micros", "personnel_seconds"],
+      "properties": {"action_id": {"type": "string", "minLength": 1}, "direct_cost_usd_micros": {"type": "integer", "minimum": 0}, "personnel_seconds": {"type": "integer", "minimum": 0}}
+    },
+    "evaluationProtocol": {
+      "type": "object", "additionalProperties": false,
+      "required": ["primary_estimands", "report_separately", "cluster_identity", "resample_cluster_count", "duplicate_rule", "frozen_assignment_budget_rule", "allocation_procedure_budget_rule", "predictive_model_rule", "interval_label", "sensitivity_axes", "sensitivity_rule", "seed_required"],
+      "properties": {
+        "primary_estimands": {"const": ["frozen_assignment_portfolio_expected_value_sampling_uncertainty", "allocation_procedure_expected_value_on_new_portfolios"]},
+        "report_separately": {"const": true}, "cluster_identity": {"const": "policy_id"},
+        "resample_cluster_count": {"type": "string", "minLength": 1}, "duplicate_rule": {"type": "string", "minLength": 1}, "frozen_assignment_budget_rule": {"type": "string", "minLength": 1}, "allocation_procedure_budget_rule": {"type": "string", "minLength": 1},
+        "predictive_model_rule": {"type": "string", "pattern": "^Never refit"}, "interval_label": {"type": "string", "minLength": 1},
+        "sensitivity_axes": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string"}}, "sensitivity_rule": {"type": "string", "minLength": 1}, "seed_required": {"const": true}
+      }
+    }
+  }
+}

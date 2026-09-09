@@ -1,0 +1,71 @@
+{
+  "contract_id": "inforsight.synthetic-economics-resource",
+  "contract_version": "1.0.0",
+  "status": "design_baseline",
+  "currency": "USD",
+  "money_unit": "usd_micro",
+  "usd_micros_per_cent": 10000,
+  "usd_micros_per_usd": 1000000,
+  "expected_value_rounding": "ROUND_HALF_EVEN",
+  "personnel_unit": "second",
+  "seconds_per_hour": 3600,
+  "semantic_catalog": {
+    "version": "1.0.0",
+    "path": "data-contracts/rh/v1/semantic-catalog.json",
+    "sha256": "d360ed670337912f6b0094d587b5a979c5b8de2ed0a528a184eac36b393f4005"
+  },
+  "estimand": {
+    "effect_id": "absolute_combined_termination_risk_reduction_90d",
+    "orientation": "p_combined_termination_control_minus_p_combined_termination_action",
+    "target_event": "lapse_or_surrender",
+    "horizon_days": 90,
+    "minimum": "-1.000000",
+    "neutral": "0.000000",
+    "maximum": "1.000000",
+    "harmful_when": "effect_lt_zero",
+    "beneficial_when": "effect_gt_zero",
+    "missing_behavior": "valuation_unavailable"
+  },
+  "value_basis": {
+    "id": "one_year_annual_premium_preserved_per_avoided_termination",
+    "source_field": "domain_snapshot.annual_premium_cents",
+    "lapse_multiplier": "1.000000",
+    "surrender_multiplier": "1.000000",
+    "combined_effect_rule": "Because the two multipliers are equal, multiply the identified combined effect by annual premium; do not claim cause-specific effects.",
+    "gross_expected_value_formula": "round_half_even(effect * annual_premium_cents * usd_micros_per_cent)",
+    "net_expected_value_formula": "gross_expected_value_usd_micros - direct_cost_usd_micros",
+    "meaning": "synthetic expected one-year annual premium preserved, not profit, cash value, CLV, revenue recognized, or realized value",
+    "missing_source_behavior": "valuation_unavailable"
+  },
+  "actions": [
+    {"action_id": "act_courtesy_reminder_v1", "direct_cost_usd_micros": 1500000, "personnel_seconds": 0},
+    {"action_id": "act_grace_period_consultation_v1", "direct_cost_usd_micros": 25000000, "personnel_seconds": 1800},
+    {"action_id": "act_specialist_phone_outreach_v1", "direct_cost_usd_micros": 65000000, "personnel_seconds": 3600},
+    {"action_id": "act_payment_remediation_v1", "direct_cost_usd_micros": 3000000, "personnel_seconds": 360},
+    {"action_id": "act_abstain_do_not_disturb_v1", "direct_cost_usd_micros": 0, "personnel_seconds": 0}
+  ],
+  "evaluation_protocol": {
+    "primary_estimands": [
+      "frozen_assignment_portfolio_expected_value_sampling_uncertainty",
+      "allocation_procedure_expected_value_on_new_portfolios"
+    ],
+    "report_separately": true,
+    "cluster_identity": "policy_id",
+    "resample_cluster_count": "original_unique_policy_count",
+    "duplicate_rule": "Each sampled occurrence receives occurrence_id=policy_id#draw_index; retain source policy_id for joins and count every occurrence in totals.",
+    "frozen_assignment_budget_rule": "Assignments, scores, effects, and assumptions are frozen; resampled totals include their sampled resource use and do not reallocate.",
+    "allocation_procedure_budget_rule": "Re-run allocation for each resample with total budget_usd_micros and personnel_capacity_seconds fixed at their original portfolio values, not scaled by duplicate count.",
+    "predictive_model_rule": "Never refit or recalibrate on an evaluation resample; reuse frozen policy-level scores and identities.",
+    "interval_label": "policy-cluster bootstrap sampling interval conditional on frozen economics assumptions",
+    "sensitivity_axes": ["treatment_effect_scale", "harmful_effect_magnitude", "direct_cost_scale", "annual_premium_value_multiplier"],
+    "sensitivity_rule": "Run a declared scenario grid separately; bootstrap intervals must not be described as uncertainty in these assumptions.",
+    "seed_required": true
+  },
+  "compatibility": {
+    "unknown_contract_version": "reject",
+    "unknown_action_id": "reject",
+    "legacy_money_bridge": "usd_micros / 1000000 for display only; do not use binary float as authoritative storage",
+    "legacy_resource_bridge": "personnel_seconds / 3600 for display only; never truncate or convert to action slots",
+    "historical_artifacts": "preserve unchanged and label legacy economics semantics"
+  }
+}
