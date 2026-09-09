@@ -42,16 +42,20 @@ from inforsight_simulator.semantic_catalog import (
 )
 from inforsight_simulator.safety_evidence import SafetyEvidence
 from inforsight_simulator.workflow.models import (
+    ActionResourceRequirement,
     CaseEvent,
     CaseState,
-    HumanReview,
-    ReviewDecision,
     SpecialistReviewAction,
 )
-from inforsight_simulator.workflow.service import WorkflowContext, WorkflowService
+from inforsight_simulator.workflow.service import (
+    LocalTrustedActorAdapter,
+    WorkflowContext,
+    WorkflowService,
+)
 
 from dashboard.config import (
     ACTION_METADATA,
+    DEFAULT_BUDGET,
     DEFAULT_AUDIT_LOG_PATH,
     DEFAULT_BUNDLE_PATH,
     DEFAULT_MAX_SPECIALIST_HOURS,
@@ -81,7 +85,12 @@ class EngineBridge:
 
         # 2. Initialize Audit Ledger and Workflow Service
         self.audit_ledger = AuditLedger(log_path=self.audit_log_path)
-        self.workflow_service = WorkflowService(audit_ledger=self.audit_ledger)
+        self.workflow_service = WorkflowService(
+            audit_ledger=self.audit_ledger,
+            capacity_hours=DEFAULT_MAX_SPECIALIST_HOURS,
+            capacity_cost_usd=DEFAULT_BUDGET,
+        )
+        self.trusted_actor_adapter = LocalTrustedActorAdapter()
 
         # 3. Initialize Rules Engine and Assistant
         self.rules_engine = EligibilityRulesEngine()
@@ -258,6 +267,22 @@ class EngineBridge:
             },
             case_brief=case_brief.to_dict(),
             model_bundle_id=self.bundle.bundle_id,
+            action_channels={
+                action: str(ACTION_METADATA.get(action, {}).get("channel", "unknown"))
+                for action in eligible_action_set.eligible_actions
+            },
+            action_resources={
+                action: ActionResourceRequirement(
+                    personnel_hours=float(
+                        ACTION_METADATA.get(action, {}).get("duration_minutes", 0.0)
+                    )
+                    / 60.0,
+                    direct_cost_usd=float(
+                        ACTION_METADATA.get(action, {}).get("direct_cost", 0.0)
+                    ),
+                )
+                for action in eligible_action_set.eligible_actions
+            },
             case_id=cid,
         )
 
@@ -273,7 +298,7 @@ class EngineBridge:
         """Processes human specialist review, records audit entry, and dispatches intervention if approved/overridden."""
         review_event = self.workflow_service.submit_review(
             case_id=case_id,
-            reviewer_id=reviewer_id,
+            trusted_actor=self.trusted_actor_adapter.attest(reviewer_id),
             action=action,
             rationale_code=rationale_code,
             justification=justification,
@@ -283,13 +308,25 @@ class EngineBridge:
         exec_event = None
         ctx = self.workflow_service.get_case(case_id)
         if ctx and ctx.state_machine.current_state == CaseState.HUMAN_REVIEWED:
-            if action in (SpecialistReviewAction.APPROVE_RECOMMENDATION, SpecialistReviewAction.OVERRIDE_ACTION):
-                final_action = selected_action if action == SpecialistReviewAction.OVERRIDE_ACTION else ctx.recommended_action
-                meta = ACTION_METADATA.get(final_action, {})
-                channel = meta.get("channel", "OUTBOUND_CALL")
+            if action in (
+                SpecialistReviewAction.APPROVE_RECOMMENDATION,
+                SpecialistReviewAction.OVERRIDE_ACTION,
+            ):
+                final_action = (
+                    selected_action
+                    if action == SpecialistReviewAction.OVERRIDE_ACTION
+                    else ctx.recommended_action
+                )
+                approval = ctx.approval
+                if approval is None:
+                    raise RuntimeError("approved workflow is missing its authority binding")
                 exec_event = self.workflow_service.dispatch_execution(
                     case_id=case_id,
-                    channel=channel,
+                    trusted_actor=self.trusted_actor_adapter.attest(reviewer_id),
+                    approval_id=approval.approval_id,
+                    idempotency_key=approval.idempotency_key,
+                    expected_case_version=approval.case_version,
+                    current_eligible_action_set=ctx.reviewed_eligible_action_set,
                     outreach_reference=f"outreach_{case_id}_{final_action}",
                 )
             elif action == SpecialistReviewAction.REJECT_AND_CLOSE:

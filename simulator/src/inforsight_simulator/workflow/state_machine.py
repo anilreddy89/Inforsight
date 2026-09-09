@@ -78,11 +78,12 @@ class CaseStateMachine:
         """Executes a validated state transition and records a CaseEvent."""
         from_state = self._current_state
 
-        # Hard ADR 0002 boundary check: autonomous execution is strictly prohibited
-        if from_state == CaseState.RECOMMENDED and to_state == CaseState.EXECUTED:
+        # No generic caller may commit execution. The service's authority boundary
+        # uses _commit_execution only after approval and freshness checks pass.
+        if to_state == CaseState.EXECUTED:
             raise UnauthorizedExecutionError(
                 f"Autonomous execution violation (ADR 0002): Case '{self.case_id}' cannot transition "
-                f"directly from {from_state.value} to {to_state.value} without human review."
+                f"from {from_state.value} to {to_state.value} through the generic transition API."
             )
 
         edge = (from_state, to_state)
@@ -153,7 +154,7 @@ class CaseStateMachine:
             case_event_id=case_event_id,
         )
 
-    def dispatch_execution(
+    def _commit_execution(
         self,
         channel: str,
         outreach_reference: str,
@@ -161,7 +162,26 @@ class CaseStateMachine:
         metadata: Optional[dict[str, Any]] = None,
         case_event_id: Optional[str] = None,
     ) -> CaseEvent:
-        """Dispatches an approved action from HUMAN_REVIEWED to EXECUTED."""
+        """Builds and records an execution event after an authority-boundary check."""
+        event = self._prepare_execution(
+            channel=channel,
+            outreach_reference=outreach_reference,
+            occurred_at=occurred_at,
+            metadata=metadata,
+            case_event_id=case_event_id,
+        )
+        self._record_prepared_execution(event)
+        return event
+
+    def _prepare_execution(
+        self,
+        channel: str,
+        outreach_reference: str,
+        occurred_at: str,
+        metadata: Optional[dict[str, Any]] = None,
+        case_event_id: Optional[str] = None,
+    ) -> CaseEvent:
+        """Build an execution event without mutating state before audit handoff."""
         if self._current_state != CaseState.HUMAN_REVIEWED:
             raise UnauthorizedExecutionError(
                 f"Cannot execute case '{self.case_id}' in state {self._current_state.value}; "
@@ -201,12 +221,30 @@ class CaseStateMachine:
             },
         }
 
-        return self.transition(
+        event_id = case_event_id or f"cev_{uuid.uuid4().hex[:24]}"
+        event = CaseEvent(
+            case_event_id=event_id,
+            case_id=self.case_id,
+            policy_id=self.policy_id,
+            from_state=self._current_state,
             to_state=CaseState.EXECUTED,
-            payload=payload,
             occurred_at=occurred_at,
-            case_event_id=case_event_id,
+            payload=payload,
         )
+        return event
+
+    def _record_prepared_execution(self, event: CaseEvent) -> None:
+        """Record an event already prepared for the current reviewed state."""
+        if self._current_state != CaseState.HUMAN_REVIEWED:
+            raise UnauthorizedExecutionError(
+                f"Cannot record execution for case '{self.case_id}' from {self._current_state.value}"
+            )
+        if event.from_state != self._current_state or event.to_state != CaseState.EXECUTED:
+            raise UnauthorizedExecutionError(
+                f"Prepared execution for case '{self.case_id}' does not match current state"
+            )
+        self._current_state = CaseState.EXECUTED
+        self._events.append(event)
 
     def dismiss(
         self,
@@ -252,4 +290,3 @@ class CaseStateMachine:
             occurred_at=occurred_at,
             case_event_id=case_event_id,
         )
-

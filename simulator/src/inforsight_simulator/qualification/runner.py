@@ -30,8 +30,11 @@ from inforsight_simulator.v6_corpus import (
     generate_v6_corpus,
 )
 from inforsight_simulator.v6_evaluation import _feature_map
-from inforsight_simulator.workflow.models import SpecialistReviewAction
-from inforsight_simulator.workflow.service import WorkflowService
+from inforsight_simulator.workflow.models import (
+    ActionResourceRequirement,
+    SpecialistReviewAction,
+)
+from inforsight_simulator.workflow.service import LocalTrustedActorAdapter, WorkflowService
 
 from .gates import (
     GateResult,
@@ -304,15 +307,27 @@ class QualificationRunner:
                 occurred_at=obs.as_of,
                 reconstructed_state={"policy_id": pid, "tenure": obs.features.tenure_days},
                 scoring_result={"calibrated_probability": score_p, "operational_tier": tier},
-                eligible_action_set={"primary_action": rec.recommended_action, "eligible_actions": list(rec.action_utilities.keys())},
+                eligible_action_set={
+                    "primary_action": rec.recommended_action,
+                    "eligible_actions": list(rec.action_utilities.keys()),
+                    "snapshot_id": f"snapshot_{pid}",
+                    "safety_evidence_id": f"safety_{pid}",
+                    "requirements_version": "safety-action-requirements/1.0.0",
+                },
                 case_brief=brief.to_dict(),
                 model_bundle_id=self.bundle_id,
+                action_channels={action: "specialist_crm" for action in rec.action_utilities},
+                action_resources={
+                    action: ActionResourceRequirement()
+                    for action in rec.action_utilities
+                },
             )
 
             # Specialist approves recommendation
+            actor = LocalTrustedActorAdapter().attest("usr_qual_001")
             workflow.submit_review(
                 case_id=case_ctx.case_id,
-                reviewer_id="usr_qual_001",
+                trusted_actor=actor,
                 action=SpecialistReviewAction.APPROVE_RECOMMENDATION,
                 rationale_code="QUALIFICATION_BASELINE_VERIFICATION",
                 occurred_at=obs.as_of,
@@ -320,9 +335,14 @@ class QualificationRunner:
 
             # Dispatch approved action
             if rec.recommended_action != "abstain":
+                assert case_ctx.approval is not None
                 workflow.dispatch_execution(
                     case_id=case_ctx.case_id,
-                    channel="specialist_crm",
+                    trusted_actor=actor,
+                    approval_id=case_ctx.approval.approval_id,
+                    idempotency_key=case_ctx.approval.idempotency_key,
+                    expected_case_version=case_ctx.approval.case_version,
+                    current_eligible_action_set=case_ctx.reviewed_eligible_action_set,
                     outreach_reference=f"OUT-{pid}",
                     occurred_at=obs.as_of,
                 )

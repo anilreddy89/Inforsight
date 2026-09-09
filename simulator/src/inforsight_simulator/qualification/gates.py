@@ -35,11 +35,12 @@ from inforsight_simulator.rules.reasons import DisqualificationReasonCode
 from inforsight_simulator.v6_corpus import V6Observation
 from inforsight_simulator.v6_evaluation import _feature_map
 from inforsight_simulator.workflow.models import (
+    ActionResourceRequirement,
     CaseState,
     SpecialistReviewAction,
     UnauthorizedExecutionError,
 )
-from inforsight_simulator.workflow.service import WorkflowService
+from inforsight_simulator.workflow.service import LocalTrustedActorAdapter, WorkflowService
 
 
 @dataclass(frozen=True)
@@ -141,19 +142,26 @@ def evaluate_gate_s1_authority_isolation(
             "calibrated_probability": score_res.calibrated_probability,
             "operational_tier": score_res.risk_tier,
         },
-        eligible_action_set={"primary_action": "grace_period_consultation", "eligible_actions": ["grace_period_consultation", "abstain"]},
+        eligible_action_set={
+            "primary_action": "grace_period_consultation",
+            "eligible_actions": ["grace_period_consultation", "abstain"],
+            "snapshot_id": "snapshot_qualification_s1",
+            "safety_evidence_id": "safety_qualification_s1",
+            "requirements_version": "safety-action-requirements/1.0.0",
+        },
         case_brief=brief_dict,
         model_bundle_id="phase-02-10-model-bundle",
+        action_channels={"grace_period_consultation": "direct_phone", "abstain": "none"},
+        action_resources={
+            "grace_period_consultation": ActionResourceRequirement(0.5, 20.0),
+            "abstain": ActionResourceRequirement(),
+        },
     )
 
     # In RECOMMENDED state, dispatch_execution MUST fail with UnauthorizedExecutionError
     unauthorized_attempts += 1
     try:
-        case_ctx.state_machine.dispatch_execution(
-            channel="direct_phone",
-            outreach_reference="OUTREACH-AUTOMATED-001",
-            occurred_at=sample_obs.as_of,
-        )
+        case_ctx.state_machine.transition(CaseState.EXECUTED, {}, sample_obs.as_of)
     except UnauthorizedExecutionError:
         blocked_attempts += 1
         marker_checks.append("PASSED: state_machine.dispatch_execution rejected in RECOMMENDED state")
@@ -163,9 +171,14 @@ def evaluate_gate_s1_authority_isolation(
     # Attempt to bypass via WorkflowService.dispatch_execution directly
     unauthorized_attempts += 1
     try:
+        actor = LocalTrustedActorAdapter().attest("usr_qual_001")
         workflow.dispatch_execution(
             case_id=case_ctx.case_id,
-            channel="direct_phone",
+            trusted_actor=actor,
+            approval_id="apr_missing",
+            idempotency_key="exec_missing",
+            expected_case_version=case_ctx.case_version,
+            current_eligible_action_set=case_ctx.reviewed_eligible_action_set,
             outreach_reference="OUTREACH-AUTOMATED-002",
             occurred_at=sample_obs.as_of,
         )
