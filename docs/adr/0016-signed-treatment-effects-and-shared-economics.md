@@ -1,6 +1,6 @@
 # ADR 0016 — Preserve signed treatment effects through shared versioned economics
 
-- Status: Proposed through [RH-04D / issue #148](https://github.com/anilreddy89/Inforsight/issues/148)
+- Status: Accepted through [RH-04D issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`
 - Date: 2026-09-09
 - Contract: [RH-04 economics/resource contract 1.0.0](../hardening/rh-04-economics-resource-contract.md)
 

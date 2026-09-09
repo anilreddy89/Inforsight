@@ -90,7 +90,8 @@ Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github
 | RH-01I | Review hardening | Implement the canonical dual-time snapshot, versioned semantic catalog, and explicit consumer migration. | Completed | [#139](https://github.com/anilreddy89/Inforsight/issues/139) | [#140](https://github.com/anilreddy89/Inforsight/pull/140) | 2026-09-08 | `f0be47e` | `simulator/src/inforsight_simulator/domain/`, `data-contracts/rh/v1/`, acceptance fixtures, [phase document](../phase_docs/phase-rh-01-implement-canonical-domain-snapshot-and-semantic-catalog.md) | Snapshot/catalog `1.0.0`, all 20 acceptance fixtures, dual-time replay, explicit adapters, consumer migration, and fail-closed unknown evidence completed; all CI checks passed. |
 | RH-02 | Review hardening | Make missing safety evidence ineligible and bind eligibility to explicit dual-time facts. | Completed | [#142](https://github.com/anilreddy89/Inforsight/issues/142) | [#143](https://github.com/anilreddy89/Inforsight/pull/143) | 2026-09-08 | `3eb74b5` | safety evidence contract `1.0.0`, rules/adapters/tests, [phase document](../phase_docs/phase-rh-02-fail-closed-safety-evidence.md) | Tri-state safety evidence, action/channel requirements, snapshot/evidence identity binding, and fail-closed consumer behavior completed; all CI checks passed. |
 | RH-03 | Review hardening | Enforce trusted, fresh, identity-bound human approval at every public execution transition. | Completed | [#145](https://github.com/anilreddy89/Inforsight/issues/145) | [#146](https://github.com/anilreddy89/Inforsight/pull/146) | 2026-09-09 | `c5fa76c` | `docs/hardening/rh-03-authority-boundary.md`, workflow/dashboard/qualification integration, focused regressions, [phase document](../phase_docs/phase-rh-03-enforce-human-authority-at-common-transition-boundary.md) | Common authority boundary, protected metadata, current eligibility, idempotency/concurrency, audit handoff, and bounded capacity checks completed; all five CI jobs passed. Authorizes RH-10D/I. |
-| RH-04–RH-10 | Review hardening | Complete economics, allocation, runtime, monitoring, grounding, P4-contract, and durable-audit repairs through the governed dependency graph. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | Open only predecessor-satisfied work; RH-10D/I is enabled by RH-03. Preserve historical artifacts. |
+| RH-04D | Review hardening | Define signed treatment-effect, shared economics/resource, and corrected evaluation contracts. | Completed | [#148](https://github.com/anilreddy89/Inforsight/issues/148) | [#149](https://github.com/anilreddy89/Inforsight/pull/149) | 2026-09-09 | `c9eddcf` | `docs/hardening/rh-04-economics-resource-contract.md`, ADR 0016, `data-contracts/rh/economics/v1/`, 8 fixtures, 6 focused design tests | Contract 1.0.0 accepts signed combined-termination effects, integer USD micros/personnel seconds, explicit annual-premium-preserved semantics, dual evaluation estimands, duplicate/budget/model-freeze rules, and sensitivity axes; all five CI jobs passed. Authorizes RH-04I from updated `main`; parent RH-04 remains open. |
+| RH-04I–RH-10 | Review hardening | Implement shared economics, allocation, runtime, monitoring, grounding, P4-contract, and durable-audit repairs through the governed dependency graph. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | RH-04I and RH-10D/I are predecessor-ready. RH-05 waits for parent RH-04 completion. Preserve historical artifacts. |
 | RH-11 | Review hardening | Expand CI and perform read-only qualification of revised claims and boundaries. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-11 | Begins only after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Regenerate affected evidence and reconcile public documentation and scientific/product claims. | Planned | [#128](https://github.com/anilreddy89/Inforsight/issues/128) (to amend when ready) | TBD | TBD | — | `docs/backlog.md` RH-12 | Sequentially follows RH-11; reconciles independent issue #130 without rewriting historical evidence. |
 | RH-13 | Review hardening | Qualify and release the hardening initiative; decide whether Phase 4 may resume. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-13 | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
@@ -130,9 +131,9 @@ In one sentence: Phase 2 and Phase 3 are complete and released; review hardening
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 60 (current completed rows; Review hardening: RH-00, RH-01D, RH-01I, RH-02, and RH-03) |
+| Completed tracked changes | 61 (current completed rows; Review hardening: RH-00, RH-01D, RH-01I, RH-02, RH-03, and RH-04D) |
 | Implemented locally changes | 0 |
-| Planned changes | RH-04 through RH-13 plus P4-04 through P4-07 |
+| Planned changes | RH-04I through RH-13 plus P4-04 through P4-07 |
 | Paused changes | 2 (P4-02 and P4-03) |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
@@ -141,18 +142,19 @@ In one sentence: Phase 2 and Phase 3 are complete and released; review hardening
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | None; RH-03 closed through PR #146 at `c5fa76c` |
-| Next implementation increment | RH-10D/I is newly enabled; other work must follow the dependency gates in `docs/backlog.md` |
+| Active increment | None; RH-04D closed through PR #149 at `c9eddcf` |
+| Next implementation increment | RH-04I and RH-10D/I are predecessor-ready; RH-05 waits for parent RH-04 completion |
 
 ## Latest verification baseline
 
-Latest merged verification baseline from issue #145 and PR #146:
+Latest merged verification baseline from issue #148 and PR #149:
 
 ```text
-RH-03 focused authority, dashboard, and qualification tests: 29 passed
+RH-04D focused design tests: 6 passed
+Complete contract suite: 33 passed
 Full repository check: passed
 All five pull-request CI jobs: passed
-Historical Phase 3 qualification artifacts: unchanged
+Historical Phase 3 artifacts and runtime behavior: unchanged
 Repository boundary checks: passed
 git diff --check: passed
 ```
