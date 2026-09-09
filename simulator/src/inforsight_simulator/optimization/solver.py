@@ -59,14 +59,11 @@ class PortfolioOptimizer:
         candidates_by_policy: dict[str, OptimalRecommendation] = {}
         for es in eligible_sets:
             pid = es.policy_id
-            val = valuations.get(
-                pid,
-                PolicyValuation(
-                    policy_id=pid,
-                    annual_premium_usd=1200.0,
-                    customer_lifetime_value_usd=3000.0,
-                ),
-            )
+            val = valuations.get(pid)
+            if val is None:
+                raise ValueError(
+                    f"VALUATION_UNAVAILABLE: annual premium valuation missing for {pid!r}"
+                )
             p_risk = risk_scores.get(pid, 0.10)
             dpd = dpd_map.get(pid, 0)
 

@@ -11,6 +11,12 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Mapping
 
+from inforsight_simulator.economics import (
+    ECONOMICS_CONTRACT_VERSION,
+    EFFECT_ID,
+    VALUE_METRIC_ID,
+)
+
 
 class UpliftQuadrant(str, Enum):
     """Canonical customer treatment responsiveness quadrants."""
@@ -23,11 +29,14 @@ class UpliftQuadrant(str, Enum):
 
 @dataclass(frozen=True)
 class PolicyValuation:
-    """Financial valuation parameters for a policy."""
+    """Policy value basis; CLV is retained only for legacy input compatibility."""
 
     policy_id: str
     annual_premium_usd: float
     customer_lifetime_value_usd: float
+    snapshot_id: str = "legacy-unbound-snapshot"
+    snapshot_version: str = "1.0.0"
+    catalog_sha256: str = "legacy-unbound-catalog"
 
     def __post_init__(self) -> None:
         if not self.policy_id:
@@ -40,15 +49,23 @@ class PolicyValuation:
 
 @dataclass(frozen=True)
 class ActionUtility:
-    """Expected economic utility and uplift metrics for a candidate action."""
+    """Contract-bound modeled annual-premium-preserved value for an action."""
 
     action_type: str
     is_eligible: bool
-    treatment_effect: float  # Tau_a(X) = P(lapse|control) - P(lapse|action)
+    treatment_effect: float  # P(combined termination|control) - P(...|action)
     gross_benefit_usd: float # Tau_a * V_policy
     direct_cost_usd: float   # c(a)
     net_utility_usd: float   # Gross benefit - direct cost
     uplift_quadrant: UpliftQuadrant
+    action_id: str = ""
+    effect_id: str = EFFECT_ID
+    economics_contract_version: str = ECONOMICS_CONTRACT_VERSION
+    metric_id: str = VALUE_METRIC_ID
+    gross_expected_value_usd_micros: int = 0
+    direct_cost_usd_micros: int = 0
+    net_expected_value_usd_micros: int = 0
+    personnel_seconds: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -59,6 +76,14 @@ class ActionUtility:
             "direct_cost_usd": round(self.direct_cost_usd, 2),
             "net_utility_usd": round(self.net_utility_usd, 2),
             "uplift_quadrant": self.uplift_quadrant.value,
+            "action_id": self.action_id,
+            "effect_id": self.effect_id,
+            "economics_contract_version": self.economics_contract_version,
+            "metric_id": self.metric_id,
+            "gross_expected_value_usd_micros": self.gross_expected_value_usd_micros,
+            "direct_cost_usd_micros": self.direct_cost_usd_micros,
+            "net_expected_value_usd_micros": self.net_expected_value_usd_micros,
+            "personnel_seconds": self.personnel_seconds,
         }
 
 
@@ -73,10 +98,17 @@ class OptimalRecommendation:
     rank_score: float
     action_utilities: dict[str, ActionUtility]
     authorized_to_act: bool = False  # Strict ADR 0002 boundary
+    economics_contract_version: str = ECONOMICS_CONTRACT_VERSION
+    metric_id: str = VALUE_METRIC_ID
 
     def __post_init__(self) -> None:
         if self.authorized_to_act is not False:
             raise ValueError("ADR 0002 Violation: authorized_to_act must be False")
+
+    @property
+    def expected_net_value_usd_micros(self) -> int:
+        selected = self.action_utilities.get(self.recommended_action)
+        return selected.net_expected_value_usd_micros if selected is not None else 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -86,6 +118,9 @@ class OptimalRecommendation:
             "uplift_quadrant": self.uplift_quadrant.value,
             "rank_score": round(self.rank_score, 4),
             "authorized_to_act": self.authorized_to_act,
+            "economics_contract_version": self.economics_contract_version,
+            "metric_id": self.metric_id,
+            "expected_net_value_usd_micros": self.expected_net_value_usd_micros,
             "action_utilities": {
                 k: v.to_dict() for k, v in sorted(self.action_utilities.items())
             },

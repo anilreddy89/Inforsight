@@ -74,7 +74,7 @@ def render_dossier_view(
 
     with rcol1:
         st.metric(
-            label="Calibrated Lapse Probability (p̂)",
+            label="Calibrated Combined Termination Probability (p̂)",
             value=f"{item.risk_score:.2%}",
             delta="High Urgency" if item.risk_score > 0.25 else "Normal",
             delta_color="inverse" if item.risk_score > 0.25 else "normal",
@@ -131,12 +131,16 @@ def render_dossier_view(
         st.markdown("#### 🎯 Intervention Guidance")
         rec_action = brief.intervention_recommendations.primary_action
         rec_meta = ACTION_METADATA.get(rec_action, {})
+        rec_utility = item.optimal_recommendation.action_utilities.get(rec_action)
+        personnel_minutes = (
+            rec_utility.personnel_seconds / 60 if rec_utility is not None else 0
+        )
         st.markdown(
             f"**Recommended Action:** {rec_meta.get('icon', '')} **{rec_meta.get('title', rec_action)}**\n\n"
             f"- **Channel:** `{rec_meta.get('channel', 'OUTBOUND_CALL')}`\n"
-            f"- **Expected Net Utility:** `${brief.intervention_recommendations.expected_net_utility:,.2f}`\n"
+            f"- **Modeled Net Annual Premium Preserved:** `${brief.intervention_recommendations.expected_net_utility:,.2f}`\n"
             f"- **Target Uplift Segment:** `{brief.intervention_recommendations.uplift_quadrant}`\n"
-            f"- **Est. Duration:** `{rec_meta.get('duration_minutes', 15)} minutes`"
+            f"- **Personnel Duration:** `{personnel_minutes:g} minutes`"
         )
 
         st.markdown("#### 🚫 Disqualified Actions (Eligibility Rules)")

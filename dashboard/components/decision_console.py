@@ -53,10 +53,14 @@ def render_decision_console(
     # 2. System Advisory Recommendation Panel
     rec_action = item.recommended_action
     rec_meta = ACTION_METADATA.get(rec_action, {})
+    rec_utility = item.optimal_recommendation.action_utilities.get(rec_action)
+    personnel_minutes = (
+        rec_utility.personnel_seconds / 60 if rec_utility is not None else 0
+    )
     st.info(
         f"💡 **System Advisory Recommendation**: {rec_meta.get('icon', '')} **{rec_meta.get('title', rec_action)}**\n\n"
-        f"- **Expected Net Preserved Value:** `${item.net_utility:,.2f}`\n"
-        f"- **Estimated Specialist Commitment:** `{rec_meta.get('duration_minutes', 15)} minutes`\n"
+        f"- **Modeled Net Annual Premium Preserved:** `${item.net_utility:,.2f}`\n"
+        f"- **Personnel Commitment:** `{personnel_minutes:g} minutes`\n"
         f"- **Target Uplift Segment:** `{item.uplift_quadrant}`\n"
         f"- **Status:** Advisory Only (`authorized_to_act: false` strictly enforced)",
         icon="ℹ️",

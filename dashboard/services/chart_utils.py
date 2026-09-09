@@ -33,7 +33,7 @@ def plot_shap_waterfall(
     bars = ax.barh(names, values, color=colors, height=0.6, alpha=0.9, edgecolor="none")
 
     ax.axvline(0, color="#64748B", linestyle="--", linewidth=1.0, alpha=0.7)
-    ax.set_xlabel("Impact on Log-Odds of Lapse (Δ logit)", fontsize=10, fontweight="normal", color="#334155")
+    ax.set_xlabel("Impact on Combined-Termination Log-Odds (Δ logit)", fontsize=10, fontweight="normal", color="#334155")
     ax.set_title(
         f"Feature Attributions (Base Logit: {base_value_logit:.2f} → Score: {calibrated_logit:.2f})",
         fontsize=11,

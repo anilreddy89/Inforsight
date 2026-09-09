@@ -15,12 +15,7 @@ from inforsight_simulator.semantic_catalog import PREPROCESSING_PROFILE_ID
 from inforsight_simulator.v6_corpus import V6CorpusConfig, generate_v6_corpus
 from inforsight_simulator.v6_evaluation import _feature_map
 
-from dashboard.config import (
-    ACTION_METADATA,
-    DEFAULT_MAX_SPECIALIST_HOURS,
-    DEFAULT_SPECIALIST_HOURLY_COST,
-    RISK_TIERS,
-)
+from dashboard.config import DEFAULT_MAX_SPECIALIST_HOURS, RISK_TIERS
 from dashboard.services.engine_bridge import EngineBridge
 
 
@@ -128,12 +123,13 @@ def load_dashboard_cohort(
         annual_prem = snapshot.annual_premium_cents / 100
         monthly_prem = annual_prem / 12
         face_amt = None
-        clv = annual_prem * 4.5  # Estimate customer lifetime value
-
         valuation = PolicyValuation(
             policy_id=pid,
             annual_premium_usd=annual_prem,
-            customer_lifetime_value_usd=clv,
+            customer_lifetime_value_usd=annual_prem,  # ignored compatibility field
+            snapshot_id=snapshot.snapshot_id,
+            snapshot_version=snapshot.snapshot_version,
+            catalog_sha256=snapshot.catalog_sha256,
         )
         optimal_rec = engine_bridge.optimize_action(
             eligible_action_set=eligible_set,
@@ -247,9 +243,8 @@ def load_dashboard_cohort(
         if engine_bridge.semantic_catalog.risk_tier_rank(item.risk_tier_id) >= 3:
             total_val_at_risk += item.annual_premium
 
-        # Specialist duration from metadata
-        meta = ACTION_METADATA.get(item.recommended_action, {})
-        allocated_specialist_minutes += meta.get("duration_minutes", 0)
+        action_resource = engine_bridge.economics_contract.action(item.recommended_action)
+        allocated_specialist_minutes += action_resource.personnel_seconds / 60
 
     allocated_specialist_hours = allocated_specialist_minutes / 60.0
     cap_util = min(100.0, (allocated_specialist_hours / max_specialist_hours) * 100.0) if max_specialist_hours > 0 else 0.0

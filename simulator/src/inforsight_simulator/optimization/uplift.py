@@ -6,6 +6,8 @@ and partitions policyholders into four canonical uplift quadrants.
 
 from __future__ import annotations
 
+import math
+
 from .models import UpliftQuadrant
 
 # Channel base efficacy parameters (proportional reduction in lapse probability)
@@ -25,11 +27,11 @@ def estimate_treatment_effect(
     prior_contact_count: int = 0,
     is_sleeping_dog_candidate: bool = False,
 ) -> float:
-    """Estimate absolute treatment effect Tau_a(X) = P(lapse|control) - P(lapse|action).
+    """Estimate signed effect for the combined lapse-or-surrender target.
 
     Args:
         action_type: Name of the action from conservation taxonomy.
-        lapse_risk_p: Baseline calibrated lapse probability in [0, 1].
+        lapse_risk_p: Baseline calibrated combined termination probability in [0, 1].
         days_past_due: Number of days premium is overdue.
         prior_contact_count: Previous outreach attempts (fatigue discount).
         is_sleeping_dog_candidate: Flag indicating customer hostility to outreach.
@@ -37,6 +39,12 @@ def estimate_treatment_effect(
     Returns:
         Estimated absolute risk reduction in [-1.0, 1.0].
     """
+    if isinstance(lapse_risk_p, bool) or not isinstance(lapse_risk_p, (int, float)):
+        raise ValueError("combined termination probability must be numeric")
+    if not math.isfinite(float(lapse_risk_p)) or not 0.0 <= float(lapse_risk_p) <= 1.0:
+        raise ValueError("combined termination probability must be finite and in [0, 1]")
+    if action_type not in CHANNEL_EFFICACY_FACTORS:
+        raise ValueError(f"unsupported action type {action_type!r}")
     if action_type == "abstain":
         return 0.0
 

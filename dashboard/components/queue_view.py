@@ -63,7 +63,7 @@ def render_queue_view(
 
         filtered.append(item)
 
-    st.markdown(f"**Showing {len(filtered)} of {len(items)} policies** (ranked by Net Preserved Utility):")
+    st.markdown(f"**Showing {len(filtered)} of {len(items)} policies** (ranked by modeled net annual premium preserved):")
 
     if not filtered:
         st.warning("No policies match the selected filter criteria.")
@@ -92,7 +92,7 @@ def render_queue_view(
             "Monthly Premium": f"${it.monthly_premium:,.2f}",
             "Primary Risk Driver": it.primary_risk_driver.replace("_", " ").title(),
             "Recommended Action": action_disp,
-            "Net Utility": f"${it.net_utility:,.2f}",
+            "Modeled Net Value": f"${it.net_utility:,.2f}",
             "Uplift Segment": it.uplift_quadrant,
         })
 
@@ -104,13 +104,13 @@ def render_queue_view(
         column_config={
             "Priority Rank": st.column_config.TextColumn("Rank", width="small"),
             "Policy ID": st.column_config.TextColumn("Policy ID", width="medium"),
-            "Calibrated Risk (p̂)": st.column_config.TextColumn("Lapse Risk", width="small"),
+            "Calibrated Risk (p̂)": st.column_config.TextColumn("Combined Termination Risk", width="small"),
             "Risk Tier": st.column_config.TextColumn("Tier", width="small"),
             "Grace Status": st.column_config.TextColumn("Grace Period", width="small"),
             "Monthly Premium": st.column_config.TextColumn("Monthly Premium", width="small"),
             "Primary Risk Driver": st.column_config.TextColumn("Primary Driver", width="medium"),
             "Recommended Action": st.column_config.TextColumn("Optimal Intervention", width="medium"),
-            "Net Utility": st.column_config.TextColumn("Net Preserved Value", width="small"),
+            "Modeled Net Value": st.column_config.TextColumn("Annual Premium Preserved", width="small"),
             "Uplift Segment": st.column_config.TextColumn("Uplift", width="small"),
         },
     )

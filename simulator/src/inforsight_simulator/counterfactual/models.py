@@ -6,6 +6,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Any, Mapping
 
+from inforsight_simulator.economics import load_economics_resource_contract
+
 
 @dataclass(frozen=True)
 class InterventionParameters:
@@ -17,38 +19,28 @@ class InterventionParameters:
     resource_hours: float = 0.0
 
 
+_ECONOMICS = load_economics_resource_contract()
+
+
+def _params(action_type: str, base_shift: float) -> InterventionParameters:
+    action = _ECONOMICS.action(action_type)
+    return InterventionParameters(
+        base_shift=base_shift,
+        direct_cost_usd=action.direct_cost_usd,
+        is_specialist=action_type in {
+            "grace_period_consultation", "specialist_phone_outreach"
+        },
+        resource_hours=action.personnel_hours,
+    )
+
+
 # Standard canonical action parameters
 CANONICAL_INTERVENTIONS: dict[str, InterventionParameters] = {
-    "abstain": InterventionParameters(
-        base_shift=0.00,
-        direct_cost_usd=0.00,
-        is_specialist=False,
-        resource_hours=0.0,
-    ),
-    "courtesy_reminder": InterventionParameters(
-        base_shift=-0.35,
-        direct_cost_usd=0.50,
-        is_specialist=False,
-        resource_hours=0.0,
-    ),
-    "payment_method_remediation": InterventionParameters(
-        base_shift=-0.90,
-        direct_cost_usd=2.50,
-        is_specialist=False,
-        resource_hours=0.0,
-    ),
-    "grace_period_consultation": InterventionParameters(
-        base_shift=-1.25,
-        direct_cost_usd=25.00,
-        is_specialist=True,
-        resource_hours=0.5,
-    ),
-    "specialist_phone_outreach": InterventionParameters(
-        base_shift=-1.60,
-        direct_cost_usd=65.00,
-        is_specialist=True,
-        resource_hours=1.0,
-    ),
+    "abstain": _params("abstain", 0.00),
+    "courtesy_reminder": _params("courtesy_reminder", -0.35),
+    "payment_method_remediation": _params("payment_method_remediation", -0.90),
+    "grace_period_consultation": _params("grace_period_consultation", -1.25),
+    "specialist_phone_outreach": _params("specialist_phone_outreach", -1.60),
 }
 
 
@@ -66,6 +58,8 @@ class CounterfactualOutcome:
     monthly_lapse_hazards: tuple[float, float, float]
     monthly_surrender_hazards: tuple[float, float, float]
     direct_cost_usd: float
+    combined_termination_treatment_effect: float = 0.0
+    direct_cost_usd_micros: int = 0
 
 
 @dataclass(frozen=True)
@@ -84,6 +78,12 @@ class TriageAssignment:
     expected_net_preserved_usd: float  # gross - direct_cost
     consumes_specialist: bool
     resource_hours: float
+    combined_termination_effect: float = 0.0
+    annual_premium_cents: int = 0
+    direct_cost_usd_micros: int = 0
+    gross_expected_value_usd_micros: int = 0
+    net_expected_value_usd_micros: int = 0
+    personnel_seconds: int = 0
 
 
 @dataclass(frozen=True)
@@ -105,6 +105,12 @@ class PolicyEvaluationMetrics:
     specialist_hours_used: float
     specialist_calls_count: int
     action_distribution: dict[str, int] = field(default_factory=dict)
+    combined_terminations_avoided: float = 0.0
+    total_spend_usd_micros: int = 0
+    gross_expected_value_usd_micros: int = 0
+    net_expected_value_usd_micros: int = 0
+    personnel_seconds_used: int = 0
+    metric_id: str = "modeled_expected_annual_premium_preserved_usd_micros"
 
 
 @dataclass(frozen=True)
@@ -178,4 +184,3 @@ class OPEResultManifest:
             "verifications": self.verifications,
             "manifest_digest": self.manifest_digest,
         }
-

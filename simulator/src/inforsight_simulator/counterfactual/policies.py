@@ -18,6 +18,7 @@ from inforsight_simulator.optimization import (
     PolicyValuation,
     PortfolioOptimizer,
 )
+from inforsight_simulator.economics import USD_MICROS_PER_USD, load_economics_resource_contract
 from inforsight_simulator.rules import (
     ActionEligibilityResult,
     EligibilityRulesEngine,
@@ -36,6 +37,7 @@ SPECIALIST_ACTIONS: set[str] = {
     "specialist_phone_outreach",
     "grace_period_consultation",
 }
+_ECONOMICS = load_economics_resource_contract()
 
 
 def calculate_annual_premium_usd(features: V6Features) -> float:
@@ -64,10 +66,27 @@ def make_assignment(
 
     p_a = outcome.counterfactual_lapse_prob
     p_0 = baseline.baseline_lapse_prob
-    saved_lapse = max(0.0, p_0 - p_a)
-    gross_preserved = saved_lapse * annual_premium_usd
-    direct_cost = params.direct_cost_usd
-    net_preserved = gross_preserved - direct_cost
+    combined_effect = outcome.combined_termination_treatment_effect
+    economics = _ECONOMICS
+    annual_premium_cents = int(round(annual_premium_usd * 100))
+    valuation = economics.value(
+        policy_id=policy_id,
+        snapshot_id=f"ope:{policy_id}",
+        snapshot_version=economics.catalog.snapshot_version,
+        catalog_sha256=economics.catalog.sha256,
+        action=assigned_action,
+        effect=combined_effect,
+        annual_premium_cents=annual_premium_cents,
+    )
+    gross_micros = valuation.gross_expected_value_usd_micros
+    cost_micros = valuation.direct_cost_usd_micros
+    net_micros = valuation.net_expected_value_usd_micros
+    assert gross_micros is not None and cost_micros is not None and net_micros is not None
+    # Legacy names remain serialization bridges until RH-12 regenerates evidence.
+    saved_lapse = combined_effect
+    gross_preserved = gross_micros / USD_MICROS_PER_USD
+    direct_cost = cost_micros / USD_MICROS_PER_USD
+    net_preserved = net_micros / USD_MICROS_PER_USD
 
     return TriageAssignment(
         policy_id=policy_id,
@@ -82,6 +101,12 @@ def make_assignment(
         expected_net_preserved_usd=net_preserved,
         consumes_specialist=params.is_specialist,
         resource_hours=params.resource_hours,
+        combined_termination_effect=combined_effect,
+        annual_premium_cents=annual_premium_cents,
+        direct_cost_usd_micros=cost_micros,
+        gross_expected_value_usd_micros=gross_micros,
+        net_expected_value_usd_micros=net_micros,
+        personnel_seconds=economics.action(assigned_action).personnel_seconds,
     )
 
 

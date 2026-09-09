@@ -73,13 +73,13 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
 
     with chart_col1:
         st.markdown("### 🎯 Risk Tier Distribution")
-        st.caption("Calibrated lapse probabilities segmented by operational intervention tiers.")
+        st.caption("Calibrated combined lapse-or-surrender probabilities segmented by operational tiers.")
         fig_donut = plot_risk_distribution(summary["tier_counts"])
         st.pyplot(fig_donut, width="stretch")
 
     with chart_col2:
         st.markdown("### 🛠️ Optimal Intervention Mix")
-        st.caption("Greedy cost-utility allocation maximizing net preserved premium.")
+        st.caption("Unconstrained recommendations ranked by modeled net annual premium preserved; RH-05 capacity enforcement remains pending.")
         fig_bar = plot_intervention_mix(summary["action_counts"])
         st.pyplot(fig_bar, width="stretch")
 
@@ -108,10 +108,10 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
     st.markdown("---")
 
     # 4. Offline Policy Evaluation (OPE) & Empirical Retention ROI (Phase 3.08)
-    st.markdown("### 📈 Offline Policy Evaluation (OPE) & Empirical Retention ROI")
+    st.markdown("### 📈 Historical offline policy evaluation (legacy economics)")
     st.markdown(
-        "Rigorous offline counterfactual simulation evaluating the **Decision Engine** against "
-        "competing operational strategies across 1,000 policy-cluster bootstrap iterations."
+        "This frozen Phase 3 artifact predates economics/resource contract 1.0.0. Its lapse-only, "
+        "ROI, cost, and value labels are retained as historical evidence and are not corrected RH-04 results."
     )
 
     ope_path = "docs/experiments/phase-03-08-ope-results.json"
