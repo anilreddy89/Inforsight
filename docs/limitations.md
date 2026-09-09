@@ -89,7 +89,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 | Status | Scheduled |
 | Severity | Material |
 | Discovered in | RH-01I canonical domain snapshot implementation |
-| Owner | RH-02 and downstream source-contract work; RH-01 implementation closed through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e` |
+| Owner | RH-02 [issue #142](https://github.com/anilreddy89/Inforsight/issues/142); RH-01 implementation closed through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e` |
 | Evidence | Canonical snapshot contract, dashboard integration tests, and passing PR #140 CI |
 | Resolution trigger | Before the v6 dashboard may recommend or approve a servicing action |
 

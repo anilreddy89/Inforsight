@@ -109,6 +109,13 @@ from .semantic_catalog import (
     SemanticCatalog,
     load_semantic_catalog,
 )
+from .safety_evidence import (
+    SAFETY_EVIDENCE_VERSION,
+    SAFETY_SOURCE_PROFILE,
+    SafetyEvidence,
+    SafetyEvidenceError,
+    reconstruct_safety_evidence,
+)
 from .preprocessing import (
     UNKNOWN_CATEGORY,
     FeaturePipelineResult,
@@ -515,6 +522,11 @@ __all__ = [
     "load_json_events",
     "reconstruct_domain_snapshot",
     "select_visible_events",
+    "SAFETY_EVIDENCE_VERSION",
+    "SAFETY_SOURCE_PROFILE",
+    "SafetyEvidence",
+    "SafetyEvidenceError",
+    "reconstruct_safety_evidence",
     "ActionEligibilityResult",
     "ConservationActionDefinition",
     "DisqualificationReasonCode",

@@ -47,6 +47,7 @@ class DisqualificationReasonCode(str, Enum):
         "DISQUALIFIED_MISSING_REQUIRED_ATTRIBUTE"
     )
     DISQUALIFIED_AMBIGUOUS_STATE = "DISQUALIFIED_AMBIGUOUS_STATE"
+    DISQUALIFIED_MISSING_SAFETY_EVIDENCE = "DISQUALIFIED_MISSING_SAFETY_EVIDENCE"
 
 
 DISQUALIFICATION_DESCRIPTIONS: dict[DisqualificationReasonCode, str] = {
@@ -104,5 +105,7 @@ DISQUALIFICATION_DESCRIPTIONS: dict[DisqualificationReasonCode, str] = {
     DisqualificationReasonCode.DISQUALIFIED_AMBIGUOUS_STATE: (
         "Fail-closed: policy state contains contradictory or unparseable values."
     ),
+    DisqualificationReasonCode.DISQUALIFIED_MISSING_SAFETY_EVIDENCE: (
+        "Fail-closed: required safety or channel-consent evidence is unknown."
+    ),
 }
-

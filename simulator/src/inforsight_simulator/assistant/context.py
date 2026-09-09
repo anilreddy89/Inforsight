@@ -40,9 +40,9 @@ class CaseEvidenceContext:
     initial_payment_method: str
     risk_class: str
     servicing_advisor_id: str
-    has_active_claim: bool = False
-    has_legal_hold: bool = False
-    has_registered_dispute: bool = False
+    has_active_claim: bool | None = None
+    has_legal_hold: bool | None = None
+    has_registered_dispute: bool | None = None
 
     # Scoring & Attribution (from Model Gateway / Bundle)
     calibrated_probability: float = 0.05
@@ -65,7 +65,9 @@ class CaseEvidenceContext:
     @property
     def has_legal_dispute_freeze(self) -> bool:
         """Indicates if any legal, hold, or dispute freeze is active."""
-        return self.has_active_claim or self.has_legal_hold or self.has_registered_dispute
+        return any(value is True for value in (
+            self.has_active_claim, self.has_legal_hold, self.has_registered_dispute
+        ))
 
     @property
     def ground_truth_entities(self) -> dict[str, Any]:

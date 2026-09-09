@@ -175,6 +175,14 @@ class QualificationRunner:
                 tenure_days=feats.tenure_days,
                 in_grace_period=in_grace,
                 days_past_due=dpd,
+                # Explicit fictional clear-state evidence for qualification fixtures.
+                has_active_claim=False,
+                has_legal_hold=False,
+                has_registered_dispute=False,
+                sms_opt_out=False,
+                email_opt_out=False,
+                phone_opt_out=False,
+                dnc_registered=False,
             )
             es = rules_engine.evaluate(ctx)
 
