@@ -864,6 +864,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-03 - Enforce human authority at the common transition boundary
 
+**Status:** In progress on 2026-09-09 through [issue #145](https://github.com/anilreddy89/Inforsight/issues/145) and branch `fix/145--rh-03-enforce-human-authority`. The first implementation slice centralizes execution authority, binds approvals to reviewed identities, rejects stale or tampered execution attempts, serializes local capacity consumption, and routes dashboard and qualification callers through the common boundary. Merge and closeout evidence remain pending.
+
 **Issue template:** Implementation task
 **Classification:** Current defect / authority invariant
 **Priority:** Release blocking

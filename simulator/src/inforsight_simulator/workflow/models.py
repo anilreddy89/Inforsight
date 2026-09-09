@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from enum import Enum
 import re
 from typing import Any, Optional
@@ -68,6 +69,84 @@ class InvalidReviewerCredentialsError(WorkflowError):
 
 class MissingJustificationError(WorkflowError):
     """Raised when required rationale code or justification is missing or inadequate."""
+
+
+class AuthorityBoundaryError(UnauthorizedExecutionError):
+    """Stable fail-closed authority-boundary error."""
+
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(f"{code}: {message}")
+        self.code = code
+
+
+@dataclass(frozen=True)
+class TrustedActorContext:
+    """Identity asserted by a trusted local server-side adapter, never a request body."""
+
+    actor_id: str
+    authenticated: bool
+    roles: tuple[str, ...]
+    trust_source: str
+
+    def __post_init__(self) -> None:
+        if not self.authenticated:
+            raise AuthorityBoundaryError("AUTH_ACTOR_UNTRUSTED", "actor is not authenticated")
+        if not REVIEWER_ID_REGEX.match(self.actor_id):
+            raise InvalidReviewerCredentialsError(
+                f"Actor ID '{self.actor_id}' does not match the trusted reviewer pattern"
+            )
+        if "conservation_specialist" not in self.roles:
+            raise AuthorityBoundaryError(
+                "AUTH_ACTOR_UNAUTHORIZED", "actor lacks conservation_specialist authority"
+            )
+        if not self.trust_source:
+            raise AuthorityBoundaryError("AUTH_ACTOR_UNTRUSTED", "trust source is required")
+
+
+@dataclass(frozen=True)
+class ApprovalBinding:
+    """Single-use approval bound to the exact evidence and recommendation reviewed."""
+
+    approval_id: str
+    case_id: str
+    case_version: int
+    snapshot_id: str
+    safety_evidence_id: str
+    eligibility_digest: str
+    requirements_version: str
+    action_type: str
+    channel: str
+    recommendation_version: str
+    model_bundle_id: str
+    actor_id: str
+    reviewed_at: str
+    expires_at: str
+    idempotency_key: str
+    schema_version: str = "authority-approval/1.0.0"
+
+    def to_dict(self) -> dict[str, Any]:
+        return dict(self.__dict__)
+
+    def is_expired_at(self, occurred_at: str) -> bool:
+        def parse(value: str) -> datetime:
+            result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            if result.tzinfo is None:
+                raise AuthorityBoundaryError("AUTH_TIME_INVALID", "authority times must be timezone-aware")
+            return result.astimezone(timezone.utc)
+
+        return parse(occurred_at) > parse(self.expires_at)
+
+
+@dataclass(frozen=True)
+class ActionResourceRequirement:
+    """Bounded local resource units reserved atomically at execution."""
+
+    personnel_hours: float = 0.0
+    direct_cost_usd: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.personnel_hours < 0 or self.direct_cost_usd < 0:
+            raise ValueError("action resources cannot be negative")
 
 
 @dataclass(frozen=True)
@@ -171,4 +250,3 @@ class CaseEvent:
             "occurred_at": self.occurred_at,
             "payload": self.payload,
         }
-
