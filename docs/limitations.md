@@ -86,12 +86,12 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 
 | Field | Value |
 | --- | --- |
-| Status | Scheduled |
+| Status | Accepted temporarily |
 | Severity | Material |
 | Discovered in | RH-01I canonical domain snapshot implementation |
-| Owner | RH-02 [issue #142](https://github.com/anilreddy89/Inforsight/issues/142); RH-01 implementation closed through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e` |
-| Evidence | Canonical snapshot contract, dashboard integration tests, and passing PR #140 CI |
-| Resolution trigger | Before the v6 dashboard may recommend or approve a servicing action |
+| Owner | Post-RH-13 source integration; RH-02 enforcement closed through [issue #142](https://github.com/anilreddy89/Inforsight/issues/142) and [PR #143](https://github.com/anilreddy89/Inforsight/pull/143), merge `3eb74b5` |
+| Evidence | Safety evidence contract 1.0.0, dual-time replay and consumer regressions, and passing PR #143 CI |
+| Resolution trigger | A governed source supplies the required lifecycle and safety facts before the dashboard may recommend or approve a servicing action |
 
 #### Finding
 
@@ -99,12 +99,12 @@ The v6 event stream provides issuance and payment history, but it does not provi
 
 #### Current behavior
 
-The canonical snapshot records these fields as unknown. Rules return `insufficient_domain_evidence` with no eligible actions, and workflow approval fails closed. Risk scoring and evidence-grounded review may continue because they do not grant servicing authority.
+The canonical snapshot records unsupported fields as unknown. RH-02 adds the versioned `fictional-safety-events/1.0.0` contract and requires explicit evidence for each action and channel. The current v6 stream does not emit those facts, so rules return an unavailable or disqualified result with no eligible action and workflow approval remains blocked. Risk scoring and evidence-grounded review may continue because they do not grant servicing authority.
 
 #### Resolution evidence required
 
-- A versioned source contract supplies the missing lifecycle and safety facts with dual-time provenance.
-- Snapshot reconstruction, eligibility, dashboard, and workflow tests prove that action authorization uses those facts without fallback defaults.
+- Integrate a governed source that emits the required lifecycle and safety facts with dual-time provenance for the active dashboard population.
+- Re-run snapshot, eligibility, dashboard, and workflow qualification against that source without fallback defaults before enabling servicing recommendations.
 
 ### LIM-002-001 — Billing frequency is confounded with observation time
 
