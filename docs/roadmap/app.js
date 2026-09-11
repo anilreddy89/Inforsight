@@ -597,12 +597,12 @@ const timelineData = [
         id: "RH-04–RH-05",
         title: "Signed Economics & Capacity-Constrained Allocation",
         status: "In Progress",
-        commit: "RH-04 complete at 04d3e59; RH-05D accepted at 3645fae",
+        commit: "RH-04 complete at 04d3e59; RH-05D accepted at 3645fae; RH-05I #157 implemented, review pending",
         summary: {
-          tech: "RH-04 is complete and RH-05D allocation contract 1.0.0 is accepted. It defines the exact two-resource portfolio problem, deterministic tie-breaking, exhaustive bounded reference, zero additive-gap gate, dashboard allocation lifecycle, and atomic override semantics. RH-05I runtime implementation remains pending.",
-          simple: "The benefit, harm, money, staff-time, and portfolio-selection rules are now approved. The next step is implementing those allocation rules in the dashboard and workflow."
+          tech: "RH-04 is complete, RH-05D allocation contract 1.0.0 is accepted, and RH-05I issue #157 is implemented and locally verified. Exact integer resources, deterministic bounded-domain allocation, versioned dashboard refresh, atomic reservation replacement, and the four-strategy comparison await review and merge.",
+          simple: "The portfolio allocator and its dashboard and workflow controls are implemented and verified; review and merge are the remaining delivery steps."
         },
-        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae); six focused tests, 39 contract tests, full make check with 498 simulator tests, and all five CI jobs passed. RH-05I is predecessor-ready; historical evidence remains frozen pending RH-12."
+        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae). RH-05I #157 passed 505 repository tests, 64 generated exact-reference cases, dashboard refresh, reservation conflict, and strategy-comparison regressions on fix/157-rh-05i-portfolio-allocation. Parent RH-05 remains open until merge; historical evidence remains frozen pending RH-12."
       },
       {
         id: "RH-06–RH-07",

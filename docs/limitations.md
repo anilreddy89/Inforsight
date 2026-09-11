@@ -46,7 +46,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Severity | Claim-blocking |
 | Discovered in | `Documents/Project_Review_Through_P4-01.md`, reviewed at commit `b15a9ba` |
 | Owner | Review hardening initiative RH-00 through RH-13; charter [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) |
-| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 through RH-05D phase records; `docs/hardening/rh-03-authority-boundary.md`; `docs/hardening/rh-04-economics-resource-contract.md`; RH-05D [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) |
+| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 through RH-05I phase records; `docs/hardening/rh-03-authority-boundary.md`; `docs/hardening/rh-04-economics-resource-contract.md`; RH-05 [issues #154/#157](https://github.com/anilreddy89/Inforsight/issues/157) |
 | Detailed plan | `Documents/phase_docs/phase-rh-00-hardening-release-charter-and-overlap-triage.md` |
 | Resolution trigger | RH-13 must record an evidence-backed `PROCEED` before P4-02 or P4-03 implementation resumes |
 
@@ -82,7 +82,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-03 enforces human authority at the common execution boundary through issue #145 and PR #146, merge `c5fa76c`; all five CI jobs passed.
 - [x] RH-04D accepts the signed economics/resource contract, evaluation estimands, and sensitivity protocol through issue #148 and PR #149, merge `c9eddcf`; all five CI jobs passed.
 - [x] RH-04I and parent RH-04 completed through issue #151 and PR #152, merge `04d3e59`; runtime consumers now preserve signed effects and share versioned economics/resources. Corrected historical evidence remains deferred to RH-12.
-- [x] RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155, merge `3645fae`; all five required CI jobs passed. RH-05I is predecessor-ready and parent RH-05 remains open.
+- [x] RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155, merge `3645fae`; RH-05I issue #157 is implemented and locally verified with 505 passing tests. Review and merge remain pending before parent RH-05 closes.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.

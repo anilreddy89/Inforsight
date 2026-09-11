@@ -2,20 +2,21 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from typing import Any, Mapping, Sequence
 
 from inforsight_simulator.assistant import CaseBrief
 from inforsight_simulator.bundle import ScoringResult
 from inforsight_simulator.domain_snapshot import DomainSnapshot, reconstruct_domain_snapshot
+from inforsight_simulator.economics import USD_MICROS_PER_USD
 from inforsight_simulator.optimization import OptimalRecommendation, PolicyValuation
 from inforsight_simulator.rules import EligibleActionSet
 from inforsight_simulator.semantic_catalog import PREPROCESSING_PROFILE_ID
 from inforsight_simulator.v6_corpus import V6CorpusConfig, generate_v6_corpus
 from inforsight_simulator.v6_evaluation import _feature_map
 
-from dashboard.config import DEFAULT_MAX_SPECIALIST_HOURS, RISK_TIERS
+from dashboard.config import DEFAULT_BUDGET, DEFAULT_MAX_SPECIALIST_HOURS, RISK_TIERS
 from dashboard.services.engine_bridge import EngineBridge
 
 
@@ -87,7 +88,7 @@ def load_dashboard_cohort(
         if pid not in latest_obs_by_policy or obs.as_of > latest_obs_by_policy[pid].as_of:
             latest_obs_by_policy[pid] = obs
 
-    items: list[TriagePolicyItem] = []
+    prepared: list[dict[str, Any]] = []
 
     for pid, obs in latest_obs_by_policy.items():
         feat_map = _feature_map(obs)
@@ -153,6 +154,86 @@ def load_dashboard_cohort(
                 "summary": summary,
                 "amount": float(amt) if amt else None,
             })
+
+        prepared.append(
+            {
+                "pid": pid,
+                "snapshot": snapshot,
+                "as_of_dt": as_of_dt,
+                "as_of_str": as_of_str,
+                "score_res": score_res,
+                "risk_tier_id": risk_tier_id,
+                "eligible_set": eligible_set,
+                "annual_prem": annual_prem,
+                "monthly_prem": monthly_prem,
+                "face_amt": face_amt,
+                "unconstrained_rec": optimal_rec,
+                "formatted_events": formatted_events,
+            }
+        )
+
+    if prepared:
+        cutoff = max(entry["as_of_dt"] for entry in prepared)
+    else:
+        cutoff = datetime.now(timezone.utc)
+    # Terminal decisions are already represented by current reservations and
+    # cannot be selected again on refresh.
+    for entry in prepared:
+        existing = engine_bridge.workflow_service.get_case(
+            engine_bridge.workflow_case_id(entry["pid"], entry["as_of_str"])
+        )
+        if existing and existing.state_machine.current_state.value in {
+            "EXECUTED", "DISMISSED", "RESOLVED"
+        }:
+            rec = entry["unconstrained_rec"]
+            abstain = rec.action_utilities["abstain"]
+            entry["unconstrained_rec"] = replace(
+                rec,
+                recommended_action="abstain",
+                expected_net_utility_usd=0.0,
+                uplift_quadrant=abstain.uplift_quadrant,
+                rank_score=0.0,
+            )
+    capacity_state = engine_bridge.workflow_service.capacity_snapshot()
+    available_budget_micros = min(
+        int(DEFAULT_BUDGET * USD_MICROS_PER_USD),
+        capacity_state["remaining_cost_usd_micros"],
+    )
+    available_personnel_seconds = min(
+        int(max_specialist_hours * 3_600), capacity_state["remaining_seconds"]
+    )
+    allocation = engine_bridge.allocate_portfolio(
+        [entry["unconstrained_rec"] for entry in prepared],
+        budget_capacity_usd_micros=available_budget_micros,
+        personnel_capacity_seconds=available_personnel_seconds,
+        as_of=cutoff,
+        portfolio_id=f"dashboard-v6-{seed}-{actual_count}",
+    )
+    selected_by_policy = {rec.policy_id: rec for rec in allocation.recommendations}
+    allocation_binding = engine_bridge.allocation_binding(allocation.allocation_id)
+    strategy_comparison = engine_bridge.compare_portfolio_strategies(
+        [entry["unconstrained_rec"] for entry in prepared],
+        risk_scores={entry["pid"]: entry["score_res"].calibrated_probability for entry in prepared},
+        budget_capacity_usd_micros=available_budget_micros,
+        personnel_capacity_seconds=available_personnel_seconds,
+        as_of=cutoff,
+        portfolio_id=f"dashboard-v6-{seed}-{actual_count}",
+    )
+    items: list[TriagePolicyItem] = []
+
+    # Allocation is complete before any brief, recommendation case, or summary is emitted.
+    for entry in prepared:
+        pid = entry["pid"]
+        snapshot = entry["snapshot"]
+        as_of_str = entry["as_of_str"]
+        score_res = entry["score_res"]
+        risk_tier_id = entry["risk_tier_id"]
+        eligible_set = entry["eligible_set"]
+        annual_prem = entry["annual_prem"]
+        monthly_prem = entry["monthly_prem"]
+        face_amt = entry["face_amt"]
+        optimal_rec = selected_by_policy[pid]
+        formatted_events = entry["formatted_events"]
 
         # Synthesize the brief directly from reconstructed evidence. Unknown source
         # facts remain unknown instead of being coerced into permissive defaults.
@@ -233,7 +314,6 @@ def load_dashboard_cohort(
     action_counts: dict[str, int] = {}
     active_grace_count = 0
     total_val_at_risk = 0.0
-    allocated_specialist_minutes = 0
 
     for item in items:
         tier_counts[item.risk_tier] = tier_counts.get(item.risk_tier, 0) + 1
@@ -243,11 +323,21 @@ def load_dashboard_cohort(
         if engine_bridge.semantic_catalog.risk_tier_rank(item.risk_tier_id) >= 3:
             total_val_at_risk += item.annual_premium
 
-        action_resource = engine_bridge.economics_contract.action(item.recommended_action)
-        allocated_specialist_minutes += action_resource.personnel_seconds / 60
-
-    allocated_specialist_hours = allocated_specialist_minutes / 60.0
-    cap_util = min(100.0, (allocated_specialist_hours / max_specialist_hours) * 100.0) if max_specialist_hours > 0 else 0.0
+    reserved_personnel_seconds = (
+        capacity_state["capacity_seconds"] - capacity_state["remaining_seconds"]
+    )
+    reserved_budget_micros = (
+        capacity_state["capacity_cost_usd_micros"]
+        - capacity_state["remaining_cost_usd_micros"]
+    )
+    total_personnel_used_seconds = reserved_personnel_seconds + allocation.personnel_used_seconds
+    total_budget_used_micros = reserved_budget_micros + allocation.budget_used_usd_micros
+    allocated_specialist_hours = total_personnel_used_seconds / 3_600
+    cap_util = (
+        total_personnel_used_seconds / capacity_state["capacity_seconds"] * 100
+        if capacity_state["capacity_seconds"]
+        else 0.0
+    )
 
     summary = {
         "total_policies": len(items),
@@ -258,6 +348,21 @@ def load_dashboard_cohort(
         "max_specialist_hours": max_specialist_hours,
         "capacity_utilization_pct": round(cap_util, 1),
         "action_counts": action_counts,
+        "allocation_id": allocation.allocation_id,
+        "allocator_version": allocation.allocator_version,
+        "allocation_binding_sha256": allocation_binding["binding_sha256"],
+        "capacity_version": allocation_binding["capacity_version"],
+        "reservation_version": allocation_binding["reservation_version"],
+        "budget_capacity_usd_micros": capacity_state["capacity_cost_usd_micros"],
+        "budget_used_usd_micros": total_budget_used_micros,
+        "budget_available_usd_micros": capacity_state["capacity_cost_usd_micros"] - total_budget_used_micros,
+        "budget_overflow_usd_micros": 0,
+        "personnel_capacity_seconds": capacity_state["capacity_seconds"],
+        "personnel_used_seconds": total_personnel_used_seconds,
+        "personnel_available_seconds": capacity_state["capacity_seconds"] - total_personnel_used_seconds,
+        "personnel_overflow_seconds": 0,
+        "modeled_expected_net_value_usd_micros": allocation.objective_usd_micros,
+        "strategy_comparison": strategy_comparison,
     }
 
     return items, summary

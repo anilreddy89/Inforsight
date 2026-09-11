@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime, timezone
 import hashlib
+import json
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
@@ -25,6 +27,9 @@ from inforsight_simulator.economics import load_economics_resource_contract
 from inforsight_simulator.optimization import (
     OptimalRecommendation,
     PolicyValuation,
+    PortfolioAllocation,
+    PortfolioOptimizer,
+    compare_portfolio_strategies,
     UpliftQuadrant,
     classify_uplift_quadrant,
     evaluate_action_utilities,
@@ -87,14 +92,15 @@ class EngineBridge:
         self.audit_ledger = AuditLedger(log_path=self.audit_log_path)
         self.workflow_service = WorkflowService(
             audit_ledger=self.audit_ledger,
-            capacity_hours=DEFAULT_MAX_SPECIALIST_HOURS,
-            capacity_cost_usd=DEFAULT_BUDGET,
+            capacity_seconds=int(DEFAULT_MAX_SPECIALIST_HOURS * 3_600),
+            capacity_cost_usd_micros=int(DEFAULT_BUDGET * 1_000_000),
         )
         self.trusted_actor_adapter = LocalTrustedActorAdapter()
 
         # 3. Initialize Rules Engine and Assistant
         self.rules_engine = EligibilityRulesEngine()
         self.assistant = CaseIntelligenceAssistant()
+        self._allocation_bindings: dict[str, dict[str, Any]] = {}
 
     def score_observation(
         self,
@@ -114,6 +120,10 @@ class EngineBridge:
                 policy_id=policy_id, as_of=as_of, catalog=self.semantic_catalog
             )
         return self.inference_engine.score_record(dict(observation_map))
+
+    @staticmethod
+    def workflow_case_id(policy_id: str, as_of_date: str) -> str:
+        return f"case_{hashlib.md5(f'{policy_id}_{as_of_date}'.encode()).hexdigest()[:24]}"
 
     def evaluate_eligibility(self, policy_context: PolicyContext) -> EligibleActionSet:
         """Determines legal and regulatory action eligibility under ADR 0002."""
@@ -143,6 +153,71 @@ class EngineBridge:
             days_past_due=days_past_due,
         )
         return select_best_unconstrained_action(policy_valuation.policy_id, utilities)
+
+    def allocate_portfolio(
+        self,
+        recommendations: Sequence[OptimalRecommendation],
+        *,
+        budget_capacity_usd_micros: int,
+        personnel_capacity_seconds: int,
+        as_of: datetime,
+        portfolio_id: str,
+    ) -> PortfolioAllocation:
+        """Apply one RH-05 allocation before dashboard artifacts are emitted."""
+        capacity = self.workflow_service.capacity_snapshot()
+        optimizer = PortfolioOptimizer(
+            budget_capacity_usd_micros=budget_capacity_usd_micros,
+            personnel_capacity_seconds=personnel_capacity_seconds,
+            portfolio_id=portfolio_id,
+        )
+        allocation = optimizer.allocate_recommendations(recommendations, as_of=as_of)
+        binding = {
+            "portfolio_id": portfolio_id,
+            "allocation_id": allocation.allocation_id,
+            "portfolio_membership": sorted(item.policy_id for item in recommendations),
+            "cutoff": as_of.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "model_bundle_id": self.bundle.bundle_id,
+            "economics_contract_version": self.economics_contract.version,
+            "capacity_version": capacity["capacity_version"],
+            "reservation_version": capacity["reservation_version"],
+        }
+        binding_sha = hashlib.sha256(
+            json.dumps(binding, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        bound_id = f"alloc_{binding_sha[:24]}"
+        allocation = replace(allocation, allocation_id=bound_id)
+        self._allocation_bindings[bound_id] = {**binding, "allocation_id": bound_id, "binding_sha256": binding_sha}
+        return allocation
+
+    def allocation_binding(self, allocation_id: str) -> dict[str, Any]:
+        """Return the immutable context/version binding for an allocation."""
+        try:
+            return dict(self._allocation_bindings[allocation_id])
+        except KeyError as exc:
+            raise ValueError("STALE_ALLOCATION: allocation identity is unknown") from exc
+
+    def compare_portfolio_strategies(
+        self,
+        recommendations: Sequence[OptimalRecommendation],
+        *,
+        risk_scores: Mapping[str, float],
+        budget_capacity_usd_micros: int,
+        personnel_capacity_seconds: int,
+        as_of: datetime,
+        portfolio_id: str,
+    ) -> tuple[dict[str, object], ...]:
+        """Run the accepted four-strategy protocol on one frozen input."""
+        return tuple(
+            result.to_dict()
+            for result in compare_portfolio_strategies(
+                recommendations,
+                risk_scores=risk_scores,
+                budget_capacity_usd_micros=budget_capacity_usd_micros,
+                personnel_capacity_seconds=personnel_capacity_seconds,
+                as_of=as_of,
+                portfolio_id=portfolio_id,
+            )
+        )
 
     def synthesize_case_brief(
         self,
@@ -247,7 +322,7 @@ class EngineBridge:
         case_id: Optional[str] = None,
     ) -> WorkflowContext:
         """Initializes or retrieves the active WorkflowContext advancing to RECOMMENDED."""
-        cid = case_id or f"case_{hashlib.md5(f'{policy_id}_{as_of_date}'.encode()).hexdigest()[:24]}"
+        cid = case_id or self.workflow_case_id(policy_id, as_of_date)
         existing = self.workflow_service.get_case(cid)
         if existing:
             return existing
@@ -273,8 +348,8 @@ class EngineBridge:
             },
             action_resources={
                 action: ActionResourceRequirement(
-                    personnel_hours=self.economics_contract.action(action).personnel_hours,
-                    direct_cost_usd=self.economics_contract.action(action).direct_cost_usd,
+                    personnel_seconds=self.economics_contract.action(action).personnel_seconds,
+                    direct_cost_usd_micros=self.economics_contract.action(action).direct_cost_usd_micros,
                 )
                 for action in eligible_action_set.eligible_actions
             },
@@ -298,6 +373,7 @@ class EngineBridge:
             rationale_code=rationale_code,
             justification=justification,
             selected_action=selected_action,
+            expected_capacity_version=self.workflow_service.capacity_snapshot()["capacity_version"],
         )
 
         exec_event = None

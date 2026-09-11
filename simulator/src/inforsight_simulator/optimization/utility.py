@@ -47,7 +47,11 @@ def evaluate_action_utilities(
 
     for action in catalog:
         economics = contract.action(action.action_id)
-        is_eligible = eligible_set.is_eligible(action.action_type)
+        # Abstain is the contract's always-feasible zero-resource choice even
+        # when legacy eligibility payloads omit it from their action list.
+        is_eligible = action.action_type == "abstain" or eligible_set.is_eligible(
+            action.action_type
+        )
 
         if not is_eligible:
             # Ineligible actions produce zero gross benefit and negative default net utility
