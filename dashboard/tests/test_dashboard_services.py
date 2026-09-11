@@ -9,6 +9,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 from inforsight_simulator.workflow.models import (
+    ActionResourceRequirement,
     CaseState,
     IneligibleOverrideError,
     InvalidReviewerCredentialsError,
@@ -54,6 +55,27 @@ class TestDashboardServices(unittest.TestCase):
         self.assertEqual(self.summary["total_policies"], 12)
         self.assertIn("tier_counts", self.summary)
         self.assertIn("action_counts", self.summary)
+        self.assertTrue(self.summary["allocation_id"].startswith("alloc_"))
+        self.assertEqual(self.summary["allocator_version"], "1.0.0")
+        self.assertLessEqual(
+            self.summary["budget_used_usd_micros"],
+            self.summary["budget_capacity_usd_micros"],
+        )
+        self.assertLessEqual(
+            self.summary["personnel_used_seconds"],
+            self.summary["personnel_capacity_seconds"],
+        )
+        self.assertEqual(self.summary["budget_overflow_usd_micros"], 0)
+        self.assertEqual(self.summary["personnel_overflow_seconds"], 0)
+        self.assertEqual(len(self.summary["allocation_binding_sha256"]), 64)
+        self.assertGreaterEqual(self.summary["capacity_version"], 1)
+        self.assertGreaterEqual(self.summary["reservation_version"], 0)
+        comparison = self.summary["strategy_comparison"]
+        self.assertEqual(
+            [row["strategy_id"] for row in comparison],
+            ["non_intervention", "operational_rules_only", "risk_ranked", "allocation_engine"],
+        )
+        self.assertEqual(len({row["comparison_context_sha256"] for row in comparison}), 1)
 
         # Assert priority ranking invariant (descending order of net utility)
         for i in range(len(self.items) - 1):
@@ -79,6 +101,7 @@ class TestDashboardServices(unittest.TestCase):
             self.assertEqual(
                 it.eligible_action_set.freeze_reason, "insufficient_domain_evidence"
             )
+            self.assertEqual(it.recommended_action, "abstain")
 
     def test_specialist_approval_workflow(self) -> None:
         """Verifies human specialist approval transitions case to HUMAN_REVIEWED and EXECUTED."""
@@ -91,6 +114,28 @@ class TestDashboardServices(unittest.TestCase):
                 rationale_code="APPROVE_OPTIMAL_RECOMMENDATION",
                 justification="Review verified policy risk and optimal action.",
             )
+
+    def test_refresh_rebinds_allocation_to_current_reservations(self) -> None:
+        audit_path = Path(self.temp_dir.name) / "refresh-audit.jsonl"
+        bridge = EngineBridge(audit_log_path=audit_path)
+        _, before = load_dashboard_cohort(bridge, policy_count=8)
+        capacity = bridge.workflow_service.capacity_snapshot()
+        bridge.workflow_service.replace_reservation(
+            case_id="case_refresh000000000001",
+            action_type="courtesy_reminder",
+            requirement=ActionResourceRequirement(
+                personnel_seconds=300, direct_cost_usd_micros=2_000_000
+            ),
+            expected_capacity_version=capacity["capacity_version"],
+        )
+        _, after = load_dashboard_cohort(bridge, policy_count=8)
+        self.assertNotEqual(before["allocation_id"], after["allocation_id"])
+        self.assertNotEqual(
+            before["allocation_binding_sha256"], after["allocation_binding_sha256"]
+        )
+        self.assertEqual(after["reservation_version"], before["reservation_version"] + 1)
+        self.assertGreaterEqual(after["personnel_used_seconds"], 300)
+        self.assertGreaterEqual(after["budget_used_usd_micros"], 2_000_000)
 
     def test_specialist_override_workflow(self) -> None:
         """Verifies specialist override with eligible action succeeds and logs to audit ledger."""

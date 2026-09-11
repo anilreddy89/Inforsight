@@ -516,6 +516,77 @@ class TestWorkflowService(unittest.TestCase):
         self.assertEqual(cm.exception.code, "AUTH_CAPACITY_EXHAUSTED")
         self.assertEqual(second.state_machine.current_state, CaseState.HUMAN_REVIEWED)
 
+    def test_reservation_replacement_is_atomic_and_version_guarded(self) -> None:
+        service = WorkflowService(capacity_seconds=600, capacity_cost_usd_micros=10_000_000)
+        first = ActionResourceRequirement(personnel_seconds=300, direct_cost_usd_micros=4_000_000)
+        replacement = ActionResourceRequirement(personnel_seconds=480, direct_cost_usd_micros=8_000_000)
+        initial = service.capacity_snapshot()
+        committed = service.replace_reservation(
+            case_id="case_reservation00000001",
+            action_type="courtesy_reminder",
+            requirement=first,
+            expected_capacity_version=initial["capacity_version"],
+        )
+        with self.assertRaises(AuthorityBoundaryError) as stale:
+            service.replace_reservation(
+                case_id="case_reservation00000001",
+                action_type="specialist_phone_outreach",
+                requirement=replacement,
+                expected_capacity_version=initial["capacity_version"],
+            )
+        self.assertEqual(stale.exception.code, "CAPACITY_VERSION_CONFLICT")
+        self.assertEqual(service.capacity_snapshot(), committed)
+
+        too_large = ActionResourceRequirement(
+            personnel_seconds=601, direct_cost_usd_micros=10_000_001
+        )
+        with self.assertRaises(AuthorityBoundaryError) as exceeded:
+            service.replace_reservation(
+                case_id="case_reservation00000001",
+                action_type="specialist_phone_outreach",
+                requirement=too_large,
+                expected_capacity_version=committed["capacity_version"],
+            )
+        self.assertEqual(exceeded.exception.code, "CAPACITY_EXCEEDED")
+        self.assertEqual(service.capacity_snapshot(), committed)
+
+        replaced = service.replace_reservation(
+            case_id="case_reservation00000001",
+            action_type="specialist_phone_outreach",
+            requirement=replacement,
+            expected_capacity_version=committed["capacity_version"],
+        )
+        self.assertEqual(replaced["remaining_seconds"], 120)
+        self.assertEqual(replaced["remaining_cost_usd_micros"], 2_000_000)
+
+    def test_concurrent_reservations_against_one_version_have_one_winner(self) -> None:
+        service = WorkflowService(capacity_seconds=300, capacity_cost_usd_micros=4_000_000)
+        requirement = ActionResourceRequirement(
+            personnel_seconds=300, direct_cost_usd_micros=4_000_000
+        )
+        expected = service.capacity_snapshot()["capacity_version"]
+
+        def reserve(case_id: str) -> str:
+            try:
+                service.replace_reservation(
+                    case_id=case_id,
+                    action_type="courtesy_reminder",
+                    requirement=requirement,
+                    expected_capacity_version=expected,
+                )
+                return "SUCCESS"
+            except AuthorityBoundaryError as exc:
+                return exc.code
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes = list(
+                pool.map(reserve, ("case_competing0000000001", "case_competing0000000002"))
+            )
+        self.assertEqual(sorted(outcomes), ["CAPACITY_VERSION_CONFLICT", "SUCCESS"])
+        snapshot = service.capacity_snapshot()
+        self.assertEqual(snapshot["remaining_seconds"], 0)
+        self.assertEqual(snapshot["remaining_cost_usd_micros"], 0)
+
     def test_audit_handoff_failure_does_not_commit_execution(self) -> None:
         class FailingExecutionLedger(AuditLedger):
             def append(self, **kwargs):

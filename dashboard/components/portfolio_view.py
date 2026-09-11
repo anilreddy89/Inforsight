@@ -17,6 +17,10 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
         "Real-time visibility into portfolio vulnerability, risk tier distribution, "
         "and specialist capacity constraints under **ADR 0002**."
     )
+    st.caption(
+        f"Capacity-feasible allocation `{summary.get('allocation_id', 'unavailable')}` "
+        f"using allocator {summary.get('allocator_version', 'unavailable')}."
+    )
 
     # 1. KPI Metric Cards Row
     kpi_col1, kpi_col2, kpi_col3, kpi_col4, kpi_col5 = st.columns(5)
@@ -65,6 +69,46 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
         )
 
     st.progress(min(1.0, cap_pct / 100.0))
+    budget_used = summary.get("budget_used_usd_micros", 0) / 1_000_000
+    budget_capacity = summary.get("budget_capacity_usd_micros", 0) / 1_000_000
+    st.caption(
+        f"Exact allocation resources: ${budget_used:,.2f} / ${budget_capacity:,.2f} budget; "
+        f"{summary.get('personnel_used_seconds', 0):,} / "
+        f"{summary.get('personnel_capacity_seconds', 0):,} personnel seconds. "
+        f"Overflow: ${summary.get('budget_overflow_usd_micros', 0) / 1_000_000:,.2f} "
+        f"and {summary.get('personnel_overflow_seconds', 0):,} seconds."
+    )
+    st.caption(
+        f"Binding `{summary.get('allocation_binding_sha256', 'unavailable')}` · "
+        f"capacity version {summary.get('capacity_version', 'unavailable')} · "
+        f"reservation version {summary.get('reservation_version', 'unavailable')}"
+    )
+
+    comparison = summary.get("strategy_comparison", ())
+    if comparison:
+        with st.expander("Controlled strategy comparison", expanded=False):
+            st.caption(
+                "Synthetic conditional comparison on identical frozen inputs; values are modeled, "
+                "not causal, realized, or production-performance estimates."
+            )
+            rows = [
+                {
+                    "Strategy": row["strategy_id"].replace("_", " ").title(),
+                    "Feasible": row["feasible"],
+                    "Selected": row["selected_count"],
+                    "Abstentions": row["abstention_count"],
+                    "Budget used (USD micros)": row["budget_used_usd_micros"],
+                    "Personnel seconds": row["personnel_used_seconds"],
+                    "Modeled net value (USD micros)": row[
+                        "modeled_expected_net_value_usd_micros"
+                    ],
+                    "Expected combined terminations avoided": row[
+                        "combined_terminations_expected_avoided"
+                    ],
+                }
+                for row in comparison
+            ]
+            st.dataframe(rows, hide_index=True, width="stretch")
 
     st.markdown("---")
 
@@ -78,8 +122,11 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
         st.pyplot(fig_donut, width="stretch")
 
     with chart_col2:
-        st.markdown("### 🛠️ Optimal Intervention Mix")
-        st.caption("Unconstrained recommendations ranked by modeled net annual premium preserved; RH-05 capacity enforcement remains pending.")
+        st.markdown("### 🛠️ Capacity-feasible intervention mix")
+        st.caption(
+            "Selections from the deterministic RH-05 portfolio allocator, ranked by "
+            "modeled net annual premium preserved."
+        )
         fig_bar = plot_intervention_mix(summary["action_counts"])
         st.pyplot(fig_bar, width="stretch")
 

@@ -143,10 +143,30 @@ class ActionResourceRequirement:
 
     personnel_hours: float = 0.0
     direct_cost_usd: float = 0.0
+    personnel_seconds: int | None = None
+    direct_cost_usd_micros: int | None = None
 
     def __post_init__(self) -> None:
         if self.personnel_hours < 0 or self.direct_cost_usd < 0:
             raise ValueError("action resources cannot be negative")
+        seconds = self.personnel_seconds
+        micros = self.direct_cost_usd_micros
+        if seconds is None:
+            converted_seconds = self.personnel_hours * 3_600
+            if not converted_seconds.is_integer():
+                raise ValueError("personnel_hours must convert exactly to integer seconds")
+            seconds = int(converted_seconds)
+        if micros is None:
+            converted_micros = self.direct_cost_usd * 1_000_000
+            if not converted_micros.is_integer():
+                raise ValueError("direct_cost_usd must convert exactly to integer USD micros")
+            micros = int(converted_micros)
+        if not isinstance(seconds, int) or seconds < 0:
+            raise ValueError("personnel_seconds must be a nonnegative integer")
+        if not isinstance(micros, int) or micros < 0:
+            raise ValueError("direct_cost_usd_micros must be a nonnegative integer")
+        object.__setattr__(self, "personnel_seconds", seconds)
+        object.__setattr__(self, "direct_cost_usd_micros", micros)
 
 
 @dataclass(frozen=True)

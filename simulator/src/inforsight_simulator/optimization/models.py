@@ -129,23 +129,94 @@ class OptimalRecommendation:
 
 @dataclass(frozen=True)
 class PortfolioAllocation:
-    """Portfolio-level triage allocation under capacity and budget constraints."""
+    """Contract-bound portfolio allocation using exact RH-04 resource units."""
 
+    allocation_id: str
+    portfolio_id: str
     as_of: datetime
-    specialist_capacity: int
-    allocated_specialist_count: int
-    total_budget_usd: float
-    allocated_cost_usd: float
-    net_portfolio_value_usd: float
+    budget_capacity_usd_micros: int
+    budget_used_usd_micros: int
+    personnel_capacity_seconds: int
+    personnel_used_seconds: int
+    objective_usd_micros: int
     recommendations: tuple[OptimalRecommendation, ...]
+    occurrence_ids: tuple[str, ...]
+    allocator_id: str = "inforsight.portfolio-allocation"
+    allocator_version: str = "1.0.0"
+    status: str = "AVAILABLE"
+    failure_code: str | None = None
+
+    def __post_init__(self) -> None:
+        for name in (
+            "budget_capacity_usd_micros",
+            "budget_used_usd_micros",
+            "personnel_capacity_seconds",
+            "personnel_used_seconds",
+        ):
+            if getattr(self, name) < 0:
+                raise ValueError(f"INVALID_CAPACITY: {name} cannot be negative")
+        if self.budget_used_usd_micros > self.budget_capacity_usd_micros:
+            raise ValueError("INFEASIBLE_SELECTION: budget capacity exceeded")
+        if self.personnel_used_seconds > self.personnel_capacity_seconds:
+            raise ValueError("INFEASIBLE_SELECTION: personnel capacity exceeded")
+        if len(self.recommendations) != len(self.occurrence_ids):
+            raise ValueError("CONTEXT_MISMATCH: occurrence and recommendation counts differ")
+
+    @property
+    def total_budget_usd(self) -> float:
+        return self.budget_capacity_usd_micros / 1_000_000
+
+    @property
+    def allocated_cost_usd(self) -> float:
+        return self.budget_used_usd_micros / 1_000_000
+
+    @property
+    def net_portfolio_value_usd(self) -> float:
+        return self.objective_usd_micros / 1_000_000
+
+    @property
+    def specialist_capacity(self) -> int:
+        """Legacy display-only whole-hour equivalent; not a governed resource."""
+        return self.personnel_capacity_seconds // 3_600
+
+    @property
+    def allocated_specialist_count(self) -> int:
+        """Legacy compatibility count for historical callers."""
+        return sum(
+            rec.recommended_action
+            in {"specialist_phone_outreach", "grace_period_consultation"}
+            for rec in self.recommendations
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "allocator_id": self.allocator_id,
+            "allocator_version": self.allocator_version,
+            "allocation_id": self.allocation_id,
+            "portfolio_id": self.portfolio_id,
             "as_of": self.as_of.isoformat().replace("+00:00", "Z"),
-            "specialist_capacity": self.specialist_capacity,
-            "allocated_specialist_count": self.allocated_specialist_count,
-            "total_budget_usd": round(self.total_budget_usd, 2),
-            "allocated_cost_usd": round(self.allocated_cost_usd, 2),
-            "net_portfolio_value_usd": round(self.net_portfolio_value_usd, 2),
+            "status": self.status,
+            "failure_code": self.failure_code,
+            "budget_capacity_usd_micros": self.budget_capacity_usd_micros,
+            "budget_used_usd_micros": self.budget_used_usd_micros,
+            "budget_available_usd_micros": self.budget_capacity_usd_micros - self.budget_used_usd_micros,
+            "budget_overflow_usd_micros": 0,
+            "personnel_capacity_seconds": self.personnel_capacity_seconds,
+            "personnel_used_seconds": self.personnel_used_seconds,
+            "personnel_available_seconds": self.personnel_capacity_seconds - self.personnel_used_seconds,
+            "personnel_overflow_seconds": 0,
+            "objective_usd_micros": self.objective_usd_micros,
+            "selections": [
+                {
+                    "occurrence_id": occurrence_id,
+                    "policy_id": rec.policy_id,
+                    "selected_action_id": rec.recommended_action,
+                    "objective_usd_micros": rec.expected_net_value_usd_micros,
+                    "direct_cost_usd_micros": rec.action_utilities[rec.recommended_action].direct_cost_usd_micros,
+                    "personnel_seconds": rec.action_utilities[rec.recommended_action].personnel_seconds,
+                    "authorized_to_act": False,
+                }
+                for occurrence_id, rec in zip(self.occurrence_ids, self.recommendations)
+            ],
             "recommendations": [rec.to_dict() for rec in self.recommendations],
         }

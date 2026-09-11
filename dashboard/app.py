@@ -69,15 +69,22 @@ def get_engine_bridge() -> EngineBridge:
 
 
 @st.cache_data
-def get_cohort_data(_bridge: EngineBridge, policy_count: int = 48) -> tuple[list[TriagePolicyItem], dict]:
-    """Generates and caches the scored demonstration cohort."""
+def get_cohort_data(
+    _bridge: EngineBridge,
+    policy_count: int = 48,
+    reservation_version: int = 0,
+) -> tuple[list[TriagePolicyItem], dict]:
+    """Cache a cohort only for one immutable reservation-state version."""
     return load_dashboard_cohort(_bridge, policy_count=policy_count)
 
 
 def main() -> None:
     # 2. Initialize Core Services & Cohort
     bridge = get_engine_bridge()
-    items, summary = get_cohort_data(bridge, policy_count=48)
+    reservation_version = bridge.workflow_service.capacity_snapshot()["reservation_version"]
+    items, summary = get_cohort_data(
+        bridge, policy_count=48, reservation_version=reservation_version
+    )
 
     # 3. Session State Initialization
     if "selected_policy_id" not in st.session_state or not st.session_state["selected_policy_id"]:

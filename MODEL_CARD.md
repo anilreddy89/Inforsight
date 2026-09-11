@@ -28,6 +28,8 @@ The outputs are designed strictly for **operational perception and conservation 
 1. **Queue Prioritization**: Sorting active policyholder accounts by risk to prioritize conservation outreach under fixed operational capacity budgets (Top 1%, 5%, and 20% review queues).
 2. **Perceptual Situational Awareness**: Providing conservation caseworkers with directional risk drivers (additive log-odds and centered SHAP attributions) to understand behavioral signals contributing to risk.
 
+The bounded local decision runtime applies portfolio-allocation contract `1.0.0` after scoring and eligibility evaluation. It uses exact integer USD micros and personnel seconds, deterministic tie-breaking, and abstention; the production procedure is described as a deterministic feasibility-preserving allocator. Exact agreement is established only for the declared small-instance validation domain, not as a global-optimality claim. All selections remain advisory and require the ADR 0002 human-authority boundary.
+
 ### Out-of-Scope and Prohibited Uses
 - **Autonomous Action Prohibited**: The model possesses zero authority to execute customer communications, issue payment retries, alter billing terms, or adjust policy parameters autonomously.
 - **Adverse Underwriting & Pricing Prohibited**: The model must never be used for initial underwriting, risk selection, premium loading, denial of coverage, or policy termination.
@@ -140,4 +142,3 @@ To safeguard consumers against automated adverse actions, the model operates und
 - **Dependencies**: `numpy==2.2.3`, `scikit-learn==1.6.1`, `scipy==1.15.2`
 - **Runtime Serving Engine**: Pure-NumPy `BundledInferenceEngine` with zero runtime `scikit-learn` dependency.
 - **Bit-for-Bit Reproducibility**: Max probability delta upon serialized bundle reload is $2.22 \times 10^{-16} \le 1.00 \times 10^{-12}$.
-

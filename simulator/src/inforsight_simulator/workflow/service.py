@@ -79,15 +79,105 @@ class WorkflowService:
         *,
         capacity_hours: float = float("inf"),
         capacity_cost_usd: float = float("inf"),
+        capacity_seconds: int | None = None,
+        capacity_cost_usd_micros: int | None = None,
         approval_ttl_minutes: int = 30,
     ) -> None:
         self.ledger = audit_ledger or AuditLedger()
         self._cases: dict[str, WorkflowContext] = {}
         self._lock = threading.RLock()
-        self._remaining_hours = capacity_hours
-        self._remaining_cost_usd = capacity_cost_usd
+        self._remaining_seconds = (
+            capacity_seconds
+            if capacity_seconds is not None
+            else (2**63 - 1 if capacity_hours == float("inf") else int(capacity_hours * 3_600))
+        )
+        self._remaining_cost_usd_micros = (
+            capacity_cost_usd_micros
+            if capacity_cost_usd_micros is not None
+            else (
+                2**63 - 1
+                if capacity_cost_usd == float("inf")
+                else int(capacity_cost_usd * 1_000_000)
+            )
+        )
+        if self._remaining_seconds < 0 or self._remaining_cost_usd_micros < 0:
+            raise ValueError("workflow capacities must be nonnegative")
         self._approval_ttl = timedelta(minutes=approval_ttl_minutes)
         self._execution_results: dict[str, tuple[str, CaseEvent]] = {}
+        self._capacity_seconds = self._remaining_seconds
+        self._capacity_cost_usd_micros = self._remaining_cost_usd_micros
+        self._capacity_version = 1
+        self._reservation_version = 0
+        self._reservations: dict[str, tuple[str, ActionResourceRequirement]] = {}
+
+    def capacity_snapshot(self) -> dict[str, int]:
+        """Return one lock-consistent exact-capacity and reservation snapshot."""
+        with self._lock:
+            return {
+                "capacity_version": self._capacity_version,
+                "reservation_version": self._reservation_version,
+                "capacity_seconds": self._capacity_seconds,
+                "remaining_seconds": self._remaining_seconds,
+                "capacity_cost_usd_micros": self._capacity_cost_usd_micros,
+                "remaining_cost_usd_micros": self._remaining_cost_usd_micros,
+            }
+
+    def _replacement_resources(
+        self,
+        *,
+        case_id: str,
+        action_type: str | None,
+        requirement: ActionResourceRequirement | None,
+        expected_capacity_version: int,
+    ) -> tuple[int, int]:
+        if expected_capacity_version != self._capacity_version:
+            raise AuthorityBoundaryError(
+                "CAPACITY_VERSION_CONFLICT", "capacity version changed before reservation"
+            )
+        old = self._reservations.get(case_id)
+        old_requirement = old[1] if old else ActionResourceRequirement()
+        new_requirement = requirement or ActionResourceRequirement()
+        available_seconds = self._remaining_seconds + old_requirement.personnel_seconds
+        available_micros = (
+            self._remaining_cost_usd_micros + old_requirement.direct_cost_usd_micros
+        )
+        if (
+            new_requirement.personnel_seconds > available_seconds
+            or new_requirement.direct_cost_usd_micros > available_micros
+        ):
+            raise AuthorityBoundaryError(
+                "CAPACITY_EXCEEDED", "replacement exceeds current exact resource capacity"
+            )
+        return (
+            available_seconds - new_requirement.personnel_seconds,
+            available_micros - new_requirement.direct_cost_usd_micros,
+        )
+
+    def replace_reservation(
+        self,
+        *,
+        case_id: str,
+        action_type: str | None,
+        requirement: ActionResourceRequirement | None,
+        expected_capacity_version: int,
+    ) -> dict[str, int]:
+        """Atomically release an old reservation and reserve its replacement."""
+        with self._lock:
+            remaining_seconds, remaining_micros = self._replacement_resources(
+                case_id=case_id,
+                action_type=action_type,
+                requirement=requirement,
+                expected_capacity_version=expected_capacity_version,
+            )
+            self._remaining_seconds = remaining_seconds
+            self._remaining_cost_usd_micros = remaining_micros
+            if action_type is None or requirement is None:
+                self._reservations.pop(case_id, None)
+            else:
+                self._reservations[case_id] = (action_type, requirement)
+            self._capacity_version += 1
+            self._reservation_version += 1
+            return self.capacity_snapshot()
 
     def get_case(self, case_id: str) -> Optional[WorkflowContext]:
         return self._cases.get(case_id)
@@ -232,6 +322,14 @@ class WorkflowService:
 
     def submit_review(
         self,
+        **kwargs: Any,
+    ) -> CaseEvent:
+        """Serialize review, eligibility revalidation, and reservation replacement."""
+        with self._lock:
+            return self._submit_review_locked(**kwargs)
+
+    def _submit_review_locked(
+        self,
         *,
         case_id: str,
         trusted_actor: TrustedActorContext,
@@ -239,6 +337,7 @@ class WorkflowService:
         rationale_code: str,
         justification: Optional[str] = None,
         selected_action: Optional[str] = None,
+        expected_capacity_version: int | None = None,
         occurred_at: Optional[str] = None,
     ) -> CaseEvent:
         """Processes a specialist review using identity supplied by trusted server context."""
@@ -297,8 +396,24 @@ class WorkflowService:
             chosen_action, "none" if chosen_action == "abstain" else "unknown"
         )
         if decision in (ReviewDecision.APPROVED, ReviewDecision.OVERRIDDEN) and channel == "unknown":
-            raise AuthorityBoundaryError(
-                "AUTH_CHANNEL_UNBOUND", f"action '{chosen_action}' has no authoritative channel"
+                raise AuthorityBoundaryError(
+                    "AUTH_CHANNEL_UNBOUND", f"action '{chosen_action}' has no authoritative channel"
+                )
+
+        reservation_requirement = (
+            ctx.action_resources[chosen_action]
+            if decision in (ReviewDecision.APPROVED, ReviewDecision.OVERRIDDEN)
+            else None
+        )
+        reservation_version = expected_capacity_version
+        # Preflight while holding the same lock used by commit. No resource is
+        # released when the expected version is stale or the replacement fails.
+        if reservation_version is not None:
+            self._replacement_resources(
+                case_id=case_id,
+                action_type=(chosen_action if reservation_requirement else None),
+                requirement=reservation_requirement,
+                expected_capacity_version=reservation_version,
             )
 
         review = HumanReview(
@@ -362,6 +477,14 @@ class WorkflowService:
             human_review=review.to_dict(),
             timestamp=ts,
         )
+
+        if reservation_version is not None:
+            self.replace_reservation(
+                case_id=case_id,
+                action_type=(chosen_action if reservation_requirement else None),
+                requirement=reservation_requirement,
+                expected_capacity_version=reservation_version,
+            )
 
         return event
 
@@ -442,16 +565,26 @@ class WorkflowService:
                     "current eligibility differs from reviewed eligibility",
                 )
 
-            requirement = ctx.action_resources.get(
-                approval.action_type, ActionResourceRequirement()
-            )
-            if (
-                requirement.personnel_hours > self._remaining_hours
-                or requirement.direct_cost_usd > self._remaining_cost_usd
-            ):
+            requirement = ctx.action_resources.get(approval.action_type, ActionResourceRequirement())
+            reserved = self._reservations.get(case_id)
+            if reserved is None:
+                try:
+                    self._replacement_resources(
+                        case_id=case_id,
+                        action_type=approval.action_type,
+                        requirement=requirement,
+                        expected_capacity_version=self._capacity_version,
+                    )
+                except AuthorityBoundaryError as exc:
+                    if exc.code == "CAPACITY_EXCEEDED":
+                        raise AuthorityBoundaryError(
+                            "AUTH_CAPACITY_EXHAUSTED",
+                            "insufficient hours or money for approved action",
+                        ) from exc
+                    raise
+            if reserved is not None and reserved[0] != approval.action_type:
                 raise AuthorityBoundaryError(
-                    "AUTH_CAPACITY_EXHAUSTED",
-                    "insufficient hours or money for approved action",
+                    "STALE_ALLOCATION", "approved action lacks its exact current reservation"
                 )
 
             protected = {"action_type", "channel", "reviewer_id", "approval_id", "case_version"}
@@ -487,9 +620,14 @@ class WorkflowService:
                 metadata={"approval_binding": approval.to_dict()},
                 timestamp=ts,
             )
+            if reserved is None:
+                self.replace_reservation(
+                    case_id=case_id,
+                    action_type=approval.action_type,
+                    requirement=requirement,
+                    expected_capacity_version=self._capacity_version,
+                )
             ctx.state_machine._record_prepared_execution(event)
-            self._remaining_hours -= requirement.personnel_hours
-            self._remaining_cost_usd -= requirement.direct_cost_usd
             ctx.case_version += 1
             self._execution_results[idempotency_key] = (request_digest, event)
             return event

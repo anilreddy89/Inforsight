@@ -908,7 +908,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-05 - Enforce capacity and validate the allocation algorithm
 
-**Status:** RH-05D completed on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`, with all five required CI jobs passing. Allocation contract 1.0.0 defines the exact portfolio problem, integer resource constraints, deterministic tie-breaking, exhaustive small-instance reference, zero additive-gap gate, dashboard allocation lifecycle, atomic override semantics, and controlled strategy comparison. RH-05I is predecessor-ready from updated `main`; parent RH-05 remains open and no runtime or historical evidence change is established by the design merge.
+**Status:** RH-05D completed on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`. RH-05I implementation is complete and locally verified for [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) on branch `fix/157-rh-05i-portfolio-allocation`; review and merge remain pending. Parent RH-05 closes only after #157 merges, and historical evidence remains frozen for RH-12.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and algorithm clarification
@@ -918,14 +918,14 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Acceptance checks:**
 
-- [ ] Dashboard allocation never silently exceeds hours or budget; any infeasibility/overflow is shown numerically.
-- [ ] Summaries refresh after decisions and derive from actual allocations.
-- [ ] Exhaustive small fixtures quantify optimality gap and marginal opportunity cost.
-- [ ] Fractional personnel hours and shared budgets are enforced consistently.
-- [ ] Documentation names the implemented algorithm truthfully.
-- [ ] Before evaluation, the issue declares either an acceptable small-instance optimality gap or acceptance of a feasibility-preserving heuristic without an optimality claim.
-- [ ] The engine is compared with non-intervention, operational rules-only, and risk-ranked strategies using the same cohort, decision cutoff, eligibility rules, action catalog, budget, and personnel units.
-- [ ] Specialist overrides recheck eligibility and atomically reserve/release hours and money; concurrent decisions cannot consume the same capacity twice.
+- [x] Dashboard allocation never silently exceeds hours or budget; any infeasibility/overflow is shown numerically.
+- [x] Summaries refresh after decisions and derive from actual allocations and current reservations.
+- [x] Exhaustive small fixtures quantify zero additive optimality gap and marginal opportunity value.
+- [x] Fractional personnel time and shared budgets are enforced as exact seconds and USD micros.
+- [x] Documentation names the implementation a deterministic feasibility-preserving allocator, exact only in the bounded validation domain.
+- [x] The accepted design predeclared a zero additive-gap threshold before RH-05I evaluation.
+- [x] The engine is compared with non-intervention, operational rules-only, and risk-ranked strategies using one frozen comparison context and identical capacities.
+- [x] Specialist decisions recheck eligibility and atomically reserve/release exact resources under a capacity version; concurrency cannot consume capacity twice.
 
 #### RH-06 - Extract and verify an inference-only runtime package
 
