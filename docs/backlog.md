@@ -908,7 +908,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-05 - Enforce capacity and validate the allocation algorithm
 
-**Status:** RH-05D completed on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`. RH-05I implementation is complete and locally verified for [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) on branch `fix/157-rh-05i-portfolio-allocation`; review and merge remain pending. Parent RH-05 closes only after #157 merges, and historical evidence remains frozen for RH-12.
+**Status:** Completed on 2026-09-11. RH-05D closed through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`; RH-05I closed through [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) and [PR #158](https://github.com/anilreddy89/Inforsight/pull/158), merge `603b955`, with all five required CI jobs passing. Allocation contract 1.0.0 now governs the bounded local runtime. Historical evidence remains frozen pending RH-12, and P4-02/P4-03 remain blocked through RH-13.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and algorithm clarification
