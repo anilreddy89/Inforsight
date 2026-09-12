@@ -1,6 +1,6 @@
 # RH-05D: Portfolio allocation contract 1.0.0
 
-Status: accepted on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`. RH-05I runtime implementation for issue #157 is complete and locally verified on `fix/157-rh-05i-portfolio-allocation`; review and merge remain pending.
+Status: implemented. The contract was accepted on 2026-09-09 through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`. RH-05I closed through [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) and [PR #158](https://github.com/anilreddy89/Inforsight/pull/158), merge `603b955`, on 2026-09-11 after all five required CI jobs passed.
 
 ## Purpose and claim boundary
 
