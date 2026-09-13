@@ -933,6 +933,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Packaging defect / refactor
 **Priority:** High
 
+**Status:** RH-06D is implemented locally on 2026-09-13 through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) on branch `docs/160-rh-06d-inference-runtime`; review and merge remain pending. Inference-runtime contract 1.0.0 now fixes the package/dependency and prohibited-import boundaries, trusted bundle identity, compatibility plan, canonical HTTP container specification, stable failures, and 14 predeclared validation fixtures. Seven focused design tests, all 46 contract tests, and full `make check` with 506 simulator tests pass. RH-06I remains blocked until RH-06D merges; RH-07 remains blocked until parent RH-06 completes.
+
 **Outcome:** Provide an independently installable inference runtime whose import, startup, health, and score paths do not import or require training/evaluation packages.
 
 **Acceptance checks:**

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.example/contracts/rh/inference-runtime/v1/inference-runtime-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_id", "contract_version", "status", "distribution", "runtime_dependencies", "serving_dependencies", "prohibited_distributions", "prohibited_module_prefixes", "runtime_modules", "trusted_bundle", "semantic_catalog", "configuration", "validation_order", "failure_codes", "serving", "containers", "historical_artifacts"],
+  "properties": {
+    "contract_id": {"const": "inforsight.inference-runtime"},
+    "contract_version": {"const": "1.0.0"},
+    "status": {"enum": ["proposed", "accepted", "retired"]},
+    "distribution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "namespace", "source_root", "requires_python", "runtime_version"],
+      "properties": {
+        "name": {"const": "inforsight-inference-runtime"},
+        "namespace": {"const": "inforsight_inference"},
+        "source_root": {"const": "inference-runtime/src/inforsight_inference"},
+        "requires_python": {"const": ">=3.11"},
+        "runtime_version": {"const": "1.0.0"}
+      }
+    },
+    "runtime_dependencies": {"const": ["numpy==2.5.2"]},
+    "serving_dependencies": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string"}},
+    "prohibited_distributions": {"type": "array", "minItems": 7, "uniqueItems": true, "items": {"type": "string"}},
+    "prohibited_module_prefixes": {"type": "array", "minItems": 10, "uniqueItems": true, "items": {"type": "string"}},
+    "runtime_modules": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "pattern": "^inforsight_inference\\."}},
+    "trusted_bundle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository_path", "file_sha256", "bundle_id", "bundle_version", "preprocessing_profile_id"],
+      "properties": {
+        "repository_path": {"const": "docs/experiments/phase-02-10-model-bundle.json"},
+        "file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bundle_id": {"const": "inforsight-v6-logistic-platt-20260817"},
+        "bundle_version": {"const": "1.0.0"},
+        "preprocessing_profile_id": {"const": "v6-coefficient-transform-then-bundle-zscore/1.0.0"}
+      }
+    },
+    "semantic_catalog": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_path", "packaged_path", "file_sha256", "catalog_version", "copy_mode"],
+      "properties": {
+        "source_path": {"const": "data-contracts/rh/v1/semantic-catalog.json"},
+        "packaged_path": {"const": "inforsight_inference/assets/semantic-catalog.json"},
+        "file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "catalog_version": {"const": "1.0.0"},
+        "copy_mode": {"const": "byte_identical_build_input"}
+      }
+    },
+    "configuration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bundle_path", "expected_bundle_sha256", "expected_bundle_id", "expected_bundle_version", "require_trusted_bundle", "explicit_path_fallback", "canonical_image_requires_trusted_bundle"],
+      "properties": {
+        "bundle_path": {"const": "INFORSIGHT_MODEL_BUNDLE_PATH"},
+        "expected_bundle_sha256": {"const": "INFORSIGHT_EXPECTED_BUNDLE_SHA256"},
+        "expected_bundle_id": {"const": "INFORSIGHT_EXPECTED_BUNDLE_ID"},
+        "expected_bundle_version": {"const": "INFORSIGHT_EXPECTED_BUNDLE_VERSION"},
+        "require_trusted_bundle": {"const": "INFORSIGHT_REQUIRE_TRUSTED_BUNDLE"},
+        "explicit_path_fallback": {"const": "forbidden"},
+        "canonical_image_requires_trusted_bundle": {"const": true}
+      }
+    },
+    "validation_order": {"const": ["resolve_path", "read_exact_bytes", "verify_byte_sha256", "parse_strict_json", "validate_structure_and_values", "verify_bundle_identity", "verify_preprocessing_and_catalog_identity", "construct_engine", "mark_ready"]},
+    "failure_codes": {"type": "array", "minItems": 13, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"}},
+    "serving": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asgi_target", "host", "port", "implemented_protocols", "routes", "health_semantics", "authorized_to_act"],
+      "properties": {
+        "asgi_target": {"const": "serving.app:app"},
+        "host": {"const": "0.0.0.0"},
+        "port": {"const": 8000},
+        "implemented_protocols": {"const": ["http_rest"]},
+        "routes": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string"}},
+        "health_semantics": {"const": "verified_bundle_loaded_and_engine_ready_only"},
+        "authorized_to_act": {"const": false}
+      }
+    },
+    "containers": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonical_dockerfile", "canonical_exposed_ports", "non_root_required", "health_route", "p4_inference_dockerfile", "p4_compose", "java_control_plane", "grpc"],
+      "properties": {
+        "canonical_dockerfile": {"const": "serving/Dockerfile"},
+        "canonical_exposed_ports": {"const": [8000]},
+        "non_root_required": {"const": true},
+        "health_route": {"const": "/health"},
+        "p4_inference_dockerfile": {"const": "non_runnable_scaffold_or_pointer_only"},
+        "p4_compose": {"const": "non_runnable_topology_scaffold"},
+        "java_control_plane": {"const": "non_runnable_scaffold"},
+        "grpc": {"const": "not_implemented"}
+      }
+    },
+    "historical_artifacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_bundle_bytes_immutable", "evaluation_and_qualification_artifacts_immutable", "final_holdout_access"],
+      "properties": {
+        "release_bundle_bytes_immutable": {"const": true},
+        "evaluation_and_qualification_artifacts_immutable": {"const": true},
+        "final_holdout_access": {"const": "forbidden"}
+      }
+    }
+  }
+}
