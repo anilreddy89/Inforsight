@@ -1,0 +1,66 @@
+{
+  "contract_id": "inforsight.inference-runtime",
+  "contract_version": "1.0.0",
+  "status": "accepted",
+  "distribution": {
+    "name": "inforsight-inference-runtime",
+    "namespace": "inforsight_inference",
+    "source_root": "inference-runtime/src/inforsight_inference",
+    "requires_python": ">=3.11",
+    "runtime_version": "1.0.0"
+  },
+  "runtime_dependencies": ["numpy==2.5.2"],
+  "serving_dependencies": ["fastapi==0.141.1", "uvicorn==0.52.4", "pydantic==2.13.5"],
+  "prohibited_distributions": ["inforsight-simulator", "matplotlib", "pandas", "scikit-learn", "scipy", "streamlit", "xgboost"],
+  "prohibited_module_prefixes": ["inforsight_simulator.boosted_modeling", "inforsight_simulator.calibration", "inforsight_simulator.diagnostics", "inforsight_simulator.explanations", "inforsight_simulator.final_evaluation", "inforsight_simulator.modeling", "inforsight_simulator.qualification", "inforsight_simulator.v6_corpus", "inforsight_simulator.v6_evaluation", "matplotlib", "pandas", "scipy", "sklearn", "streamlit", "xgboost"],
+  "runtime_modules": ["inforsight_inference.bundle", "inforsight_inference.catalog", "inforsight_inference.engine", "inforsight_inference.errors"],
+  "trusted_bundle": {
+    "repository_path": "docs/experiments/phase-02-10-model-bundle.json",
+    "file_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+    "bundle_id": "inforsight-v6-logistic-platt-20260817",
+    "bundle_version": "1.0.0",
+    "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0"
+  },
+  "semantic_catalog": {
+    "source_path": "data-contracts/rh/v1/semantic-catalog.json",
+    "packaged_path": "inforsight_inference/assets/semantic-catalog.json",
+    "file_sha256": "d360ed670337912f6b0094d587b5a979c5b8de2ed0a528a184eac36b393f4005",
+    "catalog_version": "1.0.0",
+    "copy_mode": "byte_identical_build_input"
+  },
+  "configuration": {
+    "bundle_path": "INFORSIGHT_MODEL_BUNDLE_PATH",
+    "expected_bundle_sha256": "INFORSIGHT_EXPECTED_BUNDLE_SHA256",
+    "expected_bundle_id": "INFORSIGHT_EXPECTED_BUNDLE_ID",
+    "expected_bundle_version": "INFORSIGHT_EXPECTED_BUNDLE_VERSION",
+    "require_trusted_bundle": "INFORSIGHT_REQUIRE_TRUSTED_BUNDLE",
+    "explicit_path_fallback": "forbidden",
+    "canonical_image_requires_trusted_bundle": true
+  },
+  "validation_order": ["resolve_path", "read_exact_bytes", "verify_byte_sha256", "parse_strict_json", "validate_structure_and_values", "verify_bundle_identity", "verify_preprocessing_and_catalog_identity", "construct_engine", "mark_ready"],
+  "failure_codes": ["BUNDLE_PATH_MISSING", "BUNDLE_NOT_REGULAR_FILE", "BUNDLE_UNREADABLE", "TRUST_CONFIGURATION_MISSING", "BUNDLE_DIGEST_MISMATCH", "BUNDLE_ENCODING_INVALID", "BUNDLE_JSON_INVALID", "BUNDLE_SCHEMA_INVALID", "BUNDLE_ID_MISMATCH", "BUNDLE_VERSION_UNSUPPORTED", "PREPROCESSING_IDENTITY_MISMATCH", "CATALOG_IDENTITY_MISMATCH", "ENGINE_INITIALIZATION_FAILED"],
+  "serving": {
+    "asgi_target": "serving.app:app",
+    "host": "0.0.0.0",
+    "port": 8000,
+    "implemented_protocols": ["http_rest"],
+    "routes": ["GET /health", "GET /v1/model/info", "POST /v1/score", "POST /v1/score/batch", "GET /v1/diagnostics"],
+    "health_semantics": "verified_bundle_loaded_and_engine_ready_only",
+    "authorized_to_act": false
+  },
+  "containers": {
+    "canonical_dockerfile": "serving/Dockerfile",
+    "canonical_exposed_ports": [8000],
+    "non_root_required": true,
+    "health_route": "/health",
+    "p4_inference_dockerfile": "non_runnable_scaffold_or_pointer_only",
+    "p4_compose": "non_runnable_topology_scaffold",
+    "java_control_plane": "non_runnable_scaffold",
+    "grpc": "not_implemented"
+  },
+  "historical_artifacts": {
+    "release_bundle_bytes_immutable": true,
+    "evaluation_and_qualification_artifacts_immutable": true,
+    "final_holdout_access": "forbidden"
+  }
+}

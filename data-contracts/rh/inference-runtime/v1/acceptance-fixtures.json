@@ -1,0 +1,20 @@
+{
+  "fixture_version": "1.0.0",
+  "runtime_contract_version": "1.0.0",
+  "cases": [
+    {"id": "minimal-wheel-environment", "category": "packaging", "setup": "Install only the built runtime wheel and its declared dependencies in a new environment", "expected": "Import, verified bundle load, and scoring succeed without the simulator, scikit-learn, or xgboost"},
+    {"id": "prohibited-import-sentinel", "category": "imports", "setup": "Block prohibited module prefixes while importing runtime and starting ASGI", "expected": "Import and startup succeed and no prohibited prefix appears in sys.modules"},
+    {"id": "representative-score-parity", "category": "compatibility", "setup": "Score predeclared raw-v6 records including unknown category and tier thresholds", "expected": "Probability, tier, queue, and additive explanation results match the frozen compatibility path within accepted tolerance"},
+    {"id": "single-batch-parity", "category": "compatibility", "setup": "Score identical records through direct single, direct batch, HTTP single, and HTTP batch APIs", "expected": "All result fields are consistent for every occurrence"},
+    {"id": "explicit-missing-path", "category": "startup_failure", "setup": "Set INFORSIGHT_MODEL_BUNDLE_PATH to a nonexistent file", "expected_code": "BUNDLE_PATH_MISSING", "expected": "Startup fails and does not try the repository or image default"},
+    {"id": "digest-mismatch", "category": "startup_failure", "setup": "Supply readable bundle bytes with a nonmatching trusted digest", "expected_code": "BUNDLE_DIGEST_MISMATCH", "expected": "Startup fails before parsing or readiness"},
+    {"id": "identity-mismatch", "category": "startup_failure", "setup": "Supply correctly hashed fixture bytes with an unexpected bundle ID", "expected_code": "BUNDLE_ID_MISMATCH", "expected": "Startup fails after structural validation and before engine readiness"},
+    {"id": "version-mismatch", "category": "startup_failure", "setup": "Supply correctly hashed fixture bytes with an unsupported bundle version", "expected_code": "BUNDLE_VERSION_UNSUPPORTED", "expected": "Startup fails before engine readiness"},
+    {"id": "malformed-and-nonfinite-bundle", "category": "startup_failure", "setup": "Exercise invalid UTF-8, malformed JSON, duplicate keys, non-finite numbers, missing fields, and coefficient/column mismatch", "expected_codes": ["BUNDLE_ENCODING_INVALID", "BUNDLE_JSON_INVALID", "BUNDLE_SCHEMA_INVALID"], "expected": "Each mutation fails deterministically without changing the release bundle"},
+    {"id": "verified-health", "category": "serving", "setup": "Start with explicit trusted digest, ID, and version", "expected": "GET /health reports verified runtime and bundle identity only after engine readiness"},
+    {"id": "canonical-clean-image", "category": "container", "setup": "Build the canonical Dockerfile from a clean context without relying on cached project installs", "expected": "Image runs as non-root, exposes only HTTP 8000, passes /health, and scores single and batch requests"},
+    {"id": "route-configuration-consistency", "category": "container", "setup": "Compare source, Dockerfile, serving documentation, and test configuration", "expected": "ASGI target, environment names, assets, port, health route, and scoring routes match contract 1.0.0"},
+    {"id": "scaffold-boundary", "category": "scope", "setup": "Inspect active Docker and Compose documentation", "expected": "Java, gRPC, Kafka, PostgreSQL, and full-stack Compose are labeled non-runnable scaffolds and are not RH-06 evidence"},
+    {"id": "historical-compatibility", "category": "compatibility", "setup": "Run existing intentional training/export/evaluation consumers through the compatibility facade", "expected": "Tests pass and protected bundle and historical evidence remain byte-identical"}
+  ]
+}
