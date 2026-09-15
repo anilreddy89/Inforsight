@@ -1,17 +1,21 @@
 PYTHON ?= python3
+export PYTHONPATH := $(CURDIR)/inference-runtime/src:$(PYTHONPATH)
 
-.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap run-dashboard check-contracts check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check phase-03-qualification-check
+.PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check inference-runtime-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap run-dashboard check-contracts check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check phase-03-qualification-check
 
 serve-roadmap:
 	$(PYTHON) scripts/serve_roadmap.py
 
 run-dashboard:
-	PYTHONPATH=. $(PYTHON) -m streamlit run dashboard/app.py
+	PYTHONPATH=$(CURDIR)/inference-runtime/src:. $(PYTHON) -m streamlit run dashboard/app.py
 
-check: check-contracts check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check phase-03-qualification-check simulator-test
+check: check-contracts inference-runtime-check check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check phase-03-qualification-check simulator-test
+
+inference-runtime-check:
+	$(PYTHON) -m unittest discover -s inference-runtime/tests -p 'test_*.py' -v
 
 dashboard-check:
-	MPLCONFIGDIR=/tmp $(PYTHON) -m unittest discover -s dashboard/tests -p 'test_*.py' -v
+	MPLBACKEND=Agg MPLCONFIGDIR=/tmp $(PYTHON) -m unittest discover -s dashboard/tests -p 'test_*.py' -v
 
 phase-03-qualification-check:
 	$(PYTHON) scripts/run_phase_03_qualification.py --check
@@ -165,7 +169,7 @@ scoring-authorization-check:
 leakage-check:
 	python3 -m unittest discover -s simulator/tests -p 'test_leakage_guards.py' -v
 
-test: contract-test simulator-test
+test: contract-test inference-runtime-check simulator-test
 
 contract-test:
 	python3 -m unittest discover -s data-contracts/tests -v

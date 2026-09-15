@@ -31,13 +31,16 @@ jobs:
           cache: 'pip'
           cache-dependency-path: |
             data-contracts/requirements-test.txt
+            inference-runtime/pyproject.toml
             simulator/pyproject.toml
 
       - name: Install contract test dependencies
         run: python -m pip install -r data-contracts/requirements-test.txt
 
-      - name: Install simulator package
-        run: python -m pip install -e simulator
+      - name: Install runtime and simulator packages
+        run: |
+          python -m pip install -e inference-runtime
+          python -m pip install -e simulator
 
       - name: Run boundary and contract checks
         run: make check-contracts
@@ -57,13 +60,16 @@ jobs:
           cache: 'pip'
           cache-dependency-path: |
             data-contracts/requirements-test.txt
+            inference-runtime/pyproject.toml
             simulator/pyproject.toml
 
       - name: Install contract test dependencies
         run: python -m pip install -r data-contracts/requirements-test.txt
 
-      - name: Install simulator and modeling dependencies
-        run: python -m pip install -e simulator
+      - name: Install runtime, simulator, and modeling dependencies
+        run: |
+          python -m pip install -e inference-runtime
+          python -m pip install -e simulator
 
       - name: Run v1-v3 pipeline checks
         run: make check-v1-v3
@@ -83,13 +89,16 @@ jobs:
           cache: 'pip'
           cache-dependency-path: |
             data-contracts/requirements-test.txt
+            inference-runtime/pyproject.toml
             simulator/pyproject.toml
 
       - name: Install contract test dependencies
         run: python -m pip install -r data-contracts/requirements-test.txt
 
-      - name: Install simulator and modeling dependencies
-        run: python -m pip install -e simulator
+      - name: Install runtime, simulator, and modeling dependencies
+        run: |
+          python -m pip install -e inference-runtime
+          python -m pip install -e simulator
 
       - name: Run v4-v5 diagnostics and qualification checks
         run: make check-v4-v5
@@ -109,13 +118,16 @@ jobs:
           cache: 'pip'
           cache-dependency-path: |
             data-contracts/requirements-test.txt
+            inference-runtime/pyproject.toml
             simulator/pyproject.toml
 
       - name: Install contract test dependencies
         run: python -m pip install -r data-contracts/requirements-test.txt
 
-      - name: Install simulator and modeling dependencies
-        run: python -m pip install -e simulator
+      - name: Install runtime, simulator, and modeling dependencies
+        run: |
+          python -m pip install -e inference-runtime
+          python -m pip install -e simulator
 
       - name: Run complete simulator unit test suite
         run: make simulator-test
@@ -127,8 +139,41 @@ jobs:
       - v1-v3-pipeline-checks
       - v4-v5-diagnostics-checks
       - simulator-unit-tests
+      - runtime-and-serving-checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Confirm all checks passed
         run: echo "All parallel CI validation jobs passed successfully."
+
+  runtime-and-serving-checks:
+    name: Inference Runtime & Serving
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: |
+            inference-runtime/pyproject.toml
+            dashboard/requirements.txt
+            serving/requirements-test.txt
+            simulator/pyproject.toml
+
+      - name: Install runtime and affected component dependencies
+        run: |
+          python -m pip install -e inference-runtime
+          python -m pip install -e simulator
+          python -m pip install -r serving/requirements-test.txt
+          python -m pip install -r dashboard/requirements.txt
+
+      - name: Run runtime, serving, and dashboard checks
+        run: |
+          make inference-runtime-check
+          make serving-gateway-check
+          MPLBACKEND=Agg make dashboard-check

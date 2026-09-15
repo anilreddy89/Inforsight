@@ -933,17 +933,17 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Packaging defect / refactor
 **Priority:** High
 
-**Status:** RH-06D is implemented locally on 2026-09-13 through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) on branch `docs/160-rh-06d-inference-runtime`; review and merge remain pending. Inference-runtime contract 1.0.0 now fixes the package/dependency and prohibited-import boundaries, trusted bundle identity, compatibility plan, canonical HTTP container specification, stable failures, and 14 predeclared validation fixtures. Seven focused design tests, all 46 contract tests, and full `make check` with 506 simulator tests pass. RH-06I remains blocked until RH-06D merges; RH-07 remains blocked until parent RH-06 completes.
+**Status:** RH-06D completed on 2026-09-13 through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) and [PR #161](https://github.com/anilreddy89/Inforsight/pull/161), merge `205f612`, with all five CI jobs passing. RH-06I is implemented locally on 2026-09-14 through [issue #162](https://github.com/anilreddy89/Inforsight/issues/162) on branch `fix/162-rh-06i-inference-runtime`: the NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, clean package/ASGI/container checks, and affected suites pass. Review, PR, CI, and merge remain pending; parent RH-06 and RH-07 remain merge-gated.
 
 **Outcome:** Provide an independently installable inference runtime whose import, startup, health, and score paths do not import or require training/evaluation packages.
 
 **Acceptance checks:**
 
-- [ ] A clean environment can import and score without scikit-learn, training modules, or evaluation modules.
-- [ ] Explicitly configured missing bundle paths fail loudly.
-- [ ] Startup verifies the loaded bundle against a trusted expected digest/version.
-- [ ] The serving Dockerfile targets the real application, contains required runtime assets, and exposes matching routes and environment variables.
-- [ ] Scaffold-only Java/gRPC services remain labeled non-runnable until implemented.
+- [x] A clean environment can import and score without scikit-learn, training modules, or evaluation modules.
+- [x] Explicitly configured missing bundle paths fail loudly.
+- [x] Startup verifies the loaded bundle against a trusted expected digest/version.
+- [x] The serving Dockerfile targets the real application, contains required runtime assets, and exposes matching routes and environment variables.
+- [x] Scaffold-only Java/gRPC services remain labeled non-runnable until implemented.
 
 #### RH-07 - Make monitoring states evidence-bearing
 

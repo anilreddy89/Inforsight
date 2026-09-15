@@ -6,12 +6,12 @@ import time
 import unittest
 from fastapi.testclient import TestClient
 
-from inforsight_simulator.bundle import ModelBundle, BundledInferenceEngine
+from inforsight_inference import ModelBundle, BundledInferenceEngine
 from inforsight_simulator.v6_corpus import generate_v6_corpus, V6CorpusConfig
 from inforsight_simulator.v6_evaluation import _feature_map
 from serving.app import create_app, DEFAULT_BUNDLE_PATH
 from serving.models import ADR_0002_AUTHORITY_BOUNDARY_NOTICE
-from inforsight_simulator.semantic_catalog import PREPROCESSING_PROFILE_ID
+from inforsight_inference import PREPROCESSING_PROFILE_ID
 
 
 class TestServingGateway(unittest.TestCase):
@@ -37,8 +37,15 @@ class TestServingGateway(unittest.TestCase):
         data = resp.json()
         self.assertEqual(data["status"], "healthy")
         self.assertEqual(data["engine_status"], "ready")
+        self.assertEqual(data["runtime_contract_id"], "inforsight.inference-runtime")
+        self.assertEqual(data["runtime_contract_version"], "1.0.0")
         self.assertEqual(data["bundle_id"], "inforsight-v6-logistic-platt-20260817")
         self.assertEqual(data["bundle_sha256"], self.expected_digest)
+        self.assertEqual(data["catalog_version"], "1.0.0")
+        self.assertEqual(
+            data["catalog_sha256"],
+            "d360ed670337912f6b0094d587b5a979c5b8de2ed0a528a184eac36b393f4005",
+        )
         self.assertTrue(data["bundle_sha256"].startswith("7ac292"))
 
     def test_model_info_endpoint(self) -> None:

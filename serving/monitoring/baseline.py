@@ -103,7 +103,7 @@ def build_training_baseline(bundle: Any) -> TrainingBaseline:
     Parameters
     ----------
     bundle:
-        A loaded ``inforsight_simulator.bundle.ModelBundle`` instance.
+        A loaded ``inforsight_inference.ModelBundle`` instance.
 
     Returns
     -------

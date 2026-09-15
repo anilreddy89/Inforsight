@@ -21,7 +21,13 @@ from inforsight_simulator.assistant import (
     RiskDriver,
 )
 from inforsight_simulator.audit.ledger import AuditLedger
-from inforsight_simulator.bundle import BundledInferenceEngine, ModelBundle, ScoringResult
+from inforsight_inference import (
+    BundledInferenceEngine,
+    ModelBundle,
+    ScoringResult,
+    TRUSTED_BUNDLE_SHA256,
+    load_verified_runtime,
+)
 from inforsight_simulator.domain_snapshot import DomainSnapshot
 from inforsight_simulator.economics import load_economics_resource_contract
 from inforsight_simulator.optimization import (
@@ -82,9 +88,15 @@ class EngineBridge:
         # 1. Load Model Bundle and BundledInferenceEngine
         if not self.bundle_path.exists():
             raise FileNotFoundError(f"Model bundle not found at: {self.bundle_path}")
-        self.bundle_sha256 = hashlib.sha256(self.bundle_path.read_bytes()).hexdigest()
-        self.bundle = ModelBundle.load(self.bundle_path)
-        self.inference_engine = BundledInferenceEngine(self.bundle)
+        runtime = load_verified_runtime(
+            self.bundle_path,
+            expected_sha256=TRUSTED_BUNDLE_SHA256,
+            expected_bundle_id="inforsight-v6-logistic-platt-20260817",
+            expected_bundle_version="1.0.0",
+        )
+        self.bundle_sha256 = runtime.bundle_sha256
+        self.bundle = runtime.bundle
+        self.inference_engine = runtime.engine
         self.semantic_catalog = load_semantic_catalog()
         self.economics_contract = load_economics_resource_contract(catalog=self.semantic_catalog)
 

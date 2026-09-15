@@ -38,7 +38,7 @@ from serving.monitoring.telemetry import TelemetryCollector
 from serving.monitoring.alert import build_alert_summary, _alert_for_feature, _overall_status
 from serving.monitoring.baseline import build_training_baseline, _build_numeric_baseline, _build_categorical_baseline
 from serving.monitoring.monitor import DriftMonitor
-from inforsight_simulator.bundle import ModelBundle
+from inforsight_inference import ModelBundle
 from serving.app import create_app, DEFAULT_BUNDLE_PATH
 from fastapi.testclient import TestClient
 
@@ -438,7 +438,7 @@ class TestDiagnosticsEndpoint(unittest.TestCase):
 
     def test_diagnostics_telemetry_after_scoring(self) -> None:
         """Telemetry counters increment after scoring requests."""
-        from inforsight_simulator.bundle import BundledInferenceEngine
+        from inforsight_inference import BundledInferenceEngine
         from inforsight_simulator.v6_corpus import generate_v6_corpus, V6CorpusConfig
         from inforsight_simulator.v6_evaluation import _feature_map
         corpus = generate_v6_corpus(V6CorpusConfig(base_seed=20280201))

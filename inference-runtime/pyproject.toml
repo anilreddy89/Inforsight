@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inforsight-inference-runtime"
+version = "1.0.0"
+description = "Bounded inference-only runtime for the frozen Inforsight risk model"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{ name = "Anil Kumar Reddy Jonnala" }]
+dependencies = ["numpy==2.5.2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+inforsight_inference = ["assets/semantic-catalog.json"]

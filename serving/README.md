@@ -1,6 +1,6 @@
 # Inforsight Model Serving Gateway
 
-Enterprise-grade, high-throughput, low-latency REST inference gateway hosting the frozen Inforsight Policy Conservation Risk Model (`inforsight-v6-logistic-platt-20260817`) with strict **ADR 0002** non-authority boundaries.
+Bounded REST inference gateway hosting the verified frozen Inforsight Policy Conservation Risk Model (`inforsight-v6-logistic-platt-20260817`) with strict **ADR 0002** non-authority boundaries.
 
 ---
 
@@ -9,8 +9,8 @@ Enterprise-grade, high-throughput, low-latency REST inference gateway hosting th
 The serving gateway exposes the trained and calibrated Phase 2.10 release model bundle via a lightweight FastAPI HTTP REST service.
 
 ### Core Invariants & Boundaries
-1. **Zero Scikit-Learn Dependency at Runtime**:
-   - The inference engine (`BundledInferenceEngine`) executes directly against the pure-JSON model bundle using only standard libraries, NumPy, and Pydantic. Heavy training dependencies (`scikit-learn`, `scipy`) are completely omitted from the runtime container.
+1. **Independent inference runtime**:
+   - The `inforsight-inference-runtime` distribution executes directly against the JSON model bundle using only the Python standard library and NumPy. The canonical image does not install the simulator, scikit-learn, XGBoost, SciPy, pandas, matplotlib, or Streamlit.
 2. **Bit-for-Bit Reproducibility**:
    - Model predictions on out-of-sample observations match the Phase 2.10 / Phase 2.11 validation baseline with zero drift ($\max |\Delta p| < 10^{-12}$).
 3. **ADR 0002 Non-Authority Invariant**:
@@ -18,8 +18,8 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
    - The model serves strictly in a **perception role**. It possesses zero operational authority to contact customers, alter billing schedules, or modify policies without licensed human caseworker approval.
 4. **Strict Fail-Closed Validation**:
    - Requests with missing features, illegal ranges, or undeclared attributes are rejected fail-closed with HTTP `422 Unprocessable Entity`.
-5. **Sub-millisecond Latency Target**:
-   - Vectorized single-record inference executes in sub-millisecond CPU time ($< 5\text{ms}$ HTTP response time).
+5. **Bounded Local Latency Evidence**:
+   - Phase 3 qualification measures local numerical inference only. It does not establish HTTP/network latency, production throughput, or autoscaling behavior.
 
 ---
 
@@ -27,14 +27,18 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
 
 ### 2.1 Liveness & Integrity Probe
 - **Route**: `GET /health`
-- **Purpose**: Verifies gateway liveness and confirms the loaded bundle SHA-256 digest matches the verified manifest.
+- **Purpose**: Reports readiness only after the configured bundle and packaged semantic catalog match their independently trusted identities and the engine is constructed. It does not establish model quality, monitoring health, external validity, action authority, or production readiness.
 - **Example Response (`200 OK`)**:
   ```json
   {
     "status": "healthy",
+    "runtime_contract_id": "inforsight.inference-runtime",
+    "runtime_contract_version": "1.0.0",
     "bundle_id": "inforsight-v6-logistic-platt-20260817",
     "bundle_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
     "bundle_version": "1.0.0",
+    "catalog_version": "1.0.0",
+    "catalog_sha256": "d360ed670337912f6b0094d587b5a979c5b8de2ed0a528a184eac36b393f4005",
     "engine_status": "ready"
   }
   ```
@@ -133,9 +137,9 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
 
 ---
 
-### 2.4 Vectorized Batch Scoring
+### 2.4 Batch Scoring
 - **Route**: `POST /v1/score/batch`
-- **Purpose**: Accepts up to 1,000 policy scoring requests in a single batch for high-throughput operational triage queue generation.
+- **Purpose**: Accepts up to 1,000 policy scoring requests in one bounded request for triage queue generation.
 - **Payload**:
   ```json
   {
@@ -153,7 +157,7 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
 ### 3.1 Start Server Locally
 ```bash
 # Run with live reloader
-PYTHONPATH=simulator/src:. .venv/bin/uvicorn serving.app:app --host 127.0.0.1 --port 8000 --reload
+PYTHONPATH=inference-runtime/src:. .venv/bin/uvicorn serving.app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 Interactive documentation:
@@ -163,7 +167,7 @@ Interactive documentation:
 ### 3.2 Run Test Suite
 ```bash
 # Run unit and integration tests
-.venv/bin/python3 -m unittest discover -s serving/tests -p 'test_*.py' -v
+PYTHONPATH=inference-runtime/src .venv/bin/python3 -m unittest discover -s serving/tests -p 'test_*.py' -v
 
 # Run through Makefile
 make serving-gateway-check
@@ -173,7 +177,7 @@ make serving-gateway-check
 
 ## 4. Docker Containerization
 
-The serving container uses a hardened multi-stage build running as a non-root user:
+`serving/Dockerfile` is the only canonical RH-06 image. It installs the runtime wheel, pins the accepted bundle identity, exposes HTTP port 8000 only, and runs as a non-root user:
 
 ```bash
 # Build the container
