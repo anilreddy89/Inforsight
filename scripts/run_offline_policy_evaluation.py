@@ -20,7 +20,12 @@ import json
 from pathlib import Path
 import sys
 
-from inforsight_simulator.bundle import BundledInferenceEngine, ModelBundle
+from inforsight_inference import (
+    MODEL_BUNDLE_VERSION,
+    MODEL_ID,
+    TRUSTED_BUNDLE_SHA256,
+    load_verified_runtime,
+)
 from inforsight_simulator.counterfactual import (
     CounterfactualSimulator,
     OfflinePolicyEvaluator,
@@ -241,9 +246,14 @@ def main() -> None:
         sys.exit(1)
 
     print(f"Loading release model bundle from {bundle_path}...")
-    bundle = ModelBundle.from_json(bundle_path.read_text(encoding="utf-8"))
-    inference_engine = BundledInferenceEngine(bundle)
-    print(f"Loaded model bundle: {bundle.bundle_id}")
+    runtime = load_verified_runtime(
+        bundle_path,
+        expected_sha256=TRUSTED_BUNDLE_SHA256,
+        expected_bundle_id=MODEL_ID,
+        expected_bundle_version=MODEL_BUNDLE_VERSION,
+    )
+    inference_engine = runtime.engine
+    print(f"Loaded model bundle: {runtime.bundle.bundle_id}")
 
     # 2. Generate Evaluation Cohort from Generation v6 Substrate
     print(f"Generating synthetic v6 evaluation cohort (seed: {args.seed}, policies: {args.policy_count})...")

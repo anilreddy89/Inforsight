@@ -83,7 +83,8 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-04D accepts the signed economics/resource contract, evaluation estimands, and sensitivity protocol through issue #148 and PR #149, merge `c9eddcf`; all five CI jobs passed.
 - [x] RH-04I and parent RH-04 completed through issue #151 and PR #152, merge `04d3e59`; runtime consumers now preserve signed effects and share versioned economics/resources. Corrected historical evidence remains deferred to RH-12.
 - [x] RH-05 completed on 2026-09-11: RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155 (`3645fae`); RH-05I closed through issue #157 and PR #158 (`603b955`) after all five required CI jobs passed. Historical corrected evidence remains deferred to RH-12.
-- [ ] RH-06D issue #160 is implemented locally with inference-runtime contract 1.0.0; review and merge remain pending, RH-06I is blocked, and independent training-free runtime claims remain frozen until RH-06I passes.
+- [x] RH-06D accepted inference-runtime contract 1.0.0 through issue #160 and PR #161, merge `205f612`, after all five CI jobs passed.
+- [ ] RH-06I issue #162 is implemented locally with clean package, ASGI, and container evidence; the independent runtime claim remains review- and merge-gated.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.

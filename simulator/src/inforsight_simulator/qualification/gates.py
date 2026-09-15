@@ -20,7 +20,7 @@ from inforsight_simulator.assistant import CaseIntelligenceAssistant
 from inforsight_simulator.audit.ledger import AuditLedger
 from inforsight_simulator.audit.serialization import canonical_json_dumps, compute_sha256
 from inforsight_simulator.audit.verifier import AuditTrailVerifier
-from inforsight_simulator.bundle import BundledInferenceEngine
+from inforsight_inference import BundledInferenceEngine
 from inforsight_simulator.optimization import (
     PolicyValuation,
     PortfolioOptimizer,

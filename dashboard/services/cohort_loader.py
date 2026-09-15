@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any, Mapping, Sequence
 
 from inforsight_simulator.assistant import CaseBrief
-from inforsight_simulator.bundle import ScoringResult
+from inforsight_inference import ScoringResult
 from inforsight_simulator.domain_snapshot import DomainSnapshot, reconstruct_domain_snapshot
 from inforsight_simulator.economics import USD_MICROS_PER_USD
 from inforsight_simulator.optimization import OptimalRecommendation, PolicyValuation

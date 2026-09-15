@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
-from inforsight_simulator.semantic_catalog import PREPROCESSING_PROFILE_ID
+from inforsight_inference import PREPROCESSING_PROFILE_ID
 
 
 ADR_0002_AUTHORITY_BOUNDARY_NOTICE = "ADR_0002_REQUIRES_HUMAN_REVIEW"
@@ -102,9 +102,13 @@ class BatchScoreResponse(BaseModel):
 class HealthResponse(BaseModel):
     """Liveness probe and model bundle integrity verification response."""
     status: str
+    runtime_contract_id: str
+    runtime_contract_version: str
     bundle_id: str
     bundle_sha256: str
     bundle_version: str
+    catalog_version: str
+    catalog_sha256: str
     engine_status: str
 
 

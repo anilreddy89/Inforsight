@@ -1,0 +1,630 @@
+{
+  "catalog_version": "1.0.0",
+  "snapshot_version": "1.0.0",
+  "source_profiles": [
+    "legacy-policy-events/1.0.0",
+    "v6-policy-events/6.0.0"
+  ],
+  "policy_statuses": [
+    "active",
+    "grace_period",
+    "lapsed",
+    "surrendered",
+    "unknown"
+  ],
+  "legacy_status_aliases": {
+    "ACTIVE": "active",
+    "IN_GRACE": "grace_period",
+    "LAPSED": "lapsed",
+    "SURRENDERED": "surrendered"
+  },
+  "billing_periods_per_year": {
+    "monthly": 12,
+    "quarterly": 4,
+    "semiannual": 2,
+    "annual": 1
+  },
+  "money": {
+    "currency": "USD",
+    "minor_units_per_major": 100,
+    "display_rounding": "ROUND_HALF_EVEN",
+    "annualization": "premium_amount_cents * billing_periods_per_year",
+    "monthly_equivalent": "annual_premium_cents / 12; round only for display"
+  },
+  "durations": {
+    "elapsed_day_seconds": 86400,
+    "personnel_hour_seconds": 3600,
+    "tenure": "floor((as_of - issued_at).total_seconds() / 86400)",
+    "grace": "floor((as_of - current_grace_entry).total_seconds() / 86400); null when unknown; 0 when confirmed outside grace"
+  },
+  "prediction": {
+    "target_id": "adverse_termination_90d",
+    "positive_events": [
+      "outcome.lapsed",
+      "outcome.surrendered"
+    ],
+    "horizon_days": 90,
+    "window": "(as_of, as_of + 90 elapsed days]",
+    "display_name": "90-day adverse termination risk",
+    "prohibited_alias": "lapse-only probability",
+    "authorized_to_act": false
+  },
+  "risk_tiers": [
+    {
+      "id": "TIER_1_LOW",
+      "display_name": "Tier 1: Low Risk",
+      "severity_rank": 1,
+      "min_inclusive": 0.0,
+      "max": 0.1,
+      "max_inclusive": false
+    },
+    {
+      "id": "TIER_2_MODERATE",
+      "display_name": "Tier 2: Moderate Risk",
+      "severity_rank": 2,
+      "min_inclusive": 0.1,
+      "max": 0.25,
+      "max_inclusive": false
+    },
+    {
+      "id": "TIER_3_HIGH",
+      "display_name": "Tier 3: High Risk",
+      "severity_rank": 3,
+      "min_inclusive": 0.25,
+      "max": 0.5,
+      "max_inclusive": false
+    },
+    {
+      "id": "TIER_4_CRITICAL",
+      "display_name": "Tier 4: Critical Risk",
+      "severity_rank": 4,
+      "min_inclusive": 0.5,
+      "max": 1.0,
+      "max_inclusive": true
+    }
+  ],
+  "provisional_proto_aliases": {
+    "TIER_1_CRITICAL": "TIER_4_CRITICAL",
+    "TIER_2_ELEVATED": "TIER_3_HIGH",
+    "TIER_3_MODERATE": "TIER_2_MODERATE",
+    "TIER_4_LOW": "TIER_1_LOW"
+  },
+  "actions": [
+    {
+      "action_id": "act_courtesy_reminder_v1",
+      "action_type": "courtesy_reminder",
+      "channel": "sms",
+      "regulatory_cooling_off_days": 30,
+      "minimum_policy_tenure_days": 30,
+      "maximum_policy_tenure_days": null,
+      "requires_grace_period": false,
+      "direct_cost_cents": 150,
+      "personnel_seconds": 0
+    },
+    {
+      "action_id": "act_grace_period_consultation_v1",
+      "action_type": "grace_period_consultation",
+      "channel": "phone",
+      "regulatory_cooling_off_days": 30,
+      "minimum_policy_tenure_days": 60,
+      "maximum_policy_tenure_days": null,
+      "requires_grace_period": true,
+      "direct_cost_cents": 2500,
+      "personnel_seconds": 1800
+    },
+    {
+      "action_id": "act_specialist_phone_outreach_v1",
+      "action_type": "specialist_phone_outreach",
+      "channel": "phone",
+      "regulatory_cooling_off_days": 30,
+      "minimum_policy_tenure_days": 90,
+      "maximum_policy_tenure_days": null,
+      "requires_grace_period": false,
+      "direct_cost_cents": 6500,
+      "personnel_seconds": 3600
+    },
+    {
+      "action_id": "act_payment_remediation_v1",
+      "action_type": "payment_method_remediation",
+      "channel": "sms",
+      "regulatory_cooling_off_days": 14,
+      "minimum_policy_tenure_days": 30,
+      "maximum_policy_tenure_days": null,
+      "requires_grace_period": false,
+      "direct_cost_cents": 300,
+      "personnel_seconds": 360
+    },
+    {
+      "action_id": "act_abstain_do_not_disturb_v1",
+      "action_type": "abstain",
+      "channel": "none",
+      "regulatory_cooling_off_days": 0,
+      "minimum_policy_tenure_days": 0,
+      "maximum_policy_tenure_days": null,
+      "requires_grace_period": false,
+      "direct_cost_cents": 0,
+      "personnel_seconds": 0
+    }
+  ],
+  "action_aliases": {
+    "act_abstain_default_v1": "act_abstain_do_not_disturb_v1"
+  },
+  "assumption_boundary": "Action costs, staff time, cooldowns and tenure bounds are fictional reference assumptions, not legal or empirical estimates; no automatic authority.",
+  "preprocessing": {
+    "profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
+    "dictionary_path": "docs/modeling/phase-02r-15-v6-feature-dictionary.json",
+    "dictionary_sha256": "5039083cba2c9256c73eb9b72b8013df0b4e99ab18e625b8c0fce0577e76bcb8",
+    "dictionary_version": "6.0.0",
+    "bundle_path": "docs/experiments/phase-02-10-model-bundle.json",
+    "bundle_file_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+    "bundle_id": "inforsight-v6-logistic-platt-20260817",
+    "bundle_version": "1.0.0",
+    "bundle_preprocessor": {
+      "categorical": {
+        "billing_frequency": {
+          "categories": [
+            "annual",
+            "monthly",
+            "quarterly",
+            "semiannual",
+            "__unknown__"
+          ],
+          "name": "billing_frequency"
+        },
+        "contact_category": {
+          "categories": [
+            "none",
+            "service_request",
+            "__unknown__"
+          ],
+          "name": "contact_category"
+        },
+        "notice_category": {
+          "categories": [
+            "billing_reminder",
+            "grace_warning",
+            "none",
+            "__unknown__"
+          ],
+          "name": "notice_category"
+        },
+        "product_type": {
+          "categories": [
+            "fictional_term_life",
+            "fictional_whole_life",
+            "__unknown__"
+          ],
+          "name": "product_type"
+        }
+      },
+      "feature_count": 28,
+      "numeric": {
+        "arrears_duration_days": {
+          "mean": 0.012447024466683287,
+          "name": "arrears_duration_days",
+          "scale": 0.09133222593098551
+        },
+        "contact_attribute_missing": {
+          "mean": 0.0,
+          "name": "contact_attribute_missing",
+          "scale": 1.0
+        },
+        "payment_attribute_missing": {
+          "mean": 0.023255813953488372,
+          "name": "payment_attribute_missing",
+          "scale": 0.1507148999629735
+        },
+        "premium_amount_cents": {
+          "mean": 0.9638977147732227,
+          "name": "premium_amount_cents",
+          "scale": 0.06630079974287785
+        },
+        "recent_contact_count": {
+          "mean": 0.09986110616474946,
+          "name": "recent_contact_count",
+          "scale": 0.15269182972183695
+        },
+        "recent_delay_days": {
+          "mean": 0.11185409172928762,
+          "name": "recent_delay_days",
+          "scale": 0.15690349860244202
+        },
+        "recent_failed_payment_count": {
+          "mean": 0.013830027185203651,
+          "name": "recent_failed_payment_count",
+          "scale": 0.06840984801279695
+        },
+        "recent_notice_count": {
+          "mean": 0.11454586464380259,
+          "name": "recent_notice_count",
+          "scale": 0.1583072953918144
+        },
+        "recent_recovery_count": {
+          "mean": 0.008250531239241663,
+          "name": "recent_recovery_count",
+          "scale": 0.05269796919975734
+        },
+        "recent_retry_count": {
+          "mean": 0.011111506820043448,
+          "name": "recent_retry_count",
+          "scale": 0.06114453038338236
+        },
+        "rolling_on_time_rate": {
+          "mean": 0.267324901495456,
+          "name": "rolling_on_time_rate",
+          "scale": 0.25619438817589
+        },
+        "rolling_payment_count": {
+          "mean": 0.1635267162885668,
+          "name": "rolling_payment_count",
+          "scale": 0.2602319558449341
+        },
+        "tenure_days": {
+          "mean": 0.5684841252688719,
+          "name": "tenure_days",
+          "scale": 0.4597080689849733
+        }
+      },
+      "ordered_columns": [
+        "tenure_days",
+        "premium_amount_cents",
+        "recent_delay_days",
+        "recent_failed_payment_count",
+        "recent_retry_count",
+        "recent_recovery_count",
+        "arrears_duration_days",
+        "rolling_on_time_rate",
+        "rolling_payment_count",
+        "recent_notice_count",
+        "recent_contact_count",
+        "payment_attribute_missing",
+        "contact_attribute_missing",
+        "product_type=fictional_term_life",
+        "product_type=fictional_whole_life",
+        "product_type=__unknown__",
+        "billing_frequency=annual",
+        "billing_frequency=monthly",
+        "billing_frequency=quarterly",
+        "billing_frequency=semiannual",
+        "billing_frequency=__unknown__",
+        "notice_category=billing_reminder",
+        "notice_category=grace_warning",
+        "notice_category=none",
+        "notice_category=__unknown__",
+        "contact_category=none",
+        "contact_category=service_request",
+        "contact_category=__unknown__"
+      ],
+      "schema_version": "6.0.0"
+    },
+    "feature_contracts": [
+      {
+        "name": "tenure_days",
+        "source_owner": "policy.issued effective time and the observation cutoff",
+        "dual_time_rule": "Exactly one policy.issued record must be visible at as_of; compute elapsed whole days from its effective_at to as_of.",
+        "raw_type": "integer",
+        "semantic_type": "numeric_duration_days",
+        "coefficient_transform": "clip(tenure_days / 365, 0, 5)",
+        "empty_history_behavior": "not_applicable; policy.issued is required",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "tenure_days"
+          ]
+        },
+        "driver_group": "static",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "premium_amount_cents",
+        "source_owner": "policy.issued payload premium_amount_cents",
+        "dual_time_rule": "Use the value from the single policy.issued record visible at as_of.",
+        "raw_type": "integer",
+        "semantic_type": "numeric_currency_cents",
+        "coefficient_transform": "clip(log1p(premium_amount_cents / 100) / 5, 0, 2)",
+        "empty_history_behavior": "not_applicable; policy.issued is required",
+        "missingness_behavior": "reject null, absent, negative, or non-integer values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "premium_amount_cents"
+          ]
+        },
+        "driver_group": "static",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "product_type",
+        "source_owner": "policy.issued payload product_type",
+        "dual_time_rule": "Use the value from the single policy.issued record visible at as_of.",
+        "raw_type": "string",
+        "semantic_type": "categorical",
+        "coefficient_transform": "identity; coefficient registry 1.0.0 declares no direct product contrast",
+        "empty_history_behavior": "not_applicable; policy.issued is required",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "fit a sorted categorical vocabulary on governed fit rows only and append the reserved unknown column",
+        "output_handling": {
+          "kind": "one_hot",
+          "name_pattern": "product_type=<fit_category>",
+          "reserved_name": "product_type=__unknown__",
+          "unseen_value": "map to reserved_name without changing width"
+        },
+        "driver_group": "static",
+        "designed_status": "nonzero_group_no_configured_direct_term"
+      },
+      {
+        "name": "billing_frequency",
+        "source_owner": "policy.issued payload billing_frequency",
+        "dual_time_rule": "Use the value from the single policy.issued record visible at as_of.",
+        "raw_type": "string",
+        "semantic_type": "categorical",
+        "coefficient_transform": "monthly reference with quarterly, semiannual, and annual additive contrasts",
+        "empty_history_behavior": "not_applicable; policy.issued is required",
+        "missingness_behavior": "reject null, absent, or unsupported values",
+        "preprocessing_decision": "fit a sorted categorical vocabulary on governed fit rows only and append the reserved unknown column",
+        "output_handling": {
+          "kind": "one_hot",
+          "name_pattern": "billing_frequency=<fit_category>",
+          "reserved_name": "billing_frequency=__unknown__",
+          "unseen_value": "map to reserved_name without changing width"
+        },
+        "driver_group": "static",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "recent_delay_days",
+        "source_owner": "payment.recorded payload delay_days with a visible event.corrected replacement when present",
+        "dual_time_rule": "Within (as_of - 90 days, as_of], use the latest non-null delay from visible payment records after applying visible corrections.",
+        "raw_type": "number_or_null",
+        "semantic_type": "numeric_duration_days_nullable",
+        "coefficient_transform": "clip(coalesce(recent_delay_days, 0) / 30, 0, 3)",
+        "empty_history_behavior": "use null at the public surface and 0 for the frozen coefficient transform",
+        "missingness_behavior": "zero-fill null before transformation; retain payment_attribute_missing as a separate approved input",
+        "preprocessing_decision": "zero-fill, apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "recent_delay_days"
+          ]
+        },
+        "driver_group": "recent_payment",
+        "designed_status": "nonzero_strongest_group_configured_nonzero_term"
+      },
+      {
+        "name": "recent_failed_payment_count",
+        "source_owner": "payment.recorded payload failed",
+        "dual_time_rule": "Count failed values from visible payment records in (as_of - 90 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_count",
+        "coefficient_transform": "clip(recent_failed_payment_count / 3, 0, 2); also participates in the frozen product with transformed arrears_duration_days",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "recent_failed_payment_count"
+          ],
+          "derived_contract_term": "transformed recent_failed_payment_count multiplied by transformed arrears_duration_days"
+        },
+        "driver_group": "recent_payment",
+        "designed_status": "nonzero_strongest_group_configured_nonzero_term"
+      },
+      {
+        "name": "recent_retry_count",
+        "source_owner": "payment.recorded payload retry",
+        "dual_time_rule": "Count retry values from visible payment records in (as_of - 90 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_count",
+        "coefficient_transform": "clip(recent_retry_count / 3, 0, 2)",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "recent_retry_count"
+          ]
+        },
+        "driver_group": "recent_payment",
+        "designed_status": "nonzero_strongest_group_configured_nonzero_term"
+      },
+      {
+        "name": "recent_recovery_count",
+        "source_owner": "payment.recorded payload recovered",
+        "dual_time_rule": "Count recovered values from visible payment records in (as_of - 90 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_count",
+        "coefficient_transform": "clip(recent_recovery_count / 3, 0, 2)",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "recent_recovery_count"
+          ]
+        },
+        "driver_group": "recent_payment",
+        "designed_status": "nonzero_strongest_group_configured_nonzero_term"
+      },
+      {
+        "name": "arrears_duration_days",
+        "source_owner": "payment.recorded payload arrears_days",
+        "dual_time_rule": "Use arrears_days from the latest visible payment record in (as_of - 90 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_duration_days",
+        "coefficient_transform": "clip(arrears_duration_days / 60, 0, 2); also participates in the frozen product with transformed recent_failed_payment_count",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "arrears_duration_days"
+          ],
+          "derived_contract_term": "transformed recent_failed_payment_count multiplied by transformed arrears_duration_days"
+        },
+        "driver_group": "recent_payment",
+        "designed_status": "nonzero_strongest_group_configured_nonzero_term"
+      },
+      {
+        "name": "rolling_on_time_rate",
+        "source_owner": "payment.recorded payload on_time",
+        "dual_time_rule": "Compute the mean on_time value across visible payment records in (as_of - 365 days, as_of].",
+        "raw_type": "number",
+        "semantic_type": "numeric_rate",
+        "coefficient_transform": "identity constrained to [0, 1]",
+        "empty_history_behavior": "use 0.5",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "validate the frozen range, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "rolling_on_time_rate"
+          ]
+        },
+        "driver_group": "rolling_history",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "rolling_payment_count",
+        "source_owner": "payment.recorded records",
+        "dual_time_rule": "Count visible payment records in (as_of - 365 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_count",
+        "coefficient_transform": "clip(rolling_payment_count / 12, 0, 2)",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "rolling_payment_count"
+          ]
+        },
+        "driver_group": "rolling_history",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "recent_notice_count",
+        "source_owner": "notice.sent records",
+        "dual_time_rule": "Count visible notice.sent records in (as_of - 90 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_count",
+        "coefficient_transform": "clip(recent_notice_count / 3, 0, 2)",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "recent_notice_count"
+          ]
+        },
+        "driver_group": "service_notice",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "notice_category",
+        "source_owner": "notice.sent payload category",
+        "dual_time_rule": "Use category from the latest visible notice.sent record in (as_of - 90 days, as_of].",
+        "raw_type": "string",
+        "semantic_type": "categorical",
+        "coefficient_transform": "identity; coefficient registry 1.0.0 declares no direct notice-category contrast",
+        "empty_history_behavior": "use none",
+        "missingness_behavior": "reject null or absent values; none is a valid empty-history category",
+        "preprocessing_decision": "fit a sorted categorical vocabulary on governed fit rows only and append the reserved unknown column",
+        "output_handling": {
+          "kind": "one_hot",
+          "name_pattern": "notice_category=<fit_category>",
+          "reserved_name": "notice_category=__unknown__",
+          "unseen_value": "map to reserved_name without changing width"
+        },
+        "driver_group": "service_notice",
+        "designed_status": "nonzero_group_no_configured_direct_term"
+      },
+      {
+        "name": "recent_contact_count",
+        "source_owner": "service.contact records",
+        "dual_time_rule": "Count visible service.contact records in (as_of - 90 days, as_of].",
+        "raw_type": "integer",
+        "semantic_type": "numeric_count",
+        "coefficient_transform": "clip(recent_contact_count / 3, 0, 2)",
+        "empty_history_behavior": "use 0",
+        "missingness_behavior": "reject null or absent values",
+        "preprocessing_decision": "apply frozen coefficient transform, then fit population z-score on governed fit rows only",
+        "output_handling": {
+          "kind": "numeric",
+          "names": [
+            "recent_contact_count"
+          ]
+        },
+        "driver_group": "service_notice",
+        "designed_status": "nonzero_group_configured_nonzero_term"
+      },
+      {
+        "name": "contact_category",
+        "source_owner": "service.contact payload category",
+        "dual_time_rule": "Use category from the latest visible service.contact record in (as_of - 90 days, as_of].",
+        "raw_type": "string",
+        "semantic_type": "categorical",
+        "coefficient_transform": "identity; coefficient registry 1.0.0 declares no direct contact-category contrast",
+        "empty_history_behavior": "use none",
+        "missingness_behavior": "reject null or absent values; none is a valid empty-history category and missing is a visible source category paired with contact_attribute_missing",
+        "preprocessing_decision": "fit a sorted categorical vocabulary on governed fit rows only and append the reserved unknown column",
+        "output_handling": {
+          "kind": "one_hot",
+          "name_pattern": "contact_category=<fit_category>",
+          "reserved_name": "contact_category=__unknown__",
+          "unseen_value": "map to reserved_name without changing width"
+        },
+        "driver_group": "service_notice",
+        "designed_status": "nonzero_group_no_configured_direct_term"
+      },
+      {
+        "name": "payment_attribute_missing",
+        "source_owner": "payment.recorded payload delay_days",
+        "dual_time_rule": "Within (as_of - 90 days, as_of], set true only when the latest visible payment record has a null delay_days value.",
+        "raw_type": "boolean",
+        "semantic_type": "missingness_indicator",
+        "coefficient_transform": "binary 0 or 1",
+        "empty_history_behavior": "use false",
+        "missingness_behavior": "the indicator itself is required and must not be imputed",
+        "preprocessing_decision": "emit false as 0 and true as 1 without learned preprocessing",
+        "output_handling": {
+          "kind": "numeric_indicator",
+          "names": [
+            "payment_attribute_missing"
+          ]
+        },
+        "driver_group": "missingness",
+        "designed_status": "zero_effect_stable_signal_configured_zero_term"
+      },
+      {
+        "name": "contact_attribute_missing",
+        "source_owner": "service.contact payload category",
+        "dual_time_rule": "Within (as_of - 90 days, as_of], set true only when the latest visible service.contact record uses the visible missing category.",
+        "raw_type": "boolean",
+        "semantic_type": "missingness_indicator",
+        "coefficient_transform": "binary 0 or 1",
+        "empty_history_behavior": "use false",
+        "missingness_behavior": "the indicator itself is required and must not be imputed",
+        "preprocessing_decision": "emit false as 0 and true as 1 without learned preprocessing",
+        "output_handling": {
+          "kind": "numeric_indicator",
+          "names": [
+            "contact_attribute_missing"
+          ]
+        },
+        "driver_group": "missingness",
+        "designed_status": "zero_effect_stable_signal_configured_zero_term"
+      }
+    ],
+    "input_stage": "raw V6Features -> dictionary coefficient transforms -> frozen bundle preprocessor -> model",
+    "reject": "unknown profile/digest, missing required inputs, nonfinite numeric values, or already transformed values presented as raw"
+  }
+}

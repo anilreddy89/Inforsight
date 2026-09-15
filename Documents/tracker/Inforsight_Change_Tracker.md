@@ -1,7 +1,7 @@
 # Inforsight Change Tracker
 
-Last reviewed: 2026-09-13
-Current repository branch: `docs/160-rh-06d-inference-runtime`
+Last reviewed: 2026-09-14
+Current repository branch: `fix/162-rh-06i-inference-runtime`
 
 ## Purpose
 
@@ -94,8 +94,8 @@ Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github
 | RH-04I | Review hardening | Implement signed combined-termination effects and shared economics/resources across governed runtime consumers. | Completed | [#151](https://github.com/anilreddy89/Inforsight/issues/151) | [#152](https://github.com/anilreddy89/Inforsight/pull/152) | 2026-09-09 | `04d3e59` | [phase document](../phase_docs/phase-rh-04i-signed-treatment-effects-and-shared-economics-implementation.md), economics runtime, optimization/OPE/dashboard migrations, 9 runtime fixture/adversarial tests | Signed valuation, integer USD micros, personnel seconds, source annual premium, explicit unavailable states, and governed bridges completed; all five required CI jobs passed. Parent RH-04 is closed; RH-05 is predecessor-ready; historical evidence remains protected pending RH-12. |
 | RH-05D | Review hardening | Define the portfolio allocation, exact resource, deterministic algorithm, reference validation, and capacity lifecycle contract. | Completed | [#154](https://github.com/anilreddy89/Inforsight/issues/154) | [#155](https://github.com/anilreddy89/Inforsight/pull/155) | 2026-09-09 | `3645fae` | `docs/hardening/rh-05-portfolio-allocation-contract.md`, `data-contracts/rh/allocation/v1/`, 4 fixtures, 6 focused design tests | Allocation contract 1.0.0 accepted with integer USD-micro/personnel-second constraints, exhaustive bounded reference, zero additive-gap gate, deterministic ties, dashboard lifecycle, atomic override semantics, and all five CI jobs passing. Authorizes RH-05I from updated `main`; parent RH-05 remains open. |
 | RH-05I | Review hardening | Implement portfolio allocation, exact capacity enforcement, dashboard refresh, atomic reservation replacement, and controlled strategy comparison. | Completed | [#157](https://github.com/anilreddy89/Inforsight/issues/157) | [#158](https://github.com/anilreddy89/Inforsight/pull/158) | 2026-09-11 | `603b955` | [phase document](../phase_docs/phase-rh-05i-portfolio-allocation-implementation.md), allocator/workflow/dashboard runtime, 64-case exact-reference sweep | Allocation contract 1.0.0 implemented; all five CI jobs passed. Parent RH-05 is closed. Historical evidence remains protected for RH-12 and Phase 4 remains blocked through RH-13. |
-| RH-06D | Review hardening | Define the independently installable inference-runtime packaging, trusted bundle startup, compatibility, and canonical HTTP container contract. | Implemented locally | [#160](https://github.com/anilreddy89/Inforsight/issues/160) | TBD | Planned | — | `docs/hardening/rh-06-inference-runtime-contract.md`, `data-contracts/rh/inference-runtime/v1/`, 14 fixtures, 7 focused design tests, [phase document](../phase_docs/phase-rh-06-inference-only-runtime-package.md) | Contract 1.0.0, schema, fixtures, and design validation pass locally; review/merge remain pending. RH-06I remains blocked. Historical artifacts are unchanged. |
-| RH-06I | Review hardening | Implement and verify the inference-only runtime package and canonical HTTP serving image. | Pending | TBD | TBD | TBD | — | RH-06D contract | Starts from updated `main` only after RH-06D merges. |
+| RH-06D | Review hardening | Define the independently installable inference-runtime packaging, trusted bundle startup, compatibility, and canonical HTTP container contract. | Completed | [#160](https://github.com/anilreddy89/Inforsight/issues/160) | [#161](https://github.com/anilreddy89/Inforsight/pull/161) | 2026-09-13 | `205f612` | `docs/hardening/rh-06-inference-runtime-contract.md`, `data-contracts/rh/inference-runtime/v1/`, 14 fixtures, 7 focused design tests, [phase document](../phase_docs/phase-rh-06-inference-only-runtime-package.md) | Contract 1.0.0 accepted; all five CI jobs passed. RH-06I is authorized from updated `main`. Historical artifacts are unchanged. |
+| RH-06I | Review hardening | Implement and verify the inference-only runtime package and canonical HTTP serving image. | Implemented locally | [#162](https://github.com/anilreddy89/Inforsight/issues/162) | TBD | 2026-09-14 | — | `inference-runtime/`, serving/dashboard/OPE/qualification migrations, canonical HTTP image, 14 fixture behaviors, [implementation phase document](../phase_docs/phase-rh-06i-inference-only-runtime-implementation.md) | NumPy-only runtime, trusted loading, all 13 stable failure codes, explicit legacy score parity, clean package/ASGI/container evidence, 52 serving tests, 10 dashboard tests, Phase 3 qualification, and the 506-test historical simulator suite pass. PR, CI, and merge remain pending; protected artifacts are unchanged. |
 | RH-07–RH-10 | Review hardening | Implement monitoring, grounding, P4-contract, and durable-audit repairs through the governed dependency graph. | Planned | Existing/TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | RH-07 waits for RH-06; other work follows its declared predecessors. Preserve historical artifacts. |
 | RH-11 | Review hardening | Expand CI and perform read-only qualification of revised claims and boundaries. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-11 | Begins only after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Regenerate affected evidence and reconcile public documentation and scientific/product claims. | Planned | [#128](https://github.com/anilreddy89/Inforsight/issues/128) (to amend when ready) | TBD | TBD | — | `docs/backlog.md` RH-12 | Sequentially follows RH-11; reconciles independent issue #130 without rewriting historical evidence. |
@@ -136,9 +136,9 @@ In one sentence: Phase 2 and Phase 3 are complete and released; review hardening
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 64 (current completed rows; Review hardening: RH-00, RH-01D, RH-01I, RH-02, RH-03, RH-04D, RH-04I, RH-05D, and RH-05I) |
-| Implemented locally changes | 1 (RH-06D) |
-| Planned changes | RH-06I through RH-13 plus P4-04 through P4-07 |
+| Completed tracked changes | 65 (current completed rows; Review hardening now includes RH-06D) |
+| Implemented locally changes | 1 (RH-06I) |
+| Planned changes | RH-07 through RH-13 plus P4-04 through P4-07 |
 | Paused changes | 2 (P4-02 and P4-03) |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
@@ -147,8 +147,8 @@ In one sentence: Phase 2 and Phase 3 are complete and released; review hardening
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | RH-06D issue #160 implemented locally; review and merge pending |
-| Next implementation increment | RH-06I waits for RH-06D merge |
+| Active increment | RH-06I issue #162 implemented locally on `fix/162-rh-06i-inference-runtime`; review and merge pending |
+| Next implementation increment | RH-07 after RH-06I review and merge |
 
 ## Latest verification baseline
 

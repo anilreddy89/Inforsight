@@ -1,3 +1,7 @@
+# NON-RUNNABLE PHASE 4 TOPOLOGY SKETCH.
+# Kafka, PostgreSQL, Java, gRPC, and this full-stack composition are outside
+# RH-06 and cannot be used as inference-runtime verification evidence. Use
+# serving/Dockerfile directly for the bounded HTTP runtime.
 version: '3.8'
 
 services:
@@ -55,7 +59,7 @@ services:
       - inforsight-network
 
   # ============================================================================
-  # Perception Layer: Python / FastAPI / gRPC Bundled Inference Engine
+  # Historical Phase 4 perception-layer sketch; gRPC is not implemented.
   # ============================================================================
   inference-runtime:
     build:

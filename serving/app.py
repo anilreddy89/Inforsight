@@ -2,15 +2,21 @@
 
 from __future__ import annotations
 
-import os
 import time
 from pathlib import Path
 from typing import Any
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 
-from inforsight_simulator.bundle import ModelBundle, BundledInferenceEngine, ScoringResult
-from inforsight_simulator.semantic_catalog import SemanticCatalog, load_semantic_catalog
+from inforsight_inference import (
+    BundledInferenceEngine,
+    ModelBundle,
+    RUNTIME_CONTRACT_ID,
+    RUNTIME_CONTRACT_VERSION,
+    ScoringResult,
+    SemanticCatalog,
+    load_configured_runtime,
+)
 from serving.models import (
     ADR_0002_AUTHORITY_BOUNDARY_NOTICE,
     BatchScoreRequest,
@@ -35,37 +41,24 @@ _monitor: DriftMonitor | None = None
 _catalog: SemanticCatalog | None = None
 
 
-def get_bundle_path() -> Path:
-    env_path = os.getenv("INFORSIGHT_MODEL_BUNDLE_PATH")
-    if env_path:
-        p = Path(env_path)
-        if p.exists():
-            return p
-    return DEFAULT_BUNDLE_PATH
-
-
 def load_engine(bundle_path: Path | str | None = None) -> tuple[ModelBundle, BundledInferenceEngine, str]:
-    target_path = Path(bundle_path) if bundle_path else get_bundle_path()
-    if not target_path.exists():
-        raise FileNotFoundError(f"Model bundle not found at: {target_path}")
-    raw_bytes = target_path.read_bytes()
-    import hashlib
-    digest = hashlib.sha256(raw_bytes).hexdigest()
-    bundle = ModelBundle.load(target_path)
-    engine = BundledInferenceEngine(bundle)
-    return bundle, engine, digest
+    runtime = load_configured_runtime(DEFAULT_BUNDLE_PATH, bundle_path=bundle_path)
+    return runtime.bundle, runtime.engine, runtime.bundle_sha256
 
 
 def create_app(bundle_path: Path | str | None = None) -> FastAPI:
     global _bundle, _engine, _bundle_sha256, _monitor, _catalog
-    _bundle, _engine, _bundle_sha256 = load_engine(bundle_path)
+    runtime = load_configured_runtime(DEFAULT_BUNDLE_PATH, bundle_path=bundle_path)
+    _bundle, _engine, _bundle_sha256 = (
+        runtime.bundle, runtime.engine, runtime.bundle_sha256
+    )
     _monitor = DriftMonitor(_bundle)
-    _catalog = load_semantic_catalog()
+    _catalog = runtime.catalog
 
     app = FastAPI(
         title="Inforsight Model Serving Gateway",
         description=(
-            "High-throughput, zero-dependency REST inference gateway hosting the frozen "
+            "Bounded REST inference gateway hosting the verified frozen "
             "Inforsight Conservation Risk Model with strict ADR 0002 non-authority boundaries."
         ),
         version="1.0.0",
@@ -77,9 +70,13 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
         return HealthResponse(
             status="healthy",
+            runtime_contract_id=RUNTIME_CONTRACT_ID,
+            runtime_contract_version=RUNTIME_CONTRACT_VERSION,
             bundle_id=_bundle.bundle_id,
             bundle_sha256=_bundle_sha256,
             bundle_version=_bundle.bundle_version,
+            catalog_version=_catalog.version if _catalog is not None else "",
+            catalog_sha256=_catalog.sha256 if _catalog is not None else "",
             engine_status="ready",
         )
 
