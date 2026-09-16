@@ -24,10 +24,13 @@ from serving.models import (
     DriverDetail,
     HealthResponse,
     ModelInfoResponse,
+    ResolvedOutcomeRequest,
+    ResolvedOutcomeResponse,
     ScoreRequest,
     ScoreResponse,
 )
 from serving.monitoring import DriftMonitor
+from serving.monitoring.monitor import OutcomeJoinError
 
 DEFAULT_BUNDLE_PATH = (
     Path(__file__).resolve().parent.parent / "docs" / "experiments" / "phase-02-10-model-bundle.json"
@@ -148,6 +151,12 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         latency_ms = (time.perf_counter() - t0) * 1000.0
         if _monitor is not None:
             _monitor.record_single_request(latency_ms)
+            _monitor.record_score(
+                policy_id=req.policy_id,
+                observation_id=req.observation_id or req.as_of_date,
+                features=raw_map,
+                predicted_probability=result.calibrated_probability,
+            )
         return _format_scoring_response(req, result)
 
     @app.post("/v1/score/batch", response_model=BatchScoreResponse, tags=["Scoring"])
@@ -163,14 +172,52 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         latency_ms = (time.perf_counter() - t0) * 1000.0
         if _monitor is not None:
             _monitor.record_batch_request(latency_ms, len(results))
+            for item, raw_map, result in zip(req.requests, raw_maps, results):
+                _monitor.record_score(
+                    policy_id=item.policy_id,
+                    observation_id=item.observation_id or item.as_of_date,
+                    features=raw_map,
+                    predicted_probability=result.calibrated_probability,
+                )
         scores = [_format_scoring_response(r, res) for r, res in zip(req.requests, results)]
         return BatchScoreResponse(count=len(scores), scores=scores)
+
+    @app.post(
+        "/v1/monitoring/outcomes",
+        response_model=ResolvedOutcomeResponse,
+        tags=["Monitoring"],
+    )
+    def ingest_resolved_outcome(req: ResolvedOutcomeRequest) -> ResolvedOutcomeResponse:
+        """Attach a resolved outcome to its exact retained score; no score is created here."""
+        if _monitor is None:
+            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Monitor not initialised")
+        try:
+            outcome_status = _monitor.ingest_resolved_outcome(
+                policy_id=req.policy_id,
+                observation_id=req.observation_id,
+                model_version=req.model_version,
+                observed_outcome=req.observed_outcome,
+                resolved_at=req.resolved_at,
+            )
+        except OutcomeJoinError as exc:
+            failure_status = (
+                status.HTTP_409_CONFLICT
+                if str(exc) in {"MODEL_VERSION_MISMATCH", "OUTCOME_CONFLICT"}
+                else status.HTTP_404_NOT_FOUND
+            )
+            raise HTTPException(status_code=failure_status, detail=str(exc))
+        return ResolvedOutcomeResponse(
+            status=outcome_status,
+            policy_id=req.policy_id,
+            observation_id=req.observation_id,
+            model_version=req.model_version,
+        )
 
     @app.get("/v1/diagnostics", tags=["Monitoring"])
     def diagnostics() -> JSONResponse:
         """Return inference telemetry, PSI/CSI drift, rolling calibration, and alert summary.
 
-        schema_version: 1.0.0 (predeclared in Phase 3.04A design spec).
+        schema_version: 1.1.0; RH-07 adds evidence counts and insufficient-data states.
         ADR 0002: authorized_to_act is unconditionally False in the alert_summary section.
         """
         if _monitor is None:

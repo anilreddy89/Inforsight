@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Deque
 
 from serving.monitoring.models import (
@@ -22,6 +23,7 @@ from serving.monitoring.models import (
     BSS_DEGRADED_THRESHOLD,
     ECE_GREEN_MAX,
     ECE_YELLOW_MAX,
+    MIN_CALIBRATION_OBSERVATIONS,
     _ece_status,
 )
 
@@ -33,6 +35,7 @@ _ECE_BINS = 10
 class _Observation:
     predicted_prob: float
     observed_outcome: float   # 0.0 or 1.0
+    timestamp: str = ""
 
 
 def _compute_ece(observations: list[_Observation], n_bins: int = _ECE_BINS) -> float:
@@ -78,24 +81,38 @@ class CalibrationTracker:
     Thread safety: not required (single-process, single-worker serving context).
     """
 
-    def __init__(self, window_size: int = _ROLLING_WINDOW) -> None:
+    def __init__(self, window_size: int = _ROLLING_WINDOW, minimum_observations: int = MIN_CALIBRATION_OBSERVATIONS) -> None:
+        if minimum_observations < 1 or minimum_observations > window_size:
+            raise ValueError("minimum_observations must be between 1 and window_size")
         self._window_size = window_size
+        self._minimum_observations = minimum_observations
         self._buffer: Deque[_Observation] = deque(maxlen=window_size)
-        self._oldest_timestamp: str | None = None
-        self._newest_timestamp: str | None = None
 
     def record(self, predicted_prob: float, observed_outcome: float, timestamp: str | None = None) -> None:
         """Add a resolved observation (outcome known) to the rolling window."""
-        self._buffer.append(_Observation(predicted_prob=predicted_prob, observed_outcome=observed_outcome))
-        if timestamp:
-            if self._oldest_timestamp is None:
-                self._oldest_timestamp = timestamp
-            self._newest_timestamp = timestamp
+        self._buffer.append(_Observation(
+            predicted_prob=predicted_prob,
+            observed_outcome=observed_outcome,
+            timestamp=timestamp or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        ))
 
     def compute(self) -> CalibrationReport:
         """Compute ECE, Brier Score, and BSS over the current rolling window."""
         observations = list(self._buffer)
         n = len(observations)
+
+        if n < self._minimum_observations:
+            return CalibrationReport(
+                window_size=n,
+                ece=None,
+                brier_score=None,
+                brier_skill_score=None,
+                ece_status="insufficient_data",
+                brier_status="insufficient_data",
+                minimum_observations=self._minimum_observations,
+                reference_ece=REFERENCE_ECE,
+                reference_brier_score=REFERENCE_BRIER_SCORE,
+            )
 
         ece = _compute_ece(observations)
         bs = _compute_brier_score(observations)
@@ -116,6 +133,7 @@ class CalibrationTracker:
             brier_skill_score=bss,
             ece_status=ece_stat,
             brier_status=brier_stat,
+            minimum_observations=self._minimum_observations,
             reference_ece=REFERENCE_ECE,
             reference_brier_score=REFERENCE_BRIER_SCORE,
         )
@@ -126,8 +144,8 @@ class CalibrationTracker:
 
     @property
     def oldest_timestamp(self) -> str | None:
-        return self._oldest_timestamp
+        return self._buffer[0].timestamp if self._buffer else None
 
     @property
     def newest_timestamp(self) -> str | None:
-        return self._newest_timestamp
+        return self._buffer[-1].timestamp if self._buffer else None

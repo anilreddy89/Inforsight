@@ -46,7 +46,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 | Severity | Claim-blocking |
 | Discovered in | `Documents/Project_Review_Through_P4-01.md`, reviewed at commit `b15a9ba` |
 | Owner | Review hardening initiative RH-00 through RH-13; charter [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) |
-| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 through RH-05I phase records; `docs/hardening/rh-03-authority-boundary.md`; `docs/hardening/rh-04-economics-resource-contract.md`; RH-05 [issues #154/#157](https://github.com/anilreddy89/Inforsight/issues/157) |
+| Evidence | `Documents/Hardening_Plan_Approval_and_Phase4_Gates.md`; RH plan in `docs/backlog.md`; RH-00 through RH-06I phase records; `docs/hardening/rh-03-authority-boundary.md`; `docs/hardening/rh-04-economics-resource-contract.md`; RH-05 [issues #154/#157](https://github.com/anilreddy89/Inforsight/issues/157); RH-07 [phase document](../Documents/phase_docs/phase-rh-07-evidence-bearing-monitoring.md) and [issue #129](https://github.com/anilreddy89/Inforsight/issues/129) |
 | Detailed plan | `Documents/phase_docs/phase-rh-00-hardening-release-charter-and-overlap-triage.md` |
 | Resolution trigger | RH-13 must record an evidence-backed `PROCEED` before P4-02 or P4-03 implementation resumes |
 
@@ -85,6 +85,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-05 completed on 2026-09-11: RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155 (`3645fae`); RH-05I closed through issue #157 and PR #158 (`603b955`) after all five required CI jobs passed. Historical corrected evidence remains deferred to RH-12.
 - [x] RH-06D accepted inference-runtime contract 1.0.0 through issue #160 and PR #161, merge `205f612`, after all five CI jobs passed.
 - [x] RH-06I and parent RH-06 completed through issue #162 and PR #163, merge `df69910`, after all six CI checks passed; the bounded independent-runtime claim is accepted while production-readiness and Phase 4 claims remain blocked.
+- [x] RH-07 implementation is complete locally after issue #129's scope was implemented and the full `make check` passed; issue/PR closure remains pending because the work is intentionally uncommitted. Its bounded evidence path requires real scoring evidence, exact resolved-outcome joins, and explicit `insufficient_data` before any drift or calibration-health claim.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.

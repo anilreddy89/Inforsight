@@ -124,8 +124,11 @@ def build_alert_summary(
 
     all_alerts.extend(_alert_for_calibration(calibration_report))
 
+    # A green aggregate would imply both drift and calibration evidence are adequate.
+    # Preserve an explicit incomplete-evidence state until both evidence paths qualify.
+    overall = "insufficient_data" if calibration_report.ece_status == "insufficient_data" or not drift_results else _overall_status(all_alerts)
     return AlertSummary(
-        overall_status=_overall_status(all_alerts),
+        overall_status=overall,
         active_alerts=all_alerts,
         authorized_to_act=False,
     )

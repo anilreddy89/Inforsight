@@ -29,7 +29,9 @@ PRIMARY_RISK_DRIVERS: frozenset[str] = frozenset({
     "tenure_days",
 })
 
-DIAGNOSTICS_SCHEMA_VERSION = "1.0.0"
+DIAGNOSTICS_SCHEMA_VERSION = "1.1.0"
+MIN_DRIFT_OBSERVATIONS = 50
+MIN_CALIBRATION_OBSERVATIONS = 50
 
 
 def _psi_status(value: float) -> str:
@@ -77,22 +79,24 @@ class CalibrationReport:
     """Rolling ECE, Brier Score, and BSS over a sliding observation window."""
 
     window_size: int
-    ece: float
-    brier_score: float
-    brier_skill_score: float
-    ece_status: str             # "well_calibrated" | "moderate_decay" | "significant_decay"
-    brier_status: str           # "stable" | "degraded"
+    ece: float | None
+    brier_score: float | None
+    brier_skill_score: float | None
+    ece_status: str             # "insufficient_data" | "well_calibrated" | "moderate_decay" | "significant_decay"
+    brier_status: str           # "insufficient_data" | "stable" | "degraded"
+    minimum_observations: int = MIN_CALIBRATION_OBSERVATIONS
     reference_ece: float = REFERENCE_ECE
     reference_brier_score: float = REFERENCE_BRIER_SCORE
 
     def to_dict(self) -> dict:
         return {
             "rolling_window_size": self.window_size,
-            "ece": round(self.ece, 6),
-            "brier_score": round(self.brier_score, 6),
-            "brier_skill_score": round(self.brier_skill_score, 6),
+            "ece": round(self.ece, 6) if self.ece is not None else None,
+            "brier_score": round(self.brier_score, 6) if self.brier_score is not None else None,
+            "brier_skill_score": round(self.brier_skill_score, 6) if self.brier_skill_score is not None else None,
             "ece_status": self.ece_status,
             "brier_status": self.brier_status,
+            "minimum_observations": self.minimum_observations,
             "reference_ece": self.reference_ece,
             "reference_brier_score": self.reference_brier_score,
         }
@@ -122,7 +126,7 @@ class AlertEntry:
 class AlertSummary:
     """Aggregated alert status across all drift and calibration signals."""
 
-    overall_status: str                    # "green" | "yellow" | "red"
+    overall_status: str                    # "insufficient_data" | "green" | "yellow" | "red"
     active_alerts: list[AlertEntry] = field(default_factory=list)
     authorized_to_act: bool = False
     action_authority_boundary: str = ADR_0002_AUTHORITY_BOUNDARY_NOTICE

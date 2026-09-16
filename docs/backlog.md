@@ -933,7 +933,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Packaging defect / refactor
 **Priority:** High
 
-**Status:** Completed on 2026-09-15. RH-06D closed through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) and [PR #161](https://github.com/anilreddy89/Inforsight/pull/161), merge `205f612`. RH-06I and parent RH-06 closed through [issue #162](https://github.com/anilreddy89/Inforsight/issues/162) and [PR #163](https://github.com/anilreddy89/Inforsight/pull/163), merge `df69910`, after all six CI checks passed. The merged implementation provides the NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, clean package/ASGI/container evidence, and protected historical artifacts. RH-07 issue #129 is predecessor-ready.
+**Status:** Completed on 2026-09-15. RH-06D closed through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) and [PR #161](https://github.com/anilreddy89/Inforsight/pull/161), merge `205f612`. RH-06I and parent RH-06 closed through [issue #162](https://github.com/anilreddy89/Inforsight/issues/162) and [PR #163](https://github.com/anilreddy89/Inforsight/pull/163), merge `df69910`, after all six CI checks passed. The merged implementation provides the NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, clean package/ASGI/container evidence, and protected historical artifacts. RH-07 issue #129 is implemented locally on its successor branch and awaits commit/PR closeout.
 
 **Outcome:** Provide an independently installable inference runtime whose import, startup, health, and score paths do not import or require training/evaluation packages.
 
@@ -951,15 +951,17 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Current defect / test gap
 **Priority:** High
 
+**Status:** Implementation complete locally (uncommitted) as of 2026-09-16. Existing [issue #129](https://github.com/anilreddy89/Inforsight/issues/129) is the canonical implementation task; RH-06I closed through [PR #163](https://github.com/anilreddy89/Inforsight/pull/163), merge `df69910`, satisfying its strict predecessor. The implementation scope and verification evidence are recorded in [the RH-07 phase document](../Documents/phase_docs/phase-rh-07-evidence-bearing-monitoring.md). Issue/PR closeout remains pending; no unsupported monitoring-health claim is made.
+
 **Outcome:** Retain bounded scored-feature windows, ingest resolved outcomes through an operational interface, and report `insufficient_data` until drift or calibration claims have adequate evidence.
 
 **Acceptance checks:**
 
-- [ ] Actual scoring traffic populates version-keyed drift windows.
-- [ ] Outcomes join by policy, observation, and model version through an exposed interface.
-- [ ] Empty or undersized windows cannot report `well_calibrated` or perfect skill.
-- [ ] Tests demonstrate drift after scoring traffic and calibration after resolved outcomes.
-- [ ] Scope is reconciled with open monitoring issue #129.
+- [x] Actual scoring traffic populates version-keyed drift windows.
+- [x] Outcomes join by policy, observation, and model version through an exposed interface.
+- [x] Empty or undersized windows cannot report `well_calibrated` or perfect skill.
+- [x] Tests demonstrate drift after scoring traffic and calibration after resolved outcomes.
+- [x] Scope is reconciled with open monitoring issue #129; issue/PR closure remains pending because the implementation is intentionally uncommitted.
 
 #### RH-08 - Bind narratives to structured evidence
 
