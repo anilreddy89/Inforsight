@@ -608,12 +608,12 @@ const timelineData = [
         id: "RH-06–RH-07",
         title: "Inference-Only Runtime & Evidence-Bearing Monitoring",
         status: "In Progress",
-        commit: "RH-06D 205f612; RH-06I implemented locally",
+        commit: "RH-06 complete: RH-06D 205f612; RH-06I df69910",
         summary: {
           tech: "Package scoring without training dependencies, verify bundle identity at startup, and make drift/calibration states depend on bounded scoring and resolved-outcome evidence.",
           simple: "Make scoring independently runnable and ensure monitoring says “insufficient data” until real test evidence exists."
         },
-        checks: "RH-06D issue #160 closed through PR #161, merge 205f612. RH-06I issue #162 is implemented locally on fix/162-rh-06i-inference-runtime: NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, clean package/ASGI/container checks, and affected suites pass. Review, PR, CI, and merge remain pending; parent RH-06 and RH-07 remain merge-gated."
+        checks: "RH-06D issue #160 closed through PR #161 (205f612). RH-06I issue #162 and parent RH-06 closed through PR #163 (df69910) after all six CI checks passed. The merged implementation includes the NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, and clean package/ASGI/container evidence. RH-07 issue #129 is open and predecessor-ready; monitoring implementation has not started."
       },
       {
         id: "RH-08–RH-10",

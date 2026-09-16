@@ -933,7 +933,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Packaging defect / refactor
 **Priority:** High
 
-**Status:** RH-06D completed on 2026-09-13 through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) and [PR #161](https://github.com/anilreddy89/Inforsight/pull/161), merge `205f612`, with all five CI jobs passing. RH-06I is implemented locally on 2026-09-14 through [issue #162](https://github.com/anilreddy89/Inforsight/issues/162) on branch `fix/162-rh-06i-inference-runtime`: the NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, clean package/ASGI/container checks, and affected suites pass. Review, PR, CI, and merge remain pending; parent RH-06 and RH-07 remain merge-gated.
+**Status:** Completed on 2026-09-15. RH-06D closed through [issue #160](https://github.com/anilreddy89/Inforsight/issues/160) and [PR #161](https://github.com/anilreddy89/Inforsight/pull/161), merge `205f612`. RH-06I and parent RH-06 closed through [issue #162](https://github.com/anilreddy89/Inforsight/issues/162) and [PR #163](https://github.com/anilreddy89/Inforsight/pull/163), merge `df69910`, after all six CI checks passed. The merged implementation provides the NumPy-only package, trusted bundle/catalog startup, consumer migrations, canonical HTTP image, 14 fixture behaviors, clean package/ASGI/container evidence, and protected historical artifacts. RH-07 issue #129 is predecessor-ready.
 
 **Outcome:** Provide an independently installable inference runtime whose import, startup, health, and score paths do not import or require training/evaluation packages.
 
