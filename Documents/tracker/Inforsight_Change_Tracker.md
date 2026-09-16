@@ -96,7 +96,8 @@ Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github
 | RH-05I | Review hardening | Implement portfolio allocation, exact capacity enforcement, dashboard refresh, atomic reservation replacement, and controlled strategy comparison. | Completed | [#157](https://github.com/anilreddy89/Inforsight/issues/157) | [#158](https://github.com/anilreddy89/Inforsight/pull/158) | 2026-09-11 | `603b955` | [phase document](../phase_docs/phase-rh-05i-portfolio-allocation-implementation.md), allocator/workflow/dashboard runtime, 64-case exact-reference sweep | Allocation contract 1.0.0 implemented; all five CI jobs passed. Parent RH-05 is closed. Historical evidence remains protected for RH-12 and Phase 4 remains blocked through RH-13. |
 | RH-06D | Review hardening | Define the independently installable inference-runtime packaging, trusted bundle startup, compatibility, and canonical HTTP container contract. | Completed | [#160](https://github.com/anilreddy89/Inforsight/issues/160) | [#161](https://github.com/anilreddy89/Inforsight/pull/161) | 2026-09-13 | `205f612` | `docs/hardening/rh-06-inference-runtime-contract.md`, `data-contracts/rh/inference-runtime/v1/`, 14 fixtures, 7 focused design tests, [phase document](../phase_docs/phase-rh-06-inference-only-runtime-package.md) | Contract 1.0.0 accepted; all five CI jobs passed. RH-06I is authorized from updated `main`. Historical artifacts are unchanged. |
 | RH-06I | Review hardening | Implement and verify the inference-only runtime package and canonical HTTP serving image. | Completed | [#162](https://github.com/anilreddy89/Inforsight/issues/162) | [#163](https://github.com/anilreddy89/Inforsight/pull/163) | 2026-09-15 | `df69910` | `inference-runtime/`, serving/dashboard/OPE/qualification migrations, canonical HTTP image, 14 fixture behaviors, [implementation phase document](../phase_docs/phase-rh-06i-inference-only-runtime-implementation.md) | NumPy-only runtime, trusted loading, all 13 stable failure codes, explicit legacy score parity, clean package/ASGI/container evidence, and protected-artifact checks completed; all six CI checks passed. Parent RH-06 is closed and RH-07 is predecessor-ready. |
-| RH-07–RH-10 | Review hardening | Implement monitoring, grounding, P4-contract, and durable-audit repairs through the governed dependency graph. | Planned | [#129](https://github.com/anilreddy89/Inforsight/issues/129) / Existing/TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | RH-07 issue #129 is predecessor-ready after RH-06 completion; other work follows its declared predecessors. Preserve historical artifacts. |
+| RH-07 | Review hardening | Make monitoring states evidence-bearing through bounded scored-feature windows, exact outcome joins, and explicit insufficient-data diagnostics. | Implemented locally; uncommitted | [#129](https://github.com/anilreddy89/Inforsight/issues/129) | TBD | 2026-09-16 | — | [phase document](../phase_docs/phase-rh-07-evidence-bearing-monitoring.md), `docs/backlog.md`, serving monitoring/diagnostics | Bounded score retention, exact outcome joins, explicit insufficient-data states, adversarial regressions, and the full `make check` gate are complete locally. No commit/PR/issue closeout was performed; no monitoring-health claim is accepted beyond the bounded evidence behavior. |
+| RH-08–RH-10 | Review hardening | Implement grounding, P4-contract, and durable-audit repairs through the governed dependency graph. | Planned | Existing/TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | Work follows its declared predecessors. Preserve historical artifacts. |
 | RH-11 | Review hardening | Expand CI and perform read-only qualification of revised claims and boundaries. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-11 | Begins only after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Regenerate affected evidence and reconcile public documentation and scientific/product claims. | Planned | [#128](https://github.com/anilreddy89/Inforsight/issues/128) (to amend when ready) | TBD | TBD | — | `docs/backlog.md` RH-12 | Sequentially follows RH-11; reconciles independent issue #130 without rewriting historical evidence. |
 | RH-13 | Review hardening | Qualify and release the hardening initiative; decide whether Phase 4 may resume. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-13 | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
@@ -137,18 +138,18 @@ In one sentence: Phase 2 and Phase 3 are complete and released; review hardening
 | Measure | Value |
 | --- | --- |
 | Completed tracked changes | 66 (current completed rows; Review hardening now includes RH-06D and RH-06I) |
-| Implemented locally changes | 0 |
-| Planned changes | RH-07 through RH-13 plus P4-04 through P4-07 |
+| Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
+| Planned changes | RH-08 through RH-13 plus P4-04 through P4-07 |
 | Paused changes | 2 (P4-02 and P4-03) |
-| In-progress changes | 0 |
+| In-progress changes | 0 (RH-07 implementation complete locally) |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | None; repository is on updated `main` after RH-06 completion |
-| Next implementation increment | RH-07 issue #129 — evidence-bearing monitoring |
+| Active increment | RH-07 implementation complete locally; uncommitted |
+| Next implementation increment | RH-08 — structured grounding (after RH-07 issue/PR closeout) |
 
 ## Latest verification baseline
 
@@ -164,6 +165,19 @@ Clean wheel/sdist, isolated ASGI, and no-cache canonical-container checks: passe
 Protected historical artifacts: unchanged
 All six pull-request CI checks: passed
 git diff --check: passed
+```
+
+Latest local RH-07 verification baseline on branch `fix/129-rh-07-evidence-bearing-monitoring`:
+
+```text
+Full make check: passed (all contract, artifact, serving, dashboard, qualification, and simulator gates)
+Simulator suite: 507 passed
+Serving monitoring and gateway suite: 62 passed
+Focused RH-07 diagnostics/monitoring suite: 23 passed
+Repository boundary checks: passed
+Python compilation and roadmap JavaScript syntax checks: passed
+git diff --check: passed
+Protected Phase 3.09 qualification artifacts: restored unchanged after timestamped check output
 ```
 
 Latest local R2-08 design verification on 2026-08-30:

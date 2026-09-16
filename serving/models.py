@@ -45,6 +45,11 @@ class ScoreRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     policy_id: str = Field(..., min_length=1, description="Unique policy identifier")
+    observation_id: str | None = Field(
+        default=None,
+        min_length=1,
+        description="Stable observation identifier; defaults to as_of_date for compatibility.",
+    )
     as_of_date: str = Field(..., description="Point-in-time timestamp (ISO 8601 UTC)")
     feature_stage: Literal["raw-v6-features"]
     preprocessing_profile_id: Literal[PREPROCESSING_PROFILE_ID]
@@ -97,6 +102,24 @@ class BatchScoreResponse(BaseModel):
 
     count: int
     scores: list[ScoreResponse]
+
+
+class ResolvedOutcomeRequest(BaseModel):
+    """A realized binary outcome joined to one retained serving score."""
+    model_config = ConfigDict(extra="forbid")
+
+    policy_id: str = Field(..., min_length=1)
+    observation_id: str = Field(..., min_length=1)
+    model_version: str = Field(..., min_length=1)
+    observed_outcome: Literal[0, 1]
+    resolved_at: str | None = Field(default=None, description="Optional ISO-8601 resolution timestamp")
+
+
+class ResolvedOutcomeResponse(BaseModel):
+    status: Literal["accepted", "replayed"]
+    policy_id: str
+    observation_id: str
+    model_version: str
 
 
 class HealthResponse(BaseModel):

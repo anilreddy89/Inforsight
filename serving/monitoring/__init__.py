@@ -38,7 +38,7 @@ from serving.monitoring.models import (
     AlertEntry,
     TelemetrySnapshot,
 )
-from serving.monitoring.monitor import DriftMonitor
+from serving.monitoring.monitor import DriftMonitor, OutcomeJoinError
 
 __all__ = [
     "DIAGNOSTICS_SCHEMA_VERSION",
@@ -47,6 +47,7 @@ __all__ = [
     "CalibrationReport",
     "CalibrationTracker",
     "DriftMonitor",
+    "OutcomeJoinError",
     "FeatureDriftResult",
     "TelemetryCollector",
     "TelemetrySnapshot",

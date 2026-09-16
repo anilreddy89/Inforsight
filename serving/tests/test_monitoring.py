@@ -26,6 +26,8 @@ from serving.monitoring.models import (
     ADR_0002_AUTHORITY_BOUNDARY_NOTICE,
     _psi_status,
     _ece_status,
+    MIN_CALIBRATION_OBSERVATIONS,
+    MIN_DRIFT_OBSERVATIONS,
 )
 from serving.monitoring.psi import (
     compute_psi_from_proportions,
@@ -37,7 +39,7 @@ from serving.monitoring.calibration import CalibrationTracker, _compute_ece, _co
 from serving.monitoring.telemetry import TelemetryCollector
 from serving.monitoring.alert import build_alert_summary, _alert_for_feature, _overall_status
 from serving.monitoring.baseline import build_training_baseline, _build_numeric_baseline, _build_categorical_baseline
-from serving.monitoring.monitor import DriftMonitor
+from serving.monitoring.monitor import DriftMonitor, OutcomeJoinError
 from inforsight_inference import ModelBundle
 from serving.app import create_app, DEFAULT_BUNDLE_PATH
 from fastapi.testclient import TestClient
@@ -252,8 +254,9 @@ class TestCalibrationTracker(unittest.TestCase):
         tracker = CalibrationTracker()
         report = tracker.compute()
         self.assertEqual(report.window_size, 0)
-        self.assertEqual(report.ece, 0.0)
-        self.assertEqual(report.brier_score, 0.0)
+        self.assertIsNone(report.ece)
+        self.assertIsNone(report.brier_score)
+        self.assertEqual(report.ece_status, "insufficient_data")
 
 
 # ---------------------------------------------------------------------------
@@ -351,7 +354,104 @@ class TestDriftMonitor(_BaseTest):
     def test_diagnostics_report_schema_version(self) -> None:
         report = self.monitor.diagnostics_report()
         self.assertEqual(report["schema_version"], DIAGNOSTICS_SCHEMA_VERSION)
-        self.assertEqual(report["schema_version"], "1.0.0")
+        self.assertEqual(report["schema_version"], "1.1.0")
+
+    def test_empty_diagnostics_are_explicitly_insufficient(self) -> None:
+        report = self.monitor.diagnostics_report()
+        self.assertEqual(report["feature_drift"]["status"], "insufficient_data")
+        self.assertEqual(report["calibration"]["ece_status"], "insufficient_data")
+        self.assertEqual(report["alert_summary"]["overall_status"], "insufficient_data")
+
+    def test_scoring_records_populate_drift_only_after_threshold(self) -> None:
+        features = {
+            **{name: spec.mean for name, spec in self.bundle.preprocessor.numeric.items()},
+            **{name: spec.categories[0] for name, spec in self.bundle.preprocessor.categorical.items()},
+        }
+        for index in range(MIN_DRIFT_OBSERVATIONS):
+            self.monitor.record_score(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}",
+                features=features, predicted_probability=0.3,
+            )
+        report = self.monitor.diagnostics_report()
+        self.assertEqual(report["feature_drift"]["status"], "ready")
+        self.assertEqual(report["feature_drift"]["retained_score_count"], MIN_DRIFT_OBSERVATIONS)
+        self.assertIn("tenure_days", report["feature_drift"]["features"])
+
+    def test_extreme_drift_requires_retained_scoring_evidence(self) -> None:
+        features = {name: spec.mean for name, spec in self.bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in self.bundle.preprocessor.categorical.items()})
+        features["tenure_days"] = 1e9
+        for index in range(MIN_DRIFT_OBSERVATIONS - 1):
+            self.monitor.record_score(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}",
+                features=features, predicted_probability=0.3,
+            )
+        self.assertEqual(self.monitor.diagnostics_report()["feature_drift"]["status"], "insufficient_data")
+        self.monitor.record_score(
+            policy_id="policy-final", observation_id="observation-final",
+            features=features, predicted_probability=0.3,
+        )
+        report = self.monitor.diagnostics_report()
+        self.assertEqual(report["feature_drift"]["features"]["tenure_days"]["status"], "significant_drift")
+
+    def test_score_retention_is_bounded_and_evicted_scores_cannot_join(self) -> None:
+        monitor = DriftMonitor(self.bundle, score_window_size=2, minimum_drift_observations=1)
+        features = {name: spec.mean for name, spec in self.bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in self.bundle.preprocessor.categorical.items()})
+        for index in range(3):
+            monitor.record_score(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}",
+                features=features, predicted_probability=0.3,
+            )
+        self.assertEqual(monitor.diagnostics_report()["feature_drift"]["retained_score_count"], 2)
+        with self.assertRaisesRegex(OutcomeJoinError, "SCORE_NOT_RETAINED"):
+            monitor.ingest_resolved_outcome(
+                policy_id="policy-0", observation_id="observation-0",
+                model_version=self.bundle.bundle_version, observed_outcome=0,
+            )
+
+    def test_calibration_time_bounds_follow_the_retained_window(self) -> None:
+        tracker = CalibrationTracker(window_size=2, minimum_observations=1)
+        tracker.record(0.1, 0.0, "2026-01-01T00:00:00Z")
+        tracker.record(0.2, 0.0, "2026-01-02T00:00:00Z")
+        tracker.record(0.3, 0.0, "2026-01-03T00:00:00Z")
+        self.assertEqual(tracker.oldest_timestamp, "2026-01-02T00:00:00Z")
+        self.assertEqual(tracker.newest_timestamp, "2026-01-03T00:00:00Z")
+
+    def test_outcomes_require_exact_score_and_are_idempotent(self) -> None:
+        features = {name: spec.mean for name, spec in self.bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in self.bundle.preprocessor.categorical.items()})
+        self.monitor.record_score(
+            policy_id="policy-1", observation_id="observation-1", features=features, predicted_probability=0.3,
+        )
+        version = self.bundle.bundle_version
+        self.assertEqual(self.monitor.ingest_resolved_outcome(
+            policy_id="policy-1", observation_id="observation-1", model_version=version, observed_outcome=0,
+        ), "accepted")
+        self.assertEqual(self.monitor.ingest_resolved_outcome(
+            policy_id="policy-1", observation_id="observation-1", model_version=version, observed_outcome=0,
+        ), "replayed")
+        with self.assertRaisesRegex(OutcomeJoinError, "MODEL_VERSION_MISMATCH"):
+            self.monitor.ingest_resolved_outcome(
+                policy_id="policy-1", observation_id="observation-1", model_version="wrong", observed_outcome=0,
+            )
+        self.assertEqual(self.monitor.diagnostics_report()["calibration"]["rolling_window_size"], 1)
+
+    def test_calibration_requires_adequate_joined_outcomes(self) -> None:
+        features = {name: spec.mean for name, spec in self.bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in self.bundle.preprocessor.categorical.items()})
+        version = self.bundle.bundle_version
+        for index in range(MIN_CALIBRATION_OBSERVATIONS):
+            self.monitor.record_score(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}", features=features,
+                predicted_probability=0.3,
+            )
+            self.monitor.ingest_resolved_outcome(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}", model_version=version,
+                observed_outcome=index % 2,
+            )
+        report = self.monitor.diagnostics_report()
+        self.assertNotEqual(report["calibration"]["ece_status"], "insufficient_data")
 
     def test_diagnostics_report_adr_0002_in_alert_summary(self) -> None:
         report = self.monitor.diagnostics_report()
@@ -378,8 +478,17 @@ class TestDriftMonitor(_BaseTest):
         self.assertEqual(report["telemetry"]["requests_batch"], 10)
 
     def test_calibration_window_updates_on_resolved_outcome(self) -> None:
-        for _ in range(5):
-            self.monitor.record_resolved_outcome(0.3, 0.0)
+        features = {name: spec.mean for name, spec in self.bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in self.bundle.preprocessor.categorical.items()})
+        for index in range(5):
+            self.monitor.record_score(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}",
+                features=features, predicted_probability=0.3,
+            )
+            self.monitor.ingest_resolved_outcome(
+                policy_id=f"policy-{index}", observation_id=f"observation-{index}",
+                model_version=self.bundle.bundle_version, observed_outcome=0,
+            )
         report = self.monitor.diagnostics_report()
         self.assertEqual(report["calibration"]["rolling_window_size"], 5)
 
@@ -417,7 +526,7 @@ class TestDiagnosticsEndpoint(unittest.TestCase):
     def test_diagnostics_schema_version(self) -> None:
         resp = self.client.get("/v1/diagnostics")
         data = resp.json()
-        self.assertEqual(data["schema_version"], "1.0.0")
+        self.assertEqual(data["schema_version"], "1.1.0")
 
     def test_diagnostics_adr_0002_boundary_marker(self) -> None:
         """GET /v1/diagnostics must always include authorized_to_act: false."""
@@ -438,23 +547,69 @@ class TestDiagnosticsEndpoint(unittest.TestCase):
 
     def test_diagnostics_telemetry_after_scoring(self) -> None:
         """Telemetry counters increment after scoring requests."""
-        from inforsight_inference import BundledInferenceEngine
-        from inforsight_simulator.v6_corpus import generate_v6_corpus, V6CorpusConfig
-        from inforsight_simulator.v6_evaluation import _feature_map
-        corpus = generate_v6_corpus(V6CorpusConfig(base_seed=20280201))
-        obs = [r for r in corpus.observations if r.role == "non_final_evaluation"][0]
-        fmap = _feature_map(obs)
+        bundle = ModelBundle.load(DEFAULT_BUNDLE_PATH)
+        features = {name: spec.mean for name, spec in bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in bundle.preprocessor.categorical.items()})
         payload = {
-            "policy_id": obs.policy_id,
-            "as_of_date": obs.as_of,
+            "policy_id": "rh-07-telemetry-policy",
+            "as_of_date": "2026-09-16T00:00:00Z",
             "feature_stage": "raw-v6-features",
             "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
-            "features": fmap,
+            "features": features,
         }
         self.client.post("/v1/score", json=payload)
         resp = self.client.get("/v1/diagnostics")
         data = resp.json()
         self.assertGreaterEqual(data["telemetry"]["requests_total"], 1)
+
+    def test_outcome_endpoint_joins_retained_score_and_replays_idempotently(self) -> None:
+        bundle = ModelBundle.load(DEFAULT_BUNDLE_PATH)
+        features = {name: spec.mean for name, spec in bundle.preprocessor.numeric.items()}
+        features.update({name: spec.categories[0] for name, spec in bundle.preprocessor.categorical.items()})
+        response = self.client.post("/v1/score", json={
+            "policy_id": "rh-07-outcome-policy",
+            "as_of_date": "2026-09-16T00:00:00Z",
+            "observation_id": "rh-07-outcome-observation",
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
+            "features": features,
+        })
+        self.assertEqual(response.status_code, 200)
+        outcome = {
+            "policy_id": "rh-07-outcome-policy",
+            "observation_id": "rh-07-outcome-observation",
+            "model_version": self.client.get("/v1/model/info").json()["bundle_version"],
+            "observed_outcome": 0,
+        }
+        accepted = self.client.post("/v1/monitoring/outcomes", json=outcome)
+        replayed = self.client.post("/v1/monitoring/outcomes", json=outcome)
+        conflicting = self.client.post("/v1/monitoring/outcomes", json={**outcome, "observed_outcome": 1})
+        self.assertEqual(accepted.status_code, 200)
+        self.assertEqual(accepted.json()["status"], "accepted")
+        self.assertEqual(replayed.status_code, 200)
+        self.assertEqual(replayed.json()["status"], "replayed")
+        self.assertEqual(conflicting.status_code, 409)
+        self.assertEqual(conflicting.json()["detail"], "OUTCOME_CONFLICT")
+
+    def test_outcome_endpoint_rejects_cross_version_join(self) -> None:
+        response = self.client.post("/v1/monitoring/outcomes", json={
+            "policy_id": "not-retained",
+            "observation_id": "not-retained",
+            "model_version": "wrong-version",
+            "observed_outcome": 0,
+        })
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.json()["detail"], "MODEL_VERSION_MISMATCH")
+
+    def test_outcome_endpoint_rejects_unknown_retained_score(self) -> None:
+        response = self.client.post("/v1/monitoring/outcomes", json={
+            "policy_id": "not-retained",
+            "observation_id": "not-retained",
+            "model_version": self.client.get("/v1/model/info").json()["bundle_version"],
+            "observed_outcome": 0,
+        })
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"], "SCORE_NOT_RETAINED")
 
     def test_existing_gateway_tests_still_pass(self) -> None:
         """Smoke-check: health and model/info endpoints still respond correctly."""

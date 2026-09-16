@@ -58,6 +58,7 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
   ```json
   {
     "policy_id": "POL-10492",
+    "observation_id": "OBS-2026-09-01-POL-10492",
     "as_of_date": "2026-09-01T00:00:00Z",
     "feature_stage": "raw-v6-features",
     "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
@@ -149,6 +150,28 @@ The serving gateway exposes the trained and calibrated Phase 2.10 release model 
     ]
   }
   ```
+
+---
+
+### 2.5 Evidence-Bearing Monitoring
+
+- **Routes**: `GET /v1/diagnostics`; `POST /v1/monitoring/outcomes`
+- **Scoring evidence**: Every successful score retains its raw feature vector in a bounded 500-record window keyed by `(policy_id, observation_id, bundle_version)`. `observation_id` is optional on scoring requests for compatibility and otherwise resolves to `as_of_date`.
+- **Outcome evidence**: Submit a resolved binary outcome only after its score has been retained:
+
+  ```json
+  {
+    "policy_id": "POL-10492",
+    "observation_id": "OBS-2026-09-01-POL-10492",
+    "model_version": "<bundle_version from /v1/model/info>",
+    "observed_outcome": 0,
+    "resolved_at": "2026-12-01T00:00:00Z"
+  }
+  ```
+
+  The endpoint is idempotent for the same payload. It rejects a missing retained score, a cross-version join, or a conflicting repeat; it never creates a score or outcome by default.
+- **Evidence thresholds**: Drift requires 50 retained scores; calibration requires 50 exact score/outcome joins. Before the relevant threshold, diagnostics report `insufficient_data`, with null calibration metrics and explicit evidence counts. A green aggregate is unavailable until both evidence paths are adequate.
+- **Boundary**: Monitoring is observational only. It does not change scores, tiers, workflows, approvals, model bytes, or action authority.
 
 ---
 
