@@ -975,18 +975,20 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Acceptance checks:**
 
-- [ ] Unsupported identifiers, amounts, dates, durations, percentages, actions, authorizations, causal claims, and status assertions fail validation.
-- [ ] A grounding hash is described only as input/text consistency evidence, not proof that the input is true.
-- [ ] Adversarial external-provider fixtures are required before enabling a non-deterministic provider.
-- [ ] The documented validator coverage exactly matches enforced checks.
-- [ ] Keeping the external provider disabled is an acceptable outcome; no issue is required to prove arbitrary generated prose true.
-- [ ] Adversarial results are described as evidence for declared grammar/field coverage, never as a universal hallucination guarantee.
+- [x] Unsupported identifiers, amounts, dates, durations, percentages, actions, authorizations, causal claims, and status assertions fail validation.
+- [x] A grounding hash is described only as input/text consistency evidence, not proof that the input is true.
+- [x] Adversarial external-provider fixtures are required before enabling a non-deterministic provider.
+- [x] The documented validator coverage exactly matches enforced checks.
+- [x] Keeping the external provider disabled is an acceptable outcome; no issue is required to prove arbitrary generated prose true.
+- [x] Adversarial results are described as evidence for declared grammar/field coverage, never as a universal hallucination guarantee.
 
 #### RH-09 - Amend P4-01 contracts before dependent implementation
 
 **Issue template:** Architecture decision and Design specification
 **Classification:** Architecture decision / contract defect
 **Priority:** Release blocking for P4-02/P4-03
+
+**Status:** RH-08 is complete through PR #168, merge `c283f184`. RH-09D implementation is complete locally for [issue #169](https://github.com/anilreddy89/Inforsight/issues/169) on branch `docs/169-rh-09d-p4-01-contract-reconciliation`; contract checks pass and PR creation/CI remain pending. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md). RH-09I and P4-02/P4-03 remain blocked until the declared design and release gates pass.
 
 **Outcome:** Amend ADR 0014, Protobuf, and OpenAPI contracts so authority presence, tier semantics, authentication, concurrency, idempotency, override rules, preprocessing identity, economics/resource versions, audit semantics, errors, and deployment claims are explicit before Java or Kafka work begins. RH-09D may draft after RH-01; RH-09I must reconcile the settled RH-03, RH-04, RH-06, and RH-10 specifications before merge.
 

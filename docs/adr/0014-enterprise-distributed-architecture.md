@@ -8,6 +8,8 @@
 - Enables: P4-02 (Apache Kafka Streaming Ingress), P4-03 (Java 21 / Spring Boot Control Plane), P4-04 (Persistence Layer & Cryptographic Audit Store), P4-05 (Enterprise Connectors), P4-06 (Cloud Infrastructure & Orchestration), P4-07 (Enterprise Scale Qualification)
 - Blocks: Uncoordinated microservice implementation, non-contractual network boundaries, unauthorized autonomous actions
 
+> **RH-09D reconciliation status:** The P4-01 architecture-inception contracts below remain provisional until RH-09D/RH-09I acceptance. The static topology, latency targets, and service labels are not evidence of deployed authentication, authorization, availability, throughput, or production readiness. See `docs/hardening/rh-09-contract-reconciliation.md` and issue [#169](https://github.com/anilreddy89/Inforsight/issues/169).
+
 ---
 
 ## 1. Context and Problem Framing

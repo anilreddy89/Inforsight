@@ -105,7 +105,8 @@ Backlog -> GitHub issue -> Working branch -> Pull request -> Merged -> Issue clo
 | RH-07 | Review hardening | Evidence-bearing monitoring | Implemented locally; uncommitted | Existing [issue #129](https://github.com/anilreddy89/Inforsight/issues/129) began after RH-06I. The [phase document](Documents/phase_docs/phase-rh-07-evidence-bearing-monitoring.md) records complete local implementation and passing full `make check`; issue/PR closeout remains pending. |
 | RH-08D | Review hardening | Structured grounding and bounded narrative contract | Completed | Issue [#165](https://github.com/anilreddy89/Inforsight/issues/165) closed through [PR #166](https://github.com/anilreddy89/Inforsight/pull/166), merge `8035001`; contract 1.0.0 accepted. |
 | RH-08I | Review hardening | Implement structured grounding and bounded narratives | Completed | Issue [#167](https://github.com/anilreddy89/Inforsight/issues/167) closed through [PR #168](https://github.com/anilreddy89/Inforsight/pull/168), merge `c283f184`; required CI passed. |
-| RH-09–RH-10 | Review hardening | P4-contract and durable-audit repairs | Planned | Work follows the dependency graph in `docs/backlog.md`. |
+| RH-09D | Review hardening | Reconcile P4-01 Protobuf/OpenAPI/ADR contracts | Implemented locally; PR pending | Issue [#169](https://github.com/anilreddy89/Inforsight/issues/169) on branch `docs/169-rh-09d-p4-01-contract-reconciliation`; contract consistency, Protobuf, OpenAPI, boundary, and diff checks pass. |
+| RH-09I–RH-10 | Review hardening | Implement reconciled P4 contracts and durable-audit repairs | Planned | RH-09I waits for RH-09D; work follows the dependency graph in `docs/backlog.md`. |
 | RH-11 | Review hardening | Expanded CI and read-only qualification | Planned | Begins after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Evidence regeneration and documentation reconciliation | Planned | Issue #128 will be amended when predecessor-ready; issue #130 remains independent pending reconciliation. |
 | RH-13 | Review hardening | Hardening release and Phase 4 resume decision | Planned | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
@@ -131,8 +132,8 @@ Phase 2 and Phase 3 remain completed releases. P4-01 is completed architecture-i
 | Completed Phase 4 increments | 1 of 7 (14.3% complete) |
 | In-progress Phase 4 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | RH-08I completed, issue #167 / PR #168 |
-| Next implementation increment | RH-09 — amend P4-01 contracts before dependent implementation |
+| Active increment | RH-09D implementation complete locally, issue #169 |
+| Next implementation increment | RH-09D PR review, CI, and merge |
 
 | ID | Status | Impact | Resolution trigger |
 | --- | --- | --- | --- |

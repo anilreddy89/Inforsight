@@ -42,9 +42,9 @@ message PolicyScoreResponse {
   
   // ADR 0002 Authority Boundary Marker:
   // Must be explicitly set to false by application code to guarantee perception-only authority.
-  bool authorized_to_act = 4;
+  optional bool authorized_to_act = 4;
   
-  string operational_tier = 5;       // e.g. TIER_1_CRITICAL, TIER_2_ELEVATED, TIER_3_MODERATE, TIER_4_LOW
+  string operational_tier = 5;       // Canonical: TIER_1_LOW, TIER_2_ELEVATED, TIER_3_HIGH, TIER_4_CRITICAL
   repeated FeatureContribution top_drivers = 6;
   string bundle_version = 7;
   string bundle_digest = 8;          // SHA-256 digest of active model bundle

@@ -5,7 +5,11 @@ info:
   description: >
     Enterprise control plane microservice orchestrating point-in-time policy triage,
     deterministic eligibility firewalls, knapsack uplift optimization, and governed
-    human-in-the-loop caseworker decisions.
+      human-in-the-loop caseworker decisions.
+  x-contract-status: provisional-until-rh-09-accepted
+  x-claim-boundary: Static topology does not establish authentication, authorization, latency, availability, or production readiness.
+security:
+  - bearerAuth: []
 paths:
   /api/v1/cases/triage:
     post:
@@ -61,7 +65,9 @@ paths:
       summary: Record licensed caseworker review decision
       description: >
         Enforces ADR 0002 human-in-the-loop sign-off. Records approval, override, or dismissal
-        and appends an immutable record to the SHA-256 hash-chained audit ledger.
+        and appends an immutable record to the SHA-256 hash-chained audit ledger. Trusted actor
+        establishment is separate from request payload identity; mutations require idempotency
+        and expected case-version controls.
       operationId: recordCaseDecision
       parameters:
         - name: case_id
@@ -114,6 +120,10 @@ paths:
 
 components:
   schemas:
+    RiskTier:
+      type: string
+      enum: [TIER_1_LOW, TIER_2_ELEVATED, TIER_3_HIGH, TIER_4_CRITICAL]
+      description: Canonical RH-01 risk tier; ordinal increases with risk.
     TriageBatchRequest:
       type: object
       required:
@@ -174,8 +184,7 @@ components:
         policy_id:
           type: string
         operational_tier:
-          type: string
-          enum: [TIER_1_CRITICAL, TIER_2_ELEVATED, TIER_3_MODERATE, TIER_4_LOW]
+          $ref: '#/components/schemas/RiskTier'
         calibrated_probability:
           type: number
         recommended_action:
@@ -207,7 +216,7 @@ components:
         calibrated_probability:
           type: number
         operational_tier:
-          type: string
+          $ref: '#/components/schemas/RiskTier'
         factual_narrative:
           type: string
         grounding_hash:
@@ -217,8 +226,8 @@ components:
           type: string
         authorized_to_act:
           type: boolean
-          description: >
-            ADR 0002 boundary. Remains false until licensed caseworker decision is approved.
+          nullable: false
+          description: ADR 0002 boundary. Remains false until licensed caseworker decision is approved; presence is required where authority is evaluated.
 
     CaseDecisionRequest:
       type: object
@@ -226,6 +235,8 @@ components:
         - reviewer_id
         - decision
         - timestamp
+        - idempotency_key
+        - expected_case_version
       properties:
         reviewer_id:
           type: string
@@ -245,6 +256,12 @@ components:
         timestamp:
           type: string
           format: date-time
+        idempotency_key:
+          type: string
+          minLength: 1
+        expected_case_version:
+          type: integer
+          minimum: 0
 
     CaseDecisionResponse:
       type: object
@@ -263,7 +280,7 @@ components:
           description: Cryptographic hash of the committed audit event
         authorized_to_act:
           type: boolean
-          description: True if caseworker approved or overridden; false if rejected/dismissed
+          description: True only after an approved human decision; false for rejected or dismissed decisions. This response is not an inference-runtime response.
 
     AuditTrailResponse:
       type: object
@@ -333,3 +350,10 @@ components:
                 type: string
               message:
                 type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentication transport only; trusted actor establishment and authorization remain separate enforced boundaries.

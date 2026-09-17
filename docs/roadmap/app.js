@@ -618,13 +618,13 @@ const timelineData = [
       {
         id: "RH-08–RH-10",
         title: "Structured Grounding, Corrected Interfaces & Durable Audit Semantics",
-        status: "Completed",
-        commit: "RH-08D 8035001; RH-08I c283f184",
+        status: "RH-09D PR Pending",
+        commit: "RH-08D 8035001; RH-08I c283f184; RH-09D issue #169 local implementation",
         summary: {
           tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
           simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
         },
-        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. Structured grounding, bounded statement grammar, deterministic rendering, provider validation, compatibility handling, and assistant/dashboard regressions are merged. RH-09I remains next."
+        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 implementation is complete locally on docs/169-rh-09d-p4-01-contract-reconciliation: contract consistency, Protobuf, OpenAPI, boundary, and diff checks pass; PR/CI remain pending before dependent P4 implementation."
       },
       {
         id: "RH-11–RH-13",
