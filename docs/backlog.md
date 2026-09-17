@@ -988,18 +988,20 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Architecture decision / contract defect
 **Priority:** Release blocking for P4-02/P4-03
 
-**Status:** RH-08 is complete through PR #168, merge `c283f184`. RH-09D is complete through issue #169 / PR #170, merge `fde3f2b`. RH-09I implementation is complete locally on issue #171 and branch `fix/171-rh-09i-p4-01-contracts`; full test-environment verification remains pending. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md) and [RH-09I phase document](../Documents/phase_docs/phase-rh-09i-p4-01-contract-implementation.md). P4-02/P4-03 remain blocked until the declared design and release gates pass.
+**Status:** **Completed and closed.** RH-09D closed through issue #169 / PR #170, merge `fde3f2b`. RH-09I closed through issue #171 / PR #172, merge `fe1430f`, with required CI passed. The parent RH-09 outcome is complete; P4-02/P4-03 remain blocked until RH-13 records `PROCEED`. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md) and [RH-09I phase document](../Documents/phase_docs/phase-rh-09i-p4-01-contract-implementation.md).
 
 **Outcome:** Amend ADR 0014, Protobuf, and OpenAPI contracts so authority presence, tier semantics, authentication, concurrency, idempotency, override rules, preprocessing identity, economics/resource versions, audit semantics, errors, and deployment claims are explicit before Java or Kafka work begins. RH-09D may draft after RH-01; RH-09I must reconcile the settled RH-03, RH-04, RH-06, and RH-10 specifications before merge.
 
 **Acceptance checks:**
 
-- [ ] Authority uses presence-aware representation (`optional` or explicit enum) and rejects absent/unknown authorization states.
-- [ ] Risk tiers map identically across the released model, Protobuf, OpenAPI, and canonical catalog.
-- [ ] Authentication/security schemes, trusted reviewer identity, idempotency keys, expected case versions, conditional override requirements, and errors are machine-verifiable where feasible.
-- [ ] Network/identity enforcement is specified separately from topology.
-- [ ] RPC latency remains a target until measured through a deployed path.
-- [ ] Contract compilation, linting, and compatibility tests pass.
+- [x] Authority uses presence-aware representation (`optional` or explicit enum) and rejects absent/unknown authorization states.
+- [x] Risk tiers map identically across the released model, Protobuf, OpenAPI, and canonical catalog.
+- [x] Authentication/security schemes, trusted reviewer identity, idempotency keys, expected case versions, conditional override requirements, and errors are machine-verifiable where feasible.
+- [x] Network/identity enforcement is specified separately from topology.
+- [x] RPC latency remains a target until measured through a deployed path.
+- [x] Contract compilation, linting, and compatibility tests pass.
+
+**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 remains an independent audit-durability work item, and RH-13 remains the final Phase 4 resume gate.
 
 #### RH-10 - Specify and harden audit durability semantics
 
