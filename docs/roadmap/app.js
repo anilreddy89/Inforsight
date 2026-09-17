@@ -618,13 +618,13 @@ const timelineData = [
       {
         id: "RH-08–RH-10",
         title: "Structured Grounding, Corrected Interfaces & Durable Audit Semantics",
-        status: "Planned",
-        commit: "Pending",
+        status: "RH-08D In Progress",
+        commit: "RH-08D issue #165; branch docs/165-rh-08d-structured-grounding",
         summary: {
           tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
           simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
         },
-        checks: "Design precedes implementation; RH-09I waits for settled authority, economics, runtime, and audit specifications."
+        checks: "RH-08D is in progress through issue #165. The structured-grounding contract defines typed evidence, bounded statement grammar, deterministic rendering, provider-disabled operation, and the distinction between input/text consistency and truth. RH-08I remains blocked until RH-08D merges; RH-09I waits for settled authority, economics, runtime, and audit specifications."
       },
       {
         id: "RH-11–RH-13",
