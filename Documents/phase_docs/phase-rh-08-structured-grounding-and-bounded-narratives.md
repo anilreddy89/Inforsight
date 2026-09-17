@@ -7,11 +7,11 @@
 | Initiative | Review hardening — post-Phase 3 maintenance and correctness |
 | Stable work ID | `RH-08` |
 | Delivery type | Design specification followed by bounded implementation |
-| Status | RH-08D design in progress on issue [#165](https://github.com/anilreddy89/Inforsight/issues/165) |
+| Status | RH-08I in progress through issue [#167](https://github.com/anilreddy89/Inforsight/issues/167) |
 | Milestone | `v0.3.1-decision-engine-hardening` (Milestone #6) |
 | Classification | Current defect / safety boundary |
 | Priority | High; mandatory for the hardening release |
-| Strict predecessor | RH-07 issue #129 and its implementation PR; confirmed before RH-08D start |
+| Strict predecessor | RH-08D issue #165 / PR #166, merge `8035001` |
 | Governing backlog | [RH-08](../../docs/backlog.md#rh-08---bind-narratives-to-structured-evidence) |
 | Source finding | [Project review finding 12](../Project_Review_Through_P4-01.md#12-grounding-is-lexical-and-incomplete) |
 | Related contract | [RH-01 domain snapshot and semantic catalog](../../docs/hardening/rh-01-domain-snapshot-contract.md) |
@@ -101,12 +101,13 @@ RH-01 is complete and supplies the domain snapshot/semantic catalog boundary. RH
 
 ## 10. Issue tracking and implementation instructions
 
-RH-08D is now tracked by issue [#165](https://github.com/anilreddy89/Inforsight/issues/165) on branch `docs/165-rh-08d-structured-grounding`. Create RH-08I only after RH-08D and its PR merge.
+RH-08D is tracked by issue [#165](https://github.com/anilreddy89/Inforsight/issues/165) and merged through [PR #166](https://github.com/anilreddy89/Inforsight/pull/166), merge `8035001`. RH-08I is now tracked by issue [#167](https://github.com/anilreddy89/Inforsight/issues/167).
 
-### RH-08D design issue — created
+### RH-08D design issue — merged
 
 - Template: `.github/ISSUE_TEMPLATE/design.yml`
 - Issue: [#165](https://github.com/anilreddy89/Inforsight/issues/165)
+- PR: [#166](https://github.com/anilreddy89/Inforsight/pull/166), merge `8035001`
 - Title: `[Design] RH-08D: Define structured grounding and bounded narrative contract`
 - Label: `design`
 - Milestone: `v0.3.1-decision-engine-hardening`
@@ -119,11 +120,11 @@ RH-08D is now tracked by issue [#165](https://github.com/anilreddy89/Inforsight/
 - Evidence: design document, grammar/coverage matrix, accepted/rejected examples, design validation, boundary checks, and `git diff --check`.
 - Dependencies: `Must merge first: RH-07/#129 implementation PR. Blocks: RH-08I and RH-11 grounding qualification. Related: RH-01, RH-03, RH-07, RH-12.`
 
-The normative design is [the RH-08D contract](../../docs/hardening/rh-08-structured-grounding-contract.md). Do not start RH-08I until RH-08D is merged.
+The normative design is [the RH-08D contract](../../docs/hardening/rh-08-structured-grounding-contract.md). RH-08I is governed by the separate [implementation phase document](phase-rh-08i-structured-grounding-implementation.md).
 
-### RH-08I implementation issue
+### RH-08I implementation issue — implementation complete locally
 
-Open after RH-08D closes, using `.github/ISSUE_TEMPLATE/implementation.yml`:
+Issue [#167](https://github.com/anilreddy89/Inforsight/issues/167) is open. The implementation is complete locally on `fix/167-rh-08i-structured-grounding`; open the PR and record its number here after creation.
 
 - Title: `[Implementation] RH-08I: Bind narratives to structured evidence`
 - Label: `implementation`

@@ -969,7 +969,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Current defect / safety boundary
 **Priority:** High
 
-**Status:** RH-08D in progress through [issue #165](https://github.com/anilreddy89/Inforsight/issues/165) on branch `docs/165-rh-08d-structured-grounding`. The normative design is [the RH-08D structured-grounding contract](hardening/rh-08-structured-grounding-contract.md). RH-08I remains blocked until RH-08D merges.
+**Status:** RH-08D completed through [issue #165](https://github.com/anilreddy89/Inforsight/issues/165) and [PR #166](https://github.com/anilreddy89/Inforsight/pull/166), merge `8035001`. RH-08I implementation is complete locally for [issue #167](https://github.com/anilreddy89/Inforsight/issues/167) on branch `fix/167-rh-08i-structured-grounding`; PR creation and CI remain pending. See the [RH-08I phase document](../Documents/phase_docs/phase-rh-08i-structured-grounding-implementation.md).
 
 **Outcome:** Render factual case-brief fields deterministically from the canonical snapshot and restrict generated prose to a constrained statement grammar whose claims resolve to typed evidence identifiers. Unsupported statement types reject or fall back to deterministic templates.
 

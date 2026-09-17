@@ -30,6 +30,19 @@ from inforsight_simulator.assistant.models import (
     ValidationStatus,
 )
 from inforsight_simulator.assistant.template_engine import generate_template_brief
+from inforsight_simulator.assistant.structured_grounding import (
+    GROUNDING_CONTRACT_VERSION,
+    Evidence,
+    GroundingContractError,
+    GroundingErrorCode,
+    NarrativeContext,
+    NarrativeStatement,
+    StatementKind,
+    render_statements,
+    validate_provider_payload,
+    validate_statements,
+    context_from_case_evidence,
+)
 
 __all__ = [
     "BriefRecommendation",
@@ -52,5 +65,15 @@ __all__ = [
     "SynthesisMode",
     "ValidationStatus",
     "generate_template_brief",
+    "GROUNDING_CONTRACT_VERSION",
+    "Evidence",
+    "GroundingContractError",
+    "GroundingErrorCode",
+    "NarrativeContext",
+    "NarrativeStatement",
+    "StatementKind",
+    "render_statements",
+    "validate_provider_payload",
+    "validate_statements",
+    "context_from_case_evidence",
 ]
-

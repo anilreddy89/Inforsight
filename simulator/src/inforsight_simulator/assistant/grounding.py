@@ -15,6 +15,11 @@ from inforsight_simulator.assistant.models import (
     GroundingAudit,
     ValidationStatus,
 )
+from inforsight_simulator.assistant.structured_grounding import (
+    GroundingContractError,
+    NarrativeContext,
+    validate_provider_payload,
+)
 
 
 CURRENCY_REGEX = re.compile(r"\$([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{2})?|[0-9]+(?:\.[0-9]{2})?)")
@@ -26,6 +31,17 @@ class GroundingGuard:
 
     def __init__(self, tolerance: float = 0.05) -> None:
         self.tolerance = tolerance
+
+    def validate_structured_payload(
+        self,
+        candidate_payload: dict[str, Any],
+        context: NarrativeContext,
+    ) -> tuple[tuple[str, ...], GroundingContractError | None]:
+        """Validate a RH-08 grammar payload without accepting raw prose."""
+        try:
+            return validate_provider_payload(candidate_payload, context), None
+        except GroundingContractError as error:
+            return (), error
 
     def extract_currencies(self, text: str) -> list[float]:
         """Extract all dollar currency values from text as floats."""
@@ -226,4 +242,3 @@ class GroundingGuard:
             hallucination_detected=hallucination_detected,
             violations=tuple(violations),
         )
-
