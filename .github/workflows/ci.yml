@@ -46,9 +46,23 @@ jobs:
         run: make check-contracts
 
   v1-v3-pipeline-checks:
-    name: Generations v1-v3 Pipeline Checks
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: v1-v3 Foundation
+            command: make assessment-check observation-check temporal-split-check
+          - name: v1-v3 Feature & Baseline Models
+            command: make feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check
+          - name: v1-v3 Authorization & Leakage
+            command: make scoring-authorization-check leakage-check
+          - name: v2 Corpus & Evaluation
+            command: make v2-corpus-check v2-evaluation-check v2-acceptance-check
+          - name: v3 Corpus & Evaluation
+            command: make v3-corpus-check v3-evaluation-check v3-acceptance-check
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -72,12 +86,26 @@ jobs:
           python -m pip install -e simulator
 
       - name: Run v1-v3 pipeline checks
-        run: make check-v1-v3
+        run: ${{ matrix.command }}
 
   v4-v5-diagnostics-checks:
-    name: Generations v4-v5 Diagnostics & Qualification
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: v4 Diagnostics & Qualification
+            command: make r2-13-diagnostic-readiness-check r2-14-qualification-check
+          - name: v5 Diagnostic Contracts
+            command: make r2-14a-diagnostic-contract-check r2-14ba-diagnostic-contract-check
+          - name: v5 Diagnostics
+            command: make r2-14b-diagnostic-check r2-14bb-diagnostic-check
+          - name: v6 Contract & Qualification
+            command: make r2-14c-contract-check r2-14d-qualification-check
+          - name: v6 Evaluation & Acceptance
+            command: make v6-evaluation-check v6-acceptance-check
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -101,12 +129,24 @@ jobs:
           python -m pip install -e simulator
 
       - name: Run v4-v5 diagnostics and qualification checks
-        run: make check-v4-v5
+        run: ${{ matrix.command }}
 
   simulator-unit-tests:
-    name: Simulator Unit Tests
+    name: Simulator Tests (${{ matrix.name }})
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: A-F
+            pattern: 'test_[a-f]*.py'
+          - name: G-M
+            pattern: 'test_[g-m]*.py'
+          - name: N-S
+            pattern: 'test_[n-s]*.py'
+          - name: T-Z
+            pattern: 'test_[t-z]*.py'
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -130,7 +170,7 @@ jobs:
           python -m pip install -e simulator
 
       - name: Run complete simulator unit test suite
-        run: make simulator-test
+        run: python -m unittest discover -s simulator/tests -p '${{ matrix.pattern }}' -v
 
   scaffold-checks:
     name: CI Completion Gate (scaffold-checks)

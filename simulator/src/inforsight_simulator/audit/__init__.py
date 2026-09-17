@@ -4,8 +4,10 @@ from inforsight_simulator.audit.ledger import (
     GENESIS_HASH,
     GENESIS_SEED,
     AuditIntegrityError,
+    AuditRecoveryError,
     AuditLedger,
     AuditRecord,
+    AuditWriterBusyError,
 )
 from inforsight_simulator.audit.serialization import canonical_json_dumps, compute_sha256
 from inforsight_simulator.audit.verifier import (
@@ -15,8 +17,10 @@ from inforsight_simulator.audit.verifier import (
 
 __all__ = [
     "AuditIntegrityError",
+    "AuditRecoveryError",
     "AuditLedger",
     "AuditRecord",
+    "AuditWriterBusyError",
     "AuditTrailVerifier",
     "AuditVerificationResult",
     "GENESIS_HASH",
@@ -24,4 +28,3 @@ __all__ = [
     "canonical_json_dumps",
     "compute_sha256",
 ]
-

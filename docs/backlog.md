@@ -1009,16 +1009,18 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Latent/current defect and P4 prerequisite
 **Priority:** High
 
+**Status:** RH-10D design contract complete locally; RH-10I implementation is in progress. The design artifact selects the bounded single-writer append protocol, defines checkpoint and trust semantics, predeclares recovery/concurrency behavior and adversarial coverage, and leaves PostgreSQL/KMS realization to P4-04. Issue/PR closeout remains pending.
+
 **Outcome:** Accurately bound current integrity claims and implement a concrete reference persistence mechanism selected in RH-10D: either a transactional local store, or a deliberately single-writer append protocol with documented crash recovery. Define trusted checkpoints, suffix-truncation detection, writer coordination, atomic state/audit persistence, and recovery semantics without requiring P4 PostgreSQL/KMS infrastructure.
 
 **Acceptance checks:**
 
-- [ ] Current unkeyed hash-chain behavior is described as integrity checking relative to a trusted tip/length.
+- [x] Current unkeyed hash-chain behavior is described as integrity checking relative to a trusted tip/length.
 - [ ] Suffix deletion, middle mutation, reorder, replay, and concurrent-writer cases are tested.
 - [ ] Workflow state and audit history recover consistently after restart/failure in the reference implementation.
-- [ ] P4-04 owns PostgreSQL/KMS realization; RH owns semantics, reference behavior, and adversarial fixtures.
-- [ ] Failure between state and audit updates, restart, stale checkpoint, suffix truncation, and second-writer rejection/coordination are covered.
-- [ ] The trusted checkpoint is protected by a separately stated trust boundary; a tip stored beside the writable log is not claimed to resist an attacker controlling both.
+- [x] P4-04 owns PostgreSQL/KMS realization; RH owns semantics, reference behavior, and adversarial fixtures.
+- [x] Failure between state and audit updates, restart, stale checkpoint, suffix truncation, and second-writer rejection/coordination are specified for RH-10I.
+- [x] The trusted checkpoint is protected by a separately stated trust boundary; a tip stored beside the writable log is not claimed to resist an attacker controlling both.
 
 #### RH-11 - Expand qualification, CI, and read-only artifact verification
 
