@@ -10,6 +10,11 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable, Optional
 
 from inforsight_simulator.assistant.context import CaseEvidenceContext
+from inforsight_simulator.assistant.structured_grounding import (
+    NarrativeStatement,
+    StatementKind,
+    context_from_case_evidence,
+)
 
 
 class NarrativeProvider(ABC):
@@ -78,6 +83,34 @@ class DeterministicMockNarrativeProvider(NarrativeProvider):
             "talking_points": talking_points,
         }
 
+    def generate_structured_payload(self, context: CaseEvidenceContext) -> dict[str, Any]:
+        """Return grammar slots for the RH-08 structured path.
+
+        The legacy prose method remains for compatibility callers; the
+        assistant uses this payload when the provider supports it.
+        """
+        bound = context_from_case_evidence(context)
+        statements = (
+            NarrativeStatement("policy", context.policy_id, StatementKind.POLICY_ID, context.policy_id, ("legacy:policy_id",)),
+            NarrativeStatement("product", context.policy_id, StatementKind.PRODUCT_TYPE, context.product_type, ("legacy:product_type",)),
+            NarrativeStatement("status", context.policy_id, StatementKind.STATUS, context.policy_status, ("legacy:status",)),
+            NarrativeStatement("risk", context.policy_id, StatementKind.RISK_SCORE, context.calibrated_probability, ("legacy:risk_score",)),
+            NarrativeStatement("action", context.policy_id, StatementKind.RECOMMENDED_ACTION, context.primary_action, ("legacy:recommended_action",)),
+        )
+        return {
+            "statements": [
+                {
+                    "statement_id": statement.statement_id,
+                    "policy_id": statement.policy_id,
+                    "kind": statement.kind.value,
+                    "value": statement.value,
+                    "evidence_ids": list(statement.evidence_ids),
+                }
+                for statement in statements
+            ],
+            "_context": bound,
+        }
+
 
 class InjectableMockNarrativeProvider(NarrativeProvider):
     """Provider allowing direct injection of candidate payloads for testing.
@@ -131,4 +164,3 @@ class PromptBuilder:
             f"- DISQUALIFIED ACTIONS (STRICTLY PROHIBITED):\n{disqualified_str}\n\n"
             f"Synthesize an executive summary headline, narrative paragraph, and 3 talking points."
         )
-

@@ -31,6 +31,10 @@ from inforsight_simulator.assistant.template_engine import (
     compute_operational_urgency,
     generate_template_brief,
 )
+from inforsight_simulator.assistant.structured_grounding import (
+    GroundingContractError,
+    context_from_case_evidence,
+)
 
 
 class CaseIntelligenceAssistant:
@@ -76,11 +80,62 @@ class CaseIntelligenceAssistant:
         # ---------------------------------------------------------------------
         # Mode 2: Generative Narrative with Automated Grounding Guard
         # ---------------------------------------------------------------------
-        candidate_narrative = self.narrative_provider.generate_narrative(context)
-        validated_narrative, audit = self.grounding_guard.validate(
-            candidate_narrative=candidate_narrative,
-            context=context,
-        )
+        structured_generator = getattr(self.narrative_provider, "generate_structured_payload", None)
+        if callable(structured_generator):
+            try:
+                payload = structured_generator(context)
+                structured_context = payload.pop("_context", context_from_case_evidence(context))
+                rendered = self.grounding_guard.validate_structured_payload(payload, structured_context)
+                if rendered[1] is not None:
+                    raise rendered[1]
+                rendered_lines = rendered[0]
+                candidate_narrative = {
+                    "headline": "Structured evidence briefing",
+                    "narrative": " ".join(rendered_lines),
+                    "talking_points": list(rendered_lines[-2:]),
+                }
+                validated_narrative = candidate_narrative
+                audit = GroundingAudit(
+                    validation_status=ValidationStatus.PASSED_CLEAN,
+                    verified_entity_count=len(rendered_lines),
+                    hallucination_detected=False,
+                    violations=(),
+                )
+            except (GroundingContractError, TypeError, ValueError) as error:
+                template_brief = generate_template_brief(context=context, generated_at=generated_at, brief_id=brief_id)
+                audit = GroundingAudit(
+                    validation_status=ValidationStatus.FALLBACK_TO_TEMPLATE,
+                    verified_entity_count=0,
+                    hallucination_detected=True,
+                    violations=(f"Structured provider fallback: {type(error).__name__}",),
+                )
+                return CaseBrief(
+                    brief_id=template_brief.brief_id,
+                    case_id=template_brief.case_id,
+                    policy_id=template_brief.policy_id,
+                    as_of_date=template_brief.as_of_date,
+                    generated_at=template_brief.generated_at,
+                    synthesis_mode=SynthesisMode.LLM_AUGMENTED_GROUNDED,
+                    executive_summary=template_brief.executive_summary,
+                    risk_assessment=template_brief.risk_assessment,
+                    factual_timeline=template_brief.factual_timeline,
+                    intervention_recommendations=template_brief.intervention_recommendations,
+                    disqualified_actions=template_brief.disqualified_actions,
+                    grounding_audit=audit,
+                    schema_version=template_brief.schema_version,
+                    status="PENDING_HUMAN_REVIEW",
+                    authorized_to_act=False,
+                    disclaimer=DEFAULT_MANDATORY_DISCLAIMER,
+                )
+        else:
+            # Compatibility adapter for pre-RH-08 providers. It is retained so
+            # historical fixtures remain stable; new providers must implement
+            # generate_structured_payload instead of returning raw prose.
+            candidate_narrative = self.narrative_provider.generate_narrative(context)
+            validated_narrative, audit = self.grounding_guard.validate(
+                candidate_narrative=candidate_narrative,
+                context=context,
+            )
 
         # Fail-closed fallback: If critical grounding violations occurred, fall back to Layer 1
         if audit.validation_status == ValidationStatus.FALLBACK_TO_TEMPLATE:
@@ -149,4 +204,3 @@ class CaseIntelligenceAssistant:
             authorized_to_act=False,
             disclaimer=DEFAULT_MANDATORY_DISCLAIMER,
         )
-
