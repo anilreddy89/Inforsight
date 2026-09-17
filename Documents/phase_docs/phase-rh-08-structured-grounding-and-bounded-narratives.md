@@ -7,7 +7,7 @@
 | Initiative | Review hardening — post-Phase 3 maintenance and correctness |
 | Stable work ID | `RH-08` |
 | Delivery type | Design specification followed by bounded implementation |
-| Status | RH-08I in progress through issue [#167](https://github.com/anilreddy89/Inforsight/issues/167) |
+| Status | RH-08I completed through [PR #168](https://github.com/anilreddy89/Inforsight/pull/168), merge `c283f184` |
 | Milestone | `v0.3.1-decision-engine-hardening` (Milestone #6) |
 | Classification | Current defect / safety boundary |
 | Priority | High; mandatory for the hardening release |
@@ -101,7 +101,7 @@ RH-01 is complete and supplies the domain snapshot/semantic catalog boundary. RH
 
 ## 10. Issue tracking and implementation instructions
 
-RH-08D is tracked by issue [#165](https://github.com/anilreddy89/Inforsight/issues/165) and merged through [PR #166](https://github.com/anilreddy89/Inforsight/pull/166), merge `8035001`. RH-08I is now tracked by issue [#167](https://github.com/anilreddy89/Inforsight/issues/167).
+RH-08D is tracked by issue [#165](https://github.com/anilreddy89/Inforsight/issues/165) and merged through [PR #166](https://github.com/anilreddy89/Inforsight/pull/166), merge `8035001`. RH-08I issue [#167](https://github.com/anilreddy89/Inforsight/issues/167) closed through [PR #168](https://github.com/anilreddy89/Inforsight/pull/168), merge `c283f184`.
 
 ### RH-08D design issue — merged
 

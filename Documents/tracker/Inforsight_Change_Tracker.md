@@ -98,7 +98,7 @@ Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github
 | RH-06I | Review hardening | Implement and verify the inference-only runtime package and canonical HTTP serving image. | Completed | [#162](https://github.com/anilreddy89/Inforsight/issues/162) | [#163](https://github.com/anilreddy89/Inforsight/pull/163) | 2026-09-15 | `df69910` | `inference-runtime/`, serving/dashboard/OPE/qualification migrations, canonical HTTP image, 14 fixture behaviors, [implementation phase document](../phase_docs/phase-rh-06i-inference-only-runtime-implementation.md) | NumPy-only runtime, trusted loading, all 13 stable failure codes, explicit legacy score parity, clean package/ASGI/container evidence, and protected-artifact checks completed; all six CI checks passed. Parent RH-06 is closed and RH-07 is predecessor-ready. |
 | RH-07 | Review hardening | Make monitoring states evidence-bearing through bounded scored-feature windows, exact outcome joins, and explicit insufficient-data diagnostics. | Implemented locally; uncommitted | [#129](https://github.com/anilreddy89/Inforsight/issues/129) | TBD | 2026-09-16 | — | [phase document](../phase_docs/phase-rh-07-evidence-bearing-monitoring.md), `docs/backlog.md`, serving monitoring/diagnostics | Bounded score retention, exact outcome joins, explicit insufficient-data states, adversarial regressions, and the full `make check` gate are complete locally. No commit/PR/issue closeout was performed; no monitoring-health claim is accepted beyond the bounded evidence behavior. |
 | RH-08D | Review hardening | Define structured grounding and bounded narrative contract. | Completed | [#165](https://github.com/anilreddy89/Inforsight/issues/165) | [#166](https://github.com/anilreddy89/Inforsight/pull/166) | 2026-09-16 | `8035001` | [RH-08D contract](../../docs/hardening/rh-08-structured-grounding-contract.md), phase document, `docs/backlog.md` | Contract 1.0.0 accepted; typed evidence, bounded grammar, deterministic rendering, provider-disabled operation, and claim limits are defined. |
-| RH-08I | Review hardening | Implement bounded narratives from the RH-08D contract. | Implemented locally; PR pending | [#167](https://github.com/anilreddy89/Inforsight/issues/167) | TBD | 2026-09-16 | — | [RH-08I phase document](../phase_docs/phase-rh-08i-structured-grounding-implementation.md), [RH-08D contract](../../docs/hardening/rh-08-structured-grounding-contract.md) | Branch `fix/167-rh-08i-structured-grounding`; 17 assistant/structured-grounding tests and 10 dashboard tests pass. Full repository gate was interrupted during the long v2 evaluation stage; PR/CI remain pending. |
+| RH-08I | Review hardening | Implement bounded narratives from the RH-08D contract. | Completed | [#167](https://github.com/anilreddy89/Inforsight/issues/167) | [#168](https://github.com/anilreddy89/Inforsight/pull/168) | 2026-09-17 | `c283f184` | [RH-08I phase document](../phase_docs/phase-rh-08i-structured-grounding-implementation.md), [RH-08D contract](../../docs/hardening/rh-08-structured-grounding-contract.md) | Required CI passed; typed context, bounded grammar, evidence resolution, deterministic rendering, provider validation, compatibility handling, and assistant/dashboard regressions merged. |
 | RH-09–RH-10 | Review hardening | Amend P4-contracts and implement durable-audit repairs. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | Work follows its declared predecessors. Preserve historical artifacts. |
 | RH-11 | Review hardening | Expand CI and perform read-only qualification of revised claims and boundaries. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-11 | Begins only after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Regenerate affected evidence and reconcile public documentation and scientific/product claims. | Planned | [#128](https://github.com/anilreddy89/Inforsight/issues/128) (to amend when ready) | TBD | TBD | — | `docs/backlog.md` RH-12 | Sequentially follows RH-11; reconciles independent issue #130 without rewriting historical evidence. |
@@ -143,15 +143,15 @@ In one sentence: Phase 2 and Phase 3 are complete and released; review hardening
 | Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
 | Planned changes | RH-08 through RH-13 plus P4-04 through P4-07 |
 | Paused changes | 2 (P4-02 and P4-03) |
-| In-progress changes | 1 (RH-08I, issue #167) |
+| In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | RH-08I implementation complete locally, issue #167 |
-| Next implementation increment | RH-08I PR review, CI, and merge |
+| Active increment | RH-08I completed, issue #167 / PR #168 |
+| Next implementation increment | RH-09 — P4-01 contract amendment |
 
 ## Latest verification baseline
 
