@@ -988,7 +988,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Architecture decision / contract defect
 **Priority:** Release blocking for P4-02/P4-03
 
-**Status:** RH-08 is complete through PR #168, merge `c283f184`. RH-09D implementation is complete locally for [issue #169](https://github.com/anilreddy89/Inforsight/issues/169) on branch `docs/169-rh-09d-p4-01-contract-reconciliation`; contract checks pass and PR creation/CI remain pending. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md). RH-09I and P4-02/P4-03 remain blocked until the declared design and release gates pass.
+**Status:** RH-08 is complete through PR #168, merge `c283f184`. RH-09D is complete through issue #169 / PR #170, merge `fde3f2b`. RH-09I implementation is complete locally on issue #171 and branch `fix/171-rh-09i-p4-01-contracts`; full test-environment verification remains pending. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md) and [RH-09I phase document](../Documents/phase_docs/phase-rh-09i-p4-01-contract-implementation.md). P4-02/P4-03 remain blocked until the declared design and release gates pass.
 
 **Outcome:** Amend ADR 0014, Protobuf, and OpenAPI contracts so authority presence, tier semantics, authentication, concurrency, idempotency, override rules, preprocessing identity, economics/resource versions, audit semantics, errors, and deployment claims are explicit before Java or Kafka work begins. RH-09D may draft after RH-01; RH-09I must reconcile the settled RH-03, RH-04, RH-06, and RH-10 specifications before merge.
 
