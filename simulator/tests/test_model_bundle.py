@@ -18,6 +18,7 @@ from inforsight_simulator.bundle import (
     ScoringResult,
 )
 from inforsight_simulator.explanations import CATEGORICAL_FEATURES, NUMERIC_FEATURES
+from scripts.run_model_bundle import values_match
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 BUNDLE_PATH = REPO_ROOT / "docs" / "experiments" / "phase-02-10-model-bundle.json"
@@ -49,6 +50,11 @@ def _sample_observation() -> dict[str, object]:
 
 class TestModelBundle(unittest.TestCase):
     """Test suite for release model bundle serialization, inference, and invariants."""
+
+    def test_bundle_value_comparison_allows_only_float_roundoff(self) -> None:
+        self.assertTrue(values_match({"value": 1.0}, {"value": 1.0 + 1e-13}))
+        self.assertFalse(values_match({"value": 1.0}, {"value": 1.0 + 1e-6}))
+        self.assertFalse(values_match({"value": "1.0"}, {"value": 1.0}))
 
     def setUp(self) -> None:
         self.assertTrue(

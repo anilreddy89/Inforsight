@@ -320,6 +320,6 @@ jobs:
           python -m pip install -r serving/requirements-test.txt
           python -m pip install -r dashboard/requirements.txt
 
-      - name: Run full check and verify read-only behavior
+      - name: Run read-only artifact qualification
         run: |
-          MPLBACKEND=Agg MPLCONFIGDIR=/tmp/mplconfig make read-only-qualification-check
+          MPLBACKEND=Agg MPLCONFIGDIR=/tmp/mplconfig make ci-read-only-qualification-check
