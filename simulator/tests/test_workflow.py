@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+import tempfile
 
 from inforsight_simulator.audit.ledger import AuditLedger
 from inforsight_simulator.workflow.models import (
@@ -22,6 +24,7 @@ from inforsight_simulator.workflow.models import (
     UnauthorizedExecutionError,
 )
 from inforsight_simulator.workflow.service import WorkflowService
+from inforsight_simulator.workflow.persistence import WorkflowStateStore
 from inforsight_simulator.workflow.state_machine import CaseStateMachine
 
 
@@ -258,6 +261,7 @@ class TestWorkflowService(unittest.TestCase):
         *,
         case_id: str = "case_authority000000000001",
         reviewed_at: str = "2026-09-01T10:15:00Z",
+        review: bool = True,
     ):
         eligible = self.eligible("grace_period_consultation", primary="grace_period_consultation")
         ctx = service.create_case(
@@ -275,14 +279,15 @@ class TestWorkflowService(unittest.TestCase):
             },
             occurred_at="2026-09-01T10:00:00Z",
         )
-        service.submit_review(
-            case_id=ctx.case_id,
-            trusted_actor=self.actor(),
-            action=SpecialistReviewAction.APPROVE_RECOMMENDATION,
-            rationale_code="APPROVE_RECOMMENDED_ACTION",
-            occurred_at=reviewed_at,
-        )
-        assert ctx.approval is not None
+        if review:
+            service.submit_review(
+                case_id=ctx.case_id,
+                trusted_actor=self.actor(),
+                action=SpecialistReviewAction.APPROVE_RECOMMENDATION,
+                rationale_code="APPROVE_RECOMMENDED_ACTION",
+                occurred_at=reviewed_at,
+            )
+            assert ctx.approval is not None
         return ctx
 
     def test_workflow_service_lifecycle(self) -> None:
@@ -611,6 +616,98 @@ class TestWorkflowService(unittest.TestCase):
             )
         self.assertEqual(ctx.state_machine.current_state, CaseState.HUMAN_REVIEWED)
         self.assertEqual(service.ledger.total_entries, 5)
+
+    def test_audit_handoff_failure_does_not_commit_review(self) -> None:
+        class FailingReviewLedger(AuditLedger):
+            def __init__(self):
+                super().__init__()
+                self.fail_review = False
+
+            def append(self, **kwargs):
+                if self.fail_review and kwargs["to_state"] == CaseState.HUMAN_REVIEWED.value:
+                    raise OSError("injected review audit handoff failure")
+                return super().append(**kwargs)
+
+        ledger = FailingReviewLedger()
+        service = WorkflowService(audit_ledger=ledger)
+        ctx = self.approved_case(service, review=False)
+        ledger.fail_review = True
+
+        with self.assertRaises(OSError):
+            service.submit_review(
+                case_id=ctx.case_id,
+                trusted_actor=self.actor(),
+                action=SpecialistReviewAction.APPROVE_RECOMMENDATION,
+                rationale_code="APPROVE_STANDARD_CASE",
+                occurred_at="2026-09-01T10:15:00Z",
+            )
+
+        self.assertEqual(ctx.state_machine.current_state, CaseState.RECOMMENDED)
+        self.assertEqual(ctx.state_machine.events[-1].to_state, CaseState.RECOMMENDED)
+        self.assertIsNone(ctx.approval)
+        self.assertEqual(ctx.case_version, 4)
+        self.assertEqual(service.ledger.total_entries, 4)
+
+    def test_workflow_state_and_audit_reload_together(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            ledger_path = root / "audit.jsonl"
+            state_path = root / "workflow-state.json"
+            service = WorkflowService(
+                audit_ledger=AuditLedger(ledger_path),
+                state_path=state_path,
+            )
+            original = self.approved_case(service)
+
+            restarted = WorkflowService(
+                audit_ledger=AuditLedger(ledger_path),
+                state_path=state_path,
+            )
+            recovered = restarted.get_case(original.case_id)
+            self.assertIsNotNone(recovered)
+            assert recovered is not None
+            self.assertEqual(recovered.state_machine.current_state, CaseState.HUMAN_REVIEWED)
+            self.assertEqual(recovered.case_version, original.case_version)
+            self.assertEqual(recovered.approval, original.approval)
+            self.assertEqual(restarted.ledger.total_entries, 5)
+
+    def test_restart_promotes_audit_backed_pending_transition(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            ledger_path = root / "audit.jsonl"
+            state_path = root / "workflow-state.json"
+            service = WorkflowService(
+                audit_ledger=AuditLedger(ledger_path),
+                state_path=state_path,
+            )
+            ctx = self.approved_case(service)
+
+            class FailCommitStore(WorkflowStateStore):
+                def commit(self, target):
+                    raise OSError("injected state commit failure")
+
+            service._state_store = FailCommitStore(state_path)
+            with self.assertRaises(OSError):
+                service.dispatch_execution(
+                    case_id=ctx.case_id,
+                    trusted_actor=self.actor(),
+                    approval_id=ctx.approval.approval_id,
+                    idempotency_key=ctx.approval.idempotency_key,
+                    expected_case_version=ctx.approval.case_version,
+                    current_eligible_action_set=ctx.reviewed_eligible_action_set,
+                    outreach_reference="out_pending_recovery",
+                    occurred_at="2026-09-01T10:20:00Z",
+                )
+
+            restarted = WorkflowService(
+                audit_ledger=AuditLedger(ledger_path),
+                state_path=state_path,
+            )
+            recovered = restarted.get_case(ctx.case_id)
+            self.assertIsNotNone(recovered)
+            assert recovered is not None
+            self.assertEqual(recovered.state_machine.current_state, CaseState.EXECUTED)
+            self.assertEqual(recovered.case_version, 6)
 
     def test_untrusted_actor_context_is_rejected(self) -> None:
         with self.assertRaises(AuthorityBoundaryError) as cm:

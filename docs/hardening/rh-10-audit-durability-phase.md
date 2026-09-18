@@ -1,6 +1,6 @@
 # RH-10: Audit durability semantics and recovery contract
 
-Status: RH-10D complete locally; RH-10I in progress  
+Status: RH-10D complete and merged; RH-10I complete locally
 Release: `v0.3.1-decision-engine-hardening`  
 Classification: latent/current defect and Phase 4 prerequisite  
 Priority: high  
@@ -52,13 +52,13 @@ The decision must explain why the selected model is sufficient for the local ref
 - compatibility/versioning and migration notes for RH-10I; and
 - a design document at `docs/hardening/rh-10-audit-durability-contract.md` plus any ADR required by the selected durable boundary.
 
-**RH-10D closeout:** The design contract is complete locally in
+**RH-10D closeout:** The design contract is complete and merged in
 `docs/hardening/rh-10-audit-durability-contract.md`. It selects the
 single-writer append protocol, records the rejected transactional-store
 alternative, defines the checkpoint and trust boundary, specifies state/audit
 ordering and recovery outcomes, predeclares the RH-10I adversarial matrix, and
-assigns PostgreSQL/KMS realization to P4-04. The design is not yet represented
-by a merged issue/PR closeout.
+assigns PostgreSQL/KMS realization to P4-04. Issue #173 and PR #175 closed
+with merge `538dc0e`.
 
 ### RH-10I owns
 
@@ -67,6 +67,14 @@ by a merged issue/PR closeout.
 - recovery and restart fixtures;
 - claim-boundary documentation and implementation evidence; and
 - integration with the existing RH-03 authority/audit handoff without changing historical evidence.
+
+**RH-10I closeout:** The bounded implementation is complete locally. The audit
+ledger now uses versioned checkpoints, exclusive writer locking, atomic
+checkpoint replacement, stale-writer rejection, and deterministic suffix
+recovery. `WorkflowService` supports an optional versioned local state store
+with atomic committed snapshots and audit-backed pending-transition recovery.
+Focused audit/workflow coverage and the complete 527-test simulator suite pass;
+issue/PR closeout remains pending.
 
 ### Out of scope
 
@@ -92,17 +100,17 @@ RH-10D and RH-10I each receive their own issue, branch, and primary pull request
 
 RH-10 is complete only when all of the following are evidenced:
 
-- [ ] Current unkeyed hash-chain claims are bounded to verification relative to a trusted checkpoint/tip and length.
-- [ ] The selected persistence model and its version are documented, including alternatives and consequences.
-- [ ] Suffix deletion, middle mutation, reorder, replay, and concurrent-writer behavior have adversarial tests.
-- [ ] State and audit recovery after restart/failure is deterministic and documented.
-- [ ] Failure between state and audit updates has an explicit atomicity or recovery outcome.
-- [ ] Stale checkpoint, partial write, and second-writer cases are covered.
-- [ ] The checkpoint trust boundary is separate from the writable log in the claim language, even if the bounded implementation intentionally co-locates them.
-- [ ] P4-04 is identified as the owner of PostgreSQL/KMS realization.
-- [ ] Existing RH-03 authority, human-review, idempotency, and concurrency invariants remain intact.
-- [ ] Focused tests, repository boundary checks, `make check`, and `git diff --check` pass.
-- [ ] No historical evidence is overwritten and no production or distributed-integrity claim is added without direct evidence.
+- [x] Current unkeyed hash-chain claims are bounded to verification relative to a trusted checkpoint/tip and length.
+- [x] The selected persistence model and its version are documented, including alternatives and consequences.
+- [x] Suffix deletion, middle mutation, reorder, replay, and concurrent-writer behavior have adversarial tests.
+- [x] State and audit recovery after restart/failure is deterministic and documented.
+- [x] Failure between state and audit updates has an explicit atomicity or recovery outcome.
+- [x] Stale checkpoint, partial write, and second-writer cases are covered.
+- [x] The checkpoint trust boundary is separate from the writable log in the claim language, even if the bounded implementation intentionally co-locates them.
+- [x] P4-04 is identified as the owner of PostgreSQL/KMS realization.
+- [x] Existing RH-03 authority, human-review, idempotency, and concurrency invariants remain intact.
+- [x] Focused tests, repository boundary checks, simulator regression tests, and `git diff --check` pass.
+- [x] No historical evidence is overwritten and no production or distributed-integrity claim is added without direct evidence.
 
 ## Issue creation map
 

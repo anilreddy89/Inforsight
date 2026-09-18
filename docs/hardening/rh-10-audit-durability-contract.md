@@ -1,6 +1,7 @@
 # RH-10D: Audit durability and recovery contract 1.0.0
 
-Status: complete locally — RH-10D closeout pending issue/PR merge  
+Status: complete and merged
+Evidence: issue [#173](https://github.com/anilreddy89/Inforsight/issues/173), PR [#175](https://github.com/anilreddy89/Inforsight/pull/175), merge `538dc0e`
 Release: `v0.3.1-decision-engine-hardening`  
 Scope: bounded local reference runtime only  
 Selected model: single-writer append protocol
@@ -176,10 +177,12 @@ orders:
 | After checkpoint replacement, before state commit | Recovery detects the committed audit intent and either completes the bound state commit or fails closed with an explicit recoverable pending transition. It must never silently apply a different state. |
 | After state and audit commit | Restart reproduces the same state, event identity, case version, idempotency result, and audit tip. |
 
-RH-10I must choose and document the concrete pending-transition mechanism for
-the third row. It may use a durable intent record in the same local reference
-boundary, but it must not claim a database transaction unless the selected
-storage actually provides one.
+RH-10I implements the third row with the versioned `workflow-state/1.0.0`
+local state store. It atomically replaces a committed workflow snapshot and
+can retain one pending transition containing the target snapshot and audit
+event identity. On restart, the pending transition is promoted only when the
+audit event is present; otherwise the committed snapshot is retained. This is
+an explicit recovery protocol, not a database transaction.
 
 ## 7. Adversarial and recovery test matrix
 

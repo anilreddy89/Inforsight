@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+import copy
+from pathlib import Path
 import threading
 from typing import Any, Optional
 import uuid
@@ -25,6 +27,10 @@ from inforsight_simulator.workflow.models import (
     WorkflowError,
 )
 from inforsight_simulator.workflow.state_machine import CaseStateMachine
+from inforsight_simulator.workflow.persistence import (
+    WorkflowStateRecoveryError,
+    WorkflowStateStore,
+)
 
 
 @dataclass
@@ -82,6 +88,7 @@ class WorkflowService:
         capacity_seconds: int | None = None,
         capacity_cost_usd_micros: int | None = None,
         approval_ttl_minutes: int = 30,
+        state_path: str | Path | None = None,
     ) -> None:
         self.ledger = audit_ledger or AuditLedger()
         self._cases: dict[str, WorkflowContext] = {}
@@ -109,6 +116,197 @@ class WorkflowService:
         self._capacity_version = 1
         self._reservation_version = 0
         self._reservations: dict[str, tuple[str, ActionResourceRequirement]] = {}
+        self._state_store = WorkflowStateStore(state_path) if state_path else None
+        if self._state_store:
+            self._restore_persisted_state()
+
+    def _serialize_state(self) -> dict[str, Any]:
+        def event_dict(event: CaseEvent) -> dict[str, Any]:
+            return event.to_dict()
+
+        cases = []
+        for ctx in self._cases.values():
+            cases.append(
+                {
+                    "case_id": ctx.case_id,
+                    "policy_id": ctx.policy_id,
+                    "state": ctx.state_machine.current_state.value,
+                    "events": [event_dict(event) for event in ctx.state_machine.events],
+                    "human_review": (
+                        ctx.state_machine.human_review.to_dict()
+                        if ctx.state_machine.human_review
+                        else None
+                    ),
+                    "approved_action_type": ctx.state_machine.approved_action_type,
+                    "decision_digest": ctx.decision_digest.to_dict(),
+                    "recommended_action": ctx.recommended_action,
+                    "eligible_actions": ctx.eligible_actions,
+                    "operational_tier": ctx.operational_tier,
+                    "model_score": ctx.model_score,
+                    "as_of_date": ctx.as_of_date,
+                    "snapshot_id": ctx.snapshot_id,
+                    "safety_evidence_id": ctx.safety_evidence_id,
+                    "eligibility_digest": ctx.eligibility_digest,
+                    "requirements_version": ctx.requirements_version,
+                    "recommendation_version": ctx.recommendation_version,
+                    "model_bundle_id": ctx.model_bundle_id,
+                    "action_channels": ctx.action_channels,
+                    "action_resources": {
+                        name: requirement.__dict__
+                        for name, requirement in ctx.action_resources.items()
+                    },
+                    "reviewed_eligible_action_set": ctx.reviewed_eligible_action_set,
+                    "case_version": ctx.case_version,
+                    "approval": ctx.approval.to_dict() if ctx.approval else None,
+                    "metadata": ctx.metadata,
+                }
+            )
+        return {
+            "cases": cases,
+            "remaining_seconds": self._remaining_seconds,
+            "remaining_cost_usd_micros": self._remaining_cost_usd_micros,
+            "capacity_version": self._capacity_version,
+            "reservation_version": self._reservation_version,
+            "capacity_seconds": self._capacity_seconds,
+            "capacity_cost_usd_micros": self._capacity_cost_usd_micros,
+            "reservations": {
+                case_id: {"action_type": action, "requirement": requirement.__dict__}
+                for case_id, (action, requirement) in self._reservations.items()
+            },
+            "execution_results": {
+                key: {"digest": digest, "event": event.to_dict()}
+                for key, (digest, event) in self._execution_results.items()
+            },
+        }
+
+    def _restore_state(self, payload: dict[str, Any]) -> None:
+        self._cases.clear()
+        for raw in payload.get("cases", []):
+            sm = CaseStateMachine(
+                case_id=raw["case_id"],
+                policy_id=raw["policy_id"],
+                initial_state=CaseState(raw["state"]),
+            )
+            sm._events = [
+                CaseEvent(
+                    case_event_id=event["case_event_id"],
+                    case_id=event["case_id"],
+                    policy_id=event["policy_id"],
+                    from_state=CaseState(event["from_state"]),
+                    to_state=CaseState(event["to_state"]),
+                    occurred_at=event["occurred_at"],
+                    payload=event["payload"],
+                    schema_version=event.get("schema_version", "1.0.0"),
+                )
+                for event in raw["events"]
+            ]
+            review = raw.get("human_review")
+            sm._human_review = (
+                HumanReview(
+                    reviewer_id=review["reviewer_id"],
+                    reviewed_at=review["reviewed_at"],
+                    decision=ReviewDecision(review["decision"]),
+                    rationale_code=review["rationale_code"],
+                    justification=review.get("justification"),
+                )
+                if review
+                else None
+            )
+            sm._approved_action_type = raw.get("approved_action_type")
+            approval = raw.get("approval")
+            ctx = WorkflowContext(
+                case_id=raw["case_id"],
+                policy_id=raw["policy_id"],
+                state_machine=sm,
+                decision_digest=DecisionContextDigest(**raw["decision_digest"]),
+                recommended_action=raw["recommended_action"],
+                eligible_actions=list(raw["eligible_actions"]),
+                operational_tier=raw["operational_tier"],
+                model_score=raw["model_score"],
+                as_of_date=raw["as_of_date"],
+                snapshot_id=raw.get("snapshot_id"),
+                safety_evidence_id=raw.get("safety_evidence_id"),
+                eligibility_digest=raw["eligibility_digest"],
+                requirements_version=raw["requirements_version"],
+                recommendation_version=raw["recommendation_version"],
+                model_bundle_id=raw["model_bundle_id"],
+                action_channels=dict(raw["action_channels"]),
+                action_resources={
+                    name: ActionResourceRequirement(**requirement)
+                    for name, requirement in raw["action_resources"].items()
+                },
+                reviewed_eligible_action_set=dict(raw["reviewed_eligible_action_set"]),
+                case_version=raw["case_version"],
+                approval=ApprovalBinding(**approval) if approval else None,
+                metadata=dict(raw.get("metadata", {})),
+            )
+            self._cases[ctx.case_id] = ctx
+        for name in (
+            "remaining_seconds", "remaining_cost_usd_micros", "capacity_version",
+            "reservation_version", "capacity_seconds", "capacity_cost_usd_micros",
+        ):
+            setattr(self, f"_{name}", payload[name])
+        self._reservations = {
+            case_id: (
+                item["action_type"],
+                ActionResourceRequirement(**item["requirement"]),
+            )
+            for case_id, item in payload.get("reservations", {}).items()
+        }
+        self._execution_results = {
+            key: (item["digest"], self._event_from_dict(item["event"]))
+            for key, item in payload.get("execution_results", {}).items()
+        }
+
+    @staticmethod
+    def _event_from_dict(event: dict[str, Any]) -> CaseEvent:
+        return CaseEvent(
+            case_event_id=event["case_event_id"],
+            case_id=event["case_id"],
+            policy_id=event["policy_id"],
+            from_state=CaseState(event["from_state"]),
+            to_state=CaseState(event["to_state"]),
+            occurred_at=event["occurred_at"],
+            payload=event["payload"],
+            schema_version=event.get("schema_version", "1.0.0"),
+        )
+
+    def _restore_persisted_state(self) -> None:
+        assert self._state_store is not None
+        stored = self._state_store.load()
+        if not stored:
+            return
+        pending = stored.get("pending")
+        selected = stored["committed"]
+        if pending:
+            committed_event_ids = {record.case_event_id for record in self.ledger.records}
+            if pending["audit_entry_id"] in committed_event_ids:
+                selected = pending["target"]
+        self._restore_state(selected)
+        if self.ledger.log_path:
+            audit_event_ids = {record.case_event_id for record in self.ledger.records}
+            missing = {
+                event.case_event_id
+                for ctx in self._cases.values()
+                for event in ctx.state_machine.events
+                if event.case_event_id not in audit_event_ids
+            }
+            if missing:
+                raise WorkflowStateRecoveryError(
+                    "workflow state references audit events absent from the durable ledger"
+                )
+
+    def _persist_committed(self) -> None:
+        if self._state_store:
+            self._state_store.commit(self._serialize_state())
+
+    def _begin_pending(self, committed: dict[str, Any], target: dict[str, Any], event: CaseEvent) -> None:
+        if self._state_store:
+            self._state_store.begin(
+                committed=committed,
+                target=target,
+                audit_entry_id=event.case_event_id,
+            )
 
     def capacity_snapshot(self) -> dict[str, int]:
         """Return one lock-consistent exact-capacity and reservation snapshot."""
@@ -181,6 +379,38 @@ class WorkflowService:
 
     def get_case(self, case_id: str) -> Optional[WorkflowContext]:
         return self._cases.get(case_id)
+
+    def _snapshot_mutation_state(self, ctx: WorkflowContext) -> dict[str, Any]:
+        """Capture local state before an audit handoff can commit or fail."""
+        return {
+            "state": ctx.state_machine._current_state,
+            "events": list(ctx.state_machine._events),
+            "human_review": ctx.state_machine._human_review,
+            "approved_action_type": ctx.state_machine._approved_action_type,
+            "case_version": ctx.case_version,
+            "approval": ctx.approval,
+            "metadata": copy.deepcopy(ctx.metadata),
+            "remaining_seconds": self._remaining_seconds,
+            "remaining_cost_usd_micros": self._remaining_cost_usd_micros,
+            "capacity_version": self._capacity_version,
+            "reservation_version": self._reservation_version,
+            "reservations": copy.deepcopy(self._reservations),
+        }
+
+    def _restore_mutation_state(self, ctx: WorkflowContext, snapshot: dict[str, Any]) -> None:
+        """Restore uncommitted local state after a failed audit handoff."""
+        ctx.state_machine._current_state = snapshot["state"]
+        ctx.state_machine._events = snapshot["events"]
+        ctx.state_machine._human_review = snapshot["human_review"]
+        ctx.state_machine._approved_action_type = snapshot["approved_action_type"]
+        ctx.case_version = snapshot["case_version"]
+        ctx.approval = snapshot["approval"]
+        ctx.metadata = snapshot["metadata"]
+        self._remaining_seconds = snapshot["remaining_seconds"]
+        self._remaining_cost_usd_micros = snapshot["remaining_cost_usd_micros"]
+        self._capacity_version = snapshot["capacity_version"]
+        self._reservation_version = snapshot["reservation_version"]
+        self._reservations = snapshot["reservations"]
 
     def create_case(
         self,
@@ -318,6 +548,7 @@ class WorkflowService:
             reviewed_eligible_action_set=dict(eligible_action_set),
         )
         self._cases[cid] = ctx
+        self._persist_committed()
         return ctx
 
     def submit_review(
@@ -424,69 +655,79 @@ class WorkflowService:
             justification=justification,
         )
 
-        event = ctx.state_machine.submit_human_review(
-            review=review,
-            occurred_at=ts,
-            recommended_action=ctx.recommended_action,
-            eligible_actions=ctx.eligible_actions,
-            selected_action=selected_action,
-        )
-
-        ctx.case_version += 1
-        expiry = (
-            datetime.fromisoformat(ts.replace("Z", "+00:00")) + self._approval_ttl
-        ).astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
-        approval_seed = compute_sha256(
-            canonical_json_dumps(
-                {
-                    "case_id": case_id,
-                    "case_version": ctx.case_version,
-                    "eligibility_digest": ctx.eligibility_digest,
-                    "action_type": chosen_action,
-                    "channel": channel,
-                    "actor_id": trusted_actor.actor_id,
-                    "reviewed_at": ts,
-                }
+        snapshot = self._snapshot_mutation_state(ctx)
+        committed_state = self._serialize_state()
+        audit_committed = False
+        try:
+            event = ctx.state_machine.submit_human_review(
+                review=review,
+                occurred_at=ts,
+                recommended_action=ctx.recommended_action,
+                eligible_actions=ctx.eligible_actions,
+                selected_action=selected_action,
             )
-        )
-        ctx.approval = ApprovalBinding(
-            approval_id=f"apr_{approval_seed[:24]}",
-            case_id=case_id,
-            case_version=ctx.case_version,
-            snapshot_id=ctx.snapshot_id or "unavailable",
-            safety_evidence_id=ctx.safety_evidence_id or "unavailable",
-            eligibility_digest=ctx.eligibility_digest,
-            requirements_version=ctx.requirements_version,
-            action_type=chosen_action,
-            channel=channel,
-            recommendation_version=ctx.recommendation_version,
-            model_bundle_id=ctx.model_bundle_id,
-            actor_id=trusted_actor.actor_id,
-            reviewed_at=ts,
-            expires_at=expiry,
-            idempotency_key=f"exec_{approval_seed[24:48]}",
-        )
 
-        self.ledger.append(
-            case_id=case_id,
-            policy_id=ctx.policy_id,
-            case_event_id=event.case_event_id,
-            from_state=event.from_state.value,
-            to_state=event.to_state.value,
-            decision_context_digest=ctx.decision_digest.to_dict(),
-            human_review=review.to_dict(),
-            timestamp=ts,
-        )
-
-        if reservation_version is not None:
-            self.replace_reservation(
+            ctx.case_version += 1
+            expiry = (
+                datetime.fromisoformat(ts.replace("Z", "+00:00")) + self._approval_ttl
+            ).astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+            approval_seed = compute_sha256(
+                canonical_json_dumps(
+                    {
+                        "case_id": case_id,
+                        "case_version": ctx.case_version,
+                        "eligibility_digest": ctx.eligibility_digest,
+                        "action_type": chosen_action,
+                        "channel": channel,
+                        "actor_id": trusted_actor.actor_id,
+                        "reviewed_at": ts,
+                    }
+                )
+            )
+            ctx.approval = ApprovalBinding(
+                approval_id=f"apr_{approval_seed[:24]}",
                 case_id=case_id,
-                action_type=(chosen_action if reservation_requirement else None),
-                requirement=reservation_requirement,
-                expected_capacity_version=reservation_version,
+                case_version=ctx.case_version,
+                snapshot_id=ctx.snapshot_id or "unavailable",
+                safety_evidence_id=ctx.safety_evidence_id or "unavailable",
+                eligibility_digest=ctx.eligibility_digest,
+                requirements_version=ctx.requirements_version,
+                action_type=chosen_action,
+                channel=channel,
+                recommendation_version=ctx.recommendation_version,
+                model_bundle_id=ctx.model_bundle_id,
+                actor_id=trusted_actor.actor_id,
+                reviewed_at=ts,
+                expires_at=expiry,
+                idempotency_key=f"exec_{approval_seed[24:48]}",
             )
 
-        return event
+            if reservation_version is not None:
+                self.replace_reservation(
+                    case_id=case_id,
+                    action_type=(chosen_action if reservation_requirement else None),
+                    requirement=reservation_requirement,
+                    expected_capacity_version=reservation_version,
+                )
+            self._begin_pending(committed_state, self._serialize_state(), event)
+            self.ledger.append(
+                case_id=case_id,
+                policy_id=ctx.policy_id,
+                case_event_id=event.case_event_id,
+                from_state=event.from_state.value,
+                to_state=event.to_state.value,
+                decision_context_digest=ctx.decision_digest.to_dict(),
+                human_review=review.to_dict(),
+                timestamp=ts,
+            )
+            audit_committed = True
+            self._persist_committed()
+            return event
+        except Exception:
+            self._restore_mutation_state(ctx, snapshot)
+            if self._state_store and not audit_committed:
+                self._state_store.rollback(committed_state)
+            raise
 
     def dispatch_execution(
         self,
@@ -594,43 +835,53 @@ class WorkflowService:
                     "caller metadata contains protected authority fields",
                 )
 
-            event = ctx.state_machine._prepare_execution(
-                channel=approval.channel,
-                outreach_reference=outreach_reference,
-                occurred_at=ts,
-                metadata=metadata,
-            )
-
-            hr_dict = (
-                ctx.state_machine.human_review.to_dict()
-                if ctx.state_machine.human_review
-                else None
-            )
-            dispatched = event.payload.get("execution_details")
-
-            self.ledger.append(
-                case_id=case_id,
-                policy_id=ctx.policy_id,
-                case_event_id=event.case_event_id,
-                from_state=event.from_state.value,
-                to_state=event.to_state.value,
-                decision_context_digest=ctx.decision_digest.to_dict(),
-                human_review=hr_dict,
-                dispatched_action=dispatched,
-                metadata={"approval_binding": approval.to_dict()},
-                timestamp=ts,
-            )
-            if reserved is None:
-                self.replace_reservation(
-                    case_id=case_id,
-                    action_type=approval.action_type,
-                    requirement=requirement,
-                    expected_capacity_version=self._capacity_version,
+            snapshot = self._snapshot_mutation_state(ctx)
+            committed_state = self._serialize_state()
+            audit_committed = False
+            try:
+                event = ctx.state_machine._prepare_execution(
+                    channel=approval.channel,
+                    outreach_reference=outreach_reference,
+                    occurred_at=ts,
+                    metadata=metadata,
                 )
-            ctx.state_machine._record_prepared_execution(event)
-            ctx.case_version += 1
-            self._execution_results[idempotency_key] = (request_digest, event)
-            return event
+                hr_dict = (
+                    ctx.state_machine.human_review.to_dict()
+                    if ctx.state_machine.human_review
+                    else None
+                )
+                dispatched = event.payload.get("execution_details")
+                if reserved is None:
+                    self.replace_reservation(
+                        case_id=case_id,
+                        action_type=approval.action_type,
+                        requirement=requirement,
+                        expected_capacity_version=self._capacity_version,
+                    )
+                ctx.state_machine._record_prepared_execution(event)
+                ctx.case_version += 1
+                self._execution_results[idempotency_key] = (request_digest, event)
+                self._begin_pending(committed_state, self._serialize_state(), event)
+                self.ledger.append(
+                    case_id=case_id,
+                    policy_id=ctx.policy_id,
+                    case_event_id=event.case_event_id,
+                    from_state=event.from_state.value,
+                    to_state=event.to_state.value,
+                    decision_context_digest=ctx.decision_digest.to_dict(),
+                    human_review=hr_dict,
+                    dispatched_action=dispatched,
+                    metadata={"approval_binding": approval.to_dict()},
+                    timestamp=ts,
+                )
+                audit_committed = True
+                self._persist_committed()
+                return event
+            except Exception:
+                self._restore_mutation_state(ctx, snapshot)
+                if self._state_store and not audit_committed:
+                    self._state_store.rollback(committed_state)
+                raise
 
     def dismiss_case(
         self,
@@ -646,25 +897,31 @@ class WorkflowService:
 
         ts = occurred_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
-        event = ctx.state_machine.dismiss(
-            reason=reason,
-            occurred_at=ts,
-        )
-
-        hr_dict = ctx.state_machine.human_review.to_dict() if ctx.state_machine.human_review else None
-
-        self.ledger.append(
-            case_id=case_id,
-            policy_id=ctx.policy_id,
-            case_event_id=event.case_event_id,
-            from_state=event.from_state.value,
-            to_state=event.to_state.value,
-            decision_context_digest=ctx.decision_digest.to_dict(),
-            human_review=hr_dict,
-            timestamp=ts,
-        )
-
-        return event
+        snapshot = self._snapshot_mutation_state(ctx)
+        committed_state = self._serialize_state()
+        audit_committed = False
+        try:
+            event = ctx.state_machine.dismiss(reason=reason, occurred_at=ts)
+            hr_dict = ctx.state_machine.human_review.to_dict() if ctx.state_machine.human_review else None
+            self._begin_pending(committed_state, self._serialize_state(), event)
+            self.ledger.append(
+                case_id=case_id,
+                policy_id=ctx.policy_id,
+                case_event_id=event.case_event_id,
+                from_state=event.from_state.value,
+                to_state=event.to_state.value,
+                decision_context_digest=ctx.decision_digest.to_dict(),
+                human_review=hr_dict,
+                timestamp=ts,
+            )
+            audit_committed = True
+            self._persist_committed()
+            return event
+        except Exception:
+            self._restore_mutation_state(ctx, snapshot)
+            if self._state_store and not audit_committed:
+                self._state_store.rollback(committed_state)
+            raise
 
     def resolve_case(
         self,
@@ -680,22 +937,31 @@ class WorkflowService:
 
         ts = occurred_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
-        event = ctx.state_machine.resolve(
-            resolution_notes=resolution_notes,
-            occurred_at=ts,
-        )
-
-        hr_dict = ctx.state_machine.human_review.to_dict() if ctx.state_machine.human_review else None
-
-        self.ledger.append(
-            case_id=case_id,
-            policy_id=ctx.policy_id,
-            case_event_id=event.case_event_id,
-            from_state=event.from_state.value,
-            to_state=event.to_state.value,
-            decision_context_digest=ctx.decision_digest.to_dict(),
-            human_review=hr_dict,
-            timestamp=ts,
-        )
-
-        return event
+        snapshot = self._snapshot_mutation_state(ctx)
+        committed_state = self._serialize_state()
+        audit_committed = False
+        try:
+            event = ctx.state_machine.resolve(
+                resolution_notes=resolution_notes,
+                occurred_at=ts,
+            )
+            hr_dict = ctx.state_machine.human_review.to_dict() if ctx.state_machine.human_review else None
+            self._begin_pending(committed_state, self._serialize_state(), event)
+            self.ledger.append(
+                case_id=case_id,
+                policy_id=ctx.policy_id,
+                case_event_id=event.case_event_id,
+                from_state=event.from_state.value,
+                to_state=event.to_state.value,
+                decision_context_digest=ctx.decision_digest.to_dict(),
+                human_review=hr_dict,
+                timestamp=ts,
+            )
+            audit_committed = True
+            self._persist_committed()
+            return event
+        except Exception:
+            self._restore_mutation_state(ctx, snapshot)
+            if self._state_store and not audit_committed:
+                self._state_store.rollback(committed_state)
+            raise
