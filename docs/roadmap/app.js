@@ -630,12 +630,12 @@ const timelineData = [
         id: "RH-11–RH-13",
         title: "Qualification, Evidence Reconciliation & Resume Decision",
         status: "RH-11 and RH-12 Completed; RH-13 Pending",
-        commit: "RH-11 PR #180, merge 33ffc9a; RH-12 evidence 1.0.0",
+        commit: "RH-11 PR #180, merge 33ffc9a; RH-12 PR #181, merge 1365ee5",
         summary: {
           tech: "Run expanded CI and read-only qualification, regenerate versioned evidence, reconcile active claims, and record PROCEED, REMEDIATE, or STOP for the hardening release.",
           simple: "Retest the repaired system, publish honest updated evidence, and make the final decision about resuming enterprise work."
         },
-        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 generated versioned evidence digest 47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933 with separate fixed-assignment and new-portfolio estimands, reconciled active documentation, preserved historical OPE artifacts, and deferred issue #130. RH-13 remains the release decision; only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
+        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 issue #128 closed through PR #181 (1365ee5): generated versioned evidence digest 47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933 with separate fixed-assignment and new-portfolio estimands, reconciled active documentation, preserved historical OPE artifacts, and deferred issue #130. RH-13 remains the release decision; only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
       }
     ]
   },

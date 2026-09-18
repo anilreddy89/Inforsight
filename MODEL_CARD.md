@@ -32,6 +32,9 @@ The bounded local decision runtime applies portfolio-allocation contract `1.0.0`
 
 ### RH-12 evidence reconciliation
 
+Published through [PR #181](https://github.com/anilreddy89/Inforsight/pull/181),
+merged to `main` as `1365ee5` on 2026-09-18.
+
 The corrected portfolio evidence is published in
 [`phase-rh-12-evidence-reconciliation-1.0.0.md`](docs/experiments/phase-rh-12-evidence-reconciliation-1.0.0.md)
 with machine-readable provenance in the companion JSON manifest. Its primary

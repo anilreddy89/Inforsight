@@ -1050,7 +1050,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Phase document:** [RH-12 evidence reconciliation](hardening/rh-12-evidence-reconciliation-phase.md)
 
-**Status:** Implemented in the working tree with versioned evidence and documentation reconciliation. Issue #128 / PR metadata should be recorded when the reviewed change is merged; RH-13 remains the downstream release decision.
+**Status:** Completed and merged to `main` through [issue #128](https://github.com/anilreddy89/Inforsight/issues/128) and [PR #181](https://github.com/anilreddy89/Inforsight/pull/181), merge `1365ee5`. Versioned evidence and documentation reconciliation are complete; RH-13 remains the downstream release decision.
 
 **Outcome:** Recompute affected economic and qualification evidence after fixes and reconcile all public claims and status documents without rewriting historical results. The evaluation must answer a predeclared estimand and use comparable operational baselines.
 
@@ -1160,7 +1160,7 @@ PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safet
 1. [Completed] RH-00 was created as issue #133 with the decision template, links the 2026-09-07 reviewer approval, and records `ADOPT`.
 2. [Completed] GitHub Milestone #6, `v0.3.1-decision-engine-hardening`, was created after adoption and assigned to RH-00.
 3. [Completed] The RH initiative is represented in the interactive roadmap as a separate lane between Phase 3 and resumed Phase 4; this backlog remains canonical.
-4. [Completed] Open issues #128-#130 were triaged; #128 is the canonical RH-12 implementation issue and its evidence reconciliation is complete in the working tree, #129 maps to completed RH-07, and #130 remains independently deferred pending a separate predeclared experiment.
+4. [Completed] Open issues #128-#130 were triaged; #128 is the canonical RH-12 implementation issue and merged through PR #181 (`1365ee5`), #129 maps to completed RH-07, and #130 remains independently deferred pending a separate predeclared experiment.
 5. Initially create RH-01D and the independent implementation issues whose scopes are already ready after RH-00; create `I` children and downstream issues only when their predecessor designs and contracts are stable.
 6. Keep P4-02/P4-03 unassigned or explicitly blocked until RH-13.
 

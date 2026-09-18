@@ -1,6 +1,6 @@
 # RH-12: Regenerate evidence and reconcile scientific and product claims
 
-Status: complete in the working tree; issue [#128](https://github.com/anilreddy89/Inforsight/issues/128) is the canonical implementation issue
+Status: complete and merged to `main` through [issue #128](https://github.com/anilreddy89/Inforsight/issues/128) and [PR #181](https://github.com/anilreddy89/Inforsight/pull/181), merge `1365ee5`
 Release: `v0.3.1-decision-engine-hardening`  
 Classification: documentation and evidence correction  
 Priority: release blocking  
@@ -98,8 +98,8 @@ RH-04D / RH-04I (merged)
 ```
 
 Issue #128 is the canonical RH-12 implementation issue. Its implementation is
-complete in this working tree from the merged RH-11 mainline. Record the final
-review branch and PR metadata here when the reviewed change is merged.
+merged to `main` through PR #181 as `1365ee5`, from branch
+`test/128-rh-12-evidence-reconciliation`.
 
 Independent issue #130 is deferred from experiment execution. RH-12 records
 that fresh stress variants require a separate predeclared experiment issue and
@@ -157,7 +157,7 @@ versioning and migration decision before implementation.
 
 The RH-12 closeout should link:
 
-- issue #128, the implementation PR, merge commit, milestone, and required CI;
+- issue #128, PR #181, merge commit `1365ee5`, milestone, and required CI;
 - corrected report and manifest paths, versions, hashes, seeds, cohort/snapshot
   identities, and exact estimand definitions;
 - the identical-context strategy comparison and supported objective metrics;
@@ -170,7 +170,8 @@ The RH-12 closeout should link:
 - the exact bounded claims handed to RH-13.
 
 **Closeout record:** RH-12 generated corrected evidence from the merged RH-11
-mainline. The manifest digest is
+mainline and merged to `main` through [PR #181](https://github.com/anilreddy89/Inforsight/pull/181)
+as `1365ee5` on 2026-09-18. The manifest digest is
 `47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933` and the
 report/manifest are published at
 `docs/experiments/phase-rh-12-evidence-reconciliation-1.0.0.{md,json}`. The

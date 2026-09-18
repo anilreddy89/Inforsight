@@ -87,7 +87,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-06I and parent RH-06 completed through issue #162 and PR #163, merge `df69910`, after all six CI checks passed; the bounded independent-runtime claim is accepted while production-readiness and Phase 4 claims remain blocked.
 - [x] RH-07 is merged through issue #129 / PR #164 (`793217f`). Its bounded evidence path requires real scoring evidence, exact resolved-outcome joins, and explicit `insufficient_data` before any drift or calibration-health claim.
 - [x] All RH predecessor issues through RH-11 are merged and closed.
-- [x] RH-12 generated versioned corrected evidence without rewriting historical artifacts. The manifest `phase-rh-12-evidence-reconciliation-1.0.0.json` records digest `47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933`, separate estimands, exact capacities, and `not_accessed` final-holdout status.
+- [x] RH-12 completed through issue #128 and PR #181, merged to `main` as `1365ee5`, and generated versioned corrected evidence without rewriting historical artifacts. The manifest `phase-rh-12-evidence-reconciliation-1.0.0.json` records digest `47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933`, separate estimands, exact capacities, and `not_accessed` final-holdout status.
 - [x] RH-12 reconciles the realism boundary, reviewer walkthrough, README, model card, backlog, roadmap, release notes, and P4 scaffold status. Independent issue #130 is explicitly deferred pending a separate predeclared experiment.
 - [ ] A clean, read-only qualification passes on the final hardening commit.
 - [ ] RH-13 records the final release and Phase 4 resume decision.
