@@ -1071,6 +1071,8 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-13 - Qualify and release the hardening initiative
 
+**Phase document:** [RH-13 release decision](hardening/rh-13-release-decision-phase.md)
+
 **Issue template:** Implementation task
 **Classification:** Release evidence / decision
 **Priority:** Release blocking
