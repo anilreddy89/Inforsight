@@ -1,11 +1,11 @@
 # RH-10: Audit durability semantics and recovery contract
 
-Status: RH-10D complete and merged; RH-10I complete locally
+Status: complete and merged
 Release: `v0.3.1-decision-engine-hardening`  
 Classification: latent/current defect and Phase 4 prerequisite  
 Priority: high  
 Dependencies: RH-03 complete; RH-09 complete  
-Downstream: RH-09I contract reconciliation, RH-11 qualification, RH-12 evidence reconciliation, RH-13 release decision
+Downstream: RH-11 qualification, RH-12 evidence reconciliation, RH-13 release decision
 
 ## Purpose
 
@@ -68,13 +68,13 @@ with merge `538dc0e`.
 - claim-boundary documentation and implementation evidence; and
 - integration with the existing RH-03 authority/audit handoff without changing historical evidence.
 
-**RH-10I closeout:** The bounded implementation is complete locally. The audit
+**RH-10I closeout:** The bounded implementation is complete and merged. The audit
 ledger now uses versioned checkpoints, exclusive writer locking, atomic
 checkpoint replacement, stale-writer rejection, and deterministic suffix
 recovery. `WorkflowService` supports an optional versioned local state store
 with atomic committed snapshots and audit-backed pending-transition recovery.
-Focused audit/workflow coverage and the complete 527-test simulator suite pass;
-issue/PR closeout remains pending.
+Focused audit/workflow coverage, the complete 527-test simulator suite, and the
+required PR checks pass. Issue #174 and PR #176 closed with merge `30e1155`.
 
 ### Out of scope
 
@@ -91,10 +91,10 @@ issue/PR closeout remains pending.
 RH-03 (merged)
   -> RH-10D design issue and PR
   -> RH-10I implementation issue and PR
-  -> RH-09I / RH-11 downstream qualification
+  -> RH-11 downstream qualification
 ```
 
-RH-10D and RH-10I each receive their own issue, branch, and primary pull request. RH-10I starts from updated `main` only after RH-10D merges. The parent RH-10 outcome is complete only after both children close.
+RH-10D and RH-10I each receive their own issue, branch, and primary pull request. RH-10I starts from updated `main` only after RH-10D merges. Both children are now closed and the parent RH-10 outcome is complete.
 
 ## Acceptance gate
 
@@ -125,7 +125,7 @@ Use the exact field guidance in `docs/engineering-improvement-workflow.md` and t
 
 ## Claim and artifact impact
 
-While RH-10 is open, distributed durability, authenticity, tamper resistance, and exactly-once claims remain blocked. The implementation may add versioned local fixtures and new evidence, but must not mutate historical artifacts. Any changed serialized contract or deterministic output requires an explicit compatibility and migration note in RH-10D before RH-10I implementation.
+With RH-10 complete, distributed durability, authenticity, tamper resistance, and exactly-once claims remain blocked until their dedicated production evidence exists. The implementation adds versioned local fixtures and new evidence without mutating historical artifacts. Any changed serialized contract or deterministic output remains governed by the compatibility and migration notes in RH-10D.
 
 ## Completion evidence
 
@@ -137,3 +137,8 @@ The RH-10 closeout should link:
 - full `make check` and boundary-check output;
 - a concise claim-boundary update; and
 - confirmation that historical artifacts remain unchanged.
+
+**Closeout evidence:** RH-10D issue #173 / PR #175 merged as `538dc0e`.
+RH-10I issue #174 / PR #176 merged as `30e1155`. The bounded simulator
+regression suite passed 527 tests, repository boundary checks passed, and no
+historical evidence was overwritten.
