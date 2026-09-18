@@ -6,7 +6,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="Apache 2.0 license"></a>
   <a href="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml"><img src="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml/badge.svg" alt="CI workflow status"></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-blue.svg" alt="Python 3.11+">
-  <img src="https://img.shields.io/badge/release-v0.3.1%20hardening%20(RH--11%20complete)-blue.svg" alt="Release: v0.3.1 hardening, RH-11 complete">
+  <img src="https://img.shields.io/badge/release-v0.3.1%20hardening%20(RH--12%20evidence%20reconciled)-blue.svg" alt="Release: v0.3.1 hardening, RH-12 evidence reconciled">
 </p>
 
 **Inforsight** is a clean-room conservation case intelligence system for in-force life-insurance policies. It reconstructs fictional policy timelines from immutable event streams, estimates near-term lapse or surrender risk without leaking future information, separates prediction from action authority, and keeps a human reviewer in control of every intervention.
@@ -77,7 +77,7 @@ Life insurance policy conservation differs fundamentally from consumer subscript
 - **Agent commission chargebacks**: Agents have an urgent financial incentive to reach out because carriers claw back upfront commissions if policies lapse within 12–24 months.
 - **Mathematical architecture**: The Generation v6 bounded sigmoid hazard link ($\lambda_{\text{total}}(t) \le 0.1500$) solved the Proportional Hazards Trilemma by construction. Post-hoc Platt scaling ($\hat{p} = \sigma(A \cdot z + B)$, $A=0.9618, B=-0.0334$) ensures predicted probabilities faithfully match empirical outcomes (ECE = 0.0115), enabling the Top 5% review queue to intercept 2.31× more true lapses than random outreach (NNR = 2.83).
 
-> Detailed operational walkthrough, commission economics, outreach ladder, and mathematical proofs: [docs/operational-context.md](docs/operational-context.md)
+> Detailed operational context: [docs/operational-context.md](docs/operational-context.md). The bounded reviewer journey and current realism boundary are in the [reviewer walkthrough](docs/showcase/system-walkthrough.md) and [realism boundary](docs/realism-boundary.md).
 
 ---
 
@@ -105,7 +105,7 @@ No component in Inforsight can autonomously contact a customer or alter a policy
 | [ADR 0012](docs/adr/0012-authorize-bounded-sigmoid-hazard-link-v6.md) | Bounded sigmoid hazard link for Generation v6 | Breaks the Proportional Hazards Trilemma |
 | [ADR 0013](docs/adr/0013-amend-v6-statistical-acceptance-protocol.md) | Statistical Acceptance Protocol 3.1.0 | Pre-declared thresholds; 20-seed mechanical gate |
 
-> All 13 ADRs with alternatives and rationale: [docs/adr/](docs/adr/README.md)
+> All 16 ADRs with alternatives and rationale: [docs/adr/](docs/adr/README.md)
 
 ---
 
@@ -142,7 +142,7 @@ Versioned event contracts ([JSON Schema Draft 2020-12](data-contracts/)), determ
 | P2-12 | Release marker `v0.2.0-risk-model` | ✅ |
 
 ### ✅ Phase 2R — Modeling Foundation Remediation (24/24 increments complete)
-An independent review after P2-07 identified three [claim-blocking limitations](docs/limitations.md). Phase 2R executed a full remediation arc across 6 simulator generations (v1→v6), 13 ADRs, and 24 governed increments — resulting in the Generation v6 bounded sigmoid hazard architecture that passed all acceptance gates.
+An independent review after P2-07 identified three [claim-blocking limitations](docs/limitations.md). Phase 2R executed a full remediation arc across 6 simulator generations (v1→v6), 16 ADRs, and 24 governed increments — resulting in the Generation v6 bounded sigmoid hazard architecture that passed all acceptance gates.
 
 > Detailed increments: [backlog](docs/backlog.md#phase-2r---modeling-foundation-remediation-gate) · [iteration ledger](docs/experiments/iteration-ledger.md) · [limitation register](docs/limitations.md)
 
@@ -154,11 +154,18 @@ An independent review after P2-07 identified three [claim-blocking limitations](
 - Model monitoring and drift detection architecture (PSI/CSI & rolling calibration tracking)
 - Bounded case intelligence assistant (deterministic template-first with grounded LLM layer)
 - Human-in-the-loop workflow and hash-chained audit trail engine
-- Counterfactual simulation and offline policy evaluation (OPE: \$13,764 net value, 2.92x ROCS)
+- Corrected RH-12 portfolio evidence with signed modeled effects, exact USD micros/personnel seconds, and separate fixed-assignment and allocation-procedure estimands
 - Interactive conservation intelligence dashboard (Streamlit living demonstration)
 - End-to-end system qualification and integration gate (Gates S1–S6 100% verified)
 
 > Detailed release notes: [v0.3.0-decision-engine](docs/release-notes/v0.3.0-decision-engine.md) · [qualification report](docs/experiments/phase-03-09-qualification-report.md) · [decision note](docs/experiments/phase-03-10-phase-3-decision-note.md)
+
+The historical Phase 3.08 OPE report remains preserved. RH-12's corrected
+primary estimand reports **$20,826 modeled expected net value** for the
+allocation-engine procedure on the 3,600-policy synthetic cohort, with a
+policy-cluster bootstrap interval of **$19,491–$22,031**. This is conditional
+synthetic evidence under RH-04/RH-05 contracts, not realized premium, profit,
+causal uplift, or production performance. See the [RH-12 report](docs/experiments/phase-rh-12-evidence-reconciliation-1.0.0.md).
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)
@@ -193,7 +200,7 @@ ml/               Reserved for finalized modeling artifacts
 services/         Java control-plane services and deterministic rules (deferred)
 agents/           Bounded evidence, procedure, and planning assistants (deferred)
 infra/            Local and cloud infrastructure, added only when justified
-docs/             Assumptions, 13 ADRs, 80+ experiment artifacts, modeling contracts
+docs/             Assumptions, 16 ADRs, 80+ experiment artifacts, modeling contracts
 scripts/          Repository validation and developer utilities
 datasets/         Published sample dataset with DATA_CARD.md
 learnings/        Phase-by-phase R&D notebooks
@@ -230,6 +237,8 @@ make check
 | [Backlog](docs/backlog.md) | Ordered roadmap with dependencies and acceptance gates |
 | [Threat model](docs/threat-model.md) | Assets, early threats, and controls |
 | [MODEL_CARD.md](MODEL_CARD.md) | Full model card with metrics, ethics, and limitations |
+| [Realism boundary](docs/realism-boundary.md) | Modeled, simplified, and excluded behavior |
+| [Reviewer walkthrough](docs/showcase/system-walkthrough.md) | Bounded synthetic reviewer journey |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution rules and clean-room boundaries |
 
 ---

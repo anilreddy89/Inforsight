@@ -1,0 +1,815 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_id": "inforsight.rh12.evidence-reconciliation",
+  "artifact_version": "1.0.0",
+  "created_at": "2026-09-18T00:00:00Z",
+  "status": "corrected_evidence",
+  "primary_estimand": "new_portfolio_allocation_procedure_performance",
+  "cohort": {
+    "policy_count": 3600,
+    "cluster_key": "policy_id",
+    "evaluation_seed": 20280201,
+    "as_of": "2026-09-08T00:00:00Z",
+    "horizon_days": 90,
+    "source": "Generation v6 synthetic corpus with protected oracle sidecar for conditional potential outcomes",
+    "final_holdout_access": "not_accessed"
+  },
+  "capacities": {
+    "budget_capacity_usd_micros": 5000000000,
+    "personnel_capacity_seconds": 180000,
+    "display_hours_only": 50
+  },
+  "contracts": {
+    "economics_contract_id": "inforsight.synthetic-economics-resource",
+    "economics_contract_version": "1.0.0",
+    "economics_contract_sha256": "568cbd4f30fbbc7f5b1db5afcacd06ce965b2a237212275b047df7ab19170b20",
+    "semantic_catalog_version": "1.0.0",
+    "semantic_catalog_sha256": "023932da5544511d8513ff77c9f902ca864714df3d290f8632ae26ef0c9f9777",
+    "allocator_id": "inforsight.portfolio-allocation",
+    "allocator_version": "1.0.0",
+    "model_bundle_id": "inforsight-v6-logistic-platt-20260817",
+    "model_bundle_version": "1.0.0",
+    "model_bundle_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656"
+  },
+  "comparison_context": {
+    "portfolio_id": "rh12-20280201-3600",
+    "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+    "strategies": [
+      "non_intervention",
+      "operational_rules_only",
+      "risk_ranked",
+      "allocation_engine"
+    ],
+    "same_cohort_cutoff_eligibility_catalog_budget_personnel": true,
+    "strategy_results": {
+      "non_intervention": {
+        "strategy_id": "non_intervention",
+        "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+        "occurrence_count": 3600,
+        "unique_source_policy_count": 3600,
+        "selected_count": 0,
+        "abstention_count": 3600,
+        "unavailable_action_row_count": 3762,
+        "budget_capacity_usd_micros": 5000000000,
+        "budget_used_usd_micros": 0,
+        "personnel_capacity_seconds": 180000,
+        "personnel_used_seconds": 0,
+        "capacity_adherent": true,
+        "modeled_expected_annual_premium_preserved_usd_micros": 0,
+        "direct_cost_usd_micros": 0,
+        "modeled_expected_net_value_usd_micros": 0,
+        "signed_combined_termination_effect_90d": 0.0,
+        "expected_harm_90d": 0.0,
+        "baseline_combined_termination_probability_90d": 761.94289937,
+        "selected_combined_termination_probability_90d": 761.94289937,
+        "modeled_recall_at_capacity": 0.0,
+        "modeled_unnecessary_contact_count": 0,
+        "lead_time_days": null,
+        "lead_time_status": "not_supported",
+        "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+      },
+      "operational_rules_only": {
+        "strategy_id": "operational_rules_only",
+        "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+        "occurrence_count": 3600,
+        "unique_source_policy_count": 3600,
+        "selected_count": 2031,
+        "abstention_count": 1569,
+        "unavailable_action_row_count": 3762,
+        "budget_capacity_usd_micros": 5000000000,
+        "budget_used_usd_micros": 3345000000,
+        "personnel_capacity_seconds": 180000,
+        "personnel_used_seconds": 71640,
+        "capacity_adherent": true,
+        "modeled_expected_annual_premium_preserved_usd_micros": 12079274170,
+        "direct_cost_usd_micros": 3345000000,
+        "modeled_expected_net_value_usd_micros": 8734274170,
+        "signed_combined_termination_effect_90d": 19.58119916,
+        "expected_harm_90d": 0.0,
+        "baseline_combined_termination_probability_90d": 761.94289937,
+        "selected_combined_termination_probability_90d": 742.36170022,
+        "modeled_recall_at_capacity": 0.02569904,
+        "modeled_unnecessary_contact_count": 0,
+        "lead_time_days": null,
+        "lead_time_status": "not_supported",
+        "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+      },
+      "risk_ranked": {
+        "strategy_id": "risk_ranked",
+        "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+        "occurrence_count": 3600,
+        "unique_source_policy_count": 3600,
+        "selected_count": 1974,
+        "abstention_count": 1626,
+        "unavailable_action_row_count": 3762,
+        "budget_capacity_usd_micros": 5000000000,
+        "budget_used_usd_micros": 3711000000,
+        "personnel_capacity_seconds": 180000,
+        "personnel_used_seconds": 180000,
+        "capacity_adherent": true,
+        "modeled_expected_annual_premium_preserved_usd_micros": 14999389298,
+        "direct_cost_usd_micros": 3711000000,
+        "modeled_expected_net_value_usd_micros": 11288389298,
+        "signed_combined_termination_effect_90d": 24.14356281,
+        "expected_harm_90d": 0.0,
+        "baseline_combined_termination_probability_90d": 761.94289937,
+        "selected_combined_termination_probability_90d": 737.79933656,
+        "modeled_recall_at_capacity": 0.03168684,
+        "modeled_unnecessary_contact_count": 0,
+        "lead_time_days": null,
+        "lead_time_status": "not_supported",
+        "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+      },
+      "allocation_engine": {
+        "strategy_id": "allocation_engine",
+        "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+        "occurrence_count": 3600,
+        "unique_source_policy_count": 3600,
+        "selected_count": 1832,
+        "abstention_count": 1768,
+        "unavailable_action_row_count": 3762,
+        "budget_capacity_usd_micros": 5000000000,
+        "budget_used_usd_micros": 3498000000,
+        "personnel_capacity_seconds": 180000,
+        "personnel_used_seconds": 180000,
+        "capacity_adherent": true,
+        "modeled_expected_annual_premium_preserved_usd_micros": 24323758956,
+        "direct_cost_usd_micros": 3498000000,
+        "modeled_expected_net_value_usd_micros": 20825758956,
+        "signed_combined_termination_effect_90d": 25.49635152,
+        "expected_harm_90d": 0.0,
+        "baseline_combined_termination_probability_90d": 761.94289937,
+        "selected_combined_termination_probability_90d": 736.44654785,
+        "modeled_recall_at_capacity": 0.03346229,
+        "modeled_unnecessary_contact_count": 0,
+        "lead_time_days": null,
+        "lead_time_status": "not_supported",
+        "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+      }
+    }
+  },
+  "estimands": {
+    "frozen_assignment_sampling_uncertainty": {
+      "estimand_id": "frozen_assignment_sampling_uncertainty",
+      "strategies": {
+        "non_intervention": {
+          "point_estimate": {
+            "strategy_id": "non_intervention",
+            "comparison_context_sha256": "",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 0,
+            "abstention_count": 3600,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 0,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 0,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 0,
+            "direct_cost_usd_micros": 0,
+            "modeled_expected_net_value_usd_micros": 0,
+            "signed_combined_termination_effect_90d": 0.0,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 761.94289937,
+            "modeled_recall_at_capacity": 0.0,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "direct_cost_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "personnel_used_seconds": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            }
+          }
+        },
+        "operational_rules_only": {
+          "point_estimate": {
+            "strategy_id": "operational_rules_only",
+            "comparison_context_sha256": "",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 2031,
+            "abstention_count": 1569,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 3345000000,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 71640,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 12079274170,
+            "direct_cost_usd_micros": 3345000000,
+            "modeled_expected_net_value_usd_micros": 8734274170,
+            "signed_combined_termination_effect_90d": 19.58119916,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 742.36170022,
+            "modeled_recall_at_capacity": 0.02569904,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 12057920632.5,
+              "ci_lower": 11497878806.675,
+              "ci_upper": 12674045290.425
+            },
+            "direct_cost_usd_micros": {
+              "median": 3345000000.0,
+              "ci_lower": 3238500000.0,
+              "ci_upper": 3451537500.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 8715487274.0,
+              "ci_lower": 8188603622.25,
+              "ci_upper": 9304837021.125
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 19.58678043,
+              "ci_lower": 18.82871862,
+              "ci_upper": 20.29753098
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.02570242,
+              "ci_lower": 0.02477909,
+              "ci_upper": 0.02663585
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 3345000000.0,
+              "ci_lower": 3238500000.0,
+              "ci_upper": 3451537500.0
+            },
+            "personnel_used_seconds": {
+              "median": 71640.0,
+              "ci_lower": 62271.0,
+              "ci_upper": 81720.0
+            }
+          }
+        },
+        "risk_ranked": {
+          "point_estimate": {
+            "strategy_id": "risk_ranked",
+            "comparison_context_sha256": "",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 1974,
+            "abstention_count": 1626,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 3711000000,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 180000,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 14999389298,
+            "direct_cost_usd_micros": 3711000000,
+            "modeled_expected_net_value_usd_micros": 11288389298,
+            "signed_combined_termination_effect_90d": 24.14356281,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 737.79933656,
+            "modeled_recall_at_capacity": 0.03168684,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 14997555710.5,
+              "ci_lower": 14221599460.3,
+              "ci_upper": 15793686302.525
+            },
+            "direct_cost_usd_micros": {
+              "median": 3712500000.0,
+              "ci_lower": 3578962500.0,
+              "ci_upper": 3837000000.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 11275966310.0,
+              "ci_lower": 10591016426.1,
+              "ci_upper": 12017862312.575
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 24.14408116,
+              "ci_lower": 23.14909902,
+              "ci_upper": 25.1150799
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.03169327,
+              "ci_lower": 0.03046606,
+              "ci_upper": 0.03285486
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 3712500000.0,
+              "ci_lower": 3578962500.0,
+              "ci_upper": 3837000000.0
+            },
+            "personnel_used_seconds": {
+              "median": 180360.0,
+              "ci_lower": 165240.0,
+              "ci_upper": 195120.0
+            }
+          }
+        },
+        "allocation_engine": {
+          "point_estimate": {
+            "strategy_id": "allocation_engine",
+            "comparison_context_sha256": "",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 1832,
+            "abstention_count": 1768,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 3498000000,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 180000,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 24323758956,
+            "direct_cost_usd_micros": 3498000000,
+            "modeled_expected_net_value_usd_micros": 20825758956,
+            "signed_combined_termination_effect_90d": 25.49635152,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 736.44654785,
+            "modeled_recall_at_capacity": 0.03346229,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 24272962585.0,
+              "ci_lower": 22542685627.0,
+              "ci_upper": 26131630244.75
+            },
+            "direct_cost_usd_micros": {
+              "median": 3498000000.0,
+              "ci_lower": 3370462500.0,
+              "ci_upper": 3628500000.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 20772257357.0,
+              "ci_lower": 19172332137.7,
+              "ci_upper": 22552855129.175
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 25.47449678,
+              "ci_lower": 24.25140994,
+              "ci_upper": 26.72158571
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.03344378,
+              "ci_lower": 0.03185738,
+              "ci_upper": 0.03497273
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 3498000000.0,
+              "ci_lower": 3370462500.0,
+              "ci_upper": 3628500000.0
+            },
+            "personnel_used_seconds": {
+              "median": 180000.0,
+              "ci_lower": 164520.0,
+              "ci_upper": 194760.0
+            }
+          }
+        }
+      }
+    },
+    "new_portfolio_allocation_procedure_performance": {
+      "estimand_id": "new_portfolio_allocation_procedure_performance",
+      "strategies": {
+        "non_intervention": {
+          "point_estimate": {
+            "strategy_id": "non_intervention",
+            "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 0,
+            "abstention_count": 3600,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 0,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 0,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 0,
+            "direct_cost_usd_micros": 0,
+            "modeled_expected_net_value_usd_micros": 0,
+            "signed_combined_termination_effect_90d": 0.0,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 761.94289937,
+            "modeled_recall_at_capacity": 0.0,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "direct_cost_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "personnel_used_seconds": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            }
+          }
+        },
+        "operational_rules_only": {
+          "point_estimate": {
+            "strategy_id": "operational_rules_only",
+            "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 2031,
+            "abstention_count": 1569,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 3345000000,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 71640,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 12079274170,
+            "direct_cost_usd_micros": 3345000000,
+            "modeled_expected_net_value_usd_micros": 8734274170,
+            "signed_combined_termination_effect_90d": 19.58119916,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 742.36170022,
+            "modeled_recall_at_capacity": 0.02569904,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 12082067691.0,
+              "ci_lower": 11463869040.7,
+              "ci_upper": 12636911596.9
+            },
+            "direct_cost_usd_micros": {
+              "median": 3345000000.0,
+              "ci_lower": 3245887500.0,
+              "ci_upper": 3453000000.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 8734281661.0,
+              "ci_lower": 8171320234.275,
+              "ci_upper": 9250876279.3
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 19.56782276,
+              "ci_lower": 18.89843772,
+              "ci_upper": 20.31336374
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.02568322,
+              "ci_lower": 0.02481514,
+              "ci_upper": 0.02664981
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 3345000000.0,
+              "ci_lower": 3245887500.0,
+              "ci_upper": 3453000000.0
+            },
+            "personnel_used_seconds": {
+              "median": 72000.0,
+              "ci_lower": 62280.0,
+              "ci_upper": 82080.0
+            }
+          }
+        },
+        "risk_ranked": {
+          "point_estimate": {
+            "strategy_id": "risk_ranked",
+            "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 1974,
+            "abstention_count": 1626,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 3711000000,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 180000,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 14999389298,
+            "direct_cost_usd_micros": 3711000000,
+            "modeled_expected_net_value_usd_micros": 11288389298,
+            "signed_combined_termination_effect_90d": 24.14356281,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 737.79933656,
+            "modeled_recall_at_capacity": 0.03168684,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 14978275369.0,
+              "ci_lower": 14268830195.425,
+              "ci_upper": 15670831335.475
+            },
+            "direct_cost_usd_micros": {
+              "median": 3709500000.0,
+              "ci_lower": 3629962500.0,
+              "ci_upper": 3796500000.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 11269750404.0,
+              "ci_lower": 10599340406.825,
+              "ci_upper": 11917226220.025
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 24.12838194,
+              "ci_lower": 23.38757112,
+              "ci_upper": 24.84252488
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.03168641,
+              "ci_lower": 0.03067043,
+              "ci_upper": 0.03269195
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 3709500000.0,
+              "ci_lower": 3629962500.0,
+              "ci_upper": 3796500000.0
+            },
+            "personnel_used_seconds": {
+              "median": 180000.0,
+              "ci_lower": 180000.0,
+              "ci_upper": 180000.0
+            }
+          }
+        },
+        "allocation_engine": {
+          "point_estimate": {
+            "strategy_id": "allocation_engine",
+            "comparison_context_sha256": "40c9d7452704752c458cac0c566e75bea5e58b71767f4eb1003db4ea0ca02121",
+            "occurrence_count": 3600,
+            "unique_source_policy_count": 3600,
+            "selected_count": 1832,
+            "abstention_count": 1768,
+            "unavailable_action_row_count": 3762,
+            "budget_capacity_usd_micros": 5000000000,
+            "budget_used_usd_micros": 3498000000,
+            "personnel_capacity_seconds": 180000,
+            "personnel_used_seconds": 180000,
+            "capacity_adherent": true,
+            "modeled_expected_annual_premium_preserved_usd_micros": 24323758956,
+            "direct_cost_usd_micros": 3498000000,
+            "modeled_expected_net_value_usd_micros": 20825758956,
+            "signed_combined_termination_effect_90d": 25.49635152,
+            "expected_harm_90d": 0.0,
+            "baseline_combined_termination_probability_90d": 761.94289937,
+            "selected_combined_termination_probability_90d": 736.44654785,
+            "modeled_recall_at_capacity": 0.03346229,
+            "modeled_unnecessary_contact_count": 0,
+            "lead_time_days": null,
+            "lead_time_status": "not_supported",
+            "lead_time_reason": "The current synthetic counterfactual contract provides a 90-day horizon but no intervention timestamp or event-time attribution contract."
+          },
+          "intervals": {
+            "modeled_expected_annual_premium_preserved_usd_micros": {
+              "median": 24313587872.0,
+              "ci_lower": 22938516599.725,
+              "ci_upper": 25547224521.225
+            },
+            "direct_cost_usd_micros": {
+              "median": 3496500000.0,
+              "ci_lower": 3413962500.0,
+              "ci_upper": 3592500000.0
+            },
+            "modeled_expected_net_value_usd_micros": {
+              "median": 20811181486.5,
+              "ci_lower": 19491057026.875,
+              "ci_upper": 22030528527.125
+            },
+            "signed_combined_termination_effect_90d": {
+              "median": 25.4655157,
+              "ci_lower": 24.79532136,
+              "ci_upper": 26.16500087
+            },
+            "expected_harm_90d": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "modeled_recall_at_capacity": {
+              "median": 0.03342159,
+              "ci_lower": 0.03246843,
+              "ci_upper": 0.03439782
+            },
+            "modeled_unnecessary_contact_count": {
+              "median": 0.0,
+              "ci_lower": 0.0,
+              "ci_upper": 0.0
+            },
+            "budget_used_usd_micros": {
+              "median": 3496500000.0,
+              "ci_lower": 3413962500.0,
+              "ci_upper": 3592500000.0
+            },
+            "personnel_used_seconds": {
+              "median": 180000.0,
+              "ci_lower": 180000.0,
+              "ci_upper": 180000.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "bootstrap_protocol": {
+    "cluster": "policy_id",
+    "resample_count": 1000,
+    "fixed_assignment_seed": 20280201,
+    "allocation_procedure_seed": 20280202,
+    "draw_count_per_replicate": 3600,
+    "duplicate_occurrence_identity": "policy_id#draw_index",
+    "source_policy_id_remains_join_key": true,
+    "fixed_assignment_capacity_treatment": "observed resource totals may exceed original caps because assignments are not rerun",
+    "allocation_procedure_capacity_treatment": "original total budget micros and personnel seconds remain fixed for every replicate",
+    "model_refit": false,
+    "calibration_refit": false,
+    "treatment_effect_reestimation": false,
+    "allocation_context_digest_count": 1001
+  },
+  "supported_metric_definitions": {
+    "modeled_expected_annual_premium_preserved_usd_micros": "signed combined-termination effect multiplied by annual premium cents under RH-04's synthetic one-year value basis",
+    "modeled_expected_net_value_usd_micros": "modeled expected annual premium preserved micros less direct action cost micros",
+    "signed_combined_termination_effect_90d": "control combined lapse-or-surrender probability minus selected-action combined probability",
+    "expected_harm_90d": "sum of the magnitude of negative selected-action effects; beneficial and neutral effects contribute zero",
+    "modeled_recall_at_capacity": "selected-action expected combined-effect reduction divided by baseline combined-termination probability; not observed-outcome recall",
+    "modeled_unnecessary_contact_count": "selected non-abstain occurrences with non-positive modeled effect; not a realized customer-contact outcome",
+    "lead_time_days": "not supported by the current counterfactual contract because intervention and event timestamps are not attributed"
+  },
+  "protocol_disclosure": {
+    "statistical_acceptance_protocol": "3.1.0",
+    "post_result_amendment": "RH-12 is a post-result reconciliation after RH-04/RH-05 contract repairs; it does not alter the original acceptance result",
+    "acceptance_seed_reuse": true,
+    "fresh_seed_confirmation": "not_run; requires separate predeclared experiment issue"
+  },
+  "issue_130_disposition": {
+    "disposition": "defer",
+    "issue": 130,
+    "rationale": "Fresh simulator stress variants are not required to repair or reconcile the core evidence. Execution remains separately gated by predeclared variants, thresholds, seeds, estimand, and artifact versions."
+  },
+  "claim_boundaries": {
+    "synthetic_conditional": true,
+    "causal_treatment_effect": false,
+    "realized_profit": false,
+    "external_validity": false,
+    "demographic_fairness": false,
+    "production_readiness": false,
+    "network_or_sustained_load_performance": false,
+    "phase_4_authorization": false
+  },
+  "historical_artifacts": {
+    "preserved_byte_identical": true,
+    "legacy_ope_manifest_sha256": "4779e0d3326caf07636929169342febca9777162aac84adb8af9c73104dfb88e",
+    "legacy_ope_report_sha256": "efba4c70d7a35f7641a2c6386c1a0330d7702ae7b2ab6dac8672e442408d4047",
+    "superseded_by": "phase-rh-12-evidence-reconciliation-1.0.0"
+  },
+  "evidence_digest": "47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933"
+}

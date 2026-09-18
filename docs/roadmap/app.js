@@ -527,10 +527,10 @@ const timelineData = [
         status: "Completed",
         commit: "55f0415",
         summary: {
-          tech: "Counterfactual potential-outcomes simulation engine extending Generation v6 substrate to evaluate heterogeneous treatment effects, lapse rate reduction, Net Preserved Value, and Return on Conservation Spend (ROCS) against heuristic and naive ML policies.",
-          simple: "What-If Business Impact Simulator: Mathematically tests how many policies and dollars the decision engine saves compared to simple rules or naive scoring, proving the business return before deploying to real customers."
+          tech: "Historical counterfactual potential-outcomes simulation engine extending Generation v6 substrate; corrected RH-12 evidence now reports signed modeled combined-termination effects and expected premium value under the RH-04/RH-05 contracts.",
+          simple: "Versioned What-If Business Impact Evidence: The historical simulation remains preserved while RH-12 publishes corrected, bounded modeled comparisons before any real-customer deployment."
         },
-        checks: "Issue #122 closed by PR #123 (55f0415); simulator/counterfactual/ potential outcomes; 11/11 tests pass; 1,000 bootstrap CIs; Decision Engine achieves $13,764 Net Preserved Value (2.92x ROCS, p < 0.0001 superiority vs Naive ML and Heuristics); ADR 0002 compliance; unblocks P3-09."
+        checks: "Issue #122 closed by PR #123 (55f0415); historical Phase 3.08 OPE artifacts remain preserved. RH-12 evidence 1.0.0 supersedes active product interpretation with signed modeled effects, exact USD micros/personnel seconds, separate estimands, and an explicit synthetic/conditional claim boundary."
       },
       {
         id: "P3-09",
@@ -602,7 +602,7 @@ const timelineData = [
           tech: "RH-04 and RH-05 are complete. Allocation contract 1.0.0 governs exact integer resources, deterministic bounded-domain allocation, versioned dashboard refresh, atomic reservation replacement, and the four-strategy comparison.",
           simple: "The portfolio allocator and its dashboard and workflow capacity controls are implemented, verified, and merged."
         },
-        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae); RH-05I issue #157 closed through PR #158 (603b955) after all five CI jobs passed. The implementation covers 64 generated exact-reference cases, dashboard refresh, reservation conflicts, concurrency, and four-strategy comparison. Historical evidence remains frozen pending RH-12; Phase 4 remains blocked through RH-13."
+        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae); RH-05I issue #157 closed through PR #158 (603b955) after all five CI jobs passed. The implementation covers 64 generated exact-reference cases, dashboard refresh, reservation conflicts, concurrency, and four-strategy comparison. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12. Phase 4 remains blocked through RH-13."
       },
       {
         id: "RH-06–RH-07",
@@ -624,18 +624,18 @@ const timelineData = [
           tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
           simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
         },
-        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 is complete through PR #180; RH-12 and RH-13 remain, and P4-02/P4-03 remain gated by RH-13."
+        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 and RH-12 are complete; RH-13 remains the final release decision, and P4-02/P4-03 remain gated by RH-13."
       },
       {
         id: "RH-11–RH-13",
         title: "Qualification, Evidence Reconciliation & Resume Decision",
-        status: "RH-11 Completed; RH-12/RH-13 Pending",
-        commit: "RH-11 PR #180, merge 33ffc9a",
+        status: "RH-11 and RH-12 Completed; RH-13 Pending",
+        commit: "RH-11 PR #180, merge 33ffc9a; RH-12 evidence 1.0.0",
         summary: {
           tech: "Run expanded CI and read-only qualification, regenerate versioned evidence, reconcile active claims, and record PROCEED, REMEDIATE, or STOP for the hardening release.",
           simple: "Retest the repaired system, publish honest updated evidence, and make the final decision about resuming enterprise work."
         },
-        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 evidence reconciliation and RH-13 release decision remain pending; only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
+        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 generated versioned evidence digest 47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933 with separate fixed-assignment and new-portfolio estimands, reconciled active documentation, preserved historical OPE artifacts, and deferred issue #130. RH-13 remains the release decision; only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
       }
     ]
   },
