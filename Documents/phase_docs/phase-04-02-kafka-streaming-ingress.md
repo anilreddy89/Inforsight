@@ -41,6 +41,8 @@ work for the Kafka integration slice.
 - `make streaming-integration-check` passes with 10,000 valid events arriving
   in reverse order, one malformed event, zero loss, canonical replay order, and
   one matching DLQ record.
+- `make p4-02-check` runs the focused fast path; use
+  `make p4-02-integration-check` to include the Docker/Testcontainers gate.
 
 P4-02 implementation is complete on the issue branch; the pull request and
 merge into `main` remain the release workflow’s final steps. P4-03 remains
