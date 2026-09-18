@@ -65,7 +65,7 @@ class KafkaStreamingAdapter:
             from kafka import KafkaConsumer, KafkaProducer
         except ImportError as exc:
             raise KafkaClientUnavailable(
-                "Install the optional 'streaming' extra to use the Kafka adapter"
+                "Install simulator/requirements-p4-02-integration.txt to use the Kafka adapter"
             ) from exc
 
         producer = KafkaProducer(

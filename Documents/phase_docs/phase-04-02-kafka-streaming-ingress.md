@@ -31,8 +31,8 @@ work for the Kafka integration slice.
 
 - The local Kafka-only harness is `infra/docker-compose.kafka.yml`; start it
   with `docker compose -f infra/docker-compose.kafka.yml up -d`.
-- The optional Python client is exposed as `pip install -e
-  'simulator[streaming]'`.
+- The optional Python client and Testcontainers dependencies are listed in
+  `simulator/requirements-p4-02-integration.txt`.
 - `KafkaStreamingAdapter` publishes event IDs as Kafka keys, validates consumed
   JSON through the ingress boundary, and routes malformed values to DLQ.
 - `make streaming-check` passes with unit coverage for validation,
