@@ -93,14 +93,27 @@ def main() -> None:
     if "current_view" not in st.session_state:
         st.session_state["current_view"] = "📊 Executive Portfolio"
 
+    views = [
+        "📊 Executive Portfolio",
+        "📋 Triage Queue",
+        "🔍 Policy Dossier",
+        "⚖️ Decision Console",
+        "📈 Telemetry & Drift",
+    ]
+    requested_view = st.session_state.pop("navigation_request", None)
+    if requested_view in views:
+        st.session_state["current_view"] = requested_view
+
     # Callbacks for cross-view navigation
     def select_policy_and_open_dossier(pid: str) -> None:
         st.session_state["selected_policy_id"] = pid
-        st.session_state["current_view"] = "🔍 Policy Dossier"
+        st.session_state["navigation_request"] = "🔍 Policy Dossier"
+        st.rerun()
 
     def proceed_to_decision(pid: str) -> None:
         st.session_state["selected_policy_id"] = pid
-        st.session_state["current_view"] = "⚖️ Decision Console"
+        st.session_state["navigation_request"] = "⚖️ Decision Console"
+        st.rerun()
 
     # 4. Sidebar Navigation & Branding
     with st.sidebar:
@@ -108,13 +121,6 @@ def main() -> None:
         st.caption("Policy Conservation Decision Engine (ADR 0002)")
         st.markdown("---")
 
-        views = [
-            "📊 Executive Portfolio",
-            "📋 Triage Queue",
-            "🔍 Policy Dossier",
-            "⚖️ Decision Console",
-            "📈 Telemetry & Drift",
-        ]
         chosen_view = st.radio("Navigation", views, key="current_view")
 
         st.markdown("---")

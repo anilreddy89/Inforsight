@@ -8,6 +8,8 @@ import unittest
 
 import numpy as np
 
+from scripts.run_model_explanations import manifests_match
+
 from inforsight_simulator.calibration import PlattCalibrator
 from inforsight_simulator.explanations import (
     CATEGORICAL_FEATURES,
@@ -83,6 +85,12 @@ class TestModelExplanations(unittest.TestCase):
         self.assertEqual(V6_EXPLANATIONS_CONTRACT_VERSION, "1.0.0")
         self.assertEqual(V6_EXPLANATIONS_ARTIFACT_VERSION, "1.0.0")
         self.assertEqual(PORTABLE_ARTIFACT_DECIMALS, 4)
+
+    def test_manifest_comparison_allows_only_float_roundoff(self) -> None:
+        self.assertTrue(manifests_match({"value": 1.0}, {"value": 1.0 + 1e-13}))
+        self.assertFalse(manifests_match({"value": 1.0}, {"value": 1.0 + 1e-6}))
+        self.assertFalse(manifests_match({"value": "1.0"}, {"value": 1.0}))
+        self.assertTrue(manifests_match({"values": [1.0, "stable"]}, {"values": [1.0, "stable"]}))
 
     def test_exact_additive_logit_reconstruction_mock(self) -> None:
         """Verify mathematical identity |z_cal - (phi_0 + sum(Phi_k))| < 1e-12 on mock data."""
@@ -190,4 +198,3 @@ class TestModelExplanations(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

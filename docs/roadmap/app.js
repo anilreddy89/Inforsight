@@ -608,12 +608,12 @@ const timelineData = [
         id: "RH-06–RH-07",
         title: "Inference-Only Runtime & Evidence-Bearing Monitoring",
         status: "Completed Locally",
-        commit: "RH-06 complete: RH-06D 205f612; RH-06I df69910; RH-07 uncommitted",
+        commit: "RH-07 complete: PR #164, merge 793217f",
         summary: {
           tech: "Package scoring without training dependencies, verify bundle identity at startup, and make drift/calibration states depend on bounded scoring and resolved-outcome evidence.",
           simple: "Make scoring independently runnable and ensure monitoring says “insufficient data” until real test evidence exists."
         },
-        checks: "RH-06D issue #160 closed through PR #161 (205f612). RH-06I issue #162 and parent RH-06 closed through PR #163 (df69910) after all six CI checks passed. RH-07 issue #129 is implemented locally: bounded score retention, exact outcome joins, explicit insufficient-data diagnostics, adversarial regressions, and full make check pass. No commit/PR/issue closeout was performed; no unsupported monitoring-health claim is accepted."
+        checks: "RH-06D issue #160 closed through PR #161 (205f612). RH-06I issue #162 and parent RH-06 closed through PR #163 (df69910) after all six CI checks passed. RH-07 issue #129 closed through PR #164 (793217f): bounded score retention, exact outcome joins, explicit insufficient-data diagnostics, adversarial regressions, and full make check pass. No unsupported monitoring-health claim is accepted."
       },
       {
         id: "RH-08–RH-10",

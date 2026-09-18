@@ -4,9 +4,9 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="Apache 2.0 license"></a>
-  <a href="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-passing-brightgreen.svg" alt="CI passing"></a>
+  <a href="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml"><img src="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml/badge.svg" alt="CI workflow status"></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-blue.svg" alt="Python 3.11+">
-  <img src="https://img.shields.io/badge/phase-Baseline%20ML%20Complete-brightgreen.svg" alt="Phase: Baseline ML Complete">
+  <img src="https://img.shields.io/badge/release-v0.3.1%20hardening%20(RH--10%20complete)-blue.svg" alt="Release: v0.3.1 hardening, RH-10 complete">
 </p>
 
 **Inforsight** is a clean-room conservation case intelligence system for in-force life-insurance policies. It reconstructs fictional policy timelines from immutable event streams, estimates near-term lapse or surrender risk without leaking future information, separates prediction from action authority, and keeps a human reviewer in control of every intervention.
@@ -213,7 +213,7 @@ make check
 
 `make check` runs repository-boundary validation, all published artifact reproducibility checks, focused leakage and model-pipeline tests, data-contract tests, and the complete simulator test suite.
 
-[GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the same checks on every push and pull request (4 parallel jobs, ~3.5–4.5 min).
+[GitHub Actions](https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml) runs the release checks on every push and pull request through parallel contract, pipeline, simulator, runtime, serving, dashboard, and headless Streamlit qualification jobs. The workflow badge above reflects the latest run; timing remains an environment-dependent CI observation rather than a sustained-load or network-performance claim.
 
 ---
 
