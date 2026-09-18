@@ -11,6 +11,7 @@ import unittest
 
 from inforsight_simulator.audit.ledger import (
     GENESIS_HASH,
+    AuditRecoveryError,
     AuditIntegrityError,
     AuditLedger,
     AuditRecord,
@@ -242,6 +243,80 @@ class TestCryptographicAuditLedger(unittest.TestCase):
         with self.assertRaises(AuditIntegrityError):
             AuditLedger(self.log_path)
 
+    def test_checkpoint_detects_suffix_truncation(self) -> None:
+        """A committed suffix cannot be silently removed from the durable log."""
+        self.ledger.append(
+            case_id="case_001",
+            policy_id="pol_001",
+            case_event_id="cev_001",
+            from_state="NONE",
+            to_state="CREATED",
+            timestamp="2026-09-01T10:00:00Z",
+        )
+        checkpoint_size = self.ledger.checkpoint_path.stat().st_size
+        with open(self.log_path, "r+b") as f:
+            f.truncate(0)
+        self.assertGreater(checkpoint_size, 0)
+        with self.assertRaises(AuditRecoveryError):
+            AuditLedger(self.log_path)
+
+    def test_uncheckpointed_suffix_is_recovered_after_restart(self) -> None:
+        """A log write without its checkpoint is treated as an uncommitted suffix."""
+        self.ledger.append(
+            case_id="case_001",
+            policy_id="pol_001",
+            case_event_id="cev_001",
+            from_state="NONE",
+            to_state="CREATED",
+            timestamp="2026-09-01T10:00:00Z",
+        )
+        checkpoint = json.loads(self.ledger.checkpoint_path.read_text(encoding="utf-8"))
+        with open(self.log_path, "ab") as f:
+            f.write(b'{"torn": true}\n')
+            f.flush()
+        restarted = AuditLedger(self.log_path)
+        self.assertEqual(restarted.total_entries, 1)
+        self.assertEqual(self.log_path.stat().st_size, checkpoint["log_bytes"])
+        self.assertTrue(AuditTrailVerifier.verify_file(self.log_path).is_valid)
+
+    def test_checkpoint_is_updated_atomically_with_append(self) -> None:
+        """A successful append advances the checkpoint to the exact log tip."""
+        rec = self.ledger.append(
+            case_id="case_001",
+            policy_id="pol_001",
+            case_event_id="cev_001",
+            from_state="NONE",
+            to_state="CREATED",
+            timestamp="2026-09-01T10:00:00Z",
+        )
+        checkpoint = json.loads(self.ledger.checkpoint_path.read_text(encoding="utf-8"))
+        self.assertEqual(checkpoint["entry_count"], 1)
+        self.assertEqual(checkpoint["sequence_number"], rec.sequence_number)
+        self.assertEqual(checkpoint["tip_hash"], rec.entry_hash)
+        self.assertEqual(checkpoint["log_bytes"], self.log_path.stat().st_size)
+
+    def test_stale_writer_is_rejected(self) -> None:
+        """An instance created before another writer commits cannot fork history."""
+        first = AuditLedger(self.log_path)
+        second = AuditLedger(self.log_path)
+        first.append(
+            case_id="case_001",
+            policy_id="pol_001",
+            case_event_id="cev_001",
+            from_state="NONE",
+            to_state="CREATED",
+            timestamp="2026-09-01T10:00:00Z",
+        )
+        with self.assertRaises(AuditRecoveryError):
+            second.append(
+                case_id="case_001",
+                policy_id="pol_001",
+                case_event_id="cev_002",
+                from_state="CREATED",
+                to_state="TRIAGED",
+                timestamp="2026-09-01T10:05:00Z",
+            )
+
     def test_cli_script_execution(self) -> None:
         """Tests scripts/verify_conservation_audit_trail.py via subprocess."""
         # Create a valid audit trail with human review and execution
@@ -316,4 +391,3 @@ class TestCryptographicAuditLedger(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

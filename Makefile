@@ -1,4 +1,4 @@
-PYTHON ?= python3
+PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 export PYTHONPATH := $(CURDIR)/inference-runtime/src:$(PYTHONPATH)
 
 .PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check inference-runtime-check leakage-check logistic-baseline-check observation-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap run-dashboard check-contracts check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check phase-03-qualification-check
@@ -22,16 +22,16 @@ phase-03-qualification-check:
 	$(PYTHON) -m unittest simulator.tests.test_phase_03_qualification -v
 
 rules-eligibility-check:
-	python3 -m unittest simulator.tests.test_rules_eligibility -v
+	$(PYTHON) -m unittest simulator.tests.test_rules_eligibility -v
 
 optimization-check:
-	python3 -m unittest simulator.tests.test_optimization -v
+	$(PYTHON) -m unittest simulator.tests.test_optimization -v
 
 serving-gateway-check:
-	python3 -m unittest discover -s serving/tests -p 'test_*.py' -v
+	$(PYTHON) -m unittest discover -s serving/tests -p 'test_*.py' -v
 
 assistant-check:
-	python3 -m unittest simulator.tests.test_assistant -v
+	$(PYTHON) -m unittest simulator.tests.test_assistant -v
 
 check-contracts: boundary-check dataset-check contract-test r2-08-design-check r2-12-diagnostic-contract-check r2-14a-diagnostic-contract-check r2-14ba-diagnostic-contract-check r2-14c-contract-check
 
@@ -40,139 +40,139 @@ check-v1-v3: assessment-check observation-check temporal-split-check feature-pip
 check-v4-v5: r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14b-diagnostic-check r2-14bb-diagnostic-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check
 
 final-evaluation-check:
-	python3 scripts/run_final_evaluation.py --check
-	python3 -m unittest simulator.tests.test_final_evaluation -v
+	$(PYTHON) scripts/run_final_evaluation.py --check
+	$(PYTHON) -m unittest simulator.tests.test_final_evaluation -v
 
 model-bundle-check:
-	python3 scripts/run_model_bundle.py --check
-	python3 -m unittest simulator.tests.test_model_bundle -v
+	$(PYTHON) scripts/run_model_bundle.py --check
+	$(PYTHON) -m unittest simulator.tests.test_model_bundle -v
 
 model-explanations-check:
-	python3 scripts/run_model_explanations.py --check
-	python3 -m unittest simulator.tests.test_model_explanations -v
+	$(PYTHON) scripts/run_model_explanations.py --check
+	$(PYTHON) -m unittest simulator.tests.test_model_explanations -v
 
 probability-calibration-check:
-	python3 scripts/run_probability_calibration.py --check
-	python3 -m unittest simulator.tests.test_probability_calibration -v
+	$(PYTHON) scripts/run_probability_calibration.py --check
+	$(PYTHON) -m unittest simulator.tests.test_probability_calibration -v
 
 v6-acceptance-check:
-	python3 scripts/run_v6_statistical_acceptance.py --readiness-check >/dev/null
-	python3 scripts/run_v6_statistical_acceptance.py --check
-	python3 -m unittest simulator.tests.test_v6_acceptance -v
+	$(PYTHON) scripts/run_v6_statistical_acceptance.py --readiness-check >/dev/null
+	$(PYTHON) scripts/run_v6_statistical_acceptance.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v6_acceptance -v
 
 v6-evaluation-check:
-	python3 scripts/check_v6_evaluation_support.py --check
-	python3 scripts/build_v6_evaluation_pipeline.py --check
-	python3 -m unittest simulator.tests.test_v6_evaluation -v
+	$(PYTHON) scripts/check_v6_evaluation_support.py --check
+	$(PYTHON) scripts/build_v6_evaluation_pipeline.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v6_evaluation -v
 
 r2-14d-qualification-check:
-	python3 scripts/run_v6_qualification.py --readiness-check >/dev/null
-	python3 scripts/run_v6_qualification.py --check
-	python3 -m unittest simulator.tests.test_v6_config simulator.tests.test_v6_corpus simulator.tests.test_v6_qualification -v
+	$(PYTHON) scripts/run_v6_qualification.py --readiness-check >/dev/null
+	$(PYTHON) scripts/run_v6_qualification.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v6_config simulator.tests.test_v6_corpus simulator.tests.test_v6_qualification -v
 
 r2-14c-contract-check:
-	python3 scripts/check_r2_14c_v6_contract.py
-	python3 -m unittest simulator.tests.test_v6_contract -v
+	$(PYTHON) scripts/check_r2_14c_v6_contract.py
+	$(PYTHON) -m unittest simulator.tests.test_v6_contract -v
 
 r2-14bb-diagnostic-check:
-	python3 scripts/run_v5_redesign_diagnostics_execution.py --readiness-check >/dev/null
-	python3 scripts/run_v5_redesign_diagnostics_execution.py --check
-	python3 -m unittest simulator.tests.test_v5_diagnostics_execution -v
+	$(PYTHON) scripts/run_v5_redesign_diagnostics_execution.py --readiness-check >/dev/null
+	$(PYTHON) scripts/run_v5_redesign_diagnostics_execution.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v5_diagnostics_execution -v
 
 r2-14ba-diagnostic-contract-check:
-	python3 scripts/check_r2_14ba_diagnostic_contract.py
-	python3 -m unittest simulator.tests.test_v5_diagnostic_contract_amendment -v
+	$(PYTHON) scripts/check_r2_14ba_diagnostic_contract.py
+	$(PYTHON) -m unittest simulator.tests.test_v5_diagnostic_contract_amendment -v
 
 r2-14b-diagnostic-check:
-	! python3 scripts/run_v5_redesign_diagnostics.py --readiness-check >/dev/null
-	python3 scripts/run_v5_redesign_diagnostics.py --check
-	python3 -m unittest simulator.tests.test_v5_diagnostics -v
+	! $(PYTHON) scripts/run_v5_redesign_diagnostics.py --readiness-check >/dev/null
+	$(PYTHON) scripts/run_v5_redesign_diagnostics.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v5_diagnostics -v
 
 r2-14a-diagnostic-contract-check:
-	python3 scripts/check_r2_14a_diagnostic_contract.py
-	python3 -m unittest simulator.tests.test_v5_diagnostic_contract -v
+	$(PYTHON) scripts/check_r2_14a_diagnostic_contract.py
+	$(PYTHON) -m unittest simulator.tests.test_v5_diagnostic_contract -v
 
 r2-14-qualification-check:
-	python3 scripts/run_v4_qualification.py --readiness-check >/dev/null
-	python3 scripts/run_v4_qualification.py --check
-	python3 -m unittest simulator.tests.test_v4_config simulator.tests.test_v4_corpus simulator.tests.test_v4_qualification -v
+	$(PYTHON) scripts/run_v4_qualification.py --readiness-check >/dev/null
+	$(PYTHON) scripts/run_v4_qualification.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v4_config simulator.tests.test_v4_corpus simulator.tests.test_v4_qualification -v
 
 r2-13-diagnostic-readiness-check:
-	python3 scripts/run_v4_redesign_diagnostics.py --readiness-check >/dev/null
-	python3 scripts/run_v4_redesign_diagnostics.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v4_diagnostics.py' -v
+	$(PYTHON) scripts/run_v4_redesign_diagnostics.py --readiness-check >/dev/null
+	$(PYTHON) scripts/run_v4_redesign_diagnostics.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_v4_diagnostics.py' -v
 
 r2-12-diagnostic-contract-check:
-	python3 scripts/check_r2_12_diagnostic_contract.py
+	$(PYTHON) scripts/check_r2_12_diagnostic_contract.py
 
 v3-acceptance-check:
-	python3 scripts/run_v3_statistical_acceptance.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v3_acceptance.py' -v
+	$(PYTHON) scripts/run_v3_statistical_acceptance.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_v3_acceptance.py' -v
 
 v3-evaluation-check:
-	python3 scripts/check_v3_evaluation_support.py --check
-	python3 scripts/build_v3_evaluation_pipeline.py --check
+	$(PYTHON) scripts/check_v3_evaluation_support.py --check
+	$(PYTHON) scripts/build_v3_evaluation_pipeline.py --check
 
 v3-corpus-check:
-	python3 scripts/build_v3_modeling_corpus.py --check
-	python3 -m unittest simulator.tests.test_v3_config simulator.tests.test_v3_corpus simulator.tests.test_v3_1_corpus -v
+	$(PYTHON) scripts/build_v3_modeling_corpus.py --check
+	$(PYTHON) -m unittest simulator.tests.test_v3_config simulator.tests.test_v3_corpus simulator.tests.test_v3_1_corpus -v
 
 r2-08-design-check:
-	python3 scripts/check_r2_08_design.py
+	$(PYTHON) scripts/check_r2_08_design.py
 
 v2-acceptance-check:
-	python3 scripts/run_v2_statistical_acceptance.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v2_acceptance.py' -v
+	$(PYTHON) scripts/run_v2_statistical_acceptance.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_v2_acceptance.py' -v
 
 v2-evaluation-check:
-	python3 scripts/build_v2_evaluation_pipeline.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v2_evaluation.py' -v
+	$(PYTHON) scripts/build_v2_evaluation_pipeline.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_v2_evaluation.py' -v
 
 v2-corpus-check:
-	python3 scripts/build_v2_modeling_corpus.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_v2_*.py' -v
+	$(PYTHON) scripts/build_v2_modeling_corpus.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_v2_*.py' -v
 
 boundary-check:
 	./scripts/check_repository_boundaries.sh
 
 dataset-check:
-	python3 scripts/build_sample_dataset.py --check
+	$(PYTHON) scripts/build_sample_dataset.py --check
 
 assessment-check:
-	python3 scripts/assess_synthetic_rates.py --check
+	$(PYTHON) scripts/assess_synthetic_rates.py --check
 
 observation-check:
-	python3 scripts/build_observations.py --check
+	$(PYTHON) scripts/build_observations.py --check
 
 temporal-split-check:
-	python3 scripts/build_temporal_splits.py --check
+	$(PYTHON) scripts/build_temporal_splits.py --check
 
 feature-pipeline-check:
-	python3 scripts/build_feature_pipeline.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_feature_pipeline.py' -v
+	$(PYTHON) scripts/build_feature_pipeline.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_feature_pipeline.py' -v
 
 logistic-baseline-check:
-	python3 scripts/train_logistic_baseline.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_logistic_baseline.py' -v
+	$(PYTHON) scripts/train_logistic_baseline.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_logistic_baseline.py' -v
 
 boosted-comparison-check:
-	python3 scripts/train_boosted_comparison.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_boosted_comparison.py' -v
+	$(PYTHON) scripts/train_boosted_comparison.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_boosted_comparison.py' -v
 
 feature-diagnostics-check:
-	python3 scripts/run_feature_diagnostics.py --check
-	python3 -m unittest discover -s simulator/tests -p 'test_feature_diagnostics.py' -v
+	$(PYTHON) scripts/run_feature_diagnostics.py --check
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_feature_diagnostics.py' -v
 
 scoring-authorization-check:
-	python3 -m unittest discover -s simulator/tests -p 'test_scoring_authorization.py' -v
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_scoring_authorization.py' -v
 
 leakage-check:
-	python3 -m unittest discover -s simulator/tests -p 'test_leakage_guards.py' -v
+	$(PYTHON) -m unittest discover -s simulator/tests -p 'test_leakage_guards.py' -v
 
 test: contract-test inference-runtime-check simulator-test
 
 contract-test:
-	python3 -m unittest discover -s data-contracts/tests -v
+	$(PYTHON) -m unittest discover -s data-contracts/tests -v
 
 simulator-test:
-	python3 -m unittest discover -s simulator/tests -v
+	$(PYTHON) -m unittest discover -s simulator/tests -v
