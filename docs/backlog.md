@@ -1223,7 +1223,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Eligible to resume after RH-13 `PROCEED`; implementation not started.
+**Status:** Implementation complete through [issue #184](https://github.com/anilreddy89/Inforsight/issues/184); PR/merge pending.
 
 **Outcome:** High-throughput streaming event ingress replaces static JSONL batch playback, supporting real-time bitemporal policy event streams with schema validation and dead-letter queues.
 
@@ -1237,10 +1237,14 @@ P4-01 (Architecture Inception & ADR 0014)
 - Implement local Kafka test harness using Testcontainers.
 
 **Acceptance checks:**
-- [ ] Streaming consumer handles out-of-order ingestion while preserving point-in-time state invariants.
-- [ ] Malformed or unversioned event payloads route to DLQ without crashing the consumer.
-- [ ] End-to-end integration tests process 10,000 streaming events with zero data loss or state corruption.
-- [ ] Unit and container integration tests pass.
+- [x] Versioned JSON Schema contracts exist for policy lifecycle, billing/payment, and customer service topics.
+- [x] Local KRaft Compose harness creates the event and DLQ topics.
+- [x] Unit tests cover validation, domain mismatch, malformed payloads, duplicate idempotency keys, and DLQ routing.
+- [x] Kafka adapter publishes stable event keys and consumes validated JSON values.
+- [x] Streaming consumer handles out-of-order ingestion while preserving point-in-time state invariants.
+- [x] Malformed or unversioned event payloads route to DLQ without crashing the broker-backed consumer.
+- [x] End-to-end integration tests process 10,000 streaming events with zero data loss or state corruption.
+- [x] Unit and container integration tests pass.
 
 **Depends on:** P4-01. **Blocks:** P4-03.
 

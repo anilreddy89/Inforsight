@@ -17,6 +17,10 @@ dependencies = [
     "xgboost==3.3.0",
 ]
 
+[project.optional-dependencies]
+streaming = ["kafka-python-ng==2.2.3"]
+integration = ["kafka-python-ng==2.2.3", "testcontainers[kafka]==4.15.0"]
+
 [project.scripts]
 inforsight-simulate = "inforsight_simulator.__main__:main"
 
