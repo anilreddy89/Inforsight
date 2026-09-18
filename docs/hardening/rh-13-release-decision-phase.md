@@ -1,6 +1,6 @@
 # RH-13: Qualify and release the hardening initiative
 
-Status: **Completed — PROCEED recorded on 2026-09-18** through [issue #182](https://github.com/anilreddy89/Inforsight/issues/182); qualification passed on clean `main` at `1924dfa`
+Status: **Completed — PROCEED recorded and released on 2026-09-18** through [issue #182](https://github.com/anilreddy89/Inforsight/issues/182), [PR #183](https://github.com/anilreddy89/Inforsight/pull/183), merge `f6e5a5d`; qualification passed on clean `main` at `1924dfa`
 Release: `v0.3.1-decision-engine-hardening`
 Classification: release evidence / decision
 Priority: release blocking
@@ -124,7 +124,7 @@ new branch named from its GitHub issue number, for example
 - [x] Release notes, README, model card, backlog, limitations, roadmap, phase docs, and P4 status agree.
 - [x] The RH-12 evidence digest, historical artifact hashes, and issue #130 deferred disposition are carried into the release record.
 - [x] The predeclared decision contract produced exactly one decision: `PROCEED`.
-- [x] Release preparation is authorized only after `PROCEED`; the annotated tag is prepared locally after this decision record, while no GitHub release is published by this closeout.
+- [x] Release preparation occurred only after `PROCEED`; annotated tag `v0.3.1-decision-engine-hardening` and the published [GitHub release](https://github.com/anilreddy89/Inforsight/releases/tag/v0.3.1-decision-engine-hardening) point to the merged release state.
 - [x] P4-02/P4-03 are eligible to resume after `PROCEED`; RH-13 does not implement them.
 
 ## GitHub issue instructions
@@ -259,7 +259,7 @@ out of scope unless separately reviewed.
 **Historical artifact hashes:** results `4779e0d3326caf07636929169342febca9777162aac84adb8af9c73104dfb88e`; report `efba4c70d7a35f7641a2c6386c1a0330d7702ae7b2ab6dac8672e442408d4047`.
 **Issue #130:** remains deferred pending its own predeclared experiment.
 **Downstream effect:** P4-02 and P4-03 may resume planning and implementation from the reconciled contracts; no Phase 4 implementation was performed in RH-13.
-**Release preparation:** the annotated `v0.3.1-decision-engine-hardening` tag is prepared locally after this decision; GitHub release publication remains a separate external operation.
+**Release:** annotated tag `v0.3.1-decision-engine-hardening` and [published GitHub release](https://github.com/anilreddy89/Inforsight/releases/tag/v0.3.1-decision-engine-hardening), with PR #183 merged as `f6e5a5d`.
 
 ## Completion evidence
 

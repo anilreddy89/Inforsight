@@ -827,7 +827,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-01 - Establish the canonical point-in-time domain snapshot and semantic catalog
 
-**Status:** Completed on 2026-09-08. RH-01D closed through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`; RH-01I closed through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e`. The merged runtime reconstructs immutable dual-time snapshots for both supported source profiles, validates the semantic catalog and preprocessing identity, migrates bounded consumers, preserves unknown facts, and fails closed when servicing evidence is insufficient. All PR CI checks passed. RH-02 and other downstream work proceed only under their own gates; P4-02/P4-03 remain blocked through RH-13.
+**Status:** Completed on 2026-09-08. RH-01D closed through [issue #136](https://github.com/anilreddy89/Inforsight/issues/136) and [PR #137](https://github.com/anilreddy89/Inforsight/pull/137), merge `fde664ec`; RH-01I closed through [issue #139](https://github.com/anilreddy89/Inforsight/issues/139) and [PR #140](https://github.com/anilreddy89/Inforsight/pull/140), merge `f0be47e`. The merged runtime reconstructs immutable dual-time snapshots for both supported source profiles, validates the semantic catalog and preprocessing identity, migrates bounded consumers, preserves unknown facts, and fails closed when servicing evidence is insufficient. All PR CI checks passed. RH-02 and other downstream work proceed only under their own gates; P4-02/P4-03 were gated through RH-13 and are now eligible to resume after its `PROCEED` decision.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
@@ -908,7 +908,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-05 - Enforce capacity and validate the allocation algorithm
 
-**Status:** Completed on 2026-09-11. RH-05D closed through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`; RH-05I closed through [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) and [PR #158](https://github.com/anilreddy89/Inforsight/pull/158), merge `603b955`, with all five required CI jobs passing. Allocation contract 1.0.0 now governs the bounded local runtime. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12, and P4-02/P4-03 remain blocked through RH-13.
+**Status:** Completed on 2026-09-11. RH-05D closed through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`; RH-05I closed through [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) and [PR #158](https://github.com/anilreddy89/Inforsight/pull/158), merge `603b955`, with all five required CI jobs passing. Allocation contract 1.0.0 now governs the bounded local runtime. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12, and P4-02/P4-03 are now eligible to resume after RH-13 `PROCEED`.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and algorithm clarification
@@ -1077,7 +1077,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Release evidence / decision
 **Priority:** Release blocking
 
-**Status:** Completed on 2026-09-18 through [issue #182](https://github.com/anilreddy89/Inforsight/issues/182). The clean qualification passed with 532 tests; Phase 3 gates S1–S6 reported `RELEASE_QUALIFIED` with pipeline digest `fdb3e3331b8376a93ed3531bd4837c9cfd6244cd997eb0fe126b2a3335b56f9`. Decision: **`PROCEED`**. The annotated release tag is prepared locally; no Phase 4 implementation is included in RH-13.
+**Status:** Completed on 2026-09-18 through [issue #182](https://github.com/anilreddy89/Inforsight/issues/182) and [PR #183](https://github.com/anilreddy89/Inforsight/pull/183), merge `f6e5a5d`. The clean qualification passed with 532 tests; Phase 3 gates S1–S6 reported `RELEASE_QUALIFIED` with pipeline digest `fdb3e3331b8376a93ed3531bd4837c9cfd6244cd997eb0fe126b2a3335b56f9`. Decision: **`PROCEED`**. Tag `v0.3.1-decision-engine-hardening` and the [published GitHub release](https://github.com/anilreddy89/Inforsight/releases/tag/v0.3.1-decision-engine-hardening) complete the release package; no Phase 4 implementation is included in RH-13.
 
 **Outcome:** Publish `v0.3.1-decision-engine-hardening` evidence and make a formal `PROCEED`, `REMEDIATE`, or `STOP` decision for P4-02/P4-03.
 
@@ -1087,7 +1087,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 - [x] A clean, read-only full qualification run passes and its environment and commit are recorded.
 - [x] The recorded qualification starts from a clean working tree and uses the documented headless plotting configuration.
 - [x] Release notes distinguish repaired behavior, superseded evidence, preserved historical artifacts, and remaining limitations.
-- [x] Release preparation occurs only after the decision is `PROCEED`; the annotated tag is prepared locally after the decision record.
+- [x] Release preparation occurs only after the decision is `PROCEED`; the annotated tag and published GitHub release are linked above.
 - [x] Phase 4 dependencies and amended P4-01 contracts are updated from the final reconciled state; P4-02/P4-03 are eligible to resume, but remain unimplemented.
 
 ### Finding coverage matrix
@@ -1176,7 +1176,7 @@ Phase 4 transitions Inforsight from a verified local mathematical decision engin
 
 With the Capstone Milestone `v0.3.0-decision-engine` certified with 100% passing gates (S1–S6), Phase 4 executes the productionization roadmap across 7 governed increments. Assign every P4-01 through P4-07 issue to GitHub Milestone #5 (**`v0.4.0-enterprise-scale`**).
 
-P4-01 remains completed architecture-inception history. Its affected contracts are provisional under RH-09. P4-02 and P4-03 implementation are paused until the separate review-hardening initiative closes and RH-13 records `PROCEED`.
+P4-01 remains completed architecture-inception history. Its affected contracts are provisional under RH-09. P4-02 and P4-03 implementation are eligible to resume now that the separate review-hardening initiative has closed and RH-13 records `PROCEED`.
 
 ### Dependency and execution flow
 
