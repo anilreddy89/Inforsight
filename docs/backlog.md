@@ -1001,7 +1001,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 - [x] RPC latency remains a target until measured through a deployed path.
 - [x] Contract compilation, linting, and compatibility tests pass.
 
-**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is now complete through PR #176, and RH-11 is the next qualification gate. RH-13 remains the final Phase 4 resume gate.
+**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is complete through PR #176, and RH-11 is the completed qualification gate through PR #180. RH-12 evidence reconciliation and RH-13 remain downstream; RH-13 remains the final Phase 4 resume gate.
 
 #### RH-10 - Specify and harden audit durability semantics
 
@@ -1028,19 +1028,19 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Test gap / tooling defect
 **Priority:** Release blocking
 
-**Status:** RH-11 implementation is complete locally under [issue #179](https://github.com/anilreddy89/Inforsight/issues/179) on branch `test/179-rh-11-qualification-ci`; PR and issue closure remain pending. RH-10 closed through issue #174 / PR #176, merge `30e1155`. The full guarded `make check` path passes 528 tests and leaves the working tree unchanged. RH-07 issue #129 / PR #164 is complete.
+**Status:** Completed through [issue #179](https://github.com/anilreddy89/Inforsight/issues/179) and [PR #180](https://github.com/anilreddy89/Inforsight/pull/180), merged as `33ffc9a`. RH-10 closed through issue #174 / PR #176, merge `30e1155`. The full guarded `make check` path passes 530 tests and leaves the working tree unchanged. RH-07 issue #129 / PR #164 is complete.
 
 **Outcome:** Make CI and qualification establish the revised release claims across contracts, simulator, serving, dashboard, runtime packaging, and adversarial boundaries without mutating published evidence in check mode.
 
 **Acceptance checks:**
 
-- [ ] CI installs and runs dashboard and serving suites plus all release-relevant `make check` targets.
-- [ ] Streamlit AppTest covers meaningful interactions, capacity, point-in-time, and post-decision refresh behavior.
-- [ ] Clean-image runtime smoke, API/interface tests, contract compile/lint, authority bypass, audit truncation, monitoring evidence, harmful-treatment, and grounding adversarial tests run in CI.
-- [ ] `--check` and artifact verification are read-only and compare against published evidence.
-- [ ] Each qualification gate states precisely what it proves; in-process timing is not described as network or sustained-load evidence.
-- [ ] The README badge reflects the actual workflow rather than a static passing image.
-- [ ] Verification checks working-tree cleanliness, runs in a clean environment, and uses a documented headless plotting backend.
+- [x] CI installs and runs dashboard, serving, runtime, contract, simulator, and read-only artifact qualification jobs; the full guarded `make check` also passes locally.
+- [x] Streamlit AppTest covers meaningful dashboard interactions; dashboard service tests cover capacity, point-in-time, and refresh behavior.
+- [x] Clean-image runtime smoke, API/interface tests, contract compile/lint, authority bypass, audit truncation, monitoring evidence, harmful-treatment, and grounding adversarial tests run in CI.
+- [x] `--check` and artifact verification are read-only and compare against published evidence.
+- [x] Each qualification gate states precisely what it proves; in-process timing is not described as network or sustained-load evidence.
+- [x] The README badge reflects the actual workflow rather than a static passing image.
+- [x] Verification checks working-tree cleanliness, runs in a clean environment, and uses a documented headless plotting backend.
 
 #### RH-12 - Regenerate evidence and reconcile scientific and product claims
 

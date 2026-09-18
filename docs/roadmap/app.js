@@ -624,18 +624,18 @@ const timelineData = [
           tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
           simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
         },
-        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 is next; P4-02/P4-03 remain gated by RH-13."
+        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 is complete through PR #180; RH-12 and RH-13 remain, and P4-02/P4-03 remain gated by RH-13."
       },
       {
         id: "RH-11–RH-13",
         title: "Qualification, Evidence Reconciliation & Resume Decision",
-        status: "Planned",
-        commit: "Pending",
+        status: "RH-11 Completed; RH-12/RH-13 Pending",
+        commit: "RH-11 PR #180, merge 33ffc9a",
         summary: {
           tech: "Run expanded CI and read-only qualification, regenerate versioned evidence, reconcile active claims, and record PROCEED, REMEDIATE, or STOP for the hardening release.",
           simple: "Retest the repaired system, publish honest updated evidence, and make the final decision about resuming enterprise work."
         },
-        checks: "Sequential closeout: RH-11 → RH-12 → RH-13. Only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
+        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 evidence reconciliation and RH-13 release decision remain pending; only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
       }
     ]
   },

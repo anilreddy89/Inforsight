@@ -1,6 +1,6 @@
 # RH-11: Expanded qualification, CI, and read-only artifact verification
 
-Status: implementation complete locally; issue #179 open and PR pending  
+Status: completed; issue #179 and PR #180 merged
 Release: `v0.3.1-decision-engine-hardening`  
 Classification: test gap / tooling defect  
 Priority: release blocking  
@@ -66,26 +66,26 @@ The completed increment must provide a reproducible qualification path that:
 ```text
 RH-07 issue #129 / PR #164 (merged `793217f`)
   -> RH-10 issue #174 / PR #176 (merged 30e1155)
-  -> RH-11 issue #179 / branch `test/179-rh-11-qualification-ci`
+  -> RH-11 issue #179 / PR #180 (merged `33ffc9a`)
   -> RH-12 evidence reconciliation
   -> RH-13 release decision
 ```
 
-RH-11 starts from updated `main` after the RH-10 merge and the completed RH-07
-implementation. RH-12 and RH-13 remain blocked until the RH-11 evidence is
-complete.
+RH-11 started from updated `main` after the RH-10 merge and completed RH-07
+implementation. RH-12 owns evidence reconciliation and RH-13 owns the final
+release decision; both remain downstream gates.
 
 ## Acceptance gate
 
-- [ ] CI installs and runs dashboard and serving suites plus all release-relevant `make check` targets.
-- [ ] Streamlit AppTest covers meaningful interactions, capacity, point-in-time, and post-decision refresh behavior.
-- [ ] Clean-image runtime smoke, API/interface tests, contract compile/lint, authority bypass, audit truncation, monitoring evidence, harmful-treatment, and grounding adversarial tests run in CI.
-- [ ] `--check` and artifact verification are read-only and compare against published evidence.
-- [ ] Each qualification gate states precisely what it proves; in-process timing is not described as network or sustained-load evidence.
-- [ ] The README badge reflects the actual workflow rather than a static passing image.
-- [ ] Verification checks working-tree cleanliness, runs in a clean environment, and uses a documented headless plotting backend.
-- [ ] No final holdout is accessed, transformed, predicted, or evaluated.
-- [ ] Historical artifacts remain unchanged unless a separately versioned RH-12 evidence update authorizes replacement.
+- [x] CI installs and runs dashboard, serving, runtime, contract, simulator, and read-only artifact qualification jobs; the full guarded `make check` also passes locally.
+- [x] Streamlit AppTest covers portfolio rendering, triage filtering, dossier navigation, decision-console reachability, and exception-free reruns; dashboard service tests cover capacity, point-in-time, and refresh behavior.
+- [x] Clean-image runtime smoke, API/interface tests, contract compile/lint, authority bypass, audit truncation, monitoring evidence, harmful-treatment, and grounding adversarial tests run in CI.
+- [x] `--check` and artifact verification are read-only and compare against published evidence.
+- [x] Each qualification gate states precisely what it proves; in-process timing is not described as network or sustained-load evidence.
+- [x] The README badge reflects the actual workflow rather than a static passing image.
+- [x] Verification checks working-tree cleanliness, runs in a clean environment, and uses a documented headless plotting backend.
+- [x] No final holdout is accessed, transformed, predicted, or evaluated.
+- [x] Historical artifacts remain unchanged unless a separately versioned RH-12 evidence update authorizes replacement.
 
 ## Issue creation map
 
@@ -96,9 +96,9 @@ Create one implementation issue from `.github/ISSUE_TEMPLATE/implementation.yml`
 | RH-11 | Implementation task | `[Implementation] Expand qualification, CI, and read-only artifact verification` | `implementation` | `v0.3.1-decision-engine-hardening` |
 
 Use the exact field guidance in `docs/engineering-improvement-workflow.md`.
-Implementation issue: [#179](https://github.com/anilreddy89/Inforsight/issues/179)
-on branch `test/179-rh-11-qualification-ci`. The primary deliverable is a
-qualification and evidence gate.
+Implementation issue: [#179](https://github.com/anilreddy89/Inforsight/issues/179),
+closed through [PR #180](https://github.com/anilreddy89/Inforsight/pull/180),
+merged as `33ffc9a` from `test/179-rh-11-qualification-ci`.
 
 ## Claim and artifact impact
 
@@ -123,6 +123,8 @@ The RH-11 closeout should link:
 - the documented headless plotting configuration; and
 - the exact claims passed to RH-12 and RH-13 without broadening them.
 
-Local implementation evidence: the full guarded `make check` path passes 528
-tests and leaves the working tree unchanged. Final RH-11 closure remains
-pending issue #179 closure and PR merge.
+Closeout evidence: the full guarded `make check` path passes 530 tests and
+leaves the working tree unchanged. Focused dashboard service tests (10),
+Streamlit AppTest checks (2), model explanation checks (5), model bundle checks
+(9), and read-only artifact qualification all pass. RH-12 evidence
+reconciliation and RH-13 release disposition remain downstream work.
