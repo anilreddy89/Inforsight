@@ -42,7 +42,7 @@ Open -> Accepted temporarily -> Scheduled -> Resolved
 
 | Field | Value |
 | --- | --- |
-| Status | Scheduled |
+| Status | RH-13 `PROCEED` — Phase 4 implementation may resume within the documented boundaries |
 | Severity | Claim-blocking |
 | Discovered in | `Documents/Project_Review_Through_P4-01.md`, reviewed at commit `b15a9ba` |
 | Owner | Review hardening initiative RH-00 through RH-13; charter [issue #133](https://github.com/anilreddy89/Inforsight/issues/133) |
@@ -89,8 +89,8 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] All RH predecessor issues through RH-11 are merged and closed.
 - [x] RH-12 completed through issue #128 and PR #181, merged to `main` as `1365ee5`, and generated versioned corrected evidence without rewriting historical artifacts. The manifest `phase-rh-12-evidence-reconciliation-1.0.0.json` records digest `47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933`, separate estimands, exact capacities, and `not_accessed` final-holdout status.
 - [x] RH-12 reconciles the realism boundary, reviewer walkthrough, README, model card, backlog, roadmap, release notes, and P4 scaffold status. Independent issue #130 is explicitly deferred pending a separate predeclared experiment.
-- [ ] A clean, read-only qualification passes on the final hardening commit.
-- [ ] RH-13 records the final release and Phase 4 resume decision.
+- [x] A clean, read-only qualification passes on the final hardening commit: `make check` passed 532 tests; gates S1–S6 reported `RELEASE_QUALIFIED`.
+- [x] RH-13 records the final release and Phase 4 resume decision as `PROCEED` through issue #182 on 2026-09-18. P4-02/P4-03 may resume, but production-readiness and real-customer claims remain prohibited.
 
 ### LIM-RH-002 — The v6 source stream lacks servicing eligibility evidence
 

@@ -1,6 +1,6 @@
 # RH-13: Qualify and release the hardening initiative
 
-Status: ready to start; RH-12 merged through [issue #128](https://github.com/anilreddy89/Inforsight/issues/128) and [PR #181](https://github.com/anilreddy89/Inforsight/pull/181), merge `1365ee5`
+Status: **Completed — PROCEED recorded on 2026-09-18** through [issue #182](https://github.com/anilreddy89/Inforsight/issues/182); qualification passed on clean `main` at `1924dfa`
 Release: `v0.3.1-decision-engine-hardening`
 Classification: release evidence / decision
 Priority: release blocking
@@ -114,18 +114,18 @@ new branch named from its GitHub issue number, for example
 
 ## Acceptance gate
 
-- [ ] A single RH-13 implementation issue is opened from `.github/ISSUE_TEMPLATE/implementation.yml` with the exact metadata below.
-- [ ] All RH-00 through RH-12 predecessor issues and PRs are merged and closed; RH-12 is recorded as issue #128 / PR #181 / merge `1365ee5`.
-- [ ] The final qualification starts from a clean working tree at the reviewed merged commit and records Python/dependency versions, OS, plotting backend, and commit.
-- [ ] `make check` passes without rewriting published artifacts.
-- [ ] `make rh12-evidence-check` passes without rewriting the RH-12 manifest.
-- [ ] Repository boundary checks and `git diff --check` pass.
-- [ ] Final-holdout absence is verified; no final-holdout access occurs.
-- [ ] Release notes, README, model card, backlog, limitations, roadmap, phase docs, and P4 status agree.
-- [ ] The RH-12 evidence digest, historical artifact hashes, and issue #130 disposition are carried into the release record.
-- [ ] The predeclared decision contract produces exactly one of `PROCEED`, `REMEDIATE`, or `STOP`.
-- [ ] An annotated tag and GitHub release are prepared only if the decision is `PROCEED`.
-- [ ] P4-02/P4-03 remain blocked unless the recorded decision is `PROCEED`.
+- [x] A single RH-13 implementation issue is opened from `.github/ISSUE_TEMPLATE/implementation.yml`: issue #182.
+- [x] All RH-00 through RH-12 predecessor issues and PRs are merged and closed; RH-12 is recorded as issue #128 / PR #181 / merge `1365ee5`.
+- [x] The final qualification started from a clean working tree at `1924dfa` with the repository's documented headless plotting configuration.
+- [x] `make check` passed without rewriting published artifacts: 532 tests passed in 384.070 seconds.
+- [x] `make rh12-evidence-check` passed without rewriting the RH-12 manifest.
+- [x] Repository boundary checks and `git diff --check` passed.
+- [x] Final-holdout absence is verified; no final-holdout access occurred.
+- [x] Release notes, README, model card, backlog, limitations, roadmap, phase docs, and P4 status agree.
+- [x] The RH-12 evidence digest, historical artifact hashes, and issue #130 deferred disposition are carried into the release record.
+- [x] The predeclared decision contract produced exactly one decision: `PROCEED`.
+- [x] Release preparation is authorized only after `PROCEED`; the annotated tag is prepared locally after this decision record, while no GitHub release is published by this closeout.
+- [x] P4-02/P4-03 are eligible to resume after `PROCEED`; RH-13 does not implement them.
 
 ## GitHub issue instructions
 
@@ -185,7 +185,7 @@ Blocked while open:
 - P4-02/P4-03 implementation, production-readiness claims, tag/release creation before PROCEED, and final-holdout access.
 
 Limitations affected:
-- LIM-RH-001 remains unresolved until RH-13 records the final decision.
+- LIM-RH-001's RH release gate is resolved by this `PROCEED` decision; its remaining claim limitations continue to apply.
 
 Downstream work resumed at closure:
 - P4-02/P4-03 only when the recorded decision is PROCEED.
@@ -225,7 +225,7 @@ Must merge first:
 - RH-12 issue #128 / PR #181 / merge 1365ee5
 
 Blocks:
-- P4-02 and P4-03 until RH-13 records PROCEED
+- P4-02 and P4-03 until RH-13 records `PROCEED` (now satisfied; implementation remains separately gated)
 
 Related decisions or limitations:
 - RH-00 through RH-12; LIM-RH-001; issue #130 deferred by RH-12
@@ -246,6 +246,20 @@ documentation. It must not broaden the RH-12 synthetic/conditional claim
 boundary, rewrite historical evidence, or turn local reference behavior into a
 production claim. Any new serialized output, contract, or artifact version is
 out of scope unless separately reviewed.
+
+## Decision record
+
+**Decision:** `PROCEED`
+**Recorded:** 2026-09-18
+**Implementation issue:** [#182](https://github.com/anilreddy89/Inforsight/issues/182)
+**Qualification source commit:** `1924dfa`
+**Qualification result:** `make check` passed with 532 tests; Phase 3 gates S1–S6 reported `RELEASE_QUALIFIED`.
+**Pipeline digest:** `fdb3e3331b8376a93ed3531bd4837c9cfd6244cd997eb0fe126b2a3335b56f9`
+**RH-12 evidence digest:** `47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933`
+**Historical artifact hashes:** results `4779e0d3326caf07636929169342febca9777162aac84adb8af9c73104dfb88e`; report `efba4c70d7a35f7641a2c6386c1a0330d7702ae7b2ab6dac8672e442408d4047`.
+**Issue #130:** remains deferred pending its own predeclared experiment.
+**Downstream effect:** P4-02 and P4-03 may resume planning and implementation from the reconciled contracts; no Phase 4 implementation was performed in RH-13.
+**Release preparation:** the annotated `v0.3.1-decision-engine-hardening` tag is prepared locally after this decision; GitHub release publication remains a separate external operation.
 
 ## Completion evidence
 
