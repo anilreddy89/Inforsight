@@ -85,7 +85,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-05 completed on 2026-09-11: RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155 (`3645fae`); RH-05I closed through issue #157 and PR #158 (`603b955`) after all five required CI jobs passed. Historical corrected evidence remains deferred to RH-12.
 - [x] RH-06D accepted inference-runtime contract 1.0.0 through issue #160 and PR #161, merge `205f612`, after all five CI jobs passed.
 - [x] RH-06I and parent RH-06 completed through issue #162 and PR #163, merge `df69910`, after all six CI checks passed; the bounded independent-runtime claim is accepted while production-readiness and Phase 4 claims remain blocked.
-- [x] RH-07 implementation is complete locally after issue #129's scope was implemented and the full `make check` passed; issue/PR closure remains pending because the work is intentionally uncommitted. Its bounded evidence path requires real scoring evidence, exact resolved-outcome joins, and explicit `insufficient_data` before any drift or calibration-health claim.
+- [x] RH-07 is merged through issue #129 / PR #164 (`793217f`). Its bounded evidence path requires real scoring evidence, exact resolved-outcome joins, and explicit `insufficient_data` before any drift or calibration-health claim.
 - [ ] All RH predecessor issues are merged and closed.
 - [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
 - [ ] A clean, read-only qualification passes on the final hardening commit.

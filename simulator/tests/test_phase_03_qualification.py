@@ -18,6 +18,7 @@ from inforsight_simulator.qualification import (
     evaluate_gate_s6_reproducibility,
     generate_qualification_report,
 )
+from scripts.run_phase_03_qualification import validate_published_qualification
 from inforsight_simulator.rules import EligibilityRulesEngine
 from inforsight_simulator.v6_corpus import V6CorpusConfig, generate_v6_corpus
 
@@ -180,6 +181,23 @@ class TestPhase03QualificationGates(unittest.TestCase):
         self.assertIn("# Phase 3.09 — End-to-End System Qualification & Integration Gate Report", report)
         self.assertIn("Scorecard", report)
         self.assertIn("RELEASE_QUALIFIED", report)
+
+    def test_published_check_ignores_runtime_volatile_fields(self) -> None:
+        """Check mode validates stable identity without rewriting volatile measurements."""
+        published = {
+            "schema_version": "1.0.0",
+            "phase": "Phase 3.09",
+            "evaluation_seed": 20280201,
+            "cohort_size": 1000,
+            "model_bundle_id": "bundle",
+            "model_bundle_sha256": "a" * 64,
+            "overall_decision": "RELEASE_QUALIFIED",
+            "all_gates_passed": True,
+            "created_at": "historical",
+            "pipeline_digest": "historical-digest",
+        }
+        generated = dict(published, created_at="now", pipeline_digest="new-digest")
+        validate_published_qualification(generated, published, "Decision: RELEASE_QUALIFIED")
 
 
 if __name__ == "__main__":

@@ -80,6 +80,35 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def validate_published_qualification(
+    generated_manifest: dict[str, object],
+    published_manifest: dict[str, object],
+    published_report: str,
+) -> None:
+    """Validate stable qualification identity without rewriting published evidence."""
+    stable_fields = (
+        "schema_version",
+        "phase",
+        "evaluation_seed",
+        "cohort_size",
+        "model_bundle_id",
+        "model_bundle_sha256",
+        "overall_decision",
+        "all_gates_passed",
+    )
+    for field in stable_fields:
+        if generated_manifest.get(field) != published_manifest.get(field):
+            raise ValueError(
+                f"published qualification mismatch for {field}: "
+                f"generated={generated_manifest.get(field)!r}, "
+                f"published={published_manifest.get(field)!r}"
+            )
+    if not published_manifest.get("all_gates_passed"):
+        raise ValueError("published qualification manifest is not fully qualified")
+    if "RELEASE_QUALIFIED" not in published_report:
+        raise ValueError("published qualification report lacks RELEASE_QUALIFIED decision")
+
+
 def main() -> int:
     args = parse_args()
 
@@ -120,23 +149,35 @@ def main() -> int:
     manifest = build_qualification_manifest(res)
     report_md = generate_qualification_report(manifest)
 
-    # Save manifest
     out_json = Path(args.output_json)
+    out_report = Path(args.output_report)
+
+    if args.check:
+        if not res.all_gates_passed:
+            print("\nERROR: Qualification failed! Not all gates passed.", file=sys.stderr)
+            return 1
+        try:
+            with open(out_json, "r", encoding="utf-8") as f:
+                published_manifest = json.load(f)
+            with open(out_report, "r", encoding="utf-8") as f:
+                published_report = f.read()
+            validate_published_qualification(manifest, published_manifest, published_report)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"\nERROR: Published qualification verification failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"\nQualification check passed; published evidence was not rewritten: {out_json}")
+        print(f"Published report verified without rewrite: {out_report}")
+        return 0
+
     out_json.parent.mkdir(parents=True, exist_ok=True)
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
     print(f"\nSaved qualification manifest -> {out_json}")
 
-    # Save report
-    out_report = Path(args.output_report)
     out_report.parent.mkdir(parents=True, exist_ok=True)
     with open(out_report, "w", encoding="utf-8") as f:
         f.write(report_md)
     print(f"Saved qualification report   -> {out_report}")
-
-    if args.check and not res.all_gates_passed:
-        print("\nERROR: Qualification failed! Not all gates passed.", file=sys.stderr)
-        return 1
 
     return 0
 
