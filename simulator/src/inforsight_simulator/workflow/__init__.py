@@ -25,6 +25,10 @@ from inforsight_simulator.workflow.service import (
     WorkflowService,
 )
 from inforsight_simulator.workflow.state_machine import CaseStateMachine
+from inforsight_simulator.workflow.persistence import (
+    WorkflowStateRecoveryError,
+    WorkflowStateStore,
+)
 
 __all__ = [
     "ActionResourceRequirement",
@@ -48,4 +52,6 @@ __all__ = [
     "WorkflowContext",
     "WorkflowError",
     "WorkflowService",
+    "WorkflowStateRecoveryError",
+    "WorkflowStateStore",
 ]
