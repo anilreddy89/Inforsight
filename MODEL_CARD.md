@@ -30,6 +30,26 @@ The outputs are designed strictly for **operational perception and conservation 
 
 The bounded local decision runtime applies portfolio-allocation contract `1.0.0` after scoring and eligibility evaluation. It uses exact integer USD micros and personnel seconds, deterministic tie-breaking, and abstention; the production procedure is described as a deterministic feasibility-preserving allocator. Exact agreement is established only for the declared small-instance validation domain, not as a global-optimality claim. All selections remain advisory and require the ADR 0002 human-authority boundary.
 
+### RH-12 evidence reconciliation
+
+The corrected portfolio evidence is published in
+[`phase-rh-12-evidence-reconciliation-1.0.0.md`](docs/experiments/phase-rh-12-evidence-reconciliation-1.0.0.md)
+with machine-readable provenance in the companion JSON manifest. Its primary
+estimand is new-portfolio allocation-procedure performance: policy-cluster
+resamples retain frozen model scores/effects and rerun the RH-05 procedure with
+the original total budget and personnel capacities fixed. A separate
+fixed-assignment sampling estimand is reported and is not pooled with the
+primary result.
+
+On the 3,600-policy Generation v6 synthetic cohort, the allocation-engine
+procedure has a point estimate of `$20,825.76` modeled expected net value and a
+policy-cluster bootstrap interval of `[$19,491.06, $22,030.53]`. The result is
+conditional on the frozen synthetic simulator, eligibility boundary, RH-04
+economics contract, RH-05 allocator, and model bundle. It is not realized
+premium, profit, causal treatment uplift, external validity, demographic
+fairness, or production-readiness evidence. The historical Phase 3.08 OPE
+artifact remains unchanged.
+
 ### Out-of-Scope and Prohibited Uses
 - **Autonomous Action Prohibited**: The model possesses zero authority to execute customer communications, issue payment retries, alter billing terms, or adjust policy parameters autonomously.
 - **Adverse Underwriting & Pricing Prohibited**: The model must never be used for initial underwriting, risk selection, premium loading, denial of coverage, or policy termination.

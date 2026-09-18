@@ -81,13 +81,14 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-02 enforces fail-closed safety evidence through issue #142 and PR #143, merge `3eb74b5`.
 - [x] RH-03 enforces human authority at the common execution boundary through issue #145 and PR #146, merge `c5fa76c`; all five CI jobs passed.
 - [x] RH-04D accepts the signed economics/resource contract, evaluation estimands, and sensitivity protocol through issue #148 and PR #149, merge `c9eddcf`; all five CI jobs passed.
-- [x] RH-04I and parent RH-04 completed through issue #151 and PR #152, merge `04d3e59`; runtime consumers now preserve signed effects and share versioned economics/resources. Corrected historical evidence remains deferred to RH-12.
-- [x] RH-05 completed on 2026-09-11: RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155 (`3645fae`); RH-05I closed through issue #157 and PR #158 (`603b955`) after all five required CI jobs passed. Historical corrected evidence remains deferred to RH-12.
+- [x] RH-04I and parent RH-04 completed through issue #151 and PR #152, merge `04d3e59`; runtime consumers now preserve signed effects and share versioned economics/resources. Active corrected evidence is published by RH-12 while frozen historical evidence remains unchanged.
+- [x] RH-05 completed on 2026-09-11: RH-05D accepted portfolio-allocation contract 1.0.0 through issue #154 and PR #155 (`3645fae`); RH-05I closed through issue #157 and PR #158 (`603b955`) after all five required CI jobs passed. Active corrected evidence is published by RH-12 while frozen historical evidence remains unchanged.
 - [x] RH-06D accepted inference-runtime contract 1.0.0 through issue #160 and PR #161, merge `205f612`, after all five CI jobs passed.
 - [x] RH-06I and parent RH-06 completed through issue #162 and PR #163, merge `df69910`, after all six CI checks passed; the bounded independent-runtime claim is accepted while production-readiness and Phase 4 claims remain blocked.
 - [x] RH-07 is merged through issue #129 / PR #164 (`793217f`). Its bounded evidence path requires real scoring evidence, exact resolved-outcome joins, and explicit `insufficient_data` before any drift or calibration-health claim.
-- [ ] All RH predecessor issues are merged and closed.
-- [ ] Corrected contracts and evidence are versioned without rewriting historical artifacts.
+- [x] All RH predecessor issues through RH-11 are merged and closed.
+- [x] RH-12 generated versioned corrected evidence without rewriting historical artifacts. The manifest `phase-rh-12-evidence-reconciliation-1.0.0.json` records digest `47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933`, separate estimands, exact capacities, and `not_accessed` final-holdout status.
+- [x] RH-12 reconciles the realism boundary, reviewer walkthrough, README, model card, backlog, roadmap, release notes, and P4 scaffold status. Independent issue #130 is explicitly deferred pending a separate predeclared experiment.
 - [ ] A clean, read-only qualification passes on the final hardening commit.
 - [ ] RH-13 records the final release and Phase 4 resume decision.
 

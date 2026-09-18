@@ -25,4 +25,4 @@ Predeclare two separately reported evaluation estimands: frozen-assignment polic
 
 ## Consequences
 
-Some current valuations become unavailable instead of receiving defaults. Existing dashboards and reports remain legacy evidence until RH-04I and RH-12 migrate them. More fields and version checks are required, but every consumer can reconcile to exact shared assumptions. RH-05 can enforce capacity in seconds, RH-09 can expose unambiguous wire units, and RH-12 can regenerate honestly labeled results without refitting predictive models on evaluation resamples.
+Some current valuations become unavailable instead of receiving defaults. Existing historical dashboards and reports remain legacy evidence; RH-04I established the shared runtime contract and RH-12 now publishes the versioned corrected evidence. More fields and version checks are required, but every consumer can reconcile to exact shared assumptions. RH-05 can enforce capacity in seconds, RH-09 can expose unambiguous wire units, and RH-12 regenerates honestly labeled results without refitting predictive models on evaluation resamples.

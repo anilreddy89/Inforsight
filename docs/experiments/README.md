@@ -6,6 +6,12 @@ For a synthesized cross-generation ledger of all methods, observable failures, m
 
 Current machine-readable experiment evidence includes:
 
+- `phase-rh-12-evidence-reconciliation-1.0.0.json` and `.md` — corrected,
+  versioned portfolio evidence under RH-04/RH-05 contracts, with separate
+  frozen-assignment and new-portfolio allocation-procedure estimands, 1,000
+  policy-cluster resamples, exact capacity identities, claim boundaries, and
+  historical-artifact hashes. The final holdout is `not_accessed`.
+
 The Phase 2.05 through Phase 2.07 files below are immutable historical v1 pipeline evidence. Their recorded `sealed_not_scored` state describes the artifact-generation runs at the time. Independent review after Phase 2.07 later generated predictions from the v1 test fixture through a partition-relabeling bypass; no test metric was computed. R2-03 repaired the local scoring boundary through issue #39 and PR #40 without changing these artifacts. The fixture remains review-exposed historical evidence, while the future one-shot holdout obligation remains governed by `LIM-002-003`.
 
 - `phase-01-07-synthetic-rate-assessment.json` — deterministic Phase 1 aggregate assessment.

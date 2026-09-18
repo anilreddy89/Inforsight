@@ -640,7 +640,7 @@ P3-01 (Domain Contracts & Action Taxonomy)
 
 **Milestone:** [v0.3.0-decision-engine](https://github.com/anilreddy89/Inforsight/milestone/4)
 
-**Status:** Completed on 2026-09-05 through [issue #122](https://github.com/anilreddy89/Inforsight/issues/122) and [PR #123](https://github.com/anilreddy89/Inforsight/pull/123), merge commit `55f0415`. 11/11 counterfactual and OPE unit tests pass, Decision Engine achieves $13,764 Net Preserved Value (2.92x ROCS, p < 0.0001 superiority vs baselines) across 1,000 bootstrap CIs, and repository boundaries pass. Specification and scorecard documented in `Documents/phase_docs/phase-03-08-counterfactual-simulation-and-offline-policy-evaluation.md`.
+**Status:** Completed on 2026-09-05 through [issue #122](https://github.com/anilreddy89/Inforsight/issues/122) and [PR #123](https://github.com/anilreddy89/Inforsight/pull/123), merge commit `55f0415`. The original 11/11 counterfactual/OPE checks and historical scorecard remain preserved. RH-12 publishes the active corrected evidence under the RH-04/RH-05 contracts; the historical ROCS/Net Preserved Value wording is not an active product claim.
 
 **Outcome:** A counterfactual simulation framework rigorously evaluates the business impact and ROI of the conservation decision engine against baseline triage strategies prior to dashboard integration.
 
@@ -655,7 +655,7 @@ P3-01 (Domain Contracts & Action Taxonomy)
     - *Heuristic Policy:* Simple rule-based triage (e.g. grace period only).
     - *Naive ML Policy:* Triage purely by risk score without uplift or eligibility constraints.
     - *Random Triage:* Uniform random outreach within budget.
-- Quantify key business metrics: Lapse Rate Reduction (lift), Net Preserved Annual Premium, Cost-per-Conserved-Policy, and Return on Conservation Spend (ROCS).
+- Quantify the historical metrics in the frozen scorecard, while active RH-12 reporting uses signed modeled combined-termination effects, modeled expected annual premium preserved, exact cost/resource use, and modeled expected net value.
 - Export summary results for consumption by P3-07 dashboard.
 
 **Acceptance checks:**
@@ -886,7 +886,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-04 - Preserve signed treatment effects and unify economics
 
-**Status:** Completed on 2026-09-09. RH-04D closed through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`; RH-04I closed through [issue #151](https://github.com/anilreddy89/Inforsight/issues/151) and [PR #152](https://github.com/anilreddy89/Inforsight/pull/152), merge `04d3e59`, with all five required CI jobs passing. Contract 1.0.0 now governs signed runtime valuation, integer USD micros, personnel seconds, action economics/resources, and honest dashboard/OPE bridges. Historical evidence remains frozen pending RH-12. RH-05 is predecessor-ready.
+**Status:** Completed on 2026-09-09. RH-04D closed through [issue #148](https://github.com/anilreddy89/Inforsight/issues/148) and [PR #149](https://github.com/anilreddy89/Inforsight/pull/149), merge `c9eddcf`; RH-04I closed through [issue #151](https://github.com/anilreddy89/Inforsight/issues/151) and [PR #152](https://github.com/anilreddy89/Inforsight/pull/152), merge `04d3e59`, with all five required CI jobs passing. Contract 1.0.0 now governs signed runtime valuation, integer USD micros, personnel seconds, action economics/resources, and honest dashboard/OPE bridges. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12. RH-05 is predecessor-ready.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and durable contract
@@ -908,7 +908,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 #### RH-05 - Enforce capacity and validate the allocation algorithm
 
-**Status:** Completed on 2026-09-11. RH-05D closed through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`; RH-05I closed through [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) and [PR #158](https://github.com/anilreddy89/Inforsight/pull/158), merge `603b955`, with all five required CI jobs passing. Allocation contract 1.0.0 now governs the bounded local runtime. Historical evidence remains frozen pending RH-12, and P4-02/P4-03 remain blocked through RH-13.
+**Status:** Completed on 2026-09-11. RH-05D closed through [issue #154](https://github.com/anilreddy89/Inforsight/issues/154) and [PR #155](https://github.com/anilreddy89/Inforsight/pull/155), merge `3645fae`; RH-05I closed through [issue #157](https://github.com/anilreddy89/Inforsight/issues/157) and [PR #158](https://github.com/anilreddy89/Inforsight/pull/158), merge `603b955`, with all five required CI jobs passing. Allocation contract 1.0.0 now governs the bounded local runtime. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12, and P4-02/P4-03 remain blocked through RH-13.
 
 **Issue template:** Design specification followed by Implementation task
 **Classification:** Current defect and algorithm clarification
@@ -1001,7 +1001,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 - [x] RPC latency remains a target until measured through a deployed path.
 - [x] Contract compilation, linting, and compatibility tests pass.
 
-**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is complete through PR #176, and RH-11 is the completed qualification gate through PR #180. RH-12 evidence reconciliation and RH-13 remain downstream; RH-13 remains the final Phase 4 resume gate.
+**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is complete through PR #176, RH-11 is the completed qualification gate through PR #180, and RH-12 corrected evidence is published in version 1.0.0. RH-13 remains the final Phase 4 resume gate.
 
 #### RH-10 - Specify and harden audit durability semantics
 
@@ -1048,19 +1048,26 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Documentation and evidence correction
 **Priority:** Release blocking
 
+**Phase document:** [RH-12 evidence reconciliation](hardening/rh-12-evidence-reconciliation-phase.md)
+
+**Status:** Implemented in the working tree with versioned evidence and documentation reconciliation. Issue #128 / PR metadata should be recorded when the reviewed change is merged; RH-13 remains the downstream release decision.
+
 **Outcome:** Recompute affected economic and qualification evidence after fixes and reconcile all public claims and status documents without rewriting historical results. The evaluation must answer a predeclared estimand and use comparable operational baselines.
 
 **Acceptance checks:**
 
-- [ ] Corrected OPE reports the predeclared primary estimand. Fixed-assignment resampling is labeled conditional on the frozen allocation; portfolio resampling reruns the policy and states cluster, duplication, and capacity treatment. If both are reported, they remain separate.
-- [ ] Non-intervention, rules-only, risk-ranked, and engine strategies use identical cohort, cutoff, eligibility, catalog, budget, and personnel assumptions.
-- [ ] Lead time, recall at capacity, unnecessary contacts, expected harm, premium-value, and policy-count objectives are reported where supported.
-- [ ] Predictive discrimination, calibration, treatment effect, modeled business value, and external validity are presented as separate claims.
-- [ ] Queue precision/recall, value-versus-count tradeoff, fairness/access implications, and combined lapse/surrender target mapping are explicit.
-- [ ] The v5 infeasibility statement is bounded to the examined design/search space.
-- [ ] The Protocol 3.1.0 post-result amendment and acceptance-seed reuse remain visible; any fresh-seed confirmation is predeclared in a separate experiment issue before execution.
-- [ ] README, model card, backlog, roadmap, limitations, release notes, ADR count, phase totals, and P4 scaffold status agree.
-- [ ] Scope is reconciled with open documentation and simulator issues #128 and #130.
+- [x] Corrected OPE reports the predeclared primary estimand. Fixed-assignment resampling is labeled conditional on the frozen allocation; portfolio resampling reruns the policy and states cluster, duplication, and capacity treatment. Both are reported separately.
+- [x] Non-intervention, rules-only, risk-ranked, and engine strategies use identical cohort, cutoff, eligibility, catalog, budget, and personnel assumptions.
+- [x] Lead time is explicitly reported as unsupported by the current counterfactual contract; modeled recall at capacity, modeled non-beneficial contacts, expected harm, modeled premium value, and policy-count objectives are reported where supported.
+- [x] Predictive discrimination, calibration, treatment effect, modeled business value, and external validity are presented as separate claims.
+- [x] Queue precision/recall limitations, value-versus-count tradeoff, fairness/access implications, and combined lapse/surrender target mapping are explicit.
+- [x] The v5 infeasibility statement is bounded to the examined design/search space.
+- [x] The Protocol 3.1.0 post-result amendment and acceptance-seed reuse remain visible; fresh-seed confirmation is not run and requires a separate experiment issue.
+- [x] README, model card, backlog, roadmap, limitations, release notes, phase totals, and P4 scaffold status agree.
+- [x] Scope is reconciled with open documentation and simulator issue #130; issue #130 is deferred.
+- [x] `docs/realism-boundary.md` and `docs/showcase/system-walkthrough.md` are published.
+- [x] Versioned RH-12 artifacts preserve historical Phase 3.08 files byte-for-byte and record final-holdout `not_accessed`.
+- [x] Focused RH-12 tests, `make check`, `make rh12-evidence-check`, repository boundary checks, and `git diff --check` pass.
 
 #### RH-13 - Qualify and release the hardening initiative
 
@@ -1153,7 +1160,7 @@ PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safet
 1. [Completed] RH-00 was created as issue #133 with the decision template, links the 2026-09-07 reviewer approval, and records `ADOPT`.
 2. [Completed] GitHub Milestone #6, `v0.3.1-decision-engine-hardening`, was created after adoption and assigned to RH-00.
 3. [Completed] The RH initiative is represented in the interactive roadmap as a separate lane between Phase 3 and resumed Phase 4; this backlog remains canonical.
-4. [Completed] Open issues #128-#130 were triaged; #128 maps to future RH-12, #129 maps to future RH-07, and #130 remains independent pending RH-12 reconciliation.
+4. [Completed] Open issues #128-#130 were triaged; #128 is the canonical RH-12 implementation issue and its evidence reconciliation is complete in the working tree, #129 maps to completed RH-07, and #130 remains independently deferred pending a separate predeclared experiment.
 5. Initially create RH-01D and the independent implementation issues whose scopes are already ready after RH-00; create `I` children and downstream issues only when their predecessor designs and contracts are stable.
 6. Keep P4-02/P4-03 unassigned or explicitly blocked until RH-13.
 

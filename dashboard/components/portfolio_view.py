@@ -154,14 +154,15 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
 
     st.markdown("---")
 
-    # 4. Offline Policy Evaluation (OPE) & Empirical Retention ROI (Phase 3.08)
-    st.markdown("### 📈 Historical offline policy evaluation (legacy economics)")
+    # 4. Corrected RH-12 evidence reconciliation
+    st.markdown("### 📈 Corrected synthetic portfolio evidence (RH-12)")
     st.markdown(
-        "This frozen Phase 3 artifact predates economics/resource contract 1.0.0. Its lapse-only, "
-        "ROI, cost, and value labels are retained as historical evidence and are not corrected RH-04 results."
+        "This view uses the versioned RH-12 evidence reconciliation under economics/resource contract "
+        "1.0.0 and portfolio-allocation contract 1.0.0. Values are modeled, synthetic, and conditional; "
+        "they are not realized premium, profit, causal uplift, or production performance."
     )
 
-    ope_path = "docs/experiments/phase-03-08-ope-results.json"
+    ope_path = "docs/experiments/phase-rh-12-evidence-reconciliation-1.0.0.json"
     import json
     from pathlib import Path
 
@@ -169,58 +170,76 @@ def render_portfolio_view(summary: dict[str, Any], items: Sequence[TriagePolicyI
     if p.exists():
         try:
             ope_data = json.loads(p.read_text(encoding="utf-8"))
-            de_m = ope_data["policy_metrics"]["decision_engine"]
-            de_ci = ope_data["policy_intervals"]["decision_engine"]["net_preserved_usd"]
-            de_rocs = ope_data["policy_intervals"]["decision_engine"]["rocs"]
-            contrasts = ope_data.get("pairwise_contrasts", {})
+            comparison = ope_data["comparison_context"]["strategy_results"]
+            allocation = ope_data["estimands"]["new_portfolio_allocation_procedure_performance"]["strategies"]
+            engine_point = allocation["allocation_engine"]["point_estimate"]
+            engine_net = allocation["allocation_engine"]["intervals"]["modeled_expected_net_value_usd_micros"]
+            engine_effect = allocation["allocation_engine"]["intervals"]["signed_combined_termination_effect_90d"]
+            engine_recall = allocation["allocation_engine"]["intervals"]["modeled_recall_at_capacity"]
+
+            def dollars(micros: float) -> str:
+                return f"${micros / 1_000_000:,.0f}"
 
             roi_col1, roi_col2, roi_col3, roi_col4 = st.columns(4)
             with roi_col1:
                 st.metric(
-                    label="Net Preserved Premium",
-                    value=f"${de_m['net_preserved_usd']:,.0f}",
-                    delta=f"95% CI: [${de_ci['ci_lower']:,.0f}, ${de_ci['ci_upper']:,.0f}]",
-                    help="Gross preserved premium minus direct intervention spend.",
+                    label="Modeled Net Value",
+                    value=dollars(engine_point["modeled_expected_net_value_usd_micros"]),
+                    delta="allocation-procedure point estimate",
+                    help="Signed modeled expected annual premium preserved minus direct action cost, in RH-04 USD micros.",
                 )
 
             with roi_col2:
                 st.metric(
-                    label="Return on Spend (ROCS)",
-                    value=f"{de_m['rocs']:.2f}x",
-                    delta=f"95% CI: [{de_rocs['ci_lower']:.2f}x, {de_rocs['ci_upper']:.2f}x]",
-                    help="Net preserved value generated per dollar of conservation expenditure.",
+                    label="95% interval",
+                    value=dollars(engine_net["median"]),
+                    delta=f"[{dollars(engine_net['ci_lower'])}, {dollars(engine_net['ci_upper'])}]",
+                    help="Policy-cluster bootstrap interval for the new-portfolio allocation-procedure estimand.",
                 )
 
             with roi_col3:
                 st.metric(
-                    label="Lapses Prevented",
-                    value=f"{de_m['lapses_prevented']:.1f}",
-                    delta=f"+{de_m['relative_reduction_pct']:.1f}% rel. reduction",
-                    help="Expected policyholder lapses salvaged across the portfolio.",
+                    label="Combined effect (90d)",
+                    value=f"{engine_point['signed_combined_termination_effect_90d']:.3f}",
+                    delta=f"95% interval: [{engine_effect['ci_lower']:.3f}, {engine_effect['ci_upper']:.3f}]",
+                    help="Signed modeled reduction in combined lapse-or-surrender probability; not a causal treatment effect.",
                 )
 
             with roi_col4:
                 st.metric(
-                    label="Cost per Saved Policy",
-                    value=f"${de_m['cost_per_conserved_policy_usd']:,.0f}",
-                    delta=f"Spend: ${de_m['total_spend_usd']:,.0f}",
+                    label="Modeled recall at capacity",
+                    value=f"{engine_point['modeled_recall_at_capacity']:.2%}",
+                    delta=f"95% interval: [{engine_recall['ci_lower']:.2%}, {engine_recall['ci_upper']:.2%}]",
                     delta_color="off",
-                    help="Average operational cost per saved policyholder.",
+                    help="Expected combined-effect reduction divided by baseline combined-termination probability; not observed-outcome recall.",
                 )
 
             # Comparative table expander
             with st.expander("🔍 View Comparative Policy Scorecard & Superiority Gates", expanded=False):
                 st.markdown(
-                    "| Policy Strategy | Net Preserved Value (95% CI) | ROCS (95% CI) | Superiority vs Engine | Gate Status |\n"
-                    "| :--- | :---: | :---: | :---: | :---: |\n"
-                    f"| **Decision Engine (Inforsight)** | **${de_m['net_preserved_usd']:,.0f}** [${de_ci['ci_lower']:,.0f}, ${de_ci['ci_upper']:,.0f}] | **{de_m['rocs']:.2f}x** | — | **BASELINE** |\n"
-                    f"| **Carrier Heuristic** | ${ope_data['policy_metrics']['heuristic']['net_preserved_usd']:,.0f} | {ope_data['policy_metrics']['heuristic']['rocs']:.2f}x | +${contrasts.get('heuristic', {}).get('delta_net_preserved_usd', {}).get('median', 0):,.0f} lift | 🟢 PASS ($p < 0.001$) |\n"
-                    f"| **Naive ML Risk Triage** | ${ope_data['policy_metrics']['naive_ml']['net_preserved_usd']:,.0f} | {ope_data['policy_metrics']['naive_ml']['rocs']:.2f}x | +${contrasts.get('naive_ml', {}).get('delta_net_preserved_usd', {}).get('median', 0):,.0f} lift | 🟢 PASS ($p < 0.001$) |\n"
-                    f"| **Random Outreach** | ${ope_data['policy_metrics']['random']['net_preserved_usd']:,.0f} | {ope_data['policy_metrics']['random']['rocs']:.2f}x | +${contrasts.get('random', {}).get('delta_net_preserved_usd', {}).get('median', 0):,.0f} lift | 🟢 PASS ($p < 0.001$) |\n"
-                    f"| **Non-Intervention Control** | $0 | 0.00x | +${de_m['net_preserved_usd']:,.0f} lift | 🟢 PASS ($p < 0.001$) |"
+                    "| Strategy | Net value median (95% interval) | Selected | Budget used | Personnel used |\n"
+                    "| :--- | :---: | ---: | ---: | ---: |\n"
+                    + "\n".join(
+                        f"| **{label}** | {dollars(row['intervals']['modeled_expected_net_value_usd_micros']['median'])} "
+                        f"[{dollars(row['intervals']['modeled_expected_net_value_usd_micros']['ci_lower'])}, "
+                        f"{dollars(row['intervals']['modeled_expected_net_value_usd_micros']['ci_upper'])}] | "
+                        f"{comparison[strategy]['selected_count']:,} | "
+                        f"{dollars(comparison[strategy]['budget_used_usd_micros'])} | "
+                        f"{comparison[strategy]['personnel_used_seconds']:,} sec |"
+                        for strategy, label, row in (
+                            ("non_intervention", "Non-intervention", allocation["non_intervention"]),
+                            ("operational_rules_only", "Rules-only", allocation["operational_rules_only"]),
+                            ("risk_ranked", "Risk-ranked", allocation["risk_ranked"]),
+                            ("allocation_engine", "Allocation engine", allocation["allocation_engine"]),
+                        )
+                    )
                 )
-                st.caption(f"Manifest Digest: `{ope_data.get('manifest_digest', '')}` | Evaluated over {ope_data.get('cohort_size', 0):,} synthetic policies.")
+                st.caption(
+                    f"Evidence digest: `{ope_data.get('evidence_digest', '')}` | "
+                    f"Evaluated over {ope_data['cohort']['policy_count']:,} synthetic policies; "
+                    "historical Phase 3.08 OPE remains preserved separately."
+                )
         except Exception as e:
-            st.info(f"OPE results loaded with notice: {e}")
+            st.info(f"RH-12 evidence loaded with notice: {e}")
     else:
-        st.info("Run `python3 scripts/run_offline_policy_evaluation.py` to generate empirical OPE metrics.")
+        st.info("Run `make rh12-evidence-check` after generating the versioned RH-12 evidence artifact.")
