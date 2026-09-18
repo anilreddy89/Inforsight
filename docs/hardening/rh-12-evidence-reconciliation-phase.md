@@ -143,9 +143,10 @@ dependencies, and repository-boundary confirmations.
 
 During RH-12 implementation, evidence regeneration and documentation
 reconciliation remained within the existing RH claim freeze. The corrected
-artifacts are now versioned and published; the hardening release claim, RH-13
-disposition, and any Phase 4 resume claim remain blocked until their own
-evidence-backed decision.
+artifacts are now versioned and published; RH-13 subsequently recorded the
+evidence-backed `PROCEED` release disposition. Any Phase 4 implementation must
+still pass its own acceptance gates and must not broaden the reconciled claim
+boundary.
 
 RH-12 should not change a runtime contract or deterministic serialized output.
 If corrected evidence changes bytes or meaning, assign a new artifact/report

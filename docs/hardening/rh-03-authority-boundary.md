@@ -70,4 +70,4 @@ This is an in-process reference mechanism. Crash recovery, durable transactional
 
 ## Compatibility and evidence
 
-Historical model, dataset, generator, and Phase 3 qualification artifacts remain unchanged. The Phase 3 runner now calls the common authority boundary with explicit synthetic evidence and trusted actor context; RH-03 adversarial behavior is established by focused workflow and qualification tests. P4-02 and P4-03 remain blocked until RH-13 records `PROCEED`.
+Historical model, dataset, generator, and Phase 3 qualification artifacts remain unchanged. The Phase 3 runner now calls the common authority boundary with explicit synthetic evidence and trusted actor context; RH-03 adversarial behavior is established by focused workflow and qualification tests. P4-02 and P4-03 were gated until RH-13 recorded `PROCEED`; the RH-13 closeout now makes them eligible to resume without changing this RH-03 contract.

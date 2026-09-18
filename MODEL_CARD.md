@@ -17,6 +17,14 @@
 - **Evaluation Manifest**: [`docs/experiments/phase-02-11-final-evaluation-manifest.json`](docs/experiments/phase-02-11-final-evaluation-manifest.json)
 - **Feedback & Issues**: [GitHub Issue Tracker](https://github.com/anilreddy89/Inforsight/issues)
 
+### Release qualification
+
+RH-13 issue #182 recorded a bounded `PROCEED` decision on 2026-09-18 after the
+clean qualification passed 532 tests and the Phase 3 gates reported
+`RELEASE_QUALIFIED`. This confirms the reconciled local reference package; it
+does not establish production readiness, real-policyholder validity, causal
+effects, or distributed-system performance.
+
 ---
 
 ## Intended Use

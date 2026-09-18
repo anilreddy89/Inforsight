@@ -6,7 +6,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="Apache 2.0 license"></a>
   <a href="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml"><img src="https://github.com/anilreddy89/Inforsight/actions/workflows/ci.yml/badge.svg" alt="CI workflow status"></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-blue.svg" alt="Python 3.11+">
-  <img src="https://img.shields.io/badge/release-v0.3.1%20hardening%20(RH--12%20evidence%20reconciled)-blue.svg" alt="Release: v0.3.1 hardening, RH-12 evidence reconciled">
+  <img src="https://img.shields.io/badge/release-v0.3.1%20hardening%20(RH--13%20PROCEED)-blue.svg" alt="Release: v0.3.1 hardening, RH-13 PROCEED">
 </p>
 
 **Inforsight** is a clean-room conservation case intelligence system for in-force life-insurance policies. It reconstructs fictional policy timelines from immutable event streams, estimates near-term lapse or surrender risk without leaking future information, separates prediction from action authority, and keeps a human reviewer in control of every intervention.
@@ -166,6 +166,12 @@ allocation-engine procedure on the 3,600-policy synthetic cohort, with a
 policy-cluster bootstrap interval of **$19,491–$22,031**. This is conditional
 synthetic evidence under RH-04/RH-05 contracts, not realized premium, profit,
 causal uplift, or production performance. See the [RH-12 report](docs/experiments/phase-rh-12-evidence-reconciliation-1.0.0.md).
+
+RH-13 completed the final hardening release gate with a bounded `PROCEED`
+decision on 2026-09-18 after 532 tests and read-only artifact checks passed.
+P4-02 and P4-03 are eligible to resume from the reconciled contracts, but this
+repository still does not claim production deployment, real-policyholder
+validation, or distributed-system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)

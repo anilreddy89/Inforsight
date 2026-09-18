@@ -822,7 +822,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 - [x] The milestone, stable IDs, dependency graph, and Phase 4 pause boundary are approved.
 - [x] Issues #128-#130 are reviewed field by field and assigned explicit RH dispositions in the RH-00 phase document.
 - [x] Claim restrictions while RH is open are recorded in `docs/limitations.md`.
-- [x] P4-01 remains historical evidence; P4-02/P4-03 are marked blocked by RH-13.
+- [x] P4-01 remains historical evidence; P4-02/P4-03 were gated by RH-13 and are now eligible to resume after its `PROCEED` decision.
 - [x] No application or distributed-infrastructure implementation is included.
 
 #### RH-01 - Establish the canonical point-in-time domain snapshot and semantic catalog
@@ -988,7 +988,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Architecture decision / contract defect
 **Priority:** Release blocking for P4-02/P4-03
 
-**Status:** **Completed and closed.** RH-09D closed through issue #169 / PR #170, merge `fde3f2b`. RH-09I closed through issue #171 / PR #172, merge `fe1430f`, with required CI passed. The parent RH-09 outcome is complete; P4-02/P4-03 remain blocked until RH-13 records `PROCEED`. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md) and [RH-09I phase document](../Documents/phase_docs/phase-rh-09i-p4-01-contract-implementation.md).
+**Status:** **Completed and closed.** RH-09D closed through issue #169 / PR #170, merge `fde3f2b`. RH-09I closed through issue #171 / PR #172, merge `fe1430f`, with required CI passed. The parent RH-09 outcome is complete; P4-02/P4-03 were gated pending RH-13 and are now eligible to resume after its `PROCEED` decision. See the [RH-09 phase document](../Documents/phase_docs/phase-rh-09-p4-01-contract-reconciliation.md) and [RH-09I phase document](../Documents/phase_docs/phase-rh-09i-p4-01-contract-implementation.md).
 
 **Outcome:** Amend ADR 0014, Protobuf, and OpenAPI contracts so authority presence, tier semantics, authentication, concurrency, idempotency, override rules, preprocessing identity, economics/resource versions, audit semantics, errors, and deployment claims are explicit before Java or Kafka work begins. RH-09D may draft after RH-01; RH-09I must reconcile the settled RH-03, RH-04, RH-06, and RH-10 specifications before merge.
 
@@ -1001,7 +1001,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 - [x] RPC latency remains a target until measured through a deployed path.
 - [x] Contract compilation, linting, and compatibility tests pass.
 
-**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is complete through PR #176, RH-11 is the completed qualification gate through PR #180, and RH-12 corrected evidence is published in version 1.0.0. RH-13 remains the final Phase 4 resume gate.
+**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is complete through PR #176, RH-11 is the completed qualification gate through PR #180, RH-12 corrected evidence is published in version 1.0.0, and RH-13 recorded `PROCEED` through issue #182.
 
 #### RH-10 - Specify and harden audit durability semantics
 
@@ -1050,7 +1050,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 
 **Phase document:** [RH-12 evidence reconciliation](hardening/rh-12-evidence-reconciliation-phase.md)
 
-**Status:** Completed and merged to `main` through [issue #128](https://github.com/anilreddy89/Inforsight/issues/128) and [PR #181](https://github.com/anilreddy89/Inforsight/pull/181), merge `1365ee5`. Versioned evidence and documentation reconciliation are complete; RH-13 remains the downstream release decision.
+**Status:** Completed and merged to `main` through [issue #128](https://github.com/anilreddy89/Inforsight/issues/128) and [PR #181](https://github.com/anilreddy89/Inforsight/pull/181), merge `1365ee5`. Versioned evidence and documentation reconciliation are complete; RH-13 recorded the downstream release decision as `PROCEED`.
 
 **Outcome:** Recompute affected economic and qualification evidence after fixes and reconcile all public claims and status documents without rewriting historical results. The evaluation must answer a predeclared estimand and use comparable operational baselines.
 
@@ -1077,16 +1077,18 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Release evidence / decision
 **Priority:** Release blocking
 
+**Status:** Completed on 2026-09-18 through [issue #182](https://github.com/anilreddy89/Inforsight/issues/182). The clean qualification passed with 532 tests; Phase 3 gates S1–S6 reported `RELEASE_QUALIFIED` with pipeline digest `fdb3e3331b8376a93ed3531bd4837c9cfd6244cd997eb0fe126b2a3335b56f9`. Decision: **`PROCEED`**. The annotated release tag is prepared locally; no Phase 4 implementation is included in RH-13.
+
 **Outcome:** Publish `v0.3.1-decision-engine-hardening` evidence and make a formal `PROCEED`, `REMEDIATE`, or `STOP` decision for P4-02/P4-03.
 
 **Acceptance checks:**
 
-- [ ] All predecessor RH issues are merged and closed.
-- [ ] A clean, read-only full qualification run passes and its environment and commit are recorded.
-- [ ] The recorded qualification starts from a clean working tree and uses the documented headless plotting configuration.
-- [ ] Release notes distinguish repaired behavior, superseded evidence, preserved historical artifacts, and remaining limitations.
-- [ ] Annotated tag and GitHub release are prepared only after the decision is `PROCEED`.
-- [ ] Phase 4 dependencies and amended P4-01 contracts are updated from the final merged state.
+- [x] All predecessor RH issues are merged and closed.
+- [x] A clean, read-only full qualification run passes and its environment and commit are recorded.
+- [x] The recorded qualification starts from a clean working tree and uses the documented headless plotting configuration.
+- [x] Release notes distinguish repaired behavior, superseded evidence, preserved historical artifacts, and remaining limitations.
+- [x] Release preparation occurs only after the decision is `PROCEED`; the annotated tag is prepared locally after the decision record.
+- [x] Phase 4 dependencies and amended P4-01 contracts are updated from the final reconciled state; P4-02/P4-03 are eligible to resume, but remain unimplemented.
 
 ### Finding coverage matrix
 
@@ -1147,10 +1149,10 @@ PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safet
 - Updated limitation and claim status when the merge changes what may be stated.
 - Confirmation that no final holdout, real customer data, credentials, or proprietary material entered scope.
 
-### Phase 4 operating rule while RH is open
+### Phase 4 operating rule after RH closeout
 
 - P4-01 stays completed as architecture-inception history; RH-09 amends rather than rewrites it.
-- Do not start P4-02 or P4-03 implementation until RH-13 records `PROCEED`.
+- P4-02 and P4-03 may now start implementation from the reconciled contracts because RH-13 recorded `PROCEED`; their own acceptance gates still apply.
 - P4-04 may refine its future design against RH-10, but must not implement against unsettled audit semantics.
 - P4-05 through P4-07 remain planned and inherit the amended contracts and qualification language after RH-13.
 - If schedule pressure requires independent Phase 4 preparation, limit it to reversible research or spike work with no frozen contracts and no release claim.
@@ -1164,7 +1166,7 @@ PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safet
 3. [Completed] The RH initiative is represented in the interactive roadmap as a separate lane between Phase 3 and resumed Phase 4; this backlog remains canonical.
 4. [Completed] Open issues #128-#130 were triaged; #128 is the canonical RH-12 implementation issue and merged through PR #181 (`1365ee5`), #129 maps to completed RH-07, and #130 remains independently deferred pending a separate predeclared experiment.
 5. Initially create RH-01D and the independent implementation issues whose scopes are already ready after RH-00; create `I` children and downstream issues only when their predecessor designs and contracts are stable.
-6. Keep P4-02/P4-03 unassigned or explicitly blocked until RH-13.
+6. Keep P4-02/P4-03 governed by their own acceptance gates after RH-13 `PROCEED`; do not treat the resume decision as implementation completion.
 
 ---
 
@@ -1221,7 +1223,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Paused — blocked by RH-13 `PROCEED`.
+**Status:** Eligible to resume after RH-13 `PROCEED`; implementation not started.
 
 **Outcome:** High-throughput streaming event ingress replaces static JSONL batch playback, supporting real-time bitemporal policy event streams with schema validation and dead-letter queues.
 
@@ -1248,7 +1250,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Paused — blocked by RH-13 `PROCEED`.
+**Status:** Eligible to resume after RH-13 `PROCEED`; implementation not started.
 
 **Outcome:** Production-grade Java 21 / Spring Boot microservice hosts the deterministic eligibility rules engine, knapsack uplift optimizer, and case triage queues with high concurrency.
 

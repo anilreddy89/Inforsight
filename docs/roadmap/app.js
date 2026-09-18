@@ -580,7 +580,7 @@ const timelineData = [
           tech: "Define and implement one bitemporal domain snapshot and versioned catalog for statuses, risk tiers, actions, costs, features, and duration units.",
           simple: "Create one trustworthy, time-correct view of each policy and one shared dictionary for every downstream component."
         },
-        checks: "RH-01D issue #136 closed through PR #137 (fde664ec). RH-01I issue #139 closed through PR #140 (f0be47e); all CI checks passed. Snapshot/catalog 1.0.0, all 20 acceptance fixtures, dual-time replay, explicit adapters, consumer migration, and fail-closed unknown evidence are implemented. Downstream RH gates remain independent; Phase 4 remains blocked through RH-13."
+        checks: "RH-01D issue #136 closed through PR #137 (fde664ec). RH-01I issue #139 closed through PR #140 (f0be47e); all CI checks passed. Snapshot/catalog 1.0.0, all 20 acceptance fixtures, dual-time replay, explicit adapters, consumer migration, and fail-closed unknown evidence are implemented. Downstream RH gates remained independent; Phase 4 was gated through RH-13, which now records PROCEED."
       },
       {
         id: "RH-02–RH-03",
@@ -591,7 +591,7 @@ const timelineData = [
           tech: "Require explicit safety evidence and enforce case-, snapshot-, action-, version-, and actor-bound approval at the common execution transition.",
           simple: "Missing safety facts stop outreach, and an approval only applies to the exact case and action a trusted reviewer examined."
         },
-        checks: "RH-02 issue #142 closed through PR #143 (3eb74b5). RH-03 issue #145 closed through PR #146 (c5fa76c); all five CI jobs passed. Tri-state dual-time safety evidence, authenticated fresh approval, exact reviewed-identity binding, current eligibility revalidation, protected action/channel metadata, deterministic replay/concurrency handling, and bounded local capacity enforcement are implemented. RH-10D/I is now predecessor-ready; Phase 4 remains blocked through RH-13."
+        checks: "RH-02 issue #142 closed through PR #143 (3eb74b5). RH-03 issue #145 closed through PR #146 (c5fa76c); all five CI jobs passed. Tri-state dual-time safety evidence, authenticated fresh approval, exact reviewed-identity binding, current eligibility revalidation, protected action/channel metadata, deterministic replay/concurrency handling, and bounded local capacity enforcement are implemented. RH-10D/I is now predecessor-ready; Phase 4 was gated through RH-13, which now records PROCEED."
       },
       {
         id: "RH-04–RH-05",
@@ -602,7 +602,7 @@ const timelineData = [
           tech: "RH-04 and RH-05 are complete. Allocation contract 1.0.0 governs exact integer resources, deterministic bounded-domain allocation, versioned dashboard refresh, atomic reservation replacement, and the four-strategy comparison.",
           simple: "The portfolio allocator and its dashboard and workflow capacity controls are implemented, verified, and merged."
         },
-        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae); RH-05I issue #157 closed through PR #158 (603b955) after all five CI jobs passed. The implementation covers 64 generated exact-reference cases, dashboard refresh, reservation conflicts, concurrency, and four-strategy comparison. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12. Phase 4 remains blocked through RH-13."
+        checks: "RH-04D/I are complete. RH-05D issue #154 closed through PR #155 (3645fae); RH-05I issue #157 closed through PR #158 (603b955) after all five CI jobs passed. The implementation covers 64 generated exact-reference cases, dashboard refresh, reservation conflicts, concurrency, and four-strategy comparison. Frozen historical evidence remains unchanged; active corrected evidence is published by RH-12. Phase 4 was gated through RH-13, which now records PROCEED."
       },
       {
         id: "RH-06–RH-07",
@@ -624,18 +624,18 @@ const timelineData = [
           tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
           simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
         },
-        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 and RH-12 are complete; RH-13 remains the final release decision, and P4-02/P4-03 remain gated by RH-13."
+        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 and RH-12 are complete; RH-13 issue #182 recorded PROCEED, making P4-02/P4-03 eligible to resume."
       },
       {
         id: "RH-11–RH-13",
         title: "Qualification, Evidence Reconciliation & Resume Decision",
-        status: "RH-11 and RH-12 Completed; RH-13 Pending",
-        commit: "RH-11 PR #180, merge 33ffc9a; RH-12 PR #181, merge 1365ee5",
+        status: "RH-11, RH-12, and RH-13 Completed; PROCEED",
+        commit: "RH-11 PR #180, merge 33ffc9a; RH-12 PR #181, merge 1365ee5; RH-13 issue #182",
         summary: {
           tech: "Run expanded CI and read-only qualification, regenerate versioned evidence, reconcile active claims, and record PROCEED, REMEDIATE, or STOP for the hardening release.",
           simple: "Retest the repaired system, publish honest updated evidence, and make the final decision about resuming enterprise work."
         },
-        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 issue #128 closed through PR #181 (1365ee5): generated versioned evidence digest 47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933 with separate fixed-assignment and new-portfolio estimands, reconciled active documentation, preserved historical OPE artifacts, and deferred issue #130. RH-13 remains the release decision; only RH-13 PROCEED unblocks P4-02/P4-03 implementation."
+        checks: "RH-11 issue #179 closed through PR #180 (33ffc9a): expanded parallel CI, Streamlit AppTest, read-only artifact verification, host-stable model bundle checks, and 530-test guarded qualification passed. RH-12 issue #128 closed through PR #181 (1365ee5): generated versioned evidence digest 47ac6e06793e66b20601a05486fbb24fe24ff91bbffc4acda8e4523853527933 with separate fixed-assignment and new-portfolio estimands, reconciled active documentation, preserved historical OPE artifacts, and deferred issue #130. RH-13 issue #182 recorded PROCEED after 532 tests, read-only RH-12 reconciliation, and Phase 3 digest fdb3e3331b8376a93ed3531bd4837c9cfd6244cd997eb0fe126b2a3335b56f9; P4-02/P4-03 are eligible to resume but remain unimplemented."
       }
     ]
   },
@@ -663,7 +663,7 @@ const timelineData = [
           tech: "Real-time bitemporal streaming event ingress replacing batch playback; versioned Kafka topics, event deduplication, schema validation, and poison-pill dead letter queue (DLQ).",
           simple: "Real-Time Event Stream: Connecting live customer event data through Apache Kafka with automated duplicate filtering and error quarantine queues."
         },
-        checks: "Blocked until RH-13 records PROCEED; then requires updated P4 contracts and a Testcontainers integration harness."
+        checks: "RH-13 recorded PROCEED; implementation may resume from the updated P4 contracts and requires a Testcontainers integration harness."
       },
       {
         id: "P4-03",
@@ -674,7 +674,7 @@ const timelineData = [
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "Blocked until RH-13 records PROCEED and P4-02 is predecessor-ready; amended P4 contracts govern implementation."
+        checks: "RH-13 recorded PROCEED; implementation remains dependent on P4-02 and governed by the amended P4 contracts."
       },
       {
         id: "P4-04",
