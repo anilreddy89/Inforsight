@@ -2,6 +2,16 @@
 
 This directory contains versioned JSON Schema definitions and small valid and invalid fictional examples.
 
+## P4-02 streaming contracts
+
+[`streaming/`](streaming/) contains the version `1.0.0` Kafka value contracts for
+policy lifecycle, billing/payment, and customer service topics. The contracts
+require dual-time event timestamps, an immutable event identifier, an
+idempotency key, a source, and a domain-specific event type. Invalid or
+domain-mismatched values belong on the matching dead-letter topic. Broker
+delivery, offset management, and distributed ordering are intentionally deferred
+to the Kafka adapter and integration tests.
+
 ## Version 3 event-first statistical-corpus contracts
 
 [`v3/`](v3/) contains the closed event, recurring-observation, and protected oracle-sidecar schemas for substrate contract `3.0.0`, implemented through R2-09 issue #56. V3 observations bind a scenario-specific artifact identity, sorted dual-time-visible event IDs, a canonical visible-history digest, and complete per-feature lineage. V1/v2 schemas remain unchanged, and v3 protected sidecars cannot satisfy the public observation contract.

@@ -657,13 +657,13 @@ const timelineData = [
       {
         id: "P4-02",
         title: "Apache Kafka Streaming Ingress & Event Contracts",
-        status: "Paused",
-        commit: "Pending",
+        status: "Implementation complete — PR pending",
+        commit: "Issue #184; Testcontainers gate passed; merge pending",
         summary: {
           tech: "Real-time bitemporal streaming event ingress replacing batch playback; versioned Kafka topics, event deduplication, schema validation, and poison-pill dead letter queue (DLQ).",
           simple: "Real-Time Event Stream: Connecting live customer event data through Apache Kafka with automated duplicate filtering and error quarantine queues."
         },
-        checks: "RH-13 recorded PROCEED; implementation may resume from the updated P4 contracts and requires a Testcontainers integration harness."
+        checks: "Issue #184 implementation complete. Versioned JSON Schemas, local KRaft Compose harness, six event/DLQ topics, Python adapter, validation, deduplication, dual-time out-of-order replay, broker-backed DLQ routing, and the 10,000-event Testcontainers gate pass. PR/merge remains pending; P4-03 stays blocked until P4-02 merges."
       },
       {
         id: "P4-03",

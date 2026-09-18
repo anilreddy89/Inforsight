@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anilreddy89/Inforsight/schemas/streaming/billing-payment-events/1.0.0",
+  "title": "Inforsight billing and payment streaming event",
+  "description": "Versioned Kafka value contract for billing and payment events.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "idempotency_key", "policy_id", "event_type", "occurred_at", "effective_at", "ingested_at", "source", "payload"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "event_id": { "type": "string", "pattern": "^evt_[a-z0-9]{12,64}$" },
+    "idempotency_key": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "policy_id": { "type": "string", "pattern": "^pol_[a-z0-9]{12,64}$" },
+    "event_type": { "type": "string", "enum": ["billing.invoice_issued", "billing.premium_due", "payment.received", "payment.failed", "payment.retry_scheduled"] },
+    "occurred_at": { "$ref": "#/$defs/utc_timestamp" },
+    "effective_at": { "$ref": "#/$defs/utc_timestamp" },
+    "ingested_at": { "$ref": "#/$defs/utc_timestamp" },
+    "source": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "payload": { "type": "object", "minProperties": 1 }
+  },
+  "$defs": { "utc_timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" } }
+}

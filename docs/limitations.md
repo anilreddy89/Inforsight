@@ -91,6 +91,7 @@ Execute the canonical RH dependency graph in `docs/backlog.md`. Preserve histori
 - [x] RH-12 reconciles the realism boundary, reviewer walkthrough, README, model card, backlog, roadmap, release notes, and P4 scaffold status. Independent issue #130 is explicitly deferred pending a separate predeclared experiment.
 - [x] A clean, read-only qualification passes on the final hardening commit: `make check` passed 532 tests; gates S1–S6 reported `RELEASE_QUALIFIED`.
 - [x] RH-13 records the final release and Phase 4 resume decision as `PROCEED` through issue #182 on 2026-09-18. P4-02/P4-03 may resume, but production-readiness and real-customer claims remain prohibited.
+- [x] RH-13 release package is published through PR #183, merge `f6e5a5d`, tag `v0.3.1-decision-engine-hardening`, and the [GitHub release](https://github.com/anilreddy89/Inforsight/releases/tag/v0.3.1-decision-engine-hardening).
 
 ### LIM-RH-002 — The v6 source stream lacks servicing eligibility evidence
 
