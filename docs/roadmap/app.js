@@ -618,13 +618,13 @@ const timelineData = [
       {
         id: "RH-08–RH-10",
         title: "Structured Grounding, Corrected Interfaces & Durable Audit Semantics",
-        status: "RH-09I Completed",
-        commit: "RH-08D 8035001; RH-08I c283f184; RH-09D fde3f2b; RH-09I fe1430f",
+        status: "RH-10 Completed",
+        commit: "RH-08D 8035001; RH-08I c283f184; RH-09D fde3f2b; RH-09I fe1430f; RH-10D 538dc0e; RH-10I 30e1155",
         summary: {
           tech: "Bind factual narratives to typed evidence, amend provisional P4-01 interfaces, and specify recoverable local audit persistence under an explicit trust boundary.",
           simple: "Every case statement must trace to structured facts, service contracts must agree, and audit recovery guarantees must match what is actually implemented."
         },
-        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. P4-02/P4-03 remain gated by RH-13."
+        checks: "RH-08D issue #165 closed through PR #166, merge 8035001. RH-08I issue #167 closed through PR #168, merge c283f184, after required CI passed. RH-09D issue #169 closed through PR #170, merge fde3f2b, after contract consistency, Protobuf, OpenAPI, boundary, and diff checks passed. RH-09I issue #171 closed through PR #172, merge fe1430f, after CI passed. RH-10D issue #173 closed through PR #175, merge 538dc0e; RH-10I issue #174 closed through PR #176, merge 30e1155, after required CI passed. RH-10 adds versioned checkpoints, writer coordination, workflow-state snapshots, audit-backed pending-transition recovery, and adversarial coverage. RH-11 is next; P4-02/P4-03 remain gated by RH-13."
       },
       {
         id: "RH-11–RH-13",

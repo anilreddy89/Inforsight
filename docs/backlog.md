@@ -1001,7 +1001,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 - [x] RPC latency remains a target until measured through a deployed path.
 - [x] Contract compilation, linting, and compatibility tests pass.
 
-**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 remains an independent audit-durability work item, and RH-13 remains the final Phase 4 resume gate.
+**Closeout evidence:** RH-09D contract reconciliation merged as `fde3f2b`; RH-09I bounded implementation and compatibility tests merged as `fe1430f`; repository-boundary and CI checks passed. RH-10 is now complete through PR #176, and RH-11 is the next qualification gate. RH-13 remains the final Phase 4 resume gate.
 
 #### RH-10 - Specify and harden audit durability semantics
 
@@ -1009,7 +1009,7 @@ Independent issues may be prepared in parallel, but a dependent implementation b
 **Classification:** Latent/current defect and P4 prerequisite
 **Priority:** High
 
-**Status:** RH-10D completed through [issue #173](https://github.com/anilreddy89/Inforsight/issues/173) and [PR #175](https://github.com/anilreddy89/Inforsight/pull/175), merge `538dc0e`. RH-10I implementation is complete locally with 527 simulator tests passing; issue/PR closeout remains pending. The design artifact selects the bounded single-writer append protocol, and the implementation provides versioned checkpoints, writer coordination, state snapshots, pending-transition recovery, and adversarial coverage without claiming PostgreSQL/KMS durability.
+**Status:** RH-10 is completed and closed. RH-10D completed through [issue #173](https://github.com/anilreddy89/Inforsight/issues/173) and [PR #175](https://github.com/anilreddy89/Inforsight/pull/175), merge `538dc0e`; RH-10I completed through [issue #174](https://github.com/anilreddy89/Inforsight/issues/174) and [PR #176](https://github.com/anilreddy89/Inforsight/pull/176), merge `30e1155`. The design selects the bounded single-writer append protocol, and the implementation provides versioned checkpoints, writer coordination, state snapshots, pending-transition recovery, and adversarial coverage without claiming PostgreSQL/KMS durability.
 
 **Outcome:** Accurately bound current integrity claims and implement a concrete reference persistence mechanism selected in RH-10D: either a transactional local store, or a deliberately single-writer append protocol with documented crash recovery. Define trusted checkpoints, suffix-truncation detection, writer coordination, atomic state/audit persistence, and recovery semantics without requiring P4 PostgreSQL/KMS infrastructure.
 
