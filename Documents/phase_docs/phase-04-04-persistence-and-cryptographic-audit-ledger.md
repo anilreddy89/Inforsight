@@ -33,8 +33,9 @@ execution authority.
 - `PersistentCaseRepository` now persists case creation and performs a human
   decision transition, ledger append, and idempotency-record write in one
   PostgreSQL transaction. The focused integration test proves replay returns
-  the original result without another ledger entry, stale versions are
-  rejected, and a simulated audit failure rolls back the case transition.
+  the original result without another ledger entry, mismatched key reuse and
+  stale versions are rejected, and a simulated audit failure rolls back the
+  case transition.
 - Ledger verification accepts a separately retained head checkpoint, so tail
   deletion is detectable; it also rejects sequence gaps and reordered input.
   A versioned `AuditLedgerSigner` boundary and deterministic local HMAC adapter

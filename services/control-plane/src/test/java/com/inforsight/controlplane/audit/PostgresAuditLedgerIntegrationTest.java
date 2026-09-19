@@ -63,6 +63,9 @@ class PostgresAuditLedgerIntegrationTest {
             assertThat(repository.decide(initial.caseId(), "APPROVED", 0, "idem-1", "reviewer-1")).isEqualTo(committed);
             assertThat(jdbc.queryForObject("SELECT count(*) FROM decision_idempotency", Integer.class)).isEqualTo(1);
             assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);
+            org.assertj.core.api.Assertions.assertThatThrownBy(() -> repository.decide(initial.caseId(), "DISMISSED", 0, "idem-1", "reviewer-1"))
+                    .isInstanceOf(IllegalStateException.class).hasMessage("idempotency key request mismatch");
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);
             org.assertj.core.api.Assertions.assertThatThrownBy(() -> repository.decide(initial.caseId(), "DISMISSED", 0, "idem-stale", "reviewer-1"))
                     .isInstanceOf(IllegalStateException.class).hasMessage("case version conflict");
             assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);

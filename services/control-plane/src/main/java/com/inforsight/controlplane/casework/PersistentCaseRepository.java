@@ -54,9 +54,16 @@ public final class PersistentCaseRepository implements CaseWorkflow {
 
     public CaseStore.CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey, String actorId) {
         if (idempotencyKey == null || idempotencyKey.isBlank()) throw new IllegalArgumentException("idempotency_key is required");
+        if (actorId == null || actorId.isBlank()) throw new IllegalArgumentException("reviewer_id is required");
+        String requestDigest = requestDigest(caseId, decision, expectedVersion, actorId);
         return transactions.execute(status -> {
-            Optional<CaseStore.CaseRecord> replay = idempotent(caseId, idempotencyKey);
-            if (replay.isPresent()) return replay.get();
+            Optional<IdempotentDecision> replay = idempotent(caseId, idempotencyKey);
+            if (replay.isPresent()) {
+                if (!requestDigest.equals(replay.get().requestDigest())) {
+                    throw new IllegalStateException("idempotency key request mismatch");
+                }
+                return replay.get().record();
+            }
             CaseStore.CaseRecord current = lockedCase(caseId);
             if (current.version() != expectedVersion) throw new IllegalStateException("case version conflict");
             boolean authorized = "APPROVED".equals(decision) || "OVERRIDDEN".equals(decision);
@@ -72,7 +79,7 @@ public final class PersistentCaseRepository implements CaseWorkflow {
             jdbc.update("""
                     INSERT INTO decision_idempotency (case_id, idempotency_key, request_digest, response_json, committed_case_version)
                     VALUES (?, ?, ?, CAST(? AS jsonb), ?)
-                    """, caseId, idempotencyKey, AuditHash.sha256(decision + "\n" + expectedVersion), encode(updated), updated.version());
+                    """, caseId, idempotencyKey, requestDigest, encode(updated), updated.version());
             return updated;
         });
     }
@@ -84,10 +91,14 @@ public final class PersistentCaseRepository implements CaseWorkflow {
         return hashes.stream().findFirst();
     }
 
-    private Optional<CaseStore.CaseRecord> idempotent(String caseId, String idempotencyKey) {
-        List<CaseStore.CaseRecord> records = jdbc.query("SELECT response_json::text FROM decision_idempotency WHERE case_id = ? AND idempotency_key = ?",
-                (row, index) -> decode(row.getString(1)), caseId, idempotencyKey);
+    private Optional<IdempotentDecision> idempotent(String caseId, String idempotencyKey) {
+        List<IdempotentDecision> records = jdbc.query("SELECT request_digest, response_json::text FROM decision_idempotency WHERE case_id = ? AND idempotency_key = ?",
+                (row, index) -> new IdempotentDecision(row.getString(1), decode(row.getString(2))), caseId, idempotencyKey);
         return records.stream().findFirst();
+    }
+
+    private static String requestDigest(String caseId, String decision, long expectedVersion, String actorId) {
+        return AuditHash.sha256(caseId + "\n" + expectedVersion + "\n" + decision + "\n" + actorId);
     }
 
     private CaseStore.CaseRecord lockedCase(String caseId) {
@@ -116,4 +127,6 @@ public final class PersistentCaseRepository implements CaseWorkflow {
                     node.get("recommended_action").asText(), node.get("state").asText(), node.get("version").asLong(), node.get("authorized_to_act").asBoolean());
         } catch (Exception failure) { throw new IllegalStateException("could not decode persisted case record", failure); }
     }
+
+    private record IdempotentDecision(String requestDigest, CaseStore.CaseRecord record) {}
 }
