@@ -57,6 +57,8 @@ class PostgresAuditLedgerIntegrationTest {
                     new TransactionTemplate(new DataSourceTransactionManager(dataSource)), ledger);
             var initial = record("case-transaction-1");
             repository.create(initial);
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM policy_snapshot WHERE policy_id = ?", Integer.class, initial.policyId())).isEqualTo(1);
+            assertThat(jdbc.queryForObject("SELECT snapshot_id IS NOT NULL FROM control_case WHERE case_id = ?", Boolean.class, initial.caseId())).isTrue();
             var committed = repository.decide(initial.caseId(), "APPROVED", 0, "idem-1", "reviewer-1");
             assertThat(committed.state()).isEqualTo("HUMAN_REVIEWED");
             assertThat(committed.version()).isEqualTo(1);

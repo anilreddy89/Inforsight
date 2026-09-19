@@ -31,10 +31,16 @@ public final class PersistentCaseRepository implements CaseWorkflow {
     }
 
     public CaseStore.CaseRecord create(CaseStore.CaseRecord record) {
+        String snapshotId = snapshotId(record);
         jdbc.update("""
-                INSERT INTO control_case (case_id, policy_id, state, case_version, recommendation_json, created_at_utc, updated_at_utc)
-                VALUES (?, ?, ?, ?, CAST(? AS jsonb), ?, ?)
-                """, record.caseId(), record.policyId(), record.state(), record.version(), encode(record),
+                INSERT INTO policy_snapshot (snapshot_id, policy_id, as_of_utc, evidence_digest, payload_json)
+                VALUES (?, ?, ?, ?, CAST(? AS jsonb))
+                ON CONFLICT (snapshot_id) DO NOTHING
+                """, snapshotId, record.policyId(), Timestamp.from(record.asOf()), snapshotEvidenceDigest(record), encodeSnapshot(record));
+        jdbc.update("""
+                INSERT INTO control_case (case_id, policy_id, snapshot_id, state, case_version, recommendation_json, created_at_utc, updated_at_utc)
+                VALUES (?, ?, ?, ?, ?, CAST(? AS jsonb), ?, ?)
+                """, record.caseId(), record.policyId(), snapshotId, record.state(), record.version(), encode(record),
                 Timestamp.from(record.asOf()), Timestamp.from(record.asOf()));
         return record;
     }
@@ -116,6 +122,25 @@ public final class PersistentCaseRepository implements CaseWorkflow {
                     Map.entry("bundle_digest", record.score().bundleDigest()), Map.entry("recommended_action", record.recommendedAction()),
                     Map.entry("state", record.state()), Map.entry("version", record.version()), Map.entry("authorized_to_act", record.authorizedToAct())));
         } catch (Exception failure) { throw new IllegalStateException("could not encode case record", failure); }
+    }
+
+    private String encodeSnapshot(CaseStore.CaseRecord record) {
+        try {
+            return mapper.writeValueAsString(Map.ofEntries(Map.entry("policy_id", record.policyId()),
+                    Map.entry("as_of_utc", record.asOf().toString()), Map.entry("bundle_version", record.score().bundleVersion()),
+                    Map.entry("bundle_digest", record.score().bundleDigest()),
+                    Map.entry("calibrated_probability", record.score().calibratedProbability()),
+                    Map.entry("operational_tier", record.score().operationalTier())));
+        } catch (Exception failure) { throw new IllegalStateException("could not encode policy snapshot", failure); }
+    }
+
+    private static String snapshotEvidenceDigest(CaseStore.CaseRecord record) {
+        return AuditHash.sha256(record.policyId() + "\n" + record.asOf() + "\n" + record.score().bundleVersion() + "\n"
+                + record.score().bundleDigest() + "\n" + record.score().calibratedProbability() + "\n" + record.score().operationalTier());
+    }
+
+    private static String snapshotId(CaseStore.CaseRecord record) {
+        return "snapshot_" + snapshotEvidenceDigest(record);
     }
 
     private CaseStore.CaseRecord decode(String encoded) {

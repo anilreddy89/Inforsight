@@ -45,6 +45,11 @@ execution authority.
   Its Testcontainers REST test proves Flyway startup, persisted triage, and a
   human decision response with a 64-character ledger hash. The default profile
   remains database-free and selects the P4-03 in-memory workflow.
+- Persistent case creation derives a deterministic point-in-time snapshot
+  identity from the evaluated policy, timestamp, and bundle evidence, stores it
+  in `policy_snapshot`, and binds the case through a non-null foreign key. This
+  is local snapshot evidence only; it does not claim a production evidence
+  source or historical reconstruction service.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.
@@ -94,7 +99,7 @@ authority boundary.
 
 - [x] PostgreSQL migrations execute cleanly from an empty database and are
   idempotently verifiable from a clean checkout.
-- [ ] Schema constraints preserve case identity, optimistic case versions,
+- [x] Schema constraints preserve case identity, optimistic case versions,
   idempotency keys, point-in-time evidence identities, and append-only ledger
   ordering.
 - [ ] P4-03 case creation, retrieval, and human decision transitions persist
