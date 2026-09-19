@@ -18,4 +18,5 @@ make p4-03-integration-check
 ```
 
 It requires a working Docker daemon and runs the Testcontainers test guarded
-by `INFORSIGHT_RUN_JAVA_INTEGRATION=1`.
+by `INFORSIGHT_RUN_JAVA_INTEGRATION=1`. Docker Desktop 4.91 currently needs
+the Maven `-Dapi.version=1.44` compatibility setting used by the Make target.

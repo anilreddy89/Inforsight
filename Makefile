@@ -77,7 +77,7 @@ p4-03-check:
 	mvn -f services/control-plane/pom.xml test
 
 p4-03-integration-check:
-	INFORSIGHT_RUN_JAVA_INTEGRATION=1 mvn -f services/control-plane/pom.xml test
+	INFORSIGHT_RUN_JAVA_INTEGRATION=1 mvn -Dapi.version=1.44 -f services/control-plane/pom.xml test
 
 check-v1-v3: assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check v3-corpus-check v3-evaluation-check v3-acceptance-check
 

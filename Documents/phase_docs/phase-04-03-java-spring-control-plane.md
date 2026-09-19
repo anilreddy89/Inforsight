@@ -77,7 +77,7 @@ approved replacement exists.
   requests in a reproducible local test without thread-pool exhaustion.
 - [ ] Retry, timeout, rate-limit, and circuit-breaker tests demonstrate no
   duplicate decision execution or authority bypass.
-- [ ] Testcontainers-backed integration tests pass for the service boundary.
+- [x] Testcontainers-backed integration tests pass for the service boundary.
 - [ ] Focused Java checks, relevant Python parity checks, and the repository CI
   gates pass without rewriting protected historical artifacts.
 - [ ] README, backlog, change tracker, roadmap, and this phase document are
@@ -119,5 +119,6 @@ name such as `implementation/p4-03-java-spring-control-plane`.
   locally with 12 tests, including 1,000 virtual-thread requests. The
   Docker-backed test is skipped unless explicitly enabled.
 - The real Python serving parity fixtures remain open. The opt-in
-  `make p4-03-integration-check` Testcontainers gate is wired but has not yet
-  passed locally because the Docker daemon is unavailable in this environment.
+  `make p4-03-integration-check` Testcontainers gate passes with Docker
+  Desktop when Maven is pinned to API `1.44`; this compatibility setting is
+  encoded in the Make target.
