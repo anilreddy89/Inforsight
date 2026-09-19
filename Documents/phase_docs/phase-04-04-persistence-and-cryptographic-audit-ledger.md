@@ -39,6 +39,11 @@ execution authority.
   deletion is detectable; it also rejects sequence gaps and reordered input.
   A versioned `AuditLedgerSigner` boundary and deterministic local HMAC adapter
   are test-only/development seams, not a production KMS or key-custody claim.
+- The explicit Spring `persistence` profile selects `PersistentCaseRepository`
+  for the REST workflow and returns the committed audit hash with a decision.
+  Its Testcontainers REST test proves Flyway startup, persisted triage, and a
+  human decision response with a 64-character ledger hash. The default profile
+  remains database-free and selects the P4-03 in-memory workflow.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.

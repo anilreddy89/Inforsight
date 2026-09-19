@@ -2,6 +2,7 @@ package com.inforsight.controlplane.casework;
 
 import com.inforsight.controlplane.domain.InferenceScore;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Profile;
 
 import java.time.Instant;
 import java.util.Map;
@@ -10,7 +11,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class CaseStore {
+@Profile("!persistence")
+public class CaseStore implements CaseWorkflow {
     private final Map<String, CaseRecord> records = new ConcurrentHashMap<>();
     private final Map<String, CaseRecord> idempotentDecisions = new ConcurrentHashMap<>();
     public CaseRecord create(String policyId, Instant asOf, InferenceScore score, String action) {
@@ -32,6 +34,10 @@ public class CaseStore {
         records.replace(caseId, current, updated);
         idempotentDecisions.put(caseId + "\u0000" + idempotencyKey, updated);
         return updated;
+    }
+    @Override
+    public CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey, String actorId) {
+        return decide(caseId, decision, expectedVersion, idempotencyKey);
     }
     public record CaseRecord(String caseId, String policyId, Instant asOf, InferenceScore score, String recommendedAction, String state, long version, boolean authorizedToAct) {}
 }

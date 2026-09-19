@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /** PostgreSQL case adapter. Decision state, idempotency, and audit append share one transaction. */
-public final class PersistentCaseRepository {
+public final class PersistentCaseRepository implements CaseWorkflow {
     private final JdbcTemplate jdbc;
     private final ObjectMapper mapper;
     private final TransactionTemplate transactions;
@@ -37,6 +37,12 @@ public final class PersistentCaseRepository {
                 """, record.caseId(), record.policyId(), record.state(), record.version(), encode(record),
                 Timestamp.from(record.asOf()), Timestamp.from(record.asOf()));
         return record;
+    }
+
+    @Override
+    public CaseStore.CaseRecord create(String policyId, Instant asOf, InferenceScore score, String action) {
+        return create(new CaseStore.CaseRecord("case_" + UUID.randomUUID(), policyId, asOf, score, action,
+                "RECOMMENDED", 0, false));
     }
 
     public Optional<CaseStore.CaseRecord> find(String caseId) {
@@ -69,6 +75,13 @@ public final class PersistentCaseRepository {
                     """, caseId, idempotencyKey, AuditHash.sha256(decision + "\n" + expectedVersion), encode(updated), updated.version());
             return updated;
         });
+    }
+
+    @Override
+    public Optional<String> auditHash(String caseId, long caseVersion) {
+        List<String> hashes = jdbc.query("SELECT current_hash FROM audit_ledger WHERE case_id = ? AND case_version = ? "
+                        + "AND event_type = 'HUMAN_DECISION_RECORDED'", (row, index) -> row.getString(1), caseId, caseVersion);
+        return hashes.stream().findFirst();
     }
 
     private Optional<CaseStore.CaseRecord> idempotent(String caseId, String idempotencyKey) {

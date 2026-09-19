@@ -1,6 +1,7 @@
 package com.inforsight.controlplane.web;
 
 import com.inforsight.controlplane.casework.CaseStore;
+import com.inforsight.controlplane.casework.CaseWorkflow;
 import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.InferenceClient;
 import com.inforsight.controlplane.domain.PolicyContext;
@@ -19,11 +20,11 @@ import java.util.List;
 @RequestMapping("/api/v1/cases")
 public class ControlPlaneController {
     private final InferenceClient inference;
-    private final CaseStore cases;
+    private final CaseWorkflow cases;
     private final EligibilityEngine eligibility;
     private final TriageGuard guard;
 
-    public ControlPlaneController(InferenceClient inference, CaseStore cases, EligibilityEngine eligibility, TriageGuard guard) { this.inference = inference; this.cases = cases; this.eligibility = eligibility; this.guard = guard; }
+    public ControlPlaneController(InferenceClient inference, CaseWorkflow cases, EligibilityEngine eligibility, TriageGuard guard) { this.inference = inference; this.cases = cases; this.eligibility = eligibility; this.guard = guard; }
 
     @PostMapping("/triage")
     public TriageResponse triage(@RequestBody TriageRequest request) {
@@ -54,8 +55,9 @@ public class ControlPlaneController {
 
     @PostMapping("/{caseId}/decision")
     public DecisionResponse decision(@PathVariable String caseId, @RequestBody DecisionRequest request) {
-        CaseStore.CaseRecord record = cases.decide(caseId, request.decision(), request.expectedCaseVersion(), request.idempotencyKey());
-        return new DecisionResponse(record.caseId(), record.state(), "pending-p4-04-audit", record.authorizedToAct());
+        CaseStore.CaseRecord record = cases.decide(caseId, request.decision(), request.expectedCaseVersion(), request.idempotencyKey(), request.reviewerId());
+        String auditHash = cases.auditHash(record.caseId(), record.version()).orElse("pending-p4-04-audit");
+        return new DecisionResponse(record.caseId(), record.state(), auditHash, record.authorizedToAct());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
