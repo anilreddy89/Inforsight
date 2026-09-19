@@ -7,6 +7,7 @@ import com.inforsight.controlplane.domain.PolicyContext;
 import com.inforsight.controlplane.rules.EligibilityEngine;
 import com.inforsight.controlplane.resilience.TriageGuard;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,6 +58,25 @@ public class ControlPlaneController {
         return new DecisionResponse(record.caseId(), record.state(), "pending-p4-04-audit", record.authorizedToAct());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse badRequest(IllegalArgumentException failure) {
+        return new ErrorResponse("BAD_REQUEST", failure.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse conflict(IllegalStateException failure) {
+        return new ErrorResponse("CONFLICT", failure.getMessage());
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> responseStatus(ResponseStatusException failure) {
+        HttpStatus status = HttpStatus.resolve(failure.getStatusCode().value());
+        HttpStatus resolved = status == null ? HttpStatus.INTERNAL_SERVER_ERROR : status;
+        return ResponseEntity.status(resolved).body(new ErrorResponse(resolved.name(), failure.getReason()));
+    }
+
     public record TriageRequest(@JsonProperty("as_of_date") Instant asOfDate,
                                 @JsonProperty("policy_ids") List<String> policyIds,
                                 @JsonProperty("specialist_capacity_hours") Double specialistCapacityHours,
@@ -73,4 +93,5 @@ public class ControlPlaneController {
                                   @JsonProperty("idempotency_key") String idempotencyKey,
                                   @JsonProperty("expected_case_version") long expectedCaseVersion) {}
     public record DecisionResponse(String caseId, String transitionStatus, String auditRecordHash, boolean authorizedToAct) {}
+    public record ErrorResponse(String code, String message) {}
 }

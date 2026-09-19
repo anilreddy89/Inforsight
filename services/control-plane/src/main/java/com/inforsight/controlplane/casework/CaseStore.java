@@ -21,12 +21,12 @@ public class CaseStore {
     }
     public Optional<CaseRecord> find(String caseId) { return Optional.ofNullable(records.get(caseId)); }
     public synchronized CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey) {
+        if (idempotencyKey == null || idempotencyKey.isBlank()) throw new IllegalArgumentException("idempotency_key is required");
         CaseRecord prior = idempotentDecisions.get(caseId + "\u0000" + idempotencyKey);
         if (prior != null) return prior;
         CaseRecord current = records.get(caseId);
         if (current == null) throw new IllegalArgumentException("case not found");
         if (current.version() != expectedVersion) throw new IllegalStateException("case version conflict");
-        if (idempotencyKey == null || idempotencyKey.isBlank()) throw new IllegalArgumentException("idempotency_key is required");
         boolean authorized = "APPROVED".equals(decision) || "OVERRIDDEN".equals(decision);
         CaseRecord updated = new CaseRecord(current.caseId(), current.policyId(), current.asOf(), current.score(), current.recommendedAction(), "APPROVED".equals(decision) ? "HUMAN_REVIEWED" : "DISMISSED", current.version() + 1, authorized);
         records.replace(caseId, current, updated);

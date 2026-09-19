@@ -71,11 +71,11 @@ approved replacement exists.
   including integer economics, capacity constraints, and deterministic ties.
 - [ ] The inference client validates the reconciled request/response identity,
   version, errors, timeout behavior, and `authorized_to_act: false` boundary.
-- [ ] The three control-plane endpoints expose versioned, documented request
+- [x] The three control-plane endpoints expose versioned, documented request
   and response contracts with stable error mappings.
 - [x] Virtual-thread configuration handles 1,000 concurrent bounded triage
   requests in a reproducible local test without thread-pool exhaustion.
-- [ ] Retry, timeout, rate-limit, and circuit-breaker tests demonstrate no
+- [x] Retry, timeout, rate-limit, and circuit-breaker tests demonstrate no
   duplicate decision execution or authority bypass.
 - [x] Testcontainers-backed integration tests pass for the service boundary.
 - [ ] Focused Java checks, relevant Python parity checks, and the repository CI
@@ -106,8 +106,9 @@ name such as `implementation/p4-03-java-spring-control-plane`.
 - Integer-capacity allocation uses bounded exact dynamic programming with
   deterministic tie-breaking rather than a greedy approximation.
 - The bounded inference adapter, triage, case retrieval, and human decision
-  endpoints are covered by Spring MockMvc tests. Decision authority remains
-  false until an explicit human decision is recorded.
+  endpoints are covered by Spring MockMvc tests, including stable 400/404
+  errors and replay-safe decision idempotency. Decision authority remains false
+  until an explicit human decision is recorded.
 - Canonical eligibility parity fixtures cover active consented, missing-safety,
   and legal-hold cases; the fixture suite is part of the focused Java checks.
 - Rate limiting and circuit-breaker guards are implemented on the triage path,
@@ -116,7 +117,8 @@ name such as `implementation/p4-03-java-spring-control-plane`.
   calibrated score fields, bundle metadata, and the `authorized_to_act: false`
   invariant. It applies bounded request timeout and retry behavior.
 - `make p4-03-check` and `mvn -f services/control-plane/pom.xml test` pass
-  locally with 12 tests, including 1,000 virtual-thread requests. The
+  locally with 14 tests (1 opt-in integration test skipped by default),
+  including 1,000 virtual-thread requests. The
   Docker-backed test is skipped unless explicitly enabled.
 - The real Python serving parity fixtures remain open. The opt-in
   `make p4-03-integration-check` Testcontainers gate passes with Docker
