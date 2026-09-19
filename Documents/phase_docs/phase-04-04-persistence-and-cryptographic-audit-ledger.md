@@ -16,6 +16,24 @@ execution authority.
 | Tracking issue | [#188](https://github.com/anilreddy89/Inforsight/issues/188) |
 | Pull request | TBD |
 
+## Current implementation evidence
+
+- Branch `implementation/p4-04-persistence-audit-ledger` starts from the P4-03
+  merge and owns the P4-04 implementation for issue #188.
+- Flyway migration `V1__p4_04_control_plane_persistence.sql` defines durable
+  policy snapshots, cases, triage queues, idempotency records, and audit-ledger
+  storage.
+- The initial ledger adapter canonicalizes audit payloads, persists the exact
+  canonical string, and chains entries with lowercase SHA-256 hashes. The
+  payload is stored as text deliberately: PostgreSQL `JSONB` key normalization
+  would otherwise invalidate byte-for-byte hash verification.
+- `make p4-04-integration-check` passes with PostgreSQL 16 in Testcontainers:
+  Flyway migrates an empty database, chained entries verify, and a direct
+  payload mutation is detected as `CURRENT_HASH_MISMATCH`.
+- The default P4-03 local profile keeps datasource/Flyway autoconfiguration
+  disabled while the persistent runtime profile and repository adapter are
+  implemented; existing no-database control-plane tests remain runnable.
+
 ## Objective
 
 Replace the P4-03 in-memory case store with durable relational persistence and
