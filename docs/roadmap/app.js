@@ -680,12 +680,12 @@ const timelineData = [
         id: "P4-04",
         title: "Enterprise Persistence & Cryptographic Audit Ledger",
         status: "Planned",
-        commit: "Pending",
+        commit: "Issue #188; implementation issue open",
         summary: {
           tech: "PostgreSQL relational persistence with Flyway migrations and immutable append-only SHA-256 cryptographic audit ledger with KMS signing interface.",
           simple: "Planned audit storage: Track policy snapshots and detect unauthorized history changes within an explicitly documented trust and recovery model."
         },
-        checks: "Flyway migrations; 100% tamper detection across injected ledger mutations; ACID case state transactions."
+        checks: "Issue #188 opened with the P4-04 phase document. Planned evidence: Flyway migrations, durable PostgreSQL case/queue state, atomic case-and-audit transactions, deterministic SHA-256 hash-chain verification across injected mutations, and a bounded KMS signing seam."
       },
       {
         id: "P4-05",
