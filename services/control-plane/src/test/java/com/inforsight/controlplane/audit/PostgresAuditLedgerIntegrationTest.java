@@ -63,6 +63,11 @@ class PostgresAuditLedgerIntegrationTest {
             var committed = repository.decide(initial.caseId(), "APPROVED", 0, "idem-1", "reviewer-1");
             assertThat(committed.state()).isEqualTo("HUMAN_REVIEWED");
             assertThat(committed.version()).isEqualTo(1);
+            var rehydratedRepository = new PersistentCaseRepository(jdbc, new ObjectMapper(),
+                    new TransactionTemplate(new DataSourceTransactionManager(dataSource)), ledger);
+            assertThat(rehydratedRepository.find(initial.caseId())).contains(committed);
+            assertThat(rehydratedRepository.auditHash(initial.caseId(), committed.version()))
+                    .hasValueSatisfying(hash -> assertThat(hash).matches("[0-9a-f]{64}"));
             assertThat(repository.decide(initial.caseId(), "APPROVED", 0, "idem-1", "reviewer-1")).isEqualTo(committed);
             assertThat(jdbc.queryForObject("SELECT count(*) FROM decision_idempotency", Integer.class)).isEqualTo(1);
             assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);

@@ -53,6 +53,9 @@ execution authority.
 - The same creation transaction writes a `PENDING_REVIEW` triage-queue entry
   with deterministic local priority metadata. This persists queue state but is
   not a production allocation scheduler or connector integration.
+- The PostgreSQL integration suite rebuilds the repository adapter after a
+  committed decision and rehydrates both case state and audit hash from the
+  database. This is a local durability proof, not an operations/SLA claim.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.
@@ -105,7 +108,7 @@ authority boundary.
 - [x] Schema constraints preserve case identity, optimistic case versions,
   idempotency keys, point-in-time evidence identities, and append-only ledger
   ordering.
-- [ ] P4-03 case creation, retrieval, and human decision transitions persist
+- [x] P4-03 case creation, retrieval, and human decision transitions persist
   across service restarts in PostgreSQL.
 - [x] A decision and its corresponding audit record commit atomically, with no
   durable decision state when the audit write fails.
