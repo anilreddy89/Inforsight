@@ -72,13 +72,20 @@ p4-02-check: streaming-check
 p4-02-integration-check: p4-02-check streaming-integration-check
 
 # Focused P4-03 Java control-plane checks.
-.PHONY: p4-03-integration-check
+.PHONY: p4-03-integration-check p4-04-check p4-04-integration-check
 p4-03-check:
 	mvn -f services/control-plane/pom.xml test
 
 p4-03-integration-check:
 	docker build -f serving/Dockerfile -t inforsight-serving:p4-03 .
 	INFORSIGHT_RUN_JAVA_INTEGRATION=1 mvn -Dapi.version=1.44 -Dinforsight.serving.image=inforsight-serving:p4-03 -f services/control-plane/pom.xml test
+
+# Focused P4-04 persistence and ledger checks. The integration target requires Docker.
+p4-04-check:
+	mvn -f services/control-plane/pom.xml test
+
+p4-04-integration-check:
+	INFORSIGHT_RUN_P4_04_INTEGRATION=1 mvn -Dapi.version=1.44 -f services/control-plane/pom.xml test
 
 check-v1-v3: assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check v3-corpus-check v3-evaluation-check v3-acceptance-check
 
