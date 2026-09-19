@@ -44,6 +44,12 @@ public final class AuditLedgerRepository implements AuditAppender {
                 """, (row, index) -> row(row));
     }
 
+    public AuditLedgerCheckpoint checkpoint() {
+        return jdbc.query("SELECT ledger_sequence, current_hash FROM audit_ledger ORDER BY ledger_sequence DESC LIMIT 1",
+                result -> result.next() ? new AuditLedgerCheckpoint(result.getLong(1), result.getString(2))
+                        : new AuditLedgerCheckpoint(0, AuditHash.GENESIS_HASH));
+    }
+
     private static AuditLedgerEntry row(ResultSet result) throws SQLException {
         return new AuditLedgerEntry(result.getLong("ledger_sequence"),
                 result.getObject("event_id", java.util.UUID.class), result.getString("case_id"),

@@ -35,6 +35,10 @@ execution authority.
   PostgreSQL transaction. The focused integration test proves replay returns
   the original result without another ledger entry, stale versions are
   rejected, and a simulated audit failure rolls back the case transition.
+- Ledger verification accepts a separately retained head checkpoint, so tail
+  deletion is detectable; it also rejects sequence gaps and reordered input.
+  A versioned `AuditLedgerSigner` boundary and deterministic local HMAC adapter
+  are test-only/development seams, not a production KMS or key-custody claim.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.
@@ -91,13 +95,14 @@ authority boundary.
   across service restarts in PostgreSQL.
 - [ ] A decision and its corresponding audit record commit atomically, with no
   durable decision state when the audit write fails.
-- [ ] Ledger hashes are deterministic and verification detects injected field
-  mutation, row deletion, duplication, or reordering.
+- [x] Ledger hashes are deterministic and verification detects injected field
+  mutation, checkpointed row deletion, duplication/sequence gaps, or
+  reordering.
 - [ ] Compatible idempotent retries return the original committed result without
   creating duplicate decisions or audit entries.
 - [ ] Stale case versions fail with a stable conflict error and do not append a
   new audit entry.
-- [ ] The KMS signing interface is versioned and testable while remaining an
+- [x] The KMS signing interface is versioned and testable while remaining an
   explicit local seam rather than a production integration.
 - [ ] PostgreSQL Testcontainers integration tests pass with Docker Desktop and
   the repository's focused P4-04 make target.

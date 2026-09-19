@@ -34,9 +34,13 @@ class PostgresAuditLedgerIntegrationTest {
             var second = ledger.append(event("00000000-0000-0000-0000-000000000012", 2, "DISMISSED"));
             assertThat(second.parentHash()).isEqualTo(first.currentHash());
             assertThat(new AuditLedgerVerifier().verify(ledger.entries()).valid()).isTrue();
+            var checkpoint = ledger.checkpoint();
             new JdbcTemplate(new DriverManagerDataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()))
                     .update("UPDATE audit_ledger SET canonical_payload = '{\"decision\":\"TAMPERED\"}' WHERE ledger_sequence = 2");
             assertThat(new AuditLedgerVerifier().verify(ledger.entries()).failureCode()).isEqualTo("CURRENT_HASH_MISMATCH");
+            new JdbcTemplate(new DriverManagerDataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()))
+                    .update("DELETE FROM audit_ledger WHERE ledger_sequence = 2");
+            assertThat(new AuditLedgerVerifier().verify(ledger.entries(), checkpoint).failureCode()).isEqualTo("CHECKPOINT_SEQUENCE_MISMATCH");
         }
     }
 
