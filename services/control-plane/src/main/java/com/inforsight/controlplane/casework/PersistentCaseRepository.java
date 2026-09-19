@@ -31,18 +31,24 @@ public final class PersistentCaseRepository implements CaseWorkflow {
     }
 
     public CaseStore.CaseRecord create(CaseStore.CaseRecord record) {
-        String snapshotId = snapshotId(record);
-        jdbc.update("""
-                INSERT INTO policy_snapshot (snapshot_id, policy_id, as_of_utc, evidence_digest, payload_json)
-                VALUES (?, ?, ?, ?, CAST(? AS jsonb))
-                ON CONFLICT (snapshot_id) DO NOTHING
-                """, snapshotId, record.policyId(), Timestamp.from(record.asOf()), snapshotEvidenceDigest(record), encodeSnapshot(record));
-        jdbc.update("""
-                INSERT INTO control_case (case_id, policy_id, snapshot_id, state, case_version, recommendation_json, created_at_utc, updated_at_utc)
-                VALUES (?, ?, ?, ?, ?, CAST(? AS jsonb), ?, ?)
-                """, record.caseId(), record.policyId(), snapshotId, record.state(), record.version(), encode(record),
-                Timestamp.from(record.asOf()), Timestamp.from(record.asOf()));
-        return record;
+        return transactions.execute(status -> {
+            String snapshotId = snapshotId(record);
+            jdbc.update("""
+                    INSERT INTO policy_snapshot (snapshot_id, policy_id, as_of_utc, evidence_digest, payload_json)
+                    VALUES (?, ?, ?, ?, CAST(? AS jsonb))
+                    ON CONFLICT (snapshot_id) DO NOTHING
+                    """, snapshotId, record.policyId(), Timestamp.from(record.asOf()), snapshotEvidenceDigest(record), encodeSnapshot(record));
+            jdbc.update("""
+                    INSERT INTO control_case (case_id, policy_id, snapshot_id, state, case_version, recommendation_json, created_at_utc, updated_at_utc)
+                    VALUES (?, ?, ?, ?, ?, CAST(? AS jsonb), ?, ?)
+                    """, record.caseId(), record.policyId(), snapshotId, record.state(), record.version(), encode(record),
+                    Timestamp.from(record.asOf()), Timestamp.from(record.asOf()));
+            jdbc.update("""
+                    INSERT INTO triage_queue (case_id, queue_state, priority_rank, allocated_at_utc)
+                    VALUES (?, 'PENDING_REVIEW', ?, ?)
+                    """, record.caseId(), priorityRank(record), Timestamp.from(record.asOf()));
+            return record;
+        });
     }
 
     @Override
@@ -141,6 +147,10 @@ public final class PersistentCaseRepository implements CaseWorkflow {
 
     private static String snapshotId(CaseStore.CaseRecord record) {
         return "snapshot_" + snapshotEvidenceDigest(record);
+    }
+
+    private static long priorityRank(CaseStore.CaseRecord record) {
+        return Math.round((1.0 - record.score().calibratedProbability()) * 1_000_000);
     }
 
     private CaseStore.CaseRecord decode(String encoded) {

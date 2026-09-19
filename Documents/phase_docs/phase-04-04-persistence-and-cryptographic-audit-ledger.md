@@ -50,6 +50,9 @@ execution authority.
   in `policy_snapshot`, and binds the case through a non-null foreign key. This
   is local snapshot evidence only; it does not claim a production evidence
   source or historical reconstruction service.
+- The same creation transaction writes a `PENDING_REVIEW` triage-queue entry
+  with deterministic local priority metadata. This persists queue state but is
+  not a production allocation scheduler or connector integration.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.
