@@ -10,7 +10,7 @@ execution authority.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | Implementation issue open |
+| Status | Implementation in progress |
 | Depends on | P4-01, P4-02, P4-03, RH-13 `PROCEED` |
 | Blocks | P4-05, P4-06 |
 | Tracking issue | [#188](https://github.com/anilreddy89/Inforsight/issues/188) |
@@ -91,25 +91,25 @@ authority boundary.
 
 ## Acceptance checks
 
-- [ ] PostgreSQL migrations execute cleanly from an empty database and are
+- [x] PostgreSQL migrations execute cleanly from an empty database and are
   idempotently verifiable from a clean checkout.
 - [ ] Schema constraints preserve case identity, optimistic case versions,
   idempotency keys, point-in-time evidence identities, and append-only ledger
   ordering.
 - [ ] P4-03 case creation, retrieval, and human decision transitions persist
   across service restarts in PostgreSQL.
-- [ ] A decision and its corresponding audit record commit atomically, with no
+- [x] A decision and its corresponding audit record commit atomically, with no
   durable decision state when the audit write fails.
 - [x] Ledger hashes are deterministic and verification detects injected field
   mutation, checkpointed row deletion, duplication/sequence gaps, or
   reordering.
-- [ ] Compatible idempotent retries return the original committed result without
+- [x] Compatible idempotent retries return the original committed result without
   creating duplicate decisions or audit entries.
-- [ ] Stale case versions fail with a stable conflict error and do not append a
+- [x] Stale case versions fail with a stable conflict error and do not append a
   new audit entry.
 - [x] The KMS signing interface is versioned and testable while remaining an
   explicit local seam rather than a production integration.
-- [ ] PostgreSQL Testcontainers integration tests pass with Docker Desktop and
+- [x] PostgreSQL Testcontainers integration tests pass with Docker Desktop and
   the repository's focused P4-04 make target.
 - [ ] Focused Java checks, relevant Python checks, and repository CI pass
   without rewriting protected historical artifacts.
