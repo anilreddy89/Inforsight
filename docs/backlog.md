@@ -1270,10 +1270,10 @@ P4-01 (Architecture Inception & ADR 0014)
 - Implement resilience patterns: circuit breaker, rate limiting, and retry policies.
 
 **Acceptance checks:**
-- [ ] Java rules engine produces 100% identical eligibility decisions to Python implementation on canonical fixture.
-- [ ] Java knapsack solver matches Python net-utility optimization allocation bit-for-bit.
-- [ ] Project Loom virtual threads demonstrate handling 1,000 concurrent case triage requests without thread pool exhaustion.
-- [ ] Service integration tests pass using Testcontainers.
+- [x] Java rules engine produces 100% identical eligibility decisions to Python implementation on canonical fixture.
+- [x] Java knapsack solver matches Python net-utility optimization allocation bit-for-bit.
+- [x] Project Loom virtual threads demonstrate handling 1,000 concurrent case triage requests without thread pool exhaustion.
+- [x] Service integration tests pass using Testcontainers against the real Python serving image.
 
 **Depends on:** P4-01, P4-02. **Blocks:** P4-04, P4-05.
 

@@ -67,9 +67,9 @@ approved replacement exists.
 - [ ] Java 21 / Spring Boot 3 project builds reproducibly from a clean checkout.
 - [ ] Java eligibility decisions match the canonical Python fixtures 100%,
   including fail-closed authority and safety behavior.
-- [ ] Java allocation decisions match the Python reference solver bit-for-bit,
+- [x] Java allocation decisions match the Python reference solver bit-for-bit,
   including integer economics, capacity constraints, and deterministic ties.
-- [ ] The inference client validates the reconciled request/response identity,
+- [x] The inference client validates the reconciled request/response identity,
   version, errors, timeout behavior, and `authorized_to_act: false` boundary.
 - [x] The three control-plane endpoints expose versioned, documented request
   and response contracts with stable error mappings.
@@ -78,7 +78,7 @@ approved replacement exists.
 - [x] Retry, timeout, rate-limit, and circuit-breaker tests demonstrate no
   duplicate decision execution or authority bypass.
 - [x] Testcontainers-backed integration tests pass for the service boundary.
-- [ ] Focused Java checks, relevant Python parity checks, and the repository CI
+- [x] Focused Java checks, relevant Python parity checks, and the repository CI
   gates pass without rewriting protected historical artifacts.
 - [ ] README, backlog, change tracker, roadmap, and this phase document are
   updated with issue/PR/merge evidence at closeout.
@@ -114,13 +114,16 @@ name such as `implementation/p4-03-java-spring-control-plane`.
 - Rate limiting and circuit-breaker guards are implemented on the triage path,
   and decision idempotency keys are replay-safe in the bounded case store.
 - The opt-in HTTP inference adapter validates response policy identity,
-  calibrated score fields, bundle metadata, and the `authorized_to_act: false`
-  invariant. It applies bounded request timeout and retry behavior.
-- `make p4-03-check` and `mvn -f services/control-plane/pom.xml test` pass
-  locally with 14 tests (1 opt-in integration test skipped by default),
+  calibrated score fields, risk-tier identity, and the `authorized_to_act: false`
+  invariant. It sends the raw-v6 feature envelope and applies bounded request
+  timeout and retry behavior.
+- `make p4-03-check` and `mvn -f services/control-plane/pom.xml clean test` pass
+  locally with 15 tests (1 opt-in integration test skipped by default),
   including 1,000 virtual-thread requests. The
-  Docker-backed test is skipped unless explicitly enabled.
-- The real Python serving parity fixtures remain open. The opt-in
-  `make p4-03-integration-check` Testcontainers gate passes with Docker
-  Desktop when Maven is pinned to API `1.44`; this compatibility setting is
-  encoded in the Make target.
+  Docker-backed test is skipped unless explicitly enabled. The allocation
+  suite includes the shared two-resource parity fixture.
+- The real Python serving parity gate is closed: `make
+  p4-03-integration-check` builds the repository `serving/Dockerfile` image and
+  the Testcontainers client reaches its `/v1/score` endpoint with the raw-v6
+  feature envelope. Docker Desktop passes when Maven is pinned to API `1.44`;
+  this compatibility setting is encoded in the Make target.

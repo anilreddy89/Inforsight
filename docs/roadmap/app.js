@@ -674,7 +674,7 @@ const timelineData = [
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, bounded adapter, opt-in HTTP inference transport with timeout/retry and authority validation, REST endpoints, 1,000 virtual-thread requests, parity fixtures, rate limiting, circuit breaker, idempotency, 12 focused Maven tests, and the Docker-backed Testcontainers inference-boundary test pass with Docker Desktop API 1.44 compatibility. Real Python parity remains."
+        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, shared parity fixtures, bounded adapter, raw-v6 HTTP inference transport with timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread requests, rate limiting, circuit breaker, 15 focused Maven tests, and Docker-backed Testcontainers parity against the real Python serving image pass with Docker Desktop API 1.44 compatibility."
       },
       {
         id: "P4-04",

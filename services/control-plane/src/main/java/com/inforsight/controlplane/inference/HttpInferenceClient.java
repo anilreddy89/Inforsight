@@ -13,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 
 /** Opt-in adapter for the bounded Python HTTP serving contract. */
 @Component
@@ -38,9 +39,21 @@ public class HttpInferenceClient implements InferenceClient {
 
     @Override
     public InferenceScore score(String policyId, Instant asOf) {
+        return scoreWithFeatures(policyId, asOf, Map.of());
+    }
+
+    /** Scores a raw-v6 record when the caller has the feature snapshot available. */
+    public InferenceScore scoreWithFeatures(String policyId, Instant asOf, Map<String, Object> features) {
         try {
-            String body = mapper.writeValueAsString(java.util.Map.of("policy_id", policyId, "as_of_date", asOf.toString()));
-            HttpRequest request = HttpRequest.newBuilder(scoreUri)
+            Map<String, Object> request = new java.util.LinkedHashMap<>();
+            request.put("policy_id", policyId);
+            request.put("observation_id", asOf.toString());
+            request.put("as_of_date", asOf.toString());
+            request.put("feature_stage", "raw-v6-features");
+            request.put("preprocessing_profile_id", "v6-coefficient-transform-then-bundle-zscore/1.0.0");
+            request.put("features", features);
+            String body = mapper.writeValueAsString(request);
+            HttpRequest httpRequest = HttpRequest.newBuilder(scoreUri)
                     .timeout(timeout)
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
@@ -48,7 +61,7 @@ public class HttpInferenceClient implements InferenceClient {
             Exception last = null;
             for (int attempt = 1; attempt <= maxAttempts; attempt++) {
                 try {
-                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
                     if (response.statusCode() >= 200 && response.statusCode() < 300) return parse(response.body(), policyId);
                     if (response.statusCode() < 500) throw new InferenceUnavailableException("inference returned HTTP " + response.statusCode());
                     last = new InferenceUnavailableException("inference returned retryable HTTP " + response.statusCode());
@@ -73,7 +86,7 @@ public class HttpInferenceClient implements InferenceClient {
         if (!policyId.equals(responsePolicy)) throw new InferenceUnavailableException("inference response policy identity mismatch");
         return new InferenceScore(responsePolicy,
                 node.path("calibrated_probability").asDouble(),
-                node.path("operational_tier").asText("TIER_1_LOW"),
+                node.path("operational_tier").asText(node.path("risk_tier_id").asText("TIER_1_LOW")),
                 node.path("bundle_version").asText("unknown"),
                 node.path("bundle_digest").asText("unknown"), false);
     }
