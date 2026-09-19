@@ -3,6 +3,8 @@ package com.inforsight.controlplane.web;
 import com.inforsight.controlplane.casework.CaseStore;
 import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.InferenceClient;
+import com.inforsight.controlplane.domain.PolicyContext;
+import com.inforsight.controlplane.rules.EligibilityEngine;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +18,9 @@ import java.util.List;
 public class ControlPlaneController {
     private final InferenceClient inference;
     private final CaseStore cases;
+    private final EligibilityEngine eligibility;
 
-    public ControlPlaneController(InferenceClient inference, CaseStore cases) { this.inference = inference; this.cases = cases; }
+    public ControlPlaneController(InferenceClient inference, CaseStore cases, EligibilityEngine eligibility) { this.inference = inference; this.cases = cases; this.eligibility = eligibility; }
 
     @PostMapping("/triage")
     public TriageResponse triage(@RequestBody TriageRequest request) {
@@ -25,6 +28,8 @@ public class ControlPlaneController {
         Instant asOf = request.asOfDate() == null ? Instant.now() : request.asOfDate();
         List<CaseSummary> summaries = request.policyIds().stream().map(policyId -> {
             InferenceScore score = inference.score(policyId, asOf);
+            PolicyContext context = new PolicyContext(policyId, asOf, "active", 365, false, 0, false, false, false, false, false, false, false, null);
+            eligibility.evaluate(context); // keep the rules firewall on the triage path; P4-03 does not bypass it
             CaseStore.CaseRecord record = cases.create(policyId, asOf, score, "abstain");
             return new CaseSummary(record.caseId(), policyId, score.operationalTier(), score.calibratedProbability(), record.recommendedAction(), record.state());
         }).toList();

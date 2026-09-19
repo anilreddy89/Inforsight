@@ -73,7 +73,7 @@ approved replacement exists.
   version, errors, timeout behavior, and `authorized_to_act: false` boundary.
 - [ ] The three control-plane endpoints expose versioned, documented request
   and response contracts with stable error mappings.
-- [ ] Virtual-thread configuration handles 1,000 concurrent bounded triage
+- [x] Virtual-thread configuration handles 1,000 concurrent bounded triage
   requests in a reproducible local test without thread-pool exhaustion.
 - [ ] Retry, timeout, rate-limit, and circuit-breaker tests demonstrate no
   duplicate decision execution or authority bypass.
@@ -108,8 +108,11 @@ name such as `implementation/p4-03-java-spring-control-plane`.
 - The bounded inference adapter, triage, case retrieval, and human decision
   endpoints are covered by Spring MockMvc tests. Decision authority remains
   false until an explicit human decision is recorded.
+- The opt-in HTTP inference adapter validates response policy identity,
+  calibrated score fields, bundle metadata, and the `authorized_to_act: false`
+  invariant. It applies bounded request timeout and retry behavior.
 - `make p4-03-check` and `mvn -f services/control-plane/pom.xml test` pass
-  locally with 5 tests.
-- The real inference transport/parity fixtures, resilience policies,
-  1,000-concurrent-request gate, and Testcontainers service integration are
-  still open and must be completed before this phase can be marked complete.
+  locally with 7 tests, including 1,000 virtual-thread requests.
+- The real Python parity fixtures, rate limiting/circuit breaking, and
+  Testcontainers service integration are still open and must be completed
+  before this phase can be marked complete.

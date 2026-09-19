@@ -16,4 +16,7 @@ management:
 inforsight:
   contract-version: control-plane/1.0.0
   inference:
+    transport: bounded
     base-url: http://localhost:8000
+    timeout: 500ms
+    max-attempts: 2

@@ -2,12 +2,14 @@ package com.inforsight.controlplane.inference;
 
 import com.inforsight.controlplane.domain.InferenceScore;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.time.Instant;
 import java.util.Objects;
 
 /** Bounded local adapter; the production gRPC transport is a separately versioned integration. */
 @Component
+@ConditionalOnProperty(name = "inforsight.inference.transport", havingValue = "bounded", matchIfMissing = true)
 public class BoundedInferenceClient implements InferenceClient {
     @Override
     public InferenceScore score(String policyId, Instant asOf) {

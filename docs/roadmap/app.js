@@ -674,7 +674,7 @@ const timelineData = [
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, bounded inference adapter, REST endpoints, and 5 focused Maven tests pass. Real inference transport, resilience, 1,000-concurrency, and Testcontainers gates remain."
+        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, bounded adapter, opt-in HTTP inference transport with timeout/retry and authority validation, REST endpoints, 1,000 virtual-thread requests, and 7 focused Maven tests pass. Python parity fixtures and Testcontainers gates remain."
       },
       {
         id: "P4-04",

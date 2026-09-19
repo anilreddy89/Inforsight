@@ -176,9 +176,10 @@ routing, out-of-order replay, and the 10,000-event Testcontainers gate.
 P4-03 is now in implementation through [issue #186](https://github.com/anilreddy89/Inforsight/issues/186)
 on the `implementation/p4-03-java-spring-control-plane` branch. The initial
 Spring Boot service, deterministic eligibility/allocation cores, bounded
-inference adapter, and REST smoke tests are present; transport parity,
-resilience, concurrency, and container integration remain open acceptance
-work. This repository still does not claim production deployment,
+inference adapter, opt-in HTTP transport, bounded timeout/retry behavior,
+1,000-request virtual-thread test, and REST smoke tests are present; Python
+parity fixtures and container integration remain open acceptance work. This
+repository still does not claim production deployment,
 real-policyholder validation, or distributed-system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
