@@ -56,6 +56,10 @@ execution authority.
 - The PostgreSQL integration suite rebuilds the repository adapter after a
   committed decision and rehydrates both case state and audit hash from the
   database. This is a local durability proof, not an operations/SLA claim.
+- Flyway V3 adds an append-only database trigger that rejects ordinary ledger
+  updates and deletes. Adversarial tests disable that trigger only as a
+  privileged-bypass simulation, then verify hash-chain and checkpoint failure
+  detection; this is not a production database-permissions model.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.

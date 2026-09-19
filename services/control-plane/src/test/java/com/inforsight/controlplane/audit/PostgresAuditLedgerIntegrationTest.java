@@ -8,6 +8,7 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -35,11 +36,17 @@ class PostgresAuditLedgerIntegrationTest {
             assertThat(second.parentHash()).isEqualTo(first.currentHash());
             assertThat(new AuditLedgerVerifier().verify(ledger.entries()).valid()).isTrue();
             var checkpoint = ledger.checkpoint();
-            new JdbcTemplate(new DriverManagerDataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()))
-                    .update("UPDATE audit_ledger SET canonical_payload = '{\"decision\":\"TAMPERED\"}' WHERE ledger_sequence = 2");
+            var adversary = new JdbcTemplate(new DriverManagerDataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()));
+            org.assertj.core.api.Assertions.assertThatThrownBy(() -> adversary
+                    .update("UPDATE audit_ledger SET canonical_payload = '{\"decision\":\"TAMPERED\"}' WHERE ledger_sequence = 2"))
+                    .isInstanceOf(DataAccessException.class).hasMessageContaining("append-only");
+            adversary.execute("ALTER TABLE audit_ledger DISABLE TRIGGER audit_ledger_reject_update_delete");
+            adversary.update("UPDATE audit_ledger SET canonical_payload = '{\"decision\":\"TAMPERED\"}' WHERE ledger_sequence = 2");
+            adversary.execute("ALTER TABLE audit_ledger ENABLE TRIGGER audit_ledger_reject_update_delete");
             assertThat(new AuditLedgerVerifier().verify(ledger.entries()).failureCode()).isEqualTo("CURRENT_HASH_MISMATCH");
-            new JdbcTemplate(new DriverManagerDataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()))
-                    .update("DELETE FROM audit_ledger WHERE ledger_sequence = 2");
+            adversary.execute("ALTER TABLE audit_ledger DISABLE TRIGGER audit_ledger_reject_update_delete");
+            adversary.update("DELETE FROM audit_ledger WHERE ledger_sequence = 2");
+            adversary.execute("ALTER TABLE audit_ledger ENABLE TRIGGER audit_ledger_reject_update_delete");
             assertThat(new AuditLedgerVerifier().verify(ledger.entries(), checkpoint).failureCode()).isEqualTo("CHECKPOINT_SEQUENCE_MISMATCH");
         }
     }
