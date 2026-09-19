@@ -1254,7 +1254,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Implementation in progress through [issue #186](https://github.com/anilreddy89/Inforsight/issues/186) on branch `implementation/p4-03-java-spring-control-plane`.
+**Status:** Completed through [issue #186](https://github.com/anilreddy89/Inforsight/issues/186) and [PR #187](https://github.com/anilreddy89/Inforsight/pull/187), merged to `main` as `05580203f53b95a392c9523075343ce11bbc300e` on 2026-09-19.
 
 **Outcome:** Production-grade Java 21 / Spring Boot microservice hosts the deterministic eligibility rules engine, knapsack uplift optimizer, and case triage queues with high concurrency.
 

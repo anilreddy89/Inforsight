@@ -668,13 +668,13 @@ const timelineData = [
       {
         id: "P4-03",
         title: "Java 21 / Spring Boot 3 Control Plane Microservice",
-        status: "Implementation in progress",
-        commit: "Issue #186; branch implementation/p4-03-java-spring-control-plane",
+        status: "Completed",
+        commit: "Issue #186; PR #187; merge 05580203f53b95a392c9523075343ce11bbc300e",
         summary: {
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, shared parity fixtures, bounded adapter, raw-v6 HTTP inference transport with timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread requests, rate limiting, circuit breaker, 15 focused Maven tests, and Docker-backed Testcontainers parity against the real Python serving image pass with Docker Desktop API 1.44 compatibility."
+        checks: "Issue #186 closed through PR #187, merged to main as 05580203f53b95a392c9523075343ce11bbc300e. Spring Boot scaffold, deterministic eligibility/allocation cores, shared parity fixtures, bounded adapter, raw-v6 HTTP inference transport with timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread requests, rate limiting, circuit breaker, 15 focused Maven tests, Docker-backed Testcontainers parity against the real Python serving image, and all required CI checks passed with Docker Desktop API 1.44 compatibility."
       },
       {
         id: "P4-04",

@@ -11,11 +11,11 @@ boundary.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | Implementation in progress |
+| Status | Completed and merged |
 | Depends on | P4-01, P4-02, RH-13 `PROCEED` |
 | Blocks | P4-04, P4-05 |
 | Tracking issue | [#186](https://github.com/anilreddy89/Inforsight/issues/186) |
-| Pull request | TBD |
+| Pull request | [#187](https://github.com/anilreddy89/Inforsight/pull/187), merged as `05580203f53b95a392c9523075343ce11bbc300e` |
 
 ## Objective
 
@@ -64,8 +64,8 @@ approved replacement exists.
 
 ## Acceptance checks
 
-- [ ] Java 21 / Spring Boot 3 project builds reproducibly from a clean checkout.
-- [ ] Java eligibility decisions match the canonical Python fixtures 100%,
+- [x] Java 21 / Spring Boot 3 project builds reproducibly from a clean checkout.
+- [x] Java eligibility decisions match the canonical Python fixtures 100%,
   including fail-closed authority and safety behavior.
 - [x] Java allocation decisions match the Python reference solver bit-for-bit,
   including integer economics, capacity constraints, and deterministic ties.
@@ -80,7 +80,7 @@ approved replacement exists.
 - [x] Testcontainers-backed integration tests pass for the service boundary.
 - [x] Focused Java checks, relevant Python parity checks, and the repository CI
   gates pass without rewriting protected historical artifacts.
-- [ ] README, backlog, change tracker, roadmap, and this phase document are
+- [x] README, backlog, change tracker, roadmap, and this phase document are
   updated with issue/PR/merge evidence at closeout.
 
 ## Evidence and issue workflow
@@ -91,12 +91,14 @@ P4-02 merge (`#185`, `8caae8b`) as its prerequisite and must not claim that
 P4-03 is complete until the implementation PR merges and the required CI
 checks pass.
 
-The implementation branch should start from updated `main` and use a stable
-name such as `implementation/p4-03-java-spring-control-plane`.
+The implementation branch started from updated `main` as
+`implementation/p4-03-java-spring-control-plane`. Issue #186 and PR #187 are
+now closed after merge.
 
 ## Current implementation evidence
 
-- Issue #186 is open on branch `implementation/p4-03-java-spring-control-plane`.
+- Issue #186 is closed; PR #187 merged to `main` as
+  `05580203f53b95a392c9523075343ce11bbc300e` on 2026-09-19.
 - `services/control-plane/` contains a Java 21 / Spring Boot 3 Maven module,
   virtual-thread configuration, snake-case REST mapping, and actuator health
   endpoints.
@@ -127,3 +129,10 @@ name such as `implementation/p4-03-java-spring-control-plane`.
   the Testcontainers client reaches its `/v1/score` endpoint with the raw-v6
   feature envelope. Docker Desktop passes when Maven is pinned to API `1.44`;
   this compatibility setting is encoded in the Make target.
+
+## Closeout
+
+P4-03 is complete through issue #186 and PR #187. All required CI checks passed
+on the final reviewed commit before merge. The next dependent phase must start
+from updated `main`; durable persistence and cryptographic audit storage remain
+owned by P4-04.
