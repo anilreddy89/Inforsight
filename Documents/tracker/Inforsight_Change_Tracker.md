@@ -107,7 +107,7 @@ Current release milestone: [**v0.4.0-enterprise-scale**](https://github.com/anil
 | RH-13 | Review hardening | Qualify and release the hardening initiative; decide whether Phase 4 may resume. | Completed | [#182](https://github.com/anilreddy89/Inforsight/issues/182) | [#183](https://github.com/anilreddy89/Inforsight/pull/183) | 2026-09-18 | `f6e5a5d` | `docs/hardening/rh-13-release-decision-phase.md`, release `v0.3.1-decision-engine-hardening` | `PROCEED` recorded; the hardening release passed qualification and authorized P4-02/P4-03 to resume. |
 | P4-02 | Phase 4 — Enterprise Integration & Scale | Apache Kafka streaming ingress and event contracts. | Completed | [#184](https://github.com/anilreddy89/Inforsight/issues/184) | [#185](https://github.com/anilreddy89/Inforsight/pull/185) | 2026-09-18 | `8caae8b` | `data-contracts/streaming/`, Kafka producers/consumers, DLQ engine, [phase document](../phase_docs/phase-04-02-kafka-streaming-ingress.md) | Merged to `main`; versioned JSON Schema contracts, local KRaft harness, adapter, validation, deduplication, dual-time replay, DLQ routing, 10,000-event Testcontainers gate, and focused make targets completed. |
 | P4-03 | Phase 4 — Enterprise Integration & Scale | Java 21 / Spring Boot control plane microservice. | Completed | [#186](https://github.com/anilreddy89/Inforsight/issues/186) | [#187](https://github.com/anilreddy89/Inforsight/pull/187) | 2026-09-19 | `05580203f53b95a392c9523075343ce11bbc300e` | `services/control-plane/`, Spring Boot 3 app, Virtual Threads, rules engine port, [phase document](../phase_docs/phase-04-03-java-spring-control-plane.md) | Merged to `main`; Spring Boot scaffold, deterministic eligibility/allocation cores, bounded inference adapter, raw-v6 HTTP transport with timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread test, eligibility and allocation parity fixtures, rate limiting, circuit breaker, idempotency, 15 focused tests, and Docker-backed Testcontainers parity against the real Python serving image completed. |
-| P4-04 | Phase 4 — Enterprise Integration & Scale | Enterprise persistence layer and cryptographic audit store. | In progress | [#188](https://github.com/anilreddy89/Inforsight/issues/188) | TBD | 2026-09-19 | — | [phase document](../phase_docs/phase-04-04-persistence-and-cryptographic-audit-ledger.md), Flyway migrations, PostgreSQL schema, cryptographic audit store | PostgreSQL 16/Flyway baseline, mandatory point-in-time snapshot binding, atomic case/queue creation, SHA-256 chain verification with checkpoint support, and persistent REST decision evidence are implemented. The local HMAC signer is a versioned test/development seam only—not KMS, key custody, or production-readiness evidence. Blocks P4-06. |
+| P4-04 | Phase 4 — Enterprise Integration & Scale | Enterprise persistence layer and cryptographic audit store. | Completed | [#188](https://github.com/anilreddy89/Inforsight/issues/188) | [#189](https://github.com/anilreddy89/Inforsight/pull/189) | 2026-09-19 | `a04d86d` | [phase document](../phase_docs/phase-04-04-persistence-and-cryptographic-audit-ledger.md), Flyway migrations, PostgreSQL schema, cryptographic audit store | Merged to `main`; PostgreSQL/Flyway persistence, mandatory point-in-time snapshot binding, atomic case/queue creation and decision/audit writes, SHA-256 chain and checkpoint verification, append-only row trigger, and persistence-profile REST evidence completed. Local HMAC signing remains a test/development seam—not KMS, key custody, independent checkpoint infrastructure, or production readiness. Blocks P4-06. |
 | P4-05 | Phase 4 — Enterprise Integration & Scale | Enterprise CRM and contact center connectors. | Planned | TBD | TBD | TBD | TBD | `services/control-plane/connectors/`, Salesforce FSC & Genesys/Twilio adapters | Bi-directional CRM task queuing and telephony dialer sync with strict cooldown guardrails and `authorized_to_act: false` enforcement. Blocks P4-06. |
 | P4-06 | Phase 4 — Enterprise Integration & Scale | Cloud infrastructure, Helm charts, and container orchestration. | Planned | TBD | TBD | TBD | TBD | `infra/docker/`, `infra/helm/inforsight`, `infra/docker-compose.yml` | Multi-stage Docker containerization, Kubernetes Helm charts with HPA, unified one-command local Docker Compose orchestration. Blocks P4-07. |
 | P4-07 | Phase 4 — Enterprise Integration & Scale | Enterprise scale qualification and release (`v0.4.0-enterprise-scale`). | Planned | TBD | TBD | TBD | TBD | `docs/release-notes/v0.4.0-enterprise-scale.md`, `docs/experiments/phase-04-qualification-*`, tag `v0.4.0-enterprise-scale` | Execute 100,000-policy distributed stress test; pass Enterprise Performance Gates E1–E6; release marker and close Milestone #5. |
@@ -136,14 +136,17 @@ Inforsight successfully completed Phase 2 (Baseline ML) and Phase 3 (Policy Cons
 16. Phase 3-09 is complete and merged to main in PR #125 (commit `ae34848`); 6 qualification gates S1–S6 evaluated across 1,000 policies with 100% pass rate and canonical digest `209a4c1f2b3fee5a551d724e5841cf857abecd3c669f797f17f130deaaf62d90`.
 17. Phase 3-10 is complete and merged to main in PR #127 (commit `dabc95b`); milestone release notes (`docs/release-notes/v0.3.0-decision-engine.md`), Phase 3 decision note (`docs/experiments/phase-03-10-phase-3-decision-note.md`), and tag `v0.3.0-decision-engine` formally close Milestone #4.
 18. Phase 4 roadmap established with 7 planned engineering increments (P4-01 through P4-07) for Milestone #5 (`v0.4.0-enterprise-scale`).
+19. P4-02 is complete and merged in PR #185 (commit `8caae8b`); versioned Kafka streaming contracts, validation, replay, deduplication, and DLQ behavior are covered by focused Testcontainers checks.
+20. P4-03 is complete and merged in PR #187 (commit `05580203f53b95a392c9523075343ce11bbc300e`); the Java 21/Spring Boot control-plane baseline, bounded inference, rules, allocation, and REST workflow are implemented.
+21. P4-04 is complete and merged in PR #189 (commit `a04d86d`); PostgreSQL persistence, point-in-time snapshot binding, durable queue state, and bounded audit-ledger verification are implemented without a production KMS or autonomous-execution claim.
 
-In one sentence: Phase 2, Phase 3, review hardening, and P4-02 are complete and released; P4-03 is the next planned Phase 4 increment.
+In one sentence: Phase 2, Phase 3, review hardening, and P4-02 through P4-04 are complete; P4-05 is the next Phase 4 increment.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 68 (current completed rows; includes RH-13 and P4-02 closeout) |
+| Completed tracked changes | 70 (current completed rows; includes P4-03 and P4-04 closeout) |
 | Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
-| Planned changes | P4-03 through P4-07 |
+| Planned changes | P4-05 through P4-07 |
 | Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
@@ -152,8 +155,8 @@ In one sentence: Phase 2, Phase 3, review hardening, and P4-02 are complete and 
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
-| Active increment | P4-03 implementation through issue #186 |
-| Next implementation increment | RH-10 durable-audit repairs or the next dependency-ready hardening item |
+| Active increment | P4-05 kickoff pending issue creation |
+| Next implementation increment | P4-05 CRM and contact-center connector contracts and governed adapter seams |
 
 ## Latest verification baseline
 

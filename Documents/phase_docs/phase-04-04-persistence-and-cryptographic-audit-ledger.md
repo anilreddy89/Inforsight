@@ -10,16 +10,17 @@ execution authority.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | Implementation in progress |
+| Status | Completed |
 | Depends on | P4-01, P4-02, P4-03, RH-13 `PROCEED` |
 | Blocks | P4-05, P4-06 |
 | Tracking issue | [#188](https://github.com/anilreddy89/Inforsight/issues/188) |
-| Pull request | TBD |
+| Pull request | [#189](https://github.com/anilreddy89/Inforsight/pull/189) |
 
 ## Current implementation evidence
 
-- Branch `implementation/p4-04-persistence-audit-ledger` starts from the P4-03
-  merge and owns the P4-04 implementation for issue #188.
+- P4-04 merged through PR [#189](https://github.com/anilreddy89/Inforsight/pull/189)
+  as `a04d86d`; issue [#188](https://github.com/anilreddy89/Inforsight/issues/188)
+  is closed.
 - Flyway migration `V1__p4_04_control_plane_persistence.sql` defines durable
   policy snapshots, cases, triage queues, idempotency records, and audit-ledger
   storage.
@@ -127,9 +128,9 @@ authority boundary.
   explicit local seam rather than a production integration.
 - [x] PostgreSQL Testcontainers integration tests pass with Docker Desktop and
   the repository's focused P4-04 make target.
-- [ ] Focused Java checks, relevant Python checks, and repository CI pass
+- [x] Focused Java checks, relevant Python checks, and repository CI pass
   without rewriting protected historical artifacts.
-- [ ] README, backlog, change tracker, roadmap, and this phase document are
+- [x] README, backlog, change tracker, roadmap, and this phase document are
   updated with issue/PR/merge evidence at closeout.
 
 ## Evidence and issue workflow
@@ -157,6 +158,15 @@ name such as `implementation/p4-04-persistence-audit-ledger`.
 
 ## Closeout evidence
 
-To be completed after implementation: issue number, PR number, merge commit,
-CI results, migration output, PostgreSQL integration output, ledger mutation
-verification output, and the final limitation statement.
+- Issue [#188](https://github.com/anilreddy89/Inforsight/issues/188) closed after
+  PR [#189](https://github.com/anilreddy89/Inforsight/pull/189) merged to `main`
+  as `a04d86d`.
+- Required PR CI passed before merge. `make p4-04-integration-check` recorded
+  21 passing tests, zero failures/errors, and one pre-existing opt-in inference
+  integration skip; it exercised PostgreSQL 16, all three Flyway migrations,
+  append-only trigger behavior, tamper verification, and persistence-profile
+  REST behavior.
+- The merge proves bounded local PostgreSQL persistence and audit integrity
+  behavior only. It does not claim production KMS/key custody, independent
+  checkpoint infrastructure, database-role separation, production deployment,
+  or autonomous execution.
