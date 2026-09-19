@@ -5,6 +5,7 @@ import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.InferenceClient;
 import com.inforsight.controlplane.domain.PolicyContext;
 import com.inforsight.controlplane.rules.EligibilityEngine;
+import com.inforsight.controlplane.resilience.TriageGuard;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.web.bind.annotation.*;
@@ -19,21 +20,29 @@ public class ControlPlaneController {
     private final InferenceClient inference;
     private final CaseStore cases;
     private final EligibilityEngine eligibility;
+    private final TriageGuard guard;
 
-    public ControlPlaneController(InferenceClient inference, CaseStore cases, EligibilityEngine eligibility) { this.inference = inference; this.cases = cases; this.eligibility = eligibility; }
+    public ControlPlaneController(InferenceClient inference, CaseStore cases, EligibilityEngine eligibility, TriageGuard guard) { this.inference = inference; this.cases = cases; this.eligibility = eligibility; this.guard = guard; }
 
     @PostMapping("/triage")
     public TriageResponse triage(@RequestBody TriageRequest request) {
+        guard.beforeRequest();
         if (request.policyIds() == null || request.policyIds().isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "policy_ids is required");
-        Instant asOf = request.asOfDate() == null ? Instant.now() : request.asOfDate();
-        List<CaseSummary> summaries = request.policyIds().stream().map(policyId -> {
-            InferenceScore score = inference.score(policyId, asOf);
-            PolicyContext context = new PolicyContext(policyId, asOf, "active", 365, false, 0, false, false, false, false, false, false, false, null);
-            eligibility.evaluate(context); // keep the rules firewall on the triage path; P4-03 does not bypass it
-            CaseStore.CaseRecord record = cases.create(policyId, asOf, score, "abstain");
-            return new CaseSummary(record.caseId(), policyId, score.operationalTier(), score.calibratedProbability(), record.recommendedAction(), record.state());
-        }).toList();
-        return new TriageResponse("batch_" + asOf.toEpochMilli(), summaries.size(), summaries.size(), 0.0, 0.0, summaries);
+        try {
+            Instant asOf = request.asOfDate() == null ? Instant.now() : request.asOfDate();
+            List<CaseSummary> summaries = request.policyIds().stream().map(policyId -> {
+                InferenceScore score = inference.score(policyId, asOf);
+                PolicyContext context = new PolicyContext(policyId, asOf, "active", 365, false, 0, false, false, false, false, false, false, false, null);
+                eligibility.evaluate(context); // keep the rules firewall on the triage path; P4-03 does not bypass it
+                CaseStore.CaseRecord record = cases.create(policyId, asOf, score, "abstain");
+                return new CaseSummary(record.caseId(), policyId, score.operationalTier(), score.calibratedProbability(), record.recommendedAction(), record.state());
+            }).toList();
+            guard.success();
+            return new TriageResponse("batch_" + asOf.toEpochMilli(), summaries.size(), summaries.size(), 0.0, 0.0, summaries);
+        } catch (RuntimeException failure) {
+            guard.failure();
+            throw failure;
+        }
     }
 
     @GetMapping("/{caseId}")

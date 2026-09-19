@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class CaseStore {
     private final Map<String, CaseRecord> records = new ConcurrentHashMap<>();
+    private final Map<String, CaseRecord> idempotentDecisions = new ConcurrentHashMap<>();
     public CaseRecord create(String policyId, Instant asOf, InferenceScore score, String action) {
         String id = "case_" + UUID.randomUUID();
         CaseRecord record = new CaseRecord(id, policyId, asOf, score, action, "RECOMMENDED", 0, false);
@@ -19,7 +20,9 @@ public class CaseStore {
         return record;
     }
     public Optional<CaseRecord> find(String caseId) { return Optional.ofNullable(records.get(caseId)); }
-    public CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey) {
+    public synchronized CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey) {
+        CaseRecord prior = idempotentDecisions.get(caseId + "\u0000" + idempotencyKey);
+        if (prior != null) return prior;
         CaseRecord current = records.get(caseId);
         if (current == null) throw new IllegalArgumentException("case not found");
         if (current.version() != expectedVersion) throw new IllegalStateException("case version conflict");
@@ -27,6 +30,7 @@ public class CaseStore {
         boolean authorized = "APPROVED".equals(decision) || "OVERRIDDEN".equals(decision);
         CaseRecord updated = new CaseRecord(current.caseId(), current.policyId(), current.asOf(), current.score(), current.recommendedAction(), "APPROVED".equals(decision) ? "HUMAN_REVIEWED" : "DISMISSED", current.version() + 1, authorized);
         records.replace(caseId, current, updated);
+        idempotentDecisions.put(caseId + "\u0000" + idempotencyKey, updated);
         return updated;
     }
     public record CaseRecord(String caseId, String policyId, Instant asOf, InferenceScore score, String recommendedAction, String state, long version, boolean authorizedToAct) {}

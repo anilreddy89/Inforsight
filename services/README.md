@@ -10,3 +10,12 @@ Run its focused checks with:
 ```bash
 mvn -f services/control-plane/pom.xml test
 ```
+
+The Docker-backed inference boundary test is opt-in:
+
+```bash
+make p4-03-integration-check
+```
+
+It requires a working Docker daemon and runs the Testcontainers test guarded
+by `INFORSIGHT_RUN_JAVA_INTEGRATION=1`.

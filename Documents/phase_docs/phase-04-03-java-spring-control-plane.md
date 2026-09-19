@@ -108,11 +108,16 @@ name such as `implementation/p4-03-java-spring-control-plane`.
 - The bounded inference adapter, triage, case retrieval, and human decision
   endpoints are covered by Spring MockMvc tests. Decision authority remains
   false until an explicit human decision is recorded.
+- Canonical eligibility parity fixtures cover active consented, missing-safety,
+  and legal-hold cases; the fixture suite is part of the focused Java checks.
+- Rate limiting and circuit-breaker guards are implemented on the triage path,
+  and decision idempotency keys are replay-safe in the bounded case store.
 - The opt-in HTTP inference adapter validates response policy identity,
   calibrated score fields, bundle metadata, and the `authorized_to_act: false`
   invariant. It applies bounded request timeout and retry behavior.
 - `make p4-03-check` and `mvn -f services/control-plane/pom.xml test` pass
-  locally with 7 tests, including 1,000 virtual-thread requests.
-- The real Python parity fixtures, rate limiting/circuit breaking, and
-  Testcontainers service integration are still open and must be completed
-  before this phase can be marked complete.
+  locally with 12 tests, including 1,000 virtual-thread requests. The
+  Docker-backed test is skipped unless explicitly enabled.
+- The real Python serving parity fixtures remain open. The opt-in
+  `make p4-03-integration-check` Testcontainers gate is wired but has not yet
+  passed locally because the Docker daemon is unavailable in this environment.
