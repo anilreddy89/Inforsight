@@ -169,12 +169,18 @@ causal uplift, or production performance. See the [RH-12 report](docs/experiment
 
 RH-13 completed the final hardening release gate with a bounded `PROCEED`
 decision on 2026-09-18 after 532 tests and read-only artifact checks passed.
-P4-02 implementation is complete on the [issue #184](https://github.com/anilreddy89/Inforsight/issues/184)
-branch, including the versioned contracts, local KRaft harness, adapter,
-validation, DLQ routing, out-of-order replay, and 10,000-event Testcontainers
-gate; PR/merge is pending. P4-03 remains blocked until P4-02 merges. This
-repository still does not claim production deployment, real-policyholder
-validation, or distributed-system performance.
+P4-02 is complete through [issue #184](https://github.com/anilreddy89/Inforsight/issues/184)
+and [PR #185](https://github.com/anilreddy89/Inforsight/pull/185), including
+versioned contracts, the local KRaft harness, adapter, validation, DLQ
+routing, out-of-order replay, and the 10,000-event Testcontainers gate.
+P4-03 is now in implementation through [issue #186](https://github.com/anilreddy89/Inforsight/issues/186)
+on the `implementation/p4-03-java-spring-control-plane` branch. The initial
+Spring Boot service, deterministic eligibility/allocation cores, bounded
+inference adapter, opt-in HTTP transport, bounded timeout/retry behavior,
+1,000-request virtual-thread test, and REST smoke tests are present; Python
+parity fixtures and container integration remain open acceptance work. This
+repository still does not claim production deployment,
+real-policyholder validation, or distributed-system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)

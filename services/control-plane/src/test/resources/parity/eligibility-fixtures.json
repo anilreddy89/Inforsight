@@ -1,0 +1,5 @@
+[
+  {"id":"active-consented","status":"active","tenure_days":365,"in_grace_period":false,"days_past_due":0,"has_active_claim":false,"has_legal_hold":false,"has_registered_dispute":false,"sms_opt_out":false,"email_opt_out":false,"phone_opt_out":false,"dnc_registered":false,"expected_eligible":["courtesy_reminder","specialist_phone_outreach","payment_method_remediation","abstain"]},
+  {"id":"missing-safety","status":"active","tenure_days":365,"in_grace_period":false,"days_past_due":0,"has_active_claim":null,"has_legal_hold":false,"has_registered_dispute":false,"sms_opt_out":false,"email_opt_out":false,"phone_opt_out":false,"dnc_registered":false,"expected_eligible":["abstain"]},
+  {"id":"legal-hold","status":"active","tenure_days":365,"in_grace_period":false,"days_past_due":0,"has_active_claim":false,"has_legal_hold":true,"has_registered_dispute":false,"sms_opt_out":false,"email_opt_out":false,"phone_opt_out":false,"dnc_registered":false,"expected_eligible":["abstain"]}
+]

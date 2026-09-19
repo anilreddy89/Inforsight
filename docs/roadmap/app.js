@@ -657,24 +657,24 @@ const timelineData = [
       {
         id: "P4-02",
         title: "Apache Kafka Streaming Ingress & Event Contracts",
-        status: "Implementation complete — PR pending",
-        commit: "Issue #184; Testcontainers gate passed; merge pending",
+        status: "Completed",
+        commit: "PR #185; merge 8caae8b",
         summary: {
           tech: "Real-time bitemporal streaming event ingress replacing batch playback; versioned Kafka topics, event deduplication, schema validation, and poison-pill dead letter queue (DLQ).",
           simple: "Real-Time Event Stream: Connecting live customer event data through Apache Kafka with automated duplicate filtering and error quarantine queues."
         },
-        checks: "Issue #184 implementation complete. Versioned JSON Schemas, local KRaft Compose harness, six event/DLQ topics, Python adapter, validation, deduplication, dual-time out-of-order replay, broker-backed DLQ routing, and the 10,000-event Testcontainers gate pass. PR/merge remains pending; P4-03 stays blocked until P4-02 merges."
+        checks: "Issue #184 closed through PR #185, merged as 8caae8b. Versioned JSON Schemas, local KRaft Compose harness, six event/DLQ topics, Python adapter, validation, deduplication, dual-time out-of-order replay, broker-backed DLQ routing, and the 10,000-event Testcontainers gate passed. P4-03 is now ready to start."
       },
       {
         id: "P4-03",
         title: "Java 21 / Spring Boot 3 Control Plane Microservice",
-        status: "Paused",
-        commit: "Pending",
+        status: "Implementation in progress",
+        commit: "Issue #186; branch implementation/p4-03-java-spring-control-plane",
         summary: {
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "RH-13 recorded PROCEED; implementation remains dependent on P4-02 and governed by the amended P4 contracts."
+        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, shared parity fixtures, bounded adapter, raw-v6 HTTP inference transport with timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread requests, rate limiting, circuit breaker, 15 focused Maven tests, and Docker-backed Testcontainers parity against the real Python serving image pass with Docker Desktop API 1.44 compatibility."
       },
       {
         id: "P4-04",

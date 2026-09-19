@@ -1,0 +1,16 @@
+[
+  {
+    "id": "bounded-two-resource-selection",
+    "budget_micros": 4500000,
+    "personnel_seconds": 360,
+    "candidates": [
+      {"policy_id":"p-2","action_type":"email","cost_micros":3000000,"personnel_seconds":360,"net_utility_micros":9000000,"eligible":true},
+      {"policy_id":"p-1","action_type":"sms","cost_micros":1500000,"personnel_seconds":0,"net_utility_micros":9000000,"eligible":true},
+      {"policy_id":"p-3","action_type":"phone","cost_micros":65000000,"personnel_seconds":3600,"net_utility_micros":100000000,"eligible":true}
+    ],
+    "expected_selected_policy_ids": ["p-1", "p-2"],
+    "expected_budget_used_micros": 4500000,
+    "expected_personnel_used_seconds": 360,
+    "expected_objective_micros": 18000000
+  }
+]

@@ -9,7 +9,7 @@ This tracker records what changed, what is planned, when work completed or is ex
 
 GitHub Issues and merged pull requests remain the authoritative work-item record. Update this tracker after an issue is created, implementation begins, a pull request opens, and the pull request merges.
 
-Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github.com/anilreddy89/Inforsight/milestone/6) (Milestone #6). Phase 4 Milestone #5 remains planned, but P4-02/P4-03 implementation is paused until RH-13 records `PROCEED`.
+Current release milestone: [**v0.4.0-enterprise-scale**](https://github.com/anilreddy89/Inforsight/milestone/5) (Milestone #5). The v0.3.1 hardening release is complete; P4-02 is merged and P4-03 is the next active increment.
 
 ## Status definitions
 
@@ -104,9 +104,9 @@ Current release milestone: [**v0.3.1-decision-engine-hardening**](https://github
 | RH-10 | Review hardening | Durable-audit repairs. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` Review hardening initiative | Independent predecessor for final reconciliation. |
 | RH-11 | Review hardening | Expand CI and perform read-only qualification of revised claims and boundaries. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-11 | Begins only after the declared implementation predecessors close. |
 | RH-12 | Review hardening | Regenerate affected evidence and reconcile public documentation and scientific/product claims. | Planned | [#128](https://github.com/anilreddy89/Inforsight/issues/128) (to amend when ready) | TBD | TBD | — | `docs/backlog.md` RH-12 | Sequentially follows RH-11; reconciles independent issue #130 without rewriting historical evidence. |
-| RH-13 | Review hardening | Qualify and release the hardening initiative; decide whether Phase 4 may resume. | Planned | TBD | TBD | TBD | — | `docs/backlog.md` RH-13 | Must record `PROCEED` before P4-02/P4-03 implementation starts. |
-| P4-02 | Phase 4 — Enterprise Integration & Scale | Apache Kafka streaming ingress and event contracts. | Paused | TBD | TBD | TBD | TBD | `data-contracts/streaming/`, Kafka producers/consumers, DLQ engine | P4-01 remains historical; implementation is blocked by RH-13 `PROCEED`. |
-| P4-03 | Phase 4 — Enterprise Integration & Scale | Java 21 / Spring Boot control plane microservice. | Paused | TBD | TBD | TBD | TBD | `services/control-plane/`, Spring Boot 3 app, Virtual Threads, rules engine port | Implementation is blocked by RH-13 `PROCEED` and later depends on P4-02. |
+| RH-13 | Review hardening | Qualify and release the hardening initiative; decide whether Phase 4 may resume. | Completed | [#182](https://github.com/anilreddy89/Inforsight/issues/182) | [#183](https://github.com/anilreddy89/Inforsight/pull/183) | 2026-09-18 | `f6e5a5d` | `docs/hardening/rh-13-release-decision-phase.md`, release `v0.3.1-decision-engine-hardening` | `PROCEED` recorded; the hardening release passed qualification and authorized P4-02/P4-03 to resume. |
+| P4-02 | Phase 4 — Enterprise Integration & Scale | Apache Kafka streaming ingress and event contracts. | Completed | [#184](https://github.com/anilreddy89/Inforsight/issues/184) | [#185](https://github.com/anilreddy89/Inforsight/pull/185) | 2026-09-18 | `8caae8b` | `data-contracts/streaming/`, Kafka producers/consumers, DLQ engine, [phase document](../phase_docs/phase-04-02-kafka-streaming-ingress.md) | Merged to `main`; versioned JSON Schema contracts, local KRaft harness, adapter, validation, deduplication, dual-time replay, DLQ routing, 10,000-event Testcontainers gate, and focused make targets completed. |
+| P4-03 | Phase 4 — Enterprise Integration & Scale | Java 21 / Spring Boot control plane microservice. | In progress | [#186](https://github.com/anilreddy89/Inforsight/issues/186) | TBD | 2026-09-18 | — | `services/control-plane/`, Spring Boot 3 app, Virtual Threads, rules engine port, [phase document](../phase_docs/phase-04-03-java-spring-control-plane.md) | Branch `implementation/p4-03-java-spring-control-plane`; Spring Boot scaffold, deterministic eligibility/allocation cores, bounded inference adapter, opt-in HTTP transport with raw-v6 request envelope, timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread test, eligibility and allocation parity fixtures, rate limiting, circuit breaker, idempotency, 15 focused tests, and Docker-backed Testcontainers parity against the real Python serving image pass. |
 | P4-04 | Phase 4 — Enterprise Integration & Scale | Enterprise persistence layer and cryptographic audit store. | Planned | TBD | TBD | TBD | TBD | Flyway migrations, PostgreSQL schema, cryptographic audit store | Relational persistence for cases and queues; append-only SHA-256 hash-chained audit store with KMS signing interface. Blocks P4-06. |
 | P4-05 | Phase 4 — Enterprise Integration & Scale | Enterprise CRM and contact center connectors. | Planned | TBD | TBD | TBD | TBD | `services/control-plane/connectors/`, Salesforce FSC & Genesys/Twilio adapters | Bi-directional CRM task queuing and telephony dialer sync with strict cooldown guardrails and `authorized_to_act: false` enforcement. Blocks P4-06. |
 | P4-06 | Phase 4 — Enterprise Integration & Scale | Cloud infrastructure, Helm charts, and container orchestration. | Planned | TBD | TBD | TBD | TBD | `infra/docker/`, `infra/helm/inforsight`, `infra/docker-compose.yml` | Multi-stage Docker containerization, Kubernetes Helm charts with HPA, unified one-command local Docker Compose orchestration. Blocks P4-07. |
@@ -137,22 +137,22 @@ Inforsight successfully completed Phase 2 (Baseline ML) and Phase 3 (Policy Cons
 17. Phase 3-10 is complete and merged to main in PR #127 (commit `dabc95b`); milestone release notes (`docs/release-notes/v0.3.0-decision-engine.md`), Phase 3 decision note (`docs/experiments/phase-03-10-phase-3-decision-note.md`), and tag `v0.3.0-decision-engine` formally close Milestone #4.
 18. Phase 4 roadmap established with 7 planned engineering increments (P4-01 through P4-07) for Milestone #5 (`v0.4.0-enterprise-scale`).
 
-In one sentence: Phase 2 and Phase 3 are complete and released; review hardening is active through RH-13, and P4-02/P4-03 remain paused until RH-13 records `PROCEED`.
+In one sentence: Phase 2, Phase 3, review hardening, and P4-02 are complete and released; P4-03 is the next planned Phase 4 increment.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 66 (current completed rows; Review hardening now includes RH-06D and RH-06I) |
+| Completed tracked changes | 68 (current completed rows; includes RH-13 and P4-02 closeout) |
 | Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
-| Planned changes | RH-08 through RH-13 plus P4-04 through P4-07 |
-| Paused changes | 2 (P4-02 and P4-03) |
+| Planned changes | P4-03 through P4-07 |
+| Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
-| Active Phase | Review hardening initiative (Milestone #6) |
-| Active increment | RH-09I complete through issue #171 / PR #172 |
+| Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
+| Active increment | P4-03 implementation through issue #186 |
 | Next implementation increment | RH-10 durable-audit repairs or the next dependency-ready hardening item |
 
 ## Latest verification baseline
