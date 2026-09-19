@@ -30,6 +30,11 @@ execution authority.
 - `make p4-04-integration-check` passes with PostgreSQL 16 in Testcontainers:
   Flyway migrates an empty database, chained entries verify, and a direct
   payload mutation is detected as `CURRENT_HASH_MISMATCH`.
+- `PersistentCaseRepository` now persists case creation and performs a human
+  decision transition, ledger append, and idempotency-record write in one
+  PostgreSQL transaction. The focused integration test proves replay returns
+  the original result without another ledger entry, stale versions are
+  rejected, and a simulated audit failure rolls back the case transition.
 - The default P4-03 local profile keeps datasource/Flyway autoconfiguration
   disabled while the persistent runtime profile and repository adapter are
   implemented; existing no-database control-plane tests remain runnable.

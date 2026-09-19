@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 /** PostgreSQL append-only ledger adapter. Callers must provide the surrounding transaction. */
-public final class AuditLedgerRepository {
+public final class AuditLedgerRepository implements AuditAppender {
     private final JdbcTemplate jdbc;
 
     public AuditLedgerRepository(JdbcTemplate jdbc) {
