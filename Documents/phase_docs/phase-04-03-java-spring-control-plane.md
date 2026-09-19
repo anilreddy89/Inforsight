@@ -11,10 +11,10 @@ boundary.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | Planned — issue pending |
+| Status | Implementation in progress |
 | Depends on | P4-01, P4-02, RH-13 `PROCEED` |
 | Blocks | P4-04, P4-05 |
-| Tracking issue | TBD |
+| Tracking issue | [#186](https://github.com/anilreddy89/Inforsight/issues/186) |
 | Pull request | TBD |
 
 ## Objective
@@ -93,3 +93,23 @@ checks pass.
 
 The implementation branch should start from updated `main` and use a stable
 name such as `implementation/p4-03-java-spring-control-plane`.
+
+## Current implementation evidence
+
+- Issue #186 is open on branch `implementation/p4-03-java-spring-control-plane`.
+- `services/control-plane/` contains a Java 21 / Spring Boot 3 Maven module,
+  virtual-thread configuration, snake-case REST mapping, and actuator health
+  endpoints.
+- Deterministic eligibility covers missing safety evidence, legal freezes,
+  policy viability, channel consent, cooling-off, grace-period, and tenure
+  gates.
+- Integer-capacity allocation uses bounded exact dynamic programming with
+  deterministic tie-breaking rather than a greedy approximation.
+- The bounded inference adapter, triage, case retrieval, and human decision
+  endpoints are covered by Spring MockMvc tests. Decision authority remains
+  false until an explicit human decision is recorded.
+- `make p4-03-check` and `mvn -f services/control-plane/pom.xml test` pass
+  locally with 5 tests.
+- The real inference transport/parity fixtures, resilience policies,
+  1,000-concurrent-request gate, and Testcontainers service integration are
+  still open and must be completed before this phase can be marked complete.

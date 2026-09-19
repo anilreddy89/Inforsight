@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: inforsight-control-plane
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  threads:
+    virtual:
+      enabled: true
+server:
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+inforsight:
+  contract-version: control-plane/1.0.0
+  inference:
+    base-url: http://localhost:8000

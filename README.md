@@ -173,9 +173,13 @@ P4-02 is complete through [issue #184](https://github.com/anilreddy89/Inforsight
 and [PR #185](https://github.com/anilreddy89/Inforsight/pull/185), including
 versioned contracts, the local KRaft harness, adapter, validation, DLQ
 routing, out-of-order replay, and the 10,000-event Testcontainers gate.
-P4-03 is now the active next increment. This repository still does not claim
-production deployment, real-policyholder validation, or distributed-system
-performance.
+P4-03 is now in implementation through [issue #186](https://github.com/anilreddy89/Inforsight/issues/186)
+on the `implementation/p4-03-java-spring-control-plane` branch. The initial
+Spring Boot service, deterministic eligibility/allocation cores, bounded
+inference adapter, and REST smoke tests are present; transport parity,
+resilience, concurrency, and container integration remain open acceptance
+work. This repository still does not claim production deployment,
+real-policyholder validation, or distributed-system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)

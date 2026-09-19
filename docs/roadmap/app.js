@@ -668,13 +668,13 @@ const timelineData = [
       {
         id: "P4-03",
         title: "Java 21 / Spring Boot 3 Control Plane Microservice",
-        status: "Planned — issue pending",
-        commit: "Pending",
+        status: "Implementation in progress",
+        commit: "Issue #186; branch implementation/p4-03-java-spring-control-plane",
         summary: {
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "RH-13 recorded PROCEED and P4-02 merged through PR #185. Create the implementation issue and branch from updated main; work remains governed by the amended P4 contracts and the P4-03 phase document."
+        checks: "Issue #186 is open on the implementation/p4-03-java-spring-control-plane branch. Spring Boot scaffold, deterministic eligibility/allocation cores, bounded inference adapter, REST endpoints, and 5 focused Maven tests pass. Real inference transport, resilience, 1,000-concurrency, and Testcontainers gates remain."
       },
       {
         id: "P4-04",
