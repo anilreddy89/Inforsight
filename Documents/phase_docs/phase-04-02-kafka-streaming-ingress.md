@@ -44,6 +44,6 @@ work for the Kafka integration slice.
 - `make p4-02-check` runs the focused fast path; use
   `make p4-02-integration-check` to include the Docker/Testcontainers gate.
 
-P4-02 implementation is complete on the issue branch; the pull request and
-merge into `main` remain the release workflow’s final steps. P4-03 remains
-blocked until that merge.
+P4-02 is complete through issue #184 and PR #185, merged into `main` as
+`8caae8b` on 2026-09-18. P4-03 is now eligible to begin from this merged
+baseline.

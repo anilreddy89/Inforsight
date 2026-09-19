@@ -1223,7 +1223,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Implementation complete through [issue #184](https://github.com/anilreddy89/Inforsight/issues/184); PR/merge pending.
+**Status:** Completed on 2026-09-18 through [issue #184](https://github.com/anilreddy89/Inforsight/issues/184) and [PR #185](https://github.com/anilreddy89/Inforsight/pull/185), merged to `main` as `8caae8b`.
 
 **Outcome:** High-throughput streaming event ingress replaces static JSONL batch playback, supporting real-time bitemporal policy event streams with schema validation and dead-letter queues.
 
@@ -1254,7 +1254,7 @@ P4-01 (Architecture Inception & ADR 0014)
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Eligible to resume after RH-13 `PROCEED`; implementation not started.
+**Status:** Ready to start after P4-02 merge; implementation not started and issue pending.
 
 **Outcome:** Production-grade Java 21 / Spring Boot microservice hosts the deterministic eligibility rules engine, knapsack uplift optimizer, and case triage queues with high concurrency.
 
@@ -1276,6 +1276,8 @@ P4-01 (Architecture Inception & ADR 0014)
 - [ ] Service integration tests pass using Testcontainers.
 
 **Depends on:** P4-01, P4-02. **Blocks:** P4-04, P4-05.
+
+See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-control-plane.md) for the implementation boundary, parity strategy, and issue checklist.
 
 ---
 

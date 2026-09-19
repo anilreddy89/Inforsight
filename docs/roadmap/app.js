@@ -657,24 +657,24 @@ const timelineData = [
       {
         id: "P4-02",
         title: "Apache Kafka Streaming Ingress & Event Contracts",
-        status: "Implementation complete — PR pending",
-        commit: "Issue #184; Testcontainers gate passed; merge pending",
+        status: "Completed",
+        commit: "PR #185; merge 8caae8b",
         summary: {
           tech: "Real-time bitemporal streaming event ingress replacing batch playback; versioned Kafka topics, event deduplication, schema validation, and poison-pill dead letter queue (DLQ).",
           simple: "Real-Time Event Stream: Connecting live customer event data through Apache Kafka with automated duplicate filtering and error quarantine queues."
         },
-        checks: "Issue #184 implementation complete. Versioned JSON Schemas, local KRaft Compose harness, six event/DLQ topics, Python adapter, validation, deduplication, dual-time out-of-order replay, broker-backed DLQ routing, and the 10,000-event Testcontainers gate pass. PR/merge remains pending; P4-03 stays blocked until P4-02 merges."
+        checks: "Issue #184 closed through PR #185, merged as 8caae8b. Versioned JSON Schemas, local KRaft Compose harness, six event/DLQ topics, Python adapter, validation, deduplication, dual-time out-of-order replay, broker-backed DLQ routing, and the 10,000-event Testcontainers gate passed. P4-03 is now ready to start."
       },
       {
         id: "P4-03",
         title: "Java 21 / Spring Boot 3 Control Plane Microservice",
-        status: "Paused",
+        status: "Planned — issue pending",
         commit: "Pending",
         summary: {
           tech: "Production Java 21 microservice using Virtual Threads (Project Loom) hosting deterministic eligibility rules, knapsack net-utility optimizer, and gRPC inference client.",
           simple: "High-Performance Java Engine: A dedicated Java 21 service handling thousands of cases at once, evaluating business rules and optimizing conservation budgets with sub-millisecond AI scoring."
         },
-        checks: "RH-13 recorded PROCEED; implementation remains dependent on P4-02 and governed by the amended P4 contracts."
+        checks: "RH-13 recorded PROCEED and P4-02 merged through PR #185. Create the implementation issue and branch from updated main; work remains governed by the amended P4 contracts and the P4-03 phase document."
       },
       {
         id: "P4-04",
