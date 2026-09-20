@@ -126,6 +126,12 @@ semantics, and failure dispositions must be frozen before qualification runs.
   accounted for exactly 4,000 accepted events with no loss; this is bounded
   Kafka restart/replay evidence, not yet the complete persistence-backed E5
   qualification report.
+- The opt-in `make p4-07-postgres-integration-check` now exercises Compose
+  PostgreSQL directly. It passed Flyway validation, detected a tampered audit
+  payload through the chained ledger verifier, and rehydrated a committed
+  case plus its audit hash after repository recreation. These are bounded E4/E5
+  persistence probes; they do not yet constitute the single distributed run
+  required by the final qualification report.
 - Distributed runtime execution, fault/restart evidence, measured throughput,
   measured latency, and Java/Python production-path parity remain open.
 
