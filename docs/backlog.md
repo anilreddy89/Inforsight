@@ -1308,22 +1308,21 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Outcome:** Bi-directional integration adapters connect Inforsight to enterprise customer relationship management (CRM) and contact center telephony platforms.
+**Status:** Completed through [issue #190](https://github.com/anilreddy89/Inforsight/issues/190) and [PR #191](https://github.com/anilreddy89/Inforsight/pull/191), merged as `b59f9ab`.
+
+**Outcome:** Governed connector preflight contracts represent bounded CRM and contact-center handoffs without external execution authority.
 
 **Scope:**
-- Implement CRM connector framework in `services/control-plane/connectors/`:
-  - **Salesforce Financial Services Cloud (FSC) Adapter:** Syncs prioritized cases to caseworker task queues and captures customer interaction outcomes.
-  - **Genesys Cloud / Twilio Dialer Adapter:** Formats specialist outreach batches for agent dialers with contact cooling-off guardrails.
-- Enforce strict ADR 0002 boundary: connector payloads explicitly mandate `authorized_to_act: false` until human caseworker clicks approve.
-- Provide webhook ingress for asynchronous outreach disposition callbacks (e.g. `PROMISE_TO_PAY`, `PAYMENT_RESOLVED`, `UNREACHABLE`).
+- Implemented fake-only Salesforce FSC and Genesys/Twilio adapter seams in `services/control-plane/connectors/`.
+- Enforced persisted case/version, consent, legal-hold, quiet-hour, cooldown, and idempotency guardrails.
+- Every outcome retains `authorized_to_act: false` and `external_execution_disabled: true`; no webhook or live transport was added.
 
 **Acceptance checks:**
-- [ ] Connector mocks verify bi-directional payload mapping and retry on upstream 5xx errors.
-- [ ] Cooldown compliance invariants reject outreach to policyholders contacted within the prior 30 days.
-- [ ] Unauthorized automated dispatch attempts fail at the connector boundary.
-- [ ] Unit and mock server integration tests pass.
+- [x] Versioned preflight contracts and fake adapter tests pass.
+- [x] Cooldown, consent, legal-hold, quiet-hour, stale-version, and idempotency invariants fail closed.
+- [x] PostgreSQL audit evidence records successful preflight without granting external execution.
 
-**Depends on:** P4-03. **Blocks:** P4-06.
+**Depends on:** P4-03, P4-04. **Blocks:** P4-06.
 
 ---
 
@@ -1331,25 +1330,23 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Outcome:** Production containerization, Kubernetes deployment manifests, and Helm charts enable reliable, scalable cloud deployment (AWS/GCP/local).
+**Status:** Planned through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192).
+
+**Outcome:** Reproducible local/container deployment artifacts and renderable Kubernetes configuration package the bounded Phase 4 services without claiming production cloud readiness.
 
 **Scope:**
-- Multi-stage minimal Dockerfiles for:
-  - Python inference gateway (`infra/docker/Dockerfile.inference`).
-  - Java control plane microservice (`infra/docker/Dockerfile.control-plane`).
-- Build comprehensive Helm chart `infra/helm/inforsight`:
-  - Deployments, Services, ConfigMaps, Secrets, and Ingress routing.
-  - Horizontal Pod Autoscaler (HPA) based on CPU/memory and queue depth.
-  - Readiness, liveness, and startup health probes.
-- Provide unified local development stack via Docker Compose (`infra/docker-compose.yml`) spinning up Kafka, PostgreSQL, Python Inference, and Java Control Plane.
+- Multi-stage, runtime-safe Dockerfiles for the Python inference-only runtime and Java control plane.
+- Helm chart `infra/helm/inforsight` with Deployments, Services, configuration references, probes, resources, and HPA.
+- Unified local Docker Compose topology for Kafka, PostgreSQL, inference, and the Java control plane with health checks.
+- Explicitly disabled connector execution and no committed credentials.
 
 **Acceptance checks:**
-- [ ] Container images build cleanly with zero high/critical CVE vulnerabilities.
-- [ ] Helm lint and dry-run validation pass cleanly.
-- [ ] Local Docker Compose stack launches with a single command and passes end-to-end health checks.
-- [ ] HPA configuration scales pods under synthetic load.
+- [ ] Docker build/configuration evidence passes with Docker available.
+- [ ] Helm render validation passes cleanly.
+- [ ] Local Docker Compose configuration and bounded health checks pass.
+- [ ] HPA configuration renders; P4-07 owns scale qualification.
 
-**Depends on:** P4-04, P4-05. **Blocks:** P4-07.
+**Depends on:** P4-04, P4-05. **Blocks:** P4-07. See the [P4-06 phase document](../Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md).
 
 ---
 

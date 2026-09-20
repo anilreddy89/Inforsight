@@ -679,35 +679,35 @@ const timelineData = [
       {
         id: "P4-04",
         title: "Enterprise Persistence & Cryptographic Audit Ledger",
-        status: "Planned",
-        commit: "Issue #188; implementation issue open",
+        status: "Completed",
+        commit: "Issue #188; PR #189; merge a04d86d",
         summary: {
           tech: "PostgreSQL relational persistence with Flyway migrations and immutable append-only SHA-256 cryptographic audit ledger with KMS signing interface.",
           simple: "Planned audit storage: Track policy snapshots and detect unauthorized history changes within an explicitly documented trust and recovery model."
         },
-        checks: "Issue #188 opened with the P4-04 phase document. Planned evidence: Flyway migrations, durable PostgreSQL case/queue state, atomic case-and-audit transactions, deterministic SHA-256 hash-chain verification across injected mutations, and a bounded KMS signing seam."
+        checks: "Issue #188 closed through PR #189, merged as a04d86d. PostgreSQL/Flyway persistence, point-in-time snapshot binding, atomic case/queue and audit writes, append-only ledger verification, and persistence-profile REST evidence passed; production KMS and autonomous execution remain out of scope."
       },
       {
         id: "P4-05",
         title: "Enterprise CRM & Contact Center Connectors",
-        status: "Planned",
-        commit: "Pending",
+        status: "Completed",
+        commit: "Issue #190; PR #191; merge b59f9ab",
         summary: {
           tech: "Bi-directional adapters for Salesforce Financial Services Cloud and telephony dialers (Genesys/Twilio) with strict ADR 0002 boundary and 30-day cooling-off guardrails.",
           simple: "CRM & Phone Adapters: Connecting triage queues to caseworker screens and dialers with strict anti-harassment safeguards and human authorization locks."
         },
-        checks: "services/control-plane/connectors/; mock integration tests; 100% rejection of unauthorized dispatch attempts."
+        checks: "Issue #190 closed through PR #191, merged as b59f9ab. Versioned fake-only preflight contracts, persisted case/version guardrails, consent/legal-hold/quiet-hour/cooldown checks, idempotency behavior, and PostgreSQL audit evidence passed; no live transport or external execution was added."
       },
       {
         id: "P4-06",
         title: "Cloud Infrastructure, Helm Charts & Orchestration",
-        status: "Planned",
-        commit: "Pending",
+        status: "Planned — Issue #192",
+        commit: "Issue #192; implementation not started",
         summary: {
           tech: "Multi-stage minimal Docker containerization, Kubernetes Helm charts with Horizontal Pod Autoscaling (HPA), and unified local Docker Compose orchestration.",
           simple: "Cloud & Kubernetes Packaging: Production container images and Kubernetes deployment charts with automatic scaling under load."
         },
-        checks: "infra/helm/inforsight; Docker Compose healthchecks; zero high/critical CVEs in container scans."
+        checks: "Issue #192 opened with the P4-06 phase document. Planned evidence: multi-stage non-root images, bounded Docker Compose health checks, rendered Helm Deployments/Services/probes/resources/HPA, and explicit local-only deployment limitations."
       },
       {
         id: "P4-07",

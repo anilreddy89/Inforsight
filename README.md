@@ -173,13 +173,11 @@ P4-02 is complete through [issue #184](https://github.com/anilreddy89/Inforsight
 and [PR #185](https://github.com/anilreddy89/Inforsight/pull/185), including
 versioned contracts, the local KRaft harness, adapter, validation, DLQ
 routing, out-of-order replay, and the 10,000-event Testcontainers gate.
-P4-03 is now in implementation through [issue #186](https://github.com/anilreddy89/Inforsight/issues/186)
-on the `implementation/p4-03-java-spring-control-plane` branch. The initial
-Spring Boot service, deterministic eligibility/allocation cores, bounded
-inference adapter, opt-in HTTP transport, bounded timeout/retry behavior,
-1,000-request virtual-thread test, and REST smoke tests are present; Python
-parity fixtures and container integration remain open acceptance work. This
-repository still does not claim production deployment,
+P4-03 through P4-05 are complete through [PR #187](https://github.com/anilreddy89/Inforsight/pull/187),
+[PR #189](https://github.com/anilreddy89/Inforsight/pull/189), and [PR #191](https://github.com/anilreddy89/Inforsight/pull/191).
+P4-06 is now planned through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192)
+to package the bounded services with local Docker Compose and renderable Helm
+configuration. The repository still does not claim production cloud deployment,
 real-policyholder validation, or distributed-system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
