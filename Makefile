@@ -72,7 +72,7 @@ p4-02-check: streaming-check
 p4-02-integration-check: p4-02-check streaming-integration-check
 
 # Focused P4-03 Java control-plane checks.
-.PHONY: p4-03-integration-check p4-04-check p4-04-integration-check p4-05-check p4-06-check p4-07-check
+.PHONY: p4-03-integration-check p4-04-check p4-04-integration-check p4-05-check p4-06-check p4-07-check p4-07-integration-check
 p4-03-check:
 	mvn -f services/control-plane/pom.xml test
 
@@ -101,6 +101,9 @@ p4-07-check:
 	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) scripts/run_p4_07_qualification.py --check
 	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) -m unittest simulator.tests.test_p4_07_qualification -v
 	mvn -f services/control-plane/pom.xml -Dtest=BoundedStreamingEventHandlerTest test
+
+p4-07-integration-check:
+	INFORSIGHT_RUN_P4_07_INTEGRATION=1 mvn -f services/control-plane/pom.xml -Dtest=KafkaEventConsumerIntegrationTest test
 
 check-v1-v3: assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check v3-corpus-check v3-evaluation-check v3-acceptance-check
 
