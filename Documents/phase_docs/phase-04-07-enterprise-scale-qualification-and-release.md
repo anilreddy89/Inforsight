@@ -110,9 +110,11 @@ semantics, and failure dispositions must be frozen before qualification runs.
   deduplication, and commit-after-handler semantics. Enabling it in a
   qualification topology remains a separate integration step.
 - The opt-in `make p4-07-integration-check` is wired to a real Testcontainers
-  Kafka broker. The current workstation run is blocked because Docker Desktop's
-  exposed engine reports no usable server (`No valid Docker environment`);
-  this is environment evidence, not a passing distributed qualification.
+  Kafka broker and an explicit external-bootstrap path. Testcontainers could
+  not use the current Docker Desktop API metadata, but the same consumer test
+  passed against the healthy Compose Kafka broker at `localhost:9092`: the
+  governed envelope was consumed and its duplicate replay was deduplicated.
+  This proves the consumer seam only; it is not an E1–E6 scale qualification.
 - Distributed runtime execution, fault/restart evidence, measured throughput,
   measured latency, and Java/Python production-path parity remain open.
 

@@ -21,14 +21,24 @@ class KafkaEventConsumerIntegrationTest {
     @Test
     void consumesAndDeduplicatesARealKafkaEnvelope() throws Exception {
         Assumptions.assumeTrue("1".equals(System.getenv("INFORSIGHT_RUN_P4_07_INTEGRATION")));
+        String externalBootstrap = System.getenv("INFORSIGHT_P4_07_KAFKA_BOOTSTRAP_SERVERS");
+        if (externalBootstrap != null && !externalBootstrap.isBlank()) {
+            exercise(externalBootstrap);
+            return;
+        }
         DockerImageName image = DockerImageName.parse("confluentinc/cp-kafka:7.6.0")
                 .asCompatibleSubstituteFor("apache/kafka");
         try (KafkaContainer kafka = new KafkaContainer(image)) {
             kafka.start();
+            exercise(kafka.getBootstrapServers());
+        }
+    }
+
+    private static void exercise(String bootstrapServers) throws Exception {
             BoundedStreamingEventHandler handler = new BoundedStreamingEventHandler(new ObjectMapper());
-            KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka.getBootstrapServers(), "p4-07-test-group", TOPIC);
+            KafkaEventConsumer consumer = new KafkaEventConsumer(handler, bootstrapServers, "p4-07-test-group", TOPIC);
             consumer.start();
-            try (KafkaProducer<String, String> producer = producer(kafka.getBootstrapServers())) {
+            try (KafkaProducer<String, String> producer = producer(bootstrapServers)) {
                 String event = "{\"schema_version\":\"1.0.0\",\"event_id\":\"evt_000000000001\",\"idempotency_key\":\"idem-1\",\"policy_id\":\"policy-1\",\"event_type\":\"policy.issued\"}";
                 producer.send(new ProducerRecord<>(TOPIC, "evt_000000000001", event)).get();
                 producer.send(new ProducerRecord<>(TOPIC, "evt_000000000001", event)).get();
@@ -40,7 +50,6 @@ class KafkaEventConsumerIntegrationTest {
             } finally {
                 consumer.stop();
             }
-        }
     }
 
     private static KafkaProducer<String, String> producer(String bootstrapServers) {
