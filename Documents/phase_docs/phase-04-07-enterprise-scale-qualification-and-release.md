@@ -65,8 +65,8 @@ semantics, and failure dispositions must be frozen before qualification runs.
 
 ## Acceptance checks
 
-- [ ] E1–E6 are frozen with exact thresholds, workload, and failure semantics.
-- [ ] The 100,000-policy workload is reproducible and cryptographically bound
+- [x] E1–E6 are frozen with exact thresholds, workload, and failure semantics.
+- [x] The 100,000-policy workload is reproducible and cryptographically bound
   to its configuration and runtime versions.
 - [ ] Throughput and latency evidence is complete, bounded, and reproducible.
 - [ ] Authority isolation and audit tamper scenarios fail closed.
@@ -87,6 +87,18 @@ semantics, and failure dispositions must be frozen before qualification runs.
 - Full repository and CI results.
 - Release notes and final decision record, including any failed or deferred
   gate and the resulting claim boundary.
+
+## Implementation evidence
+
+- `make p4-07-check` passes with 8 focused tests.
+- The dependency-free preflight freezes the 100,000-policy/200,000-event
+  workload and E1–E6 gate inventory.
+- Stable manifest SHA-256: `00c7af00458fcd9cefc69864523eac984b125ed70d7640cb60b8bbc7c7499228`.
+- Missing or non-numeric runtime measurements produce `stop` with
+  `insufficient_evidence`; even a synthetic all-gates pass does not set
+  `release_authorized` to true.
+- Distributed runtime execution, fault/restart evidence, measured throughput,
+  measured latency, and Java/Python production-path parity remain open.
 
 ## Current status
 

@@ -1372,6 +1372,8 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 - Prepare annotated Git release tag `v0.4.0-enterprise-scale` and close GitHub Milestone #5.
 
 **Acceptance checks:**
+- [x] E1–E6 are pre-registered with exact thresholds, workload, and fail-closed semantics.
+- [x] The 100,000-policy workload identity is reproducible and cryptographically bound.
 - [ ] All 6 Enterprise Performance Gates (E1–E6) pass 100%.
 - [ ] Enterprise Qualification Report and cryptographic manifest published.
 - [ ] Release notes document deployment topologies, scaling benchmarks, and operator guides.
