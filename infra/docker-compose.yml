@@ -1,8 +1,5 @@
-# NON-RUNNABLE PHASE 4 TOPOLOGY SKETCH.
-# Kafka, PostgreSQL, Java, gRPC, and this full-stack composition are outside
-# RH-06 and cannot be used as inference-runtime verification evidence. Use
-# serving/Dockerfile directly for the bounded HTTP runtime.
-version: '3.8'
+# P4-06 local bounded topology. This is an evidence harness, not a production
+# deployment claim. Start with: docker compose -f infra/docker-compose.yml up.
 
 services:
   # ============================================================================
@@ -10,7 +7,6 @@ services:
   # ============================================================================
   kafka:
     image: confluentinc/cp-kafka:7.6.0
-    container_name: inforsight-kafka
     ports:
       - "9092:9092"
     environment:
@@ -41,9 +37,8 @@ services:
   # ============================================================================
   postgres:
     image: postgres:16-alpine
-    container_name: inforsight-postgres
     ports:
-      - "5432:5432"
+      - "${INFORSIGHT_POSTGRES_PORT:-5433}:5432"
     environment:
       POSTGRES_DB: inforsight_enterprise
       POSTGRES_USER: inforsight_app
@@ -65,17 +60,14 @@ services:
     build:
       context: ..
       dockerfile: infra/docker/Dockerfile.inference
-    container_name: inforsight-inference-runtime
     ports:
-      - "8000:8000"   # FastAPI HTTP/REST & Diagnostics
-      - "50051:50051" # gRPC Low-Latency Scoring RPC
+      - "8000:8000"   # FastAPI HTTP/REST & diagnostics
     environment:
       INFERENCE_HOST: "0.0.0.0"
       INFERENCE_REST_PORT: "8000"
-      INFERENCE_GRPC_PORT: "50051"
-      MODEL_BUNDLE_PATH: "serving/model_bundle_v6_logistic.json"
+      INFORSIGHT_MODEL_BUNDLE_PATH: "/app/model/model-bundle.json"
     healthcheck:
-      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/v1/health')\""]
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -89,16 +81,16 @@ services:
     build:
       context: ..
       dockerfile: infra/docker/Dockerfile.control-plane
-    container_name: inforsight-control-plane
     ports:
       - "8080:8080"   # Spring Boot REST API
     environment:
-      SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/inforsight_enterprise"
-      SPRING_DATASOURCE_USERNAME: "inforsight_app"
-      SPRING_DATASOURCE_PASSWORD: "dev_insecure_local_password"
-      INFERENCE_SERVICE_HOST: "inference-runtime"
-      INFERENCE_SERVICE_PORT: "50051"
+      SPRING_PROFILES_ACTIVE: persistence
+      INFORSIGHT_DB_URL: "jdbc:postgresql://postgres:5432/inforsight_enterprise"
+      INFORSIGHT_DB_USERNAME: "inforsight_app"
+      INFORSIGHT_DB_PASSWORD: "dev_insecure_local_password"
+      INFORSIGHT_EXTERNAL_EXECUTION_ENABLED: "false"
+      INFORSIGHT_AUTHORIZED_TO_ACT: "false"
+      INFORSIGHT_INFERENCE_BASE_URL: "http://inference-runtime:8000"
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
     depends_on:
       postgres:
