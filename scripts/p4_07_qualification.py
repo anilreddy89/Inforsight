@@ -21,6 +21,19 @@ EVENTS_PER_POLICY = 2
 WORKLOAD_SEED = 407_2026
 THROUGHPUT_MIN_EVENTS_PER_SECOND = 5_000.0
 LATENCY_P99_MAX_MS = 50.0
+REQUIRED_EVIDENCE_FIELDS = (
+    "run_id",
+    "measurement_source",
+    "topology_identity",
+    "workload_sha256",
+    "observed_event_count",
+    "dropped_event_count",
+    "measurement_window_seconds",
+    "authority_probe_count",
+    "tamper_probe_count",
+    "restart_probe_count",
+    "parity_fixture_count",
+)
 
 
 @dataclass(frozen=True)
@@ -168,16 +181,61 @@ def evaluate_gates(measurements: Mapping[str, Any] | None) -> dict[str, Any]:
     }
 
 
+def validate_measurement_evidence(measurements: Mapping[str, Any] | None) -> list[str]:
+    """Validate the evidence binding required before gate results are trusted."""
+
+    if not isinstance(measurements, Mapping):
+        return ["measurements must be a JSON object"]
+    expected_workload = manifest()["workload"]
+    violations: list[str] = []
+    for field in REQUIRED_EVIDENCE_FIELDS:
+        if field not in measurements:
+            violations.append(f"missing evidence field: {field}")
+    if violations:
+        return violations
+    if not isinstance(measurements["run_id"], str) or not measurements["run_id"]:
+        violations.append("run_id must be a non-empty string")
+    if measurements["measurement_source"] not in {
+        "distributed_testcontainers",
+        "distributed_compose",
+        "kubernetes_cluster",
+    }:
+        violations.append("measurement_source must identify a distributed execution harness")
+    if not isinstance(measurements["topology_identity"], str) or not measurements["topology_identity"]:
+        violations.append("topology_identity must be a non-empty string")
+    if measurements["workload_sha256"] != expected_workload["workload_sha256"]:
+        violations.append("measurement workload identity mismatch")
+    if measurements["observed_event_count"] != expected_workload["event_count"]:
+        violations.append("observed event count does not match the frozen workload")
+    if measurements["dropped_event_count"] != 0:
+        violations.append("dropped events are not permitted")
+    if _measurement_number(measurements, "measurement_window_seconds") is None or measurements["measurement_window_seconds"] <= 0:
+        violations.append("measurement window must be positive")
+    for field in ("authority_probe_count", "tamper_probe_count", "restart_probe_count", "parity_fixture_count"):
+        if isinstance(measurements[field], bool) or not isinstance(measurements[field], int) or measurements[field] <= 0:
+            violations.append(f"{field} must be a positive integer")
+    return violations
+
+
 def qualification_report(measurements: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """Return a report whose release decision is bounded by gate evidence."""
 
     stable_manifest = manifest()
+    evidence_violations = validate_measurement_evidence(measurements) if measurements is not None else [
+        "runtime measurements were not supplied"
+    ]
+    gate_evaluation = evaluate_gates(measurements)
+    if evidence_violations:
+        gate_evaluation = dict(gate_evaluation)
+        gate_evaluation["decision"] = "stop"
     return {
         "contract_version": CONTRACT_VERSION,
         "manifest_sha256": stable_manifest["manifest_sha256"],
         "workload_sha256": stable_manifest["workload"]["workload_sha256"],
         "measurements": dict(measurements or {}),
-        "gate_evaluation": evaluate_gates(measurements),
+        "evidence_valid": not evidence_violations,
+        "evidence_violations": evidence_violations,
+        "gate_evaluation": gate_evaluation,
         "release_authorized": False,
         "claim_boundary": (
             "Synthetic qualification evidence only; no production, customer, "
@@ -218,4 +276,3 @@ def validate_contract() -> list[str]:
 def write_json(path: Path, value: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-

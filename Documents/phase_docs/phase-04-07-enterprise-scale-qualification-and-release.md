@@ -90,13 +90,17 @@ semantics, and failure dispositions must be frozen before qualification runs.
 
 ## Implementation evidence
 
-- `make p4-07-check` passes with 8 focused tests.
+- `make p4-07-check` passes with 10 focused tests.
 - The dependency-free preflight freezes the 100,000-policy/200,000-event
   workload and E1–E6 gate inventory.
 - Stable manifest SHA-256: `00c7af00458fcd9cefc69864523eac984b125ed70d7640cb60b8bbc7c7499228`.
 - Missing or non-numeric runtime measurements produce `stop` with
   `insufficient_evidence`; even a synthetic all-gates pass does not set
   `release_authorized` to true.
+- Runtime measurements must bind a run ID, distributed measurement source,
+  topology identity, exact workload digest and event count, zero drops,
+  positive measurement window, and authority/tamper/restart/parity probe
+  counts.
 - Distributed runtime execution, fault/restart evidence, measured throughput,
   measured latency, and Java/Python production-path parity remain open.
 
