@@ -65,9 +65,9 @@ and `authorized_to_act: false` boundaries at every deployment surface.
   probes, resources, configuration boundaries, and HPA behavior.
 - [x] Default deployment configuration preserves
   `authorized_to_act: false` and `external_execution_disabled: true`.
-- [x] Focused checks and `make p4-06-check` pass; `make check` and required CI
-  checks remain as final acceptance work.
-- [ ] Documentation and limitation statements distinguish local deployment
+- [x] Focused checks, `make p4-06-check`, and the full local `make check` pass;
+  required PR CI checks remain as final acceptance work.
+- [x] Documentation and limitation statements distinguish local deployment
   evidence from production readiness.
 
 ## Evidence plan
@@ -84,6 +84,9 @@ and `authorized_to_act: false` boundaries at every deployment surface.
 ## Implementation evidence
 
 - `make p4-06-check` passes with dependency-free structural checks.
+- Full `make check` passes: 546 tests passed, with one optional Kafka
+  integration test skipped because `INFORSIGHT_RUN_KAFKA_INTEGRATION=1` was not
+  enabled.
 - `docker compose -f infra/docker-compose.yml config --quiet` passes.
 - `helm lint infra/helm/inforsight` and `helm template` pass; the chart renders
   control-plane/inference/PostgreSQL Services and Deployments, probes, resource
