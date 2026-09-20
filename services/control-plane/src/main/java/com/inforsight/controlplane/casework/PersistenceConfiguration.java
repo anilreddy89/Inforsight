@@ -31,9 +31,9 @@ public class PersistenceConfiguration {
     }
 
     @Bean
-    ConnectorPreflightService connectorPreflightService(AuditLedgerRepository audit) {
+    ConnectorPreflightService connectorPreflightService(AuditLedgerRepository audit, CaseWorkflow cases) {
         var adapters = new EnumMap<ConnectorTarget, ConnectorAdapter>(ConnectorTarget.class);
         for (ConnectorTarget target : ConnectorTarget.values()) adapters.put(target, new FakeConnectorAdapter(target));
-        return new ConnectorPreflightService(adapters, audit);
+        return new ConnectorPreflightService(adapters, audit, cases);
     }
 }

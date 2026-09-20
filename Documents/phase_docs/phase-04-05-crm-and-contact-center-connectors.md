@@ -68,20 +68,20 @@ record, or otherwise cause an external side effect.
 
 ## Acceptance checks
 
-- [ ] Connector contracts have explicit version, point-in-time identity,
+- [x] Connector contracts have explicit version, point-in-time identity,
   idempotency, and authority fields.
-- [ ] Salesforce FSC and Genesys/Twilio adapter interfaces compile with fake
+- [x] Salesforce FSC and Genesys/Twilio adapter interfaces compile with fake
   implementations only; no live transport is included.
-- [ ] Connector preflight fails closed for missing human decision, consent,
+- [x] Connector preflight fails closed for missing human decision, consent,
   legal hold, cooldown, quiet hours, duplicate idempotency key, or stale case
   version.
-- [ ] Every connector outcome retains `authorized_to_act: false` and reports
+- [x] Every connector outcome retains `authorized_to_act: false` and reports
   that external execution is disabled.
-- [ ] Connector preflight records are persisted and auditable without granting
+- [x] Connector preflight records are persisted and auditable without granting
   external execution authority.
-- [ ] Tests prove deterministic payloads, idempotency behavior, and all
+- [x] Tests prove deterministic payloads, idempotency behavior, and all
   fail-closed guardrail paths using fictional clean-room inputs.
-- [ ] `make p4-05-check`, relevant Java checks, and PR CI pass.
+- [x] `make p4-05-check`, relevant Java checks, and PR CI pass.
 - [ ] Documentation, tracker, issue, PR, and final limitation statement are
   updated at closeout.
 

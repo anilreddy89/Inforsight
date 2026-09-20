@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inforsight.controlplane.casework.CaseStore;
 import com.inforsight.controlplane.casework.PersistentCaseRepository;
 import com.inforsight.controlplane.domain.InferenceScore;
+import com.inforsight.controlplane.connectors.ConnectorAdapter;
+import com.inforsight.controlplane.connectors.ConnectorPreflightRequest;
+import com.inforsight.controlplane.connectors.ConnectorPreflightService;
+import com.inforsight.controlplane.connectors.ConnectorTarget;
+import com.inforsight.controlplane.connectors.FakeConnectorAdapter;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -17,6 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
+import java.util.EnumMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,15 +81,25 @@ class PostgresAuditLedgerIntegrationTest {
             assertThat(rehydratedRepository.find(initial.caseId())).contains(committed);
             assertThat(rehydratedRepository.auditHash(initial.caseId(), committed.version()))
                     .hasValueSatisfying(hash -> assertThat(hash).matches("[0-9a-f]{64}"));
+            var adapters = new EnumMap<ConnectorTarget, ConnectorAdapter>(ConnectorTarget.class);
+            for (var target : ConnectorTarget.values()) adapters.put(target, new FakeConnectorAdapter(target));
+            var connector = new ConnectorPreflightService(adapters, ledger, rehydratedRepository);
+            String snapshotId = jdbc.queryForObject("SELECT snapshot_id FROM control_case WHERE case_id = ?", String.class, initial.caseId());
+            var preflight = connector.preflight(new ConnectorPreflightRequest("connector-preflight/1.0.0", ConnectorTarget.SALESFORCE_FSC,
+                    initial.caseId(), committed.version(), initial.policyId(), snapshotId,
+                    rehydratedRepository.auditHash(initial.caseId(), committed.version()).orElseThrow(), "connector-idem-1",
+                    true, true, false, false, false, Instant.parse("2026-09-19T00:00:00Z")));
+            assertThat(preflight.status()).isEqualTo("PREFLIGHT_READY");
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(2);
             assertThat(repository.decide(initial.caseId(), "APPROVED", 0, "idem-1", "reviewer-1")).isEqualTo(committed);
             assertThat(jdbc.queryForObject("SELECT count(*) FROM decision_idempotency", Integer.class)).isEqualTo(1);
-            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(2);
             org.assertj.core.api.Assertions.assertThatThrownBy(() -> repository.decide(initial.caseId(), "DISMISSED", 0, "idem-1", "reviewer-1"))
                     .isInstanceOf(IllegalStateException.class).hasMessage("idempotency key request mismatch");
-            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(2);
             org.assertj.core.api.Assertions.assertThatThrownBy(() -> repository.decide(initial.caseId(), "DISMISSED", 0, "idem-stale", "reviewer-1"))
                     .isInstanceOf(IllegalStateException.class).hasMessage("case version conflict");
-            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(2);
 
             var rejectedRepository = new PersistentCaseRepository(jdbc, new ObjectMapper(),
                     new TransactionTemplate(new DataSourceTransactionManager(dataSource)), event -> { throw new IllegalStateException("audit unavailable"); });
@@ -92,7 +108,7 @@ class PostgresAuditLedgerIntegrationTest {
             org.assertj.core.api.Assertions.assertThatThrownBy(() -> rejectedRepository.decide(rejected.caseId(), "APPROVED", 0, "idem-rollback", "reviewer-1"))
                     .isInstanceOf(IllegalStateException.class).hasMessage("audit unavailable");
             assertThat(rejectedRepository.find(rejected.caseId())).contains(rejected);
-            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(1);
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM audit_ledger", Integer.class)).isEqualTo(2);
         }
     }
 
