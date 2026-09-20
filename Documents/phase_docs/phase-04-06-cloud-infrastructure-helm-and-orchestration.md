@@ -18,6 +18,93 @@ not claim production cloud readiness or live external execution.
 | Pull request | TBD |
 | Branch | `implementation/p4-06-cloud-infrastructure-helm-orchestration` |
 
+## Architecture Overview & Visual Poster
+
+![Phase 4.06 Architecture Poster](../../docs/assets/phase-04-06-architecture-poster.jpg)
+
+### Polyglot System Topology
+
+```mermaid
+flowchart TD
+    subgraph INGRESS["1. Streaming Event Ingress"]
+        KAFKA["Apache Kafka (KRaft Mode)\nPort: 9092 / 29092\nTopics: policy-lifecycle-events,\nbilling-payment-events"]
+    end
+
+    subgraph RUNTIMES["2. Polyglot Microservices Runtime"]
+        direction LR
+        subgraph INFERENCE["Perception Layer (Python 3.12)"]
+            FASTAPI["FastAPI / BundledInferenceEngine\nPort: 8000\nBundle: inforsight-v6-logistic-platt\nPlatt Calibration & Local Attribution"]
+            PERCEPT_GUARD["ADR 0002 Firewall:\nauthorized_to_act: false\nZero DB Access • Read-Only"]
+            FASTAPI --- PERCEPT_GUARD
+        end
+
+        subgraph CONTROL["Action Authority (Java 21 / Spring Boot 3)"]
+            SPRING["Spring Boot 3 / Project Loom\nPort: 8080\nVirtual Threads Concurrency"]
+            RULES["Rules Firewall & Knapsack Solver"]
+            HITL["Human-in-the-Loop Triage"]
+            CONNECTORS["Fake Connectors (Salesforce/Twilio)\nexternal_execution_disabled: true"]
+            SPRING --> RULES --> HITL --> CONNECTORS
+        end
+    end
+
+    subgraph PERSISTENCE["3. Persistence & Cryptographic Audit"]
+        POSTGRES["PostgreSQL 16 Alpine\nPort: 5432 / 5433\nDB: inforsight_enterprise"]
+        MIGRATIONS["Flyway Versioned Migrations"]
+        AUDIT["Immutable SHA-256 Hash-Chained Audit Ledger\nparent_hash ➔ current_hash\nHMAC/KMS Tamper Detection"]
+        POSTGRES --- MIGRATIONS
+        POSTGRES --- AUDIT
+    end
+
+    subgraph ORCHESTRATION["4. Orchestration & Packaging Baseline"]
+        COMPOSE["Local Docker Compose\nBridge: inforsight-network\nDependency-Ordered Health Gates"]
+        HELM["Kubernetes Helm Chart\ninfra/helm/inforsight\nDeployments, Services, ConfigMaps, Probes"]
+        HPA["Horizontal Pod Autoscaler\nTarget: 70% CPU | Replicas: 2 - 10"]
+    end
+
+    KAFKA -->|Bitemporal Event Stream| SPRING
+    SPRING -->|REST / HTTP Scoring Protocol| FASTAPI
+    SPRING -->|JDBC / Flyway Snapshots & Atomic Commits| POSTGRES
+    ORCHESTRATION -.->|Packages & Orchestrates| RUNTIMES
+    ORCHESTRATION -.->|Manages| PERSISTENCE
+```
+
+### Component Deployment Specifications
+
+- **Streaming Gateway: Apache Kafka (KRaft Mode)**:
+  - Container Image: `confluentinc/cp-kafka:7.6.0`
+  - Consensus: KRaft mode (zero ZooKeeper dependency).
+  - Ports: `9092` (host) / `29092` (container bridge network `inforsight-network`).
+  - Topics: `policy-lifecycle-events`, `billing-payment-events`, `customer-service-events`.
+  - Health check: `kafka-broker-api-versions --bootstrap-server localhost:9092`.
+
+- **Inference Runtime (Python 3.12 / FastAPI)**:
+  - Dockerfile: `infra/docker/Dockerfile.inference` (multi-stage non-root build as `inforsight`).
+  - Bundle: Frozen `inforsight-v6-logistic-platt-20260817` with Platt calibration and local attributions.
+  - Port: `8000`.
+  - Health check: `GET /health`.
+  - ADR 0002 Invariant: **Perception Authority Only** (`authorized_to_act: false`). Zero database access.
+
+- **Control Plane (Java 21 / Spring Boot 3)**:
+  - Dockerfile: `infra/docker/Dockerfile.control-plane` (Maven builder $\to$ Eclipse Temurin 21 JRE, non-root `inforsight:inforsight`).
+  - Concurrency: Java 21 Virtual Threads (Project Loom) with Spring profile `persistence`.
+  - Port: `8080`.
+  - Health check: `GET /actuator/health`.
+  - ADR 0002 Invariant: **Sole Action Authority**. Deterministic rules firewall, knapsack uplift optimizer, and human caseworker approval. Fake-only CRM connectors (`external_execution_disabled: true`).
+
+- **Persistence & Cryptographic Audit Store (PostgreSQL 16 Alpine)**:
+  - Container Image: `postgres:16-alpine`.
+  - Port: `5432` (host mapping `5433`).
+  - Migrations: Flyway schema migrations (`policy_snapshot`, `active_triage_queue`, `case_state`).
+  - Audit Ledger: Append-only `conservation_audit_ledger` with SHA-256 hash chaining (`parent_hash` $\to$ `current_hash`) and tamper detection.
+  - Health check: `pg_isready -U inforsight_app -d inforsight_enterprise`.
+
+- **Kubernetes Helm Chart (`infra/helm/inforsight`)**:
+  - Declarative manifests for `Deployments`, `ClusterIP Services`, `ConfigMaps`, and liveness/readiness probes.
+  - Resource boundaries: 500m CPU / 512Mi RAM request for application pods.
+  - Horizontal Pod Autoscaler (`autoscaling/v2`): Target 70% CPU utilization, 2–10 replicas.
+
+---
+
 ## Objective
 
 Define a coherent, reproducible deployment baseline for the Java control plane,
@@ -100,6 +187,16 @@ and `authorized_to_act: false` boundaries at every deployment surface.
   containers were not changed.
 - This evidence proves local reproducible packaging and health wiring only; it
   does not prove cloud deployment, CVE absence, production HA, SLOs, or scale.
+
+## Evidence Boundary Matrix
+
+| Dimension | Proven in P4-06 (Local Baseline) | Explicitly Deferred / Out of Scope |
+| :--- | :--- | :--- |
+| **Containerization** | Non-root multi-stage Docker builds pass cleanly for Python & Java | No public registry push, cloud vulnerability scanning, or CVE certification |
+| **Local Orchestration** | Docker Compose starts Kafka, Postgres, Inference, Control Plane with health gates | Not a production HA topology, managed cloud database, or disaster recovery claim |
+| **Kubernetes Packaging** | Helm templates render Deployments, Services, ConfigMaps, Probes, and HPA | No live production Kubernetes cluster, ingress certificates, or cloud DNS |
+| **External Connectors** | Enforced `authorized_to_act: false` and fake-only connector preflight | No live Salesforce FSC, Genesys, Twilio, or outbound telephony/SMS execution |
+| **Scale Qualification** | HPA specification defined with CPU 70% threshold (2–10 replicas) | 100,000-policy distributed stress test and E1–E6 gates owned by P4-07 |
 
 ## Issue workflow
 
