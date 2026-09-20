@@ -100,7 +100,7 @@ p4-06-check:
 p4-07-check:
 	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) scripts/run_p4_07_qualification.py --check
 	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) -m unittest simulator.tests.test_p4_07_qualification -v
-	mvn -f services/control-plane/pom.xml -Dtest=BoundedStreamingEventHandlerTest test
+	mvn -f services/control-plane/pom.xml -Dtest=BoundedStreamingEventHandlerTest,ConnectorPreflightServiceTest,AuditHashTest,EligibilityParityFixtureTest,PortfolioAllocatorTest test
 
 p4-07-integration-check:
 	INFORSIGHT_RUN_P4_07_INTEGRATION=1 mvn -f services/control-plane/pom.xml -Dtest=KafkaEventConsumerIntegrationTest test
