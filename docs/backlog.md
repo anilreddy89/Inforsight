@@ -1154,7 +1154,7 @@ PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safet
 - P4-01 stays completed as architecture-inception history; RH-09 amends rather than rewrites it.
 - P4-02 and P4-03 may now start implementation from the reconciled contracts because RH-13 recorded `PROCEED`; their own acceptance gates still apply.
 - P4-04 may refine its future design against RH-10, but must not implement against unsettled audit semantics.
-- P4-05 through P4-07 remain planned and inherit the amended contracts and qualification language after RH-13.
+- P4-05 through P4-06 are complete; P4-07 is now in implementation and inherits the amended contracts and qualification language after RH-13.
 - If schedule pressure requires independent Phase 4 preparation, limit it to reversible research or spike work with no frozen contracts and no release claim.
 - PostgreSQL/KMS deployment, production identity federation, CRM/telephony connectors, Kafka, Kubernetes, multi-region scaling, a new deep-learning or causal/uplift model, and a live LLM are explicitly outside RH.
 - Fresh acceptance seeds are optional: they strengthen confirmation but do not block RH-13 when the post-result protocol change remains disclosed and no fresh-confirmation claim is made.
@@ -1355,7 +1355,9 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Outcome:** Formal distributed system qualification under high-volume synthetic load, verification of Enterprise Performance Gates (E1–E6), and milestone release closeout.
+**Status:** In progress through [issue #195](https://github.com/anilreddy89/Inforsight/issues/195) on branch `implementation/p4-07-enterprise-scale-qualification`.
+
+**Outcome:** Formal distributed system qualification under high-volume synthetic load, verification of Enterprise Performance Gates (E1–E6), and milestone release closeout. See the [P4-07 phase document](../Documents/phase_docs/phase-04-07-enterprise-scale-qualification-and-release.md).
 
 **Scope:**
 - Execute distributed stress qualification runner on 100,000 synthetic policies across Kafka streaming cluster.
