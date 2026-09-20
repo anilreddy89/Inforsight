@@ -1330,7 +1330,7 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** Planned through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192).
+**Status:** In progress through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192) on branch `implementation/p4-06-cloud-infrastructure-helm-orchestration`.
 
 **Outcome:** Reproducible local/container deployment artifacts and renderable Kubernetes configuration package the bounded Phase 4 services without claiming production cloud readiness.
 
@@ -1341,10 +1341,10 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 - Explicitly disabled connector execution and no committed credentials.
 
 **Acceptance checks:**
-- [ ] Docker build/configuration evidence passes with Docker available.
-- [ ] Helm render validation passes cleanly.
-- [ ] Local Docker Compose configuration and bounded health checks pass.
-- [ ] HPA configuration renders; P4-07 owns scale qualification.
+- [x] Docker build/configuration evidence passes with Docker available.
+- [x] Helm render validation passes cleanly.
+- [x] Local Docker Compose configuration and bounded health checks pass.
+- [x] HPA configuration renders; P4-07 owns scale qualification.
 
 **Depends on:** P4-04, P4-05. **Blocks:** P4-07. See the [P4-06 phase document](../Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md).
 

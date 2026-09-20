@@ -1,0 +1,41 @@
+replicaCount: 1
+
+controlPlane:
+  image:
+    repository: inforsight-control-plane
+    tag: p4-06
+    pullPolicy: IfNotPresent
+  port: 8080
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits: { cpu: "1", memory: 1Gi }
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
+
+inference:
+  image:
+    repository: inforsight-inference
+    tag: p4-06
+    pullPolicy: IfNotPresent
+  port: 8000
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { cpu: "1", memory: 768Mi }
+
+postgres:
+  enabled: true
+  image: postgres:16-alpine
+  port: 5432
+  database: inforsight_enterprise
+  username: inforsight_app
+  password: local-development-only
+  storage: 1Gi
+
+externalKafka:
+  bootstrapServers: kafka:29092
+
+externalExecutionEnabled: false
+authorizedToAct: false

@@ -1,5 +1,32 @@
-# NON-RUNNABLE PHASE 4 HISTORICAL SCAFFOLD.
-#
-# RH-06 has one canonical HTTP image: ../../serving/Dockerfile (build context:
-# repository root). gRPC is not implemented. Do not build or use this file as
-# runtime, deployment, or verification evidence.
+# Multi-stage bounded HTTP inference image for the P4-06 local topology.
+# Build context is the repository root.
+
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+COPY inference-runtime /build/inference-runtime
+COPY serving/requirements.txt /build/serving-requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels /build/inference-runtime \
+    && pip install --no-cache-dir --user /build/wheels/inforsight_inference_runtime-1.0.0-py3-none-any.whl \
+    && pip install --no-cache-dir --user -r /build/serving-requirements.txt
+
+FROM python:3.12-slim AS runtime
+
+WORKDIR /app
+RUN groupadd -r inforsight && useradd -r -g inforsight -s /sbin/nologin -d /app inforsight
+COPY --from=builder --chown=inforsight:inforsight /root/.local /app/.local
+ENV PATH=/app/.local/bin:$PATH \
+    PYTHONPATH=/app \
+    INFORSIGHT_MODEL_BUNDLE_PATH=/app/model/model-bundle.json \
+    INFORSIGHT_EXPECTED_BUNDLE_SHA256=7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656 \
+    INFORSIGHT_EXPECTED_BUNDLE_ID=inforsight-v6-logistic-platt-20260817 \
+    INFORSIGHT_EXPECTED_BUNDLE_VERSION=1.0.0 \
+    INFORSIGHT_REQUIRE_TRUSTED_BUNDLE=true
+COPY docs/experiments/phase-02-10-model-bundle.json /app/model/model-bundle.json
+COPY serving /app/serving
+USER inforsight
+
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)" || exit 1
+CMD ["uvicorn", "serving.app:app", "--host", "0.0.0.0", "--port", "8000"]

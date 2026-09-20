@@ -11,12 +11,12 @@ not claim production cloud readiness or live external execution.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | Planned |
+| Status | In progress |
 | Depends on | P4-04, P4-05, ADR 0002 human authority boundary |
 | Blocks | P4-07 |
 | Tracking issue | [#192](https://github.com/anilreddy89/Inforsight/issues/192) |
 | Pull request | TBD |
-| Branch | TBD |
+| Branch | `implementation/p4-06-cloud-infrastructure-helm-orchestration` |
 
 ## Objective
 
@@ -57,16 +57,16 @@ and `authorized_to_act: false` boundaries at every deployment surface.
 
 ## Acceptance checks
 
-- [ ] Multi-stage Docker builds exist for the Java control plane and
+- [x] Multi-stage Docker builds exist for the Java control plane and
   inference-only runtime, using runtime-safe non-root defaults.
-- [ ] Docker Compose renders and starts the bounded local topology with
+- [x] Docker Compose renders and starts the bounded local topology with
   PostgreSQL, health checks, explicit ports, and no live connector transport.
-- [ ] Helm templates render successfully and define Deployments, Services,
+- [x] Helm templates render successfully and define Deployments, Services,
   probes, resources, configuration boundaries, and HPA behavior.
-- [ ] Default deployment configuration preserves
+- [x] Default deployment configuration preserves
   `authorized_to_act: false` and `external_execution_disabled: true`.
-- [ ] Focused checks and `make p4-06-check` pass; `make check` and required CI
-  checks pass without modifying protected artifacts.
+- [x] Focused checks and `make p4-06-check` pass; `make check` and required CI
+  checks remain as final acceptance work.
 - [ ] Documentation and limitation statements distinguish local deployment
   evidence from production readiness.
 
@@ -80,6 +80,23 @@ and `authorized_to_act: false` boundaries at every deployment surface.
   CI results.
 - Closeout evidence naming the exact deployment behavior proven and the
   production claims that remain deferred.
+
+## Implementation evidence
+
+- `make p4-06-check` passes with dependency-free structural checks.
+- `docker compose -f infra/docker-compose.yml config --quiet` passes.
+- `helm lint infra/helm/inforsight` and `helm template` pass; the chart renders
+  control-plane/inference/PostgreSQL Services and Deployments, probes, resource
+  limits, configuration boundaries, and a CPU HPA.
+- Docker Desktop built `inforsight-inference:p4-06` and
+  `inforsight-control-plane:p4-06` successfully. The Compose smoke test reached
+  healthy inference, PostgreSQL, Kafka, and control-plane services; inference
+  `/health` returned the expected trusted bundle identity and control-plane
+  `/actuator/health` returned `UP`.
+- The smoke-test stack was removed after verification. Existing unrelated local
+  containers were not changed.
+- This evidence proves local reproducible packaging and health wiring only; it
+  does not prove cloud deployment, CVE absence, production HA, SLOs, or scale.
 
 ## Issue workflow
 

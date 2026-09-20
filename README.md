@@ -175,9 +175,11 @@ versioned contracts, the local KRaft harness, adapter, validation, DLQ
 routing, out-of-order replay, and the 10,000-event Testcontainers gate.
 P4-03 through P4-05 are complete through [PR #187](https://github.com/anilreddy89/Inforsight/pull/187),
 [PR #189](https://github.com/anilreddy89/Inforsight/pull/189), and [PR #191](https://github.com/anilreddy89/Inforsight/pull/191).
-P4-06 is now planned through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192)
-to package the bounded services with local Docker Compose and renderable Helm
-configuration. The repository still does not claim production cloud deployment,
+P4-06 is now in implementation through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192)
+on branch `implementation/p4-06-cloud-infrastructure-helm-orchestration` to
+package the bounded services with local Docker Compose and renderable Helm
+configuration. Initial image, Compose, Helm, and local health evidence passes;
+the repository still does not claim production cloud deployment,
 real-policyholder validation, or distributed-system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
