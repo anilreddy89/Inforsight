@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inforsight.local/contracts/connectors/v1/connector-preflight.schema.json",
+  "title": "Inforsight connector preflight v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "target", "case_id", "case_version", "policy_id", "snapshot_id", "audit_hash", "idempotency_key", "authorized_to_act", "external_execution_disabled"],
+  "properties": {
+    "contract_version": {"const": "connector-preflight/1.0.0"},
+    "target": {"enum": ["SALESFORCE_FSC", "GENESYS", "TWILIO"]},
+    "case_id": {"type": "string", "minLength": 1},
+    "case_version": {"type": "integer", "minimum": 0},
+    "policy_id": {"type": "string", "minLength": 1},
+    "snapshot_id": {"type": "string", "minLength": 1},
+    "audit_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "authorized_to_act": {"const": false},
+    "external_execution_disabled": {"const": true}
+  }
+}

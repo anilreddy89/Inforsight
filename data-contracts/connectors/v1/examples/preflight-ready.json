@@ -1,0 +1,12 @@
+{
+  "contract_version": "connector-preflight/1.0.0",
+  "target": "SALESFORCE_FSC",
+  "case_id": "case-fictional-001",
+  "case_version": 1,
+  "policy_id": "policy-fictional-001",
+  "snapshot_id": "snapshot-fictional-001",
+  "audit_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "idempotency_key": "fictional-preflight-001",
+  "authorized_to_act": false,
+  "external_execution_disabled": true
+}
