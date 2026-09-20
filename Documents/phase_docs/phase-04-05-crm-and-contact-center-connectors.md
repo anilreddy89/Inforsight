@@ -15,6 +15,18 @@ actions disabled and `authorized_to_act: false`.
 | Tracking issue | [#190](https://github.com/anilreddy89/Inforsight/issues/190) |
 | Pull request | TBD |
 
+## Current implementation evidence
+
+- Versioned `connector-preflight/1.0.0` JSON Schema and a fictional example
+  require case/version, snapshot, audit, idempotency, target, and explicit
+  `authorized_to_act: false` / `external_execution_disabled: true` markers.
+- Java preflight contracts and deterministic fake adapters cover Salesforce FSC,
+  Genesys, and Twilio target types without a transport client or credentials.
+- `ConnectorPreflightService` rejects missing human review or consent, legal
+  hold, quiet hours, and cooldown; a ready preflight emits an
+  authority-neutral audit event and idempotent replay does not append again.
+- `make p4-05-check` passes with fictional clean-room inputs only.
+
 ## Objective
 
 Define and implement bounded CRM-task and contact-center synchronization ports
