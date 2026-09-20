@@ -83,6 +83,14 @@ class P407QualificationTests(unittest.TestCase):
             "tamper_probe_count": 10,
             "restart_probe_count": 3,
             "parity_fixture_count": 20,
+            "capabilities": {
+                "kafka_ingress": True,
+                "control_plane_consumer": True,
+                "inference_http": True,
+                "postgres_audit": True,
+                "restart_replay": True,
+                "parity_fixtures": True,
+            },
             "events_per_second": 5_000,
             "p99_latency_ms": 50,
             "unauthorized_dispatches": 0,
@@ -108,6 +116,7 @@ class P407QualificationTests(unittest.TestCase):
             "tamper_probe_count": 1,
             "restart_probe_count": 1,
             "parity_fixture_count": 1,
+            "capabilities": {},
         }
         violations = validate_measurement_evidence(measurements)
         self.assertIn("measurement workload identity mismatch", violations)

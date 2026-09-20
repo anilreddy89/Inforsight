@@ -33,6 +33,7 @@ REQUIRED_EVIDENCE_FIELDS = (
     "tamper_probe_count",
     "restart_probe_count",
     "parity_fixture_count",
+    "capabilities",
 )
 
 
@@ -214,6 +215,21 @@ def validate_measurement_evidence(measurements: Mapping[str, Any] | None) -> lis
     for field in ("authority_probe_count", "tamper_probe_count", "restart_probe_count", "parity_fixture_count"):
         if isinstance(measurements[field], bool) or not isinstance(measurements[field], int) or measurements[field] <= 0:
             violations.append(f"{field} must be a positive integer")
+    capabilities = measurements["capabilities"]
+    required_capabilities = (
+        "kafka_ingress",
+        "control_plane_consumer",
+        "inference_http",
+        "postgres_audit",
+        "restart_replay",
+        "parity_fixtures",
+    )
+    if not isinstance(capabilities, Mapping):
+        violations.append("capabilities must be an object")
+    else:
+        for capability in required_capabilities:
+            if capabilities.get(capability) is not True:
+                violations.append(f"missing runtime capability: {capability}")
     return violations
 
 

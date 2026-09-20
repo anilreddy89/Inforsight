@@ -101,6 +101,10 @@ semantics, and failure dispositions must be frozen before qualification runs.
   topology identity, exact workload digest and event count, zero drops,
   positive measurement window, and authority/tamper/restart/parity probe
   counts.
+- Runtime evidence must also prove the capabilities needed for an end-to-end
+  claim: Kafka ingress, a control-plane consumer, inference HTTP, PostgreSQL
+  audit, restart/replay, and parity fixtures. The current P4-06 topology does
+  not yet satisfy the control-plane-consumer capability, so E1–E6 remain open.
 - Distributed runtime execution, fault/restart evidence, measured throughput,
   measured latency, and Java/Python production-path parity remain open.
 
