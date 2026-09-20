@@ -100,6 +100,7 @@ p4-06-check:
 p4-07-check:
 	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) scripts/run_p4_07_qualification.py --check
 	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) -m unittest simulator.tests.test_p4_07_qualification -v
+	mvn -f services/control-plane/pom.xml -Dtest=BoundedStreamingEventHandlerTest test
 
 check-v1-v3: assessment-check observation-check temporal-split-check feature-pipeline-check logistic-baseline-check boosted-comparison-check feature-diagnostics-check scoring-authorization-check leakage-check v2-corpus-check v2-evaluation-check v2-acceptance-check v3-corpus-check v3-evaluation-check v3-acceptance-check
 
