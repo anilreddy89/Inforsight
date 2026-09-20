@@ -132,8 +132,13 @@ semantics, and failure dispositions must be frozen before qualification runs.
   case plus its audit hash after repository recreation. These are bounded E4/E5
   persistence probes; they do not yet constitute the single distributed run
   required by the final qualification report.
-- Distributed runtime execution, fault/restart evidence, measured throughput,
-  measured latency, and Java/Python production-path parity remain open.
+- The opt-in `make p4-07-latency-integration-check` measured 100 warmed HTTP
+  inference-to-case samples against the healthy Compose inference runtime. The
+  observed p99 was 4.748 ms, below the frozen 50 ms floor. This is bounded
+  HTTP component evidence only; Kafka ingress-to-case timing is still required
+  before E2 can be marked complete.
+- Combined distributed runtime execution, Kafka-to-case latency, fault/restart
+  evidence, and Java/Python production-path parity remain open.
 
 ## Current status
 
