@@ -179,6 +179,7 @@ P4-06 is now in implementation through [issue #192](https://github.com/anilreddy
 on branch `implementation/p4-06-cloud-infrastructure-helm-orchestration` to
 package the bounded services with local Docker Compose and renderable Helm
 configuration. Initial image, Compose, Helm, and local health evidence passes;
+configuration (see [Phase 4.06 Architecture](Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md) and [Infrastructure Guide](infra/README.md)). Initial image, Compose, Helm, and local health evidence passes;
 the repository still does not claim production cloud deployment,
 real-policyholder validation, or distributed-system performance.
 
