@@ -11,11 +11,11 @@ not claim production cloud readiness or live external execution.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | In progress |
+| Status | Completed on 2026-09-20 through [PR #193](https://github.com/anilreddy89/Inforsight/pull/193), merge commit `974b6a0` |
 | Depends on | P4-04, P4-05, ADR 0002 human authority boundary |
 | Blocks | P4-07 |
 | Tracking issue | [#192](https://github.com/anilreddy89/Inforsight/issues/192) |
-| Pull request | TBD |
+| Pull request | [#193](https://github.com/anilreddy89/Inforsight/pull/193) |
 | Branch | `implementation/p4-06-cloud-infrastructure-helm-orchestration` |
 
 ## Architecture Overview & Visual Poster
@@ -219,6 +219,14 @@ credentials, and external execution out of scope.
 
 ## Closeout evidence
 
-To be completed after implementation: PR number, merge commit, focused Docker
-and Helm evidence, required CI results, and the final local-only deployment
-limitation statement.
+- Implementation merged through [PR #193](https://github.com/anilreddy89/Inforsight/pull/193)
+  as `974b6a0`.
+- Follow-up architecture poster documentation merged through
+  [PR #194](https://github.com/anilreddy89/Inforsight/pull/194) as `5c2bf14`.
+- `make p4-06-check`, full `make check` (546 tests passed; one optional Kafka
+  integration test skipped), Docker image builds, Compose health smoke test,
+  and Helm lint/template validation passed.
+- The merged change proves a bounded local/container deployment baseline only;
+  production cloud deployment, managed infrastructure, credentials, live
+  external execution, and distributed scale qualification remain deferred to
+  P4-07 or later.

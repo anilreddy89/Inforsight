@@ -1330,7 +1330,7 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Status:** In progress through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192) on branch `implementation/p4-06-cloud-infrastructure-helm-orchestration`.
+**Status:** Completed through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192), [PR #193](https://github.com/anilreddy89/Inforsight/pull/193), merged as `974b6a0` on 2026-09-20. Follow-up architecture poster documentation merged through [PR #194](https://github.com/anilreddy89/Inforsight/pull/194) as `5c2bf14`.
 
 **Outcome:** Reproducible local/container deployment artifacts and renderable Kubernetes configuration package the bounded Phase 4 services without claiming production cloud readiness.
 
@@ -1345,8 +1345,9 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 - [x] Helm render validation passes cleanly.
 - [x] Local Docker Compose configuration and bounded health checks pass.
 - [x] HPA configuration renders; P4-07 owns scale qualification.
+- [x] Full local repository validation passes: 546 tests passed with one optional Kafka integration test skipped.
 
-**Depends on:** P4-04, P4-05. **Blocks:** P4-07. See the [P4-06 phase document](../Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md).
+**Depends on:** P4-04, P4-05. **Blocks:** P4-07. See the [P4-06 phase document](../Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md). Production cloud deployment, managed infrastructure, and distributed scale qualification remain out of scope.
 
 ---
 

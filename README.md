@@ -175,13 +175,15 @@ versioned contracts, the local KRaft harness, adapter, validation, DLQ
 routing, out-of-order replay, and the 10,000-event Testcontainers gate.
 P4-03 through P4-05 are complete through [PR #187](https://github.com/anilreddy89/Inforsight/pull/187),
 [PR #189](https://github.com/anilreddy89/Inforsight/pull/189), and [PR #191](https://github.com/anilreddy89/Inforsight/pull/191).
-P4-06 is now in implementation through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192)
-on branch `implementation/p4-06-cloud-infrastructure-helm-orchestration` to
-package the bounded services with local Docker Compose and renderable Helm
-configuration. Initial image, Compose, Helm, and local health evidence passes;
-configuration (see [Phase 4.06 Architecture](Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md) and [Infrastructure Guide](infra/README.md)). Initial image, Compose, Helm, and local health evidence passes;
-the repository still does not claim production cloud deployment,
-real-policyholder validation, or distributed-system performance.
+P4-06 is complete through [issue #192](https://github.com/anilreddy89/Inforsight/issues/192),
+[PR #193](https://github.com/anilreddy89/Inforsight/pull/193), merged as `974b6a0`,
+with the follow-up architecture poster in [PR #194](https://github.com/anilreddy89/Inforsight/pull/194).
+The phase packages the bounded services with local Docker Compose and renderable
+Helm configuration; Docker, Compose, Helm, focused checks, and the full local
+repository gate passed. See [Phase 4.06 Architecture](Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md)
+and the [Infrastructure Guide](infra/README.md). The repository still does not
+claim production cloud deployment, real-policyholder validation, or distributed
+system performance.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)

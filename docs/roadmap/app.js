@@ -701,13 +701,13 @@ const timelineData = [
       {
         id: "P4-06",
         title: "Cloud Infrastructure, Helm Charts & Orchestration",
-        status: "In progress — Issue #192",
-        commit: "Issue #192; implementation/p4-06-cloud-infrastructure-helm-orchestration",
+        status: "Completed",
+        commit: "Issue #192; PR #193; merge 974b6a0; poster PR #194",
         summary: {
           tech: "Multi-stage minimal Docker containerization, Kubernetes Helm charts with Horizontal Pod Autoscaling (HPA), and unified local Docker Compose orchestration.",
           simple: "Cloud & Kubernetes Packaging: Production container images and Kubernetes deployment charts with automatic scaling under load."
         },
-        checks: "Issue #192 is in implementation on branch implementation/p4-06-cloud-infrastructure-helm-orchestration. Docker images build, Compose and Helm render checks pass, and local inference/PostgreSQL/Kafka/control-plane health evidence is recorded; production cloud deployment and scale claims remain deferred."
+        checks: "Issue #192 closed through PR #193, merged as 974b6a0; architecture poster documentation followed in PR #194 as 5c2bf14. Docker images, Compose and Helm render checks, focused infrastructure checks, full local repository validation (546 passed; one optional Kafka integration test skipped), and local service health evidence passed; production cloud deployment and scale claims remain deferred."
       },
       {
         id: "P4-07",
