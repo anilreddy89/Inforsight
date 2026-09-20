@@ -108,7 +108,7 @@ Current release milestone: [**v0.4.0-enterprise-scale**](https://github.com/anil
 | P4-02 | Phase 4 — Enterprise Integration & Scale | Apache Kafka streaming ingress and event contracts. | Completed | [#184](https://github.com/anilreddy89/Inforsight/issues/184) | [#185](https://github.com/anilreddy89/Inforsight/pull/185) | 2026-09-18 | `8caae8b` | `data-contracts/streaming/`, Kafka producers/consumers, DLQ engine, [phase document](../phase_docs/phase-04-02-kafka-streaming-ingress.md) | Merged to `main`; versioned JSON Schema contracts, local KRaft harness, adapter, validation, deduplication, dual-time replay, DLQ routing, 10,000-event Testcontainers gate, and focused make targets completed. |
 | P4-03 | Phase 4 — Enterprise Integration & Scale | Java 21 / Spring Boot control plane microservice. | Completed | [#186](https://github.com/anilreddy89/Inforsight/issues/186) | [#187](https://github.com/anilreddy89/Inforsight/pull/187) | 2026-09-19 | `05580203f53b95a392c9523075343ce11bbc300e` | `services/control-plane/`, Spring Boot 3 app, Virtual Threads, rules engine port, [phase document](../phase_docs/phase-04-03-java-spring-control-plane.md) | Merged to `main`; Spring Boot scaffold, deterministic eligibility/allocation cores, bounded inference adapter, raw-v6 HTTP transport with timeout/retry and authority validation, REST endpoints with stable errors and replay-safe decisions, 1,000 virtual-thread test, eligibility and allocation parity fixtures, rate limiting, circuit breaker, idempotency, 15 focused tests, and Docker-backed Testcontainers parity against the real Python serving image completed. |
 | P4-04 | Phase 4 — Enterprise Integration & Scale | Enterprise persistence layer and cryptographic audit store. | Completed | [#188](https://github.com/anilreddy89/Inforsight/issues/188) | [#189](https://github.com/anilreddy89/Inforsight/pull/189) | 2026-09-19 | `a04d86d` | [phase document](../phase_docs/phase-04-04-persistence-and-cryptographic-audit-ledger.md), Flyway migrations, PostgreSQL schema, cryptographic audit store | Merged to `main`; PostgreSQL/Flyway persistence, mandatory point-in-time snapshot binding, atomic case/queue creation and decision/audit writes, SHA-256 chain and checkpoint verification, append-only row trigger, and persistence-profile REST evidence completed. Local HMAC signing remains a test/development seam—not KMS, key custody, independent checkpoint infrastructure, or production readiness. Blocks P4-06. |
-| P4-05 | Phase 4 — Enterprise Integration & Scale | Enterprise CRM and contact center connectors. | Implementation issue open | [#190](https://github.com/anilreddy89/Inforsight/issues/190) | TBD | 2026-09-19 | — | [phase document](../phase_docs/phase-04-05-crm-and-contact-center-connectors.md), `services/control-plane/connectors/`, Salesforce FSC & Genesys/Twilio adapter seams | Governed preflight and handoff contracts only: deterministic CRM-task/contact-center sync intents, fake adapters, strict consent/cooldown/quiet-hour/legal-hold guardrails, and `authorized_to_act: false`. No live transport, credentials, task creation, calls, or autonomous execution. Blocks P4-06. |
+| P4-05 | Phase 4 — Enterprise Integration & Scale | Enterprise CRM and contact center connectors. | Completed | [#190](https://github.com/anilreddy89/Inforsight/issues/190) | [#191](https://github.com/anilreddy89/Inforsight/pull/191) | 2026-09-20 | `b59f9ab` | [phase document](../phase_docs/phase-04-05-crm-and-contact-center-connectors.md), `services/control-plane/connectors/`, Salesforce FSC & Genesys/Twilio adapter seams | Merged to `main`; versioned fake-only CRM/contact-center preflight contracts use actual persisted case state/version, strict consent/cooldown/quiet-hour/legal-hold guardrails, idempotent replay rejection, and PostgreSQL audit evidence. No live transport, credentials, CRM/telephony action, or autonomous execution. Blocks P4-06. |
 | P4-06 | Phase 4 — Enterprise Integration & Scale | Cloud infrastructure, Helm charts, and container orchestration. | Planned | TBD | TBD | TBD | TBD | `infra/docker/`, `infra/helm/inforsight`, `infra/docker-compose.yml` | Multi-stage Docker containerization, Kubernetes Helm charts with HPA, unified one-command local Docker Compose orchestration. Blocks P4-07. |
 | P4-07 | Phase 4 — Enterprise Integration & Scale | Enterprise scale qualification and release (`v0.4.0-enterprise-scale`). | Planned | TBD | TBD | TBD | TBD | `docs/release-notes/v0.4.0-enterprise-scale.md`, `docs/experiments/phase-04-qualification-*`, tag `v0.4.0-enterprise-scale` | Execute 100,000-policy distributed stress test; pass Enterprise Performance Gates E1–E6; release marker and close Milestone #5. |
 
@@ -139,14 +139,15 @@ Inforsight successfully completed Phase 2 (Baseline ML) and Phase 3 (Policy Cons
 19. P4-02 is complete and merged in PR #185 (commit `8caae8b`); versioned Kafka streaming contracts, validation, replay, deduplication, and DLQ behavior are covered by focused Testcontainers checks.
 20. P4-03 is complete and merged in PR #187 (commit `05580203f53b95a392c9523075343ce11bbc300e`); the Java 21/Spring Boot control-plane baseline, bounded inference, rules, allocation, and REST workflow are implemented.
 21. P4-04 is complete and merged in PR #189 (commit `a04d86d`); PostgreSQL persistence, point-in-time snapshot binding, durable queue state, and bounded audit-ledger verification are implemented without a production KMS or autonomous-execution claim.
+22. P4-05 is complete and merged in PR #191 (commit `b59f9ab`); versioned fake-only CRM/contact-center preflight contracts, persisted-case guardrails, idempotency behavior, and PostgreSQL audit evidence are implemented without live transport or autonomous execution.
 
-In one sentence: Phase 2, Phase 3, review hardening, and P4-02 through P4-04 are complete; P4-05 is the next Phase 4 increment.
+In one sentence: Phase 2, Phase 3, review hardening, and P4-02 through P4-05 are complete; P4-06 is the next Phase 4 increment.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 70 (current completed rows; includes P4-03 and P4-04 closeout) |
+| Completed tracked changes | 71 (current completed rows; includes P4-05 closeout) |
 | Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
-| Planned changes | P4-05 through P4-07 |
+| Planned changes | P4-06 through P4-07 |
 | Paused changes | 0 |
 | In-progress changes | 0 |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
@@ -155,8 +156,8 @@ In one sentence: Phase 2, Phase 3, review hardening, and P4-02 through P4-04 are
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 4 — Enterprise Integration & Scale (Milestone #5) |
-| Active increment | P4-05 implementation through issue #190 |
-| Next implementation increment | P4-05 CRM and contact-center connector contracts and governed adapter seams |
+| Active increment | P4-05 closed through issue #190 and PR #191 |
+| Next implementation increment | P4-06 cloud infrastructure, Helm charts, and container orchestration |
 
 ## Latest verification baseline
 

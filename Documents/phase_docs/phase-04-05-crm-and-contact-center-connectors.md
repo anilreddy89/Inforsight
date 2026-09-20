@@ -9,11 +9,11 @@ actions disabled and `authorized_to_act: false`.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | Implementation issue open |
+| Status | Completed |
 | Depends on | P4-03, P4-04, ADR 0002 human authority boundary |
 | Blocks | P4-06 |
 | Tracking issue | [#190](https://github.com/anilreddy89/Inforsight/issues/190) |
-| Pull request | TBD |
+| Pull request | [#191](https://github.com/anilreddy89/Inforsight/pull/191) |
 
 ## Current implementation evidence
 
@@ -82,7 +82,7 @@ record, or otherwise cause an external side effect.
 - [x] Tests prove deterministic payloads, idempotency behavior, and all
   fail-closed guardrail paths using fictional clean-room inputs.
 - [x] `make p4-05-check`, relevant Java checks, and PR CI pass.
-- [ ] Documentation, tracker, issue, PR, and final limitation statement are
+- [x] Documentation, tracker, issue, PR, and final limitation statement are
   updated at closeout.
 
 ## Evidence plan
@@ -120,6 +120,15 @@ explicitly out of scope.
 
 ## Closeout evidence
 
-To be completed after implementation: issue number, PR number, merge commit,
-focused test output, required CI results, fake-adapter evidence, audit record
-evidence, and the final no-external-execution limitation statement.
+- Tracking issue [#190](https://github.com/anilreddy89/Inforsight/issues/190)
+  and implementation PR [#191](https://github.com/anilreddy89/Inforsight/pull/191)
+  are closed and merged to `main` at `b59f9ab`.
+- `make p4-05-check`, the focused Java suite, the PostgreSQL/Testcontainers
+  persistence evidence, and required PR CI checks passed before merge.
+- The successful persisted preflight path records
+  `CONNECTOR_PREFLIGHT_RECORDED` in the audit ledger; compatible idempotency
+  replay adds no duplicate record and an incompatible reuse is rejected.
+- Fake adapters remain the only connector implementations. No transport,
+  credential, CRM mutation, telephony call, message, task creation, or
+  autonomous external execution was added; every outcome remains
+  `authorized_to_act: false` with external execution disabled.
