@@ -121,6 +121,11 @@ semantics, and failure dispositions must be frozen before qualification runs.
   broker-to-consumer evidence only; it is not full end-to-end E1–E6
   qualification because inference, PostgreSQL audit, restart/replay, parity,
   latency, authority, and tamper evidence are not yet bound to the run.
+- The same external-broker harness restarted the consumer with the same Kafka
+  group after a bounded 4,000-event workload. The two consumer instances
+  accounted for exactly 4,000 accepted events with no loss; this is bounded
+  Kafka restart/replay evidence, not yet the complete persistence-backed E5
+  qualification report.
 - Distributed runtime execution, fault/restart evidence, measured throughput,
   measured latency, and Java/Python production-path parity remain open.
 

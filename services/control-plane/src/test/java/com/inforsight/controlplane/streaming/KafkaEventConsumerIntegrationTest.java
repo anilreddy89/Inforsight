@@ -71,6 +71,55 @@ class KafkaEventConsumerIntegrationTest {
         assertThat(eventsPerSecond).isGreaterThanOrEqualTo(5_000.0);
     }
 
+    @Test
+    void restartsTheConsumerGroupWithoutLosingTheBoundedEventSet() throws Exception {
+        Assumptions.assumeTrue("1".equals(System.getenv("INFORSIGHT_RUN_P4_07_INTEGRATION")));
+        String externalBootstrap = System.getenv("INFORSIGHT_P4_07_KAFKA_BOOTSTRAP_SERVERS");
+        Assumptions.assumeTrue(externalBootstrap != null && !externalBootstrap.isBlank(),
+                "The restart/replay run requires an explicit Compose Kafka bootstrap endpoint");
+
+        final int eventCount = 4_000;
+        String groupId = "p4-07-restart-" + UUID.randomUUID();
+        try (KafkaProducer<String, String> producer = producer(externalBootstrap)) {
+            for (int index = 0; index < eventCount; index++) {
+                String eventId = "evt_p407_restart_" + index;
+                String event = "{\"schema_version\":\"1.0.0\",\"event_id\":\"" + eventId
+                        + "\",\"idempotency_key\":\"idem_p407_restart_" + index
+                        + "\",\"policy_id\":\"p407-restart-policy-" + index
+                        + "\",\"event_type\":\"policy.issued\"}";
+                producer.send(new ProducerRecord<>(TOPIC, eventId, event));
+            }
+            producer.flush();
+        }
+
+        BoundedStreamingEventHandler firstHandler = new BoundedStreamingEventHandler(new ObjectMapper());
+        KafkaEventConsumer firstConsumer = new KafkaEventConsumer(firstHandler, externalBootstrap, groupId, TOPIC);
+        firstConsumer.start();
+        try {
+            long deadline = System.nanoTime() + Duration.ofSeconds(15).toNanos();
+            while (firstHandler.acceptedCount() < eventCount / 2 && System.nanoTime() < deadline) {
+                Thread.sleep(50);
+            }
+        } finally {
+            firstConsumer.stop();
+        }
+
+        BoundedStreamingEventHandler resumedHandler = new BoundedStreamingEventHandler(new ObjectMapper());
+        KafkaEventConsumer resumedConsumer = new KafkaEventConsumer(resumedHandler, externalBootstrap, groupId, TOPIC);
+        resumedConsumer.start();
+        try {
+            long deadline = System.nanoTime() + Duration.ofSeconds(30).toNanos();
+            while (firstHandler.acceptedCount() + resumedHandler.acceptedCount() < eventCount
+                    && System.nanoTime() < deadline) {
+                Thread.sleep(50);
+            }
+        } finally {
+            resumedConsumer.stop();
+        }
+
+        assertThat(firstHandler.acceptedCount() + resumedHandler.acceptedCount()).isEqualTo(eventCount);
+    }
+
     private static void exercise(String bootstrapServers) throws Exception {
             BoundedStreamingEventHandler handler = new BoundedStreamingEventHandler(new ObjectMapper());
             KafkaEventConsumer consumer = new KafkaEventConsumer(handler, bootstrapServers, "p4-07-test-group", TOPIC);
