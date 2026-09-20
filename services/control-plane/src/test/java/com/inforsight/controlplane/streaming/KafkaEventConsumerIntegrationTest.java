@@ -12,6 +12,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 import java.util.Properties;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,6 +33,42 @@ class KafkaEventConsumerIntegrationTest {
             kafka.start();
             exercise(kafka.getBootstrapServers());
         }
+    }
+
+    @Test
+    void consumesTheFrozenP407EventCardinalityAboveTheThroughputFloor() throws Exception {
+        Assumptions.assumeTrue("1".equals(System.getenv("INFORSIGHT_RUN_P4_07_INTEGRATION")));
+        String externalBootstrap = System.getenv("INFORSIGHT_P4_07_KAFKA_BOOTSTRAP_SERVERS");
+        Assumptions.assumeTrue(externalBootstrap != null && !externalBootstrap.isBlank(),
+                "The 200,000-event run requires an explicit Compose Kafka bootstrap endpoint");
+        BoundedStreamingEventHandler handler = new BoundedStreamingEventHandler(new ObjectMapper());
+        KafkaEventConsumer consumer = new KafkaEventConsumer(
+                handler, externalBootstrap, "p4-07-throughput-" + UUID.randomUUID(), TOPIC);
+        consumer.start();
+        final int eventCount = 200_000;
+        long baseline = handler.acceptedCount();
+        long started = System.nanoTime();
+        try (KafkaProducer<String, String> producer = producer(externalBootstrap)) {
+            for (int index = 0; index < eventCount; index++) {
+                String eventId = String.format("evt_p407_%012d", index);
+                String event = "{\"schema_version\":\"1.0.0\",\"event_id\":\"" + eventId
+                        + "\",\"idempotency_key\":\"idem_p407_" + index
+                        + "\",\"policy_id\":\"p407-policy-" + index
+                        + "\",\"event_type\":\"policy.issued\"}";
+                producer.send(new ProducerRecord<>(TOPIC, eventId, event));
+            }
+            producer.flush();
+        }
+        long deadline = System.nanoTime() + Duration.ofSeconds(90).toNanos();
+        while (handler.acceptedCount() < baseline + eventCount && System.nanoTime() < deadline) {
+            Thread.sleep(100);
+        }
+        long elapsedNanos = System.nanoTime() - started;
+        consumer.stop();
+        assertThat(handler.acceptedCount()).isGreaterThanOrEqualTo(baseline + eventCount);
+        double eventsPerSecond = eventCount / (elapsedNanos / 1_000_000_000.0);
+        System.out.printf("P4-07 E1 observed throughput: %.2f events/sec; accepted=%d%n", eventsPerSecond, handler.acceptedCount() - baseline);
+        assertThat(eventsPerSecond).isGreaterThanOrEqualTo(5_000.0);
     }
 
     private static void exercise(String bootstrapServers) throws Exception {

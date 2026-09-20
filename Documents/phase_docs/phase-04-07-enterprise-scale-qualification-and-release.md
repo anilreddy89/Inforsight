@@ -103,8 +103,9 @@ semantics, and failure dispositions must be frozen before qualification runs.
   counts.
 - Runtime evidence must also prove the capabilities needed for an end-to-end
   claim: Kafka ingress, a control-plane consumer, inference HTTP, PostgreSQL
-  audit, restart/replay, and parity fixtures. The current P4-06 topology does
-  not yet satisfy the control-plane-consumer capability, so E1–E6 remain open.
+  audit, restart/replay, and parity fixtures. The bounded consumer seam now
+  satisfies the consumer capability, but the remaining end-to-end capabilities
+  and E1–E6 gates remain open.
 - A disabled-by-default Java Kafka consumer seam is now implemented with
   allowlisted topics, envelope validation, event-key binding, idempotency
   deduplication, and commit-after-handler semantics. Enabling it in a
@@ -114,7 +115,12 @@ semantics, and failure dispositions must be frozen before qualification runs.
   not use the current Docker Desktop API metadata, but the same consumer test
   passed against the healthy Compose Kafka broker at `localhost:9092`: the
   governed envelope was consumed and its duplicate replay was deduplicated.
-  This proves the consumer seam only; it is not an E1–E6 scale qualification.
+- Against the healthy Compose Kafka broker at `localhost:9092`, the focused
+  frozen-cardinality run accepted 200,000/200,000 events at 15,552.36
+  events/sec, above the E1 5,000 events/sec floor. This is bounded
+  broker-to-consumer evidence only; it is not full end-to-end E1–E6
+  qualification because inference, PostgreSQL audit, restart/replay, parity,
+  latency, authority, and tamper evidence are not yet bound to the run.
 - Distributed runtime execution, fault/restart evidence, measured throughput,
   measured latency, and Java/Python production-path parity remain open.
 

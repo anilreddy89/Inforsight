@@ -60,8 +60,10 @@ public final class KafkaEventConsumer implements SmartLifecycle {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(250));
                 records.forEach(record -> {
                     handler.handle(record.topic(), record.key(), record.value());
-                    consumer.commitSync();
                 });
+                if (!records.isEmpty()) {
+                    consumer.commitSync();
+                }
             }
         } catch (WakeupException ignored) {
             // Normal shutdown path.
