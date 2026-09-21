@@ -103,6 +103,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | E6 parity | Java eligibility/allocation fixture checks | 3 parity/allocation fixture tests passed | Declared fixtures match; full production-path parity evidence remains open. |
 | Combined topology | `make p4-07-combined-integration-check` | 100/100 measured events processed; hybrid reruns observed p99 between 212.747 ms and 1,557.413 ms | Capability binding succeeded; E2 remains above 50 ms, while checkpoint-bounded tail verification isolates prior local data. |
 | Minimal response optimization | Same combined harness with `/v1/score/minimal` and four inference workers | 100/100 measured events processed; p99 546.152 ms | Diagnostic response serialization was removed from the control-plane path and the contract is covered by a serving test; E2 remains above 50 ms. |
+| Minimal batch optimization | Same combined harness with `/v1/score/minimal/batch`, one request per Kafka poll, and Kafka `fetch.max.wait.ms=25` | 100/100 measured events processed; p99 648.437 ms | The batch contract and Kafka path are operational, but this rerun did not improve p99; no performance credit is claimed and E2 remains open. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -193,6 +194,13 @@ metrics. Component passes do not compensate for the combined E2 failure.
   642.293 ms four-worker full-response run, but still more than ten times the
   50 ms E2 floor. This optimization reduces payload work; it does not resolve
   the remaining topology bottleneck.
+- A subsequent bounded batch path sends one minimal inference request per Kafka
+  poll and lowers Kafka `fetch.max.wait.ms` to 25 ms. The corrected run
+  processed 100/100 events but measured 648.437 ms p99, worse than the earlier
+  546.152 ms single-request-profile run. This confirms the result is sensitive
+  to topology/runtime variance and that fetch wait is not the controlling
+  bottleneck; the batch path remains a structural optimization, not a passing
+  E2 measurement.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart

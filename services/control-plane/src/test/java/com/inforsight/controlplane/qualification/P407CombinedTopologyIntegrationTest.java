@@ -59,6 +59,7 @@ class P407CombinedTopologyIntegrationTest {
         CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
         String topic = "p4_07_combined_" + runToken.replace("-", "").substring(0, 20);
+        String warmupId = "evt_p407_combined_warmup_" + runToken;
         record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
         BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
             @Override
@@ -70,15 +71,19 @@ class P407CombinedTopologyIntegrationTest {
             @Override
             public void handleBatch(List<StreamingRecord> records) {
                 try {
-                    List<HttpInferenceClient.InferenceRequest> requests = records.stream().map(record -> {
+                    List<StreamingRecord> measuredRecords = records.stream()
+                            .filter(record -> !record.value().contains(warmupId)).toList();
+                    if (measuredRecords.isEmpty()) return;
+                    List<HttpInferenceClient.InferenceRequest> requests = new ArrayList<>();
+                    for (StreamingRecord record : measuredRecords) {
                         JsonNode event = mapper.readTree(record.value());
-                        return new HttpInferenceClient.InferenceRequest(event.get("policy_id").asText(),
-                                Instant.parse("2026-09-18T00:00:00Z"), features());
-                    }).toList();
+                        requests.add(new HttpInferenceClient.InferenceRequest(event.get("policy_id").asText(),
+                                Instant.parse("2026-09-18T00:00:00Z"), features()));
+                    }
                     List<InferenceScore> scores = inference.scoreMinimalBatchWithFeatures(requests);
                     List<Prepared> prepared = new ArrayList<>();
-                    for (int index = 0; index < records.size(); index++) {
-                        JsonNode event = mapper.readTree(records.get(index).value());
+                    for (int index = 0; index < measuredRecords.size(); index++) {
+                        JsonNode event = mapper.readTree(measuredRecords.get(index).value());
                         prepared.add(new Prepared(requests.get(index).policyId(), event.get("event_id").asText(),
                                 event.get("ingress_nanos").asLong(), scores.get(index)));
                     }
@@ -98,6 +103,11 @@ class P407CombinedTopologyIntegrationTest {
             }
         };
         String groupId = "p4-07-combined-" + UUID.randomUUID();
+        try (KafkaProducer<String, String> producer = producer(kafka)) {
+            producer.send(new ProducerRecord<>(topic, warmupId,
+                    event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
+            producer.flush();
+        }
         KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "earliest", 500);
         consumer.start();
         final int eventCount = 100;
@@ -114,6 +124,7 @@ class P407CombinedTopologyIntegrationTest {
         while (accepted.get() < eventCount && System.nanoTime() < deadline) Thread.sleep(50);
         consumer.stop();
 
+        assertThat(consumer.terminalFailure()).as("Kafka consumer terminal failure").isNull();
         assertThat(failures).isEmpty();
         assertThat(accepted).hasValue(eventCount);
         assertThat(latencies).hasSize(eventCount);

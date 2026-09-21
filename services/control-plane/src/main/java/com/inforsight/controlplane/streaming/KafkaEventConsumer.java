@@ -34,6 +34,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     private final ExecutorService handlerExecutor = Executors.newVirtualThreadPerTaskExecutor();
     private volatile boolean running;
+    private volatile Throwable terminalFailure;
 
     public KafkaEventConsumer(
             StreamingEventHandler handler,
@@ -102,6 +103,10 @@ public final class KafkaEventConsumer implements SmartLifecycle {
             }
         } catch (WakeupException ignored) {
             // Normal shutdown path.
+        } catch (Throwable failure) {
+            terminalFailure = failure;
+            if (failure instanceof RuntimeException runtimeFailure) throw runtimeFailure;
+            throw new IllegalStateException("Kafka consumer poll loop failed", failure);
         } finally {
             handlerExecutor.close();
             consumer.close();
@@ -118,6 +123,11 @@ public final class KafkaEventConsumer implements SmartLifecycle {
     @Override
     public boolean isRunning() {
         return running;
+    }
+
+    /** Exposes an asynchronous poll-loop failure to qualification harnesses. */
+    public Throwable terminalFailure() {
+        return terminalFailure;
     }
 
     @Override
