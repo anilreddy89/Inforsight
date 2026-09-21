@@ -179,6 +179,11 @@ metrics. Component passes do not compensate for the combined E2 failure.
   observed p99 values from 212.747 ms to 1,557.413 ms across reruns. The
   variance itself is qualification evidence: the path is not yet stable, and
   every observed p99 remains above the 50 ms E2 floor.
+- The inference image now exposes `INFORSIGHT_INFERENCE_WORKERS` explicitly.
+  A four-worker Compose run measured 642.293 ms p99 and an eight-worker run
+  measured 660.538 ms p99. The lack of improvement from 4 to 8 workers shows
+  that Python worker count alone is not the controlling bottleneck; the
+  default remains one worker until a topology-level capacity plan is declared.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart
