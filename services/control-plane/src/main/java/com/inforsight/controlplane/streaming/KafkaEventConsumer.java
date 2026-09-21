@@ -46,6 +46,11 @@ public final class KafkaEventConsumer implements SmartLifecycle {
     /** Test-only offset policy seam; production configuration remains earliest. */
     public KafkaEventConsumer(StreamingEventHandler handler, String bootstrapServers, String groupId,
                               String topics, String autoOffsetReset) {
+        this(handler, bootstrapServers, groupId, topics, autoOffsetReset, 500);
+    }
+
+    public KafkaEventConsumer(StreamingEventHandler handler, String bootstrapServers, String groupId,
+                              String topics, String autoOffsetReset, int maxPollRecords) {
         this.handler = handler;
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -54,6 +59,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Integer.toString(Math.max(1, maxPollRecords)));
         this.consumer = new KafkaConsumer<>(properties);
         this.consumer.subscribe(Arrays.stream(topics.split(",")).map(String::trim).filter(topic -> !topic.isBlank()).toList());
     }
@@ -68,17 +74,17 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         try {
             while (running) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(250));
+                if (records.isEmpty()) continue;
                 var batch = records.partitions().stream()
                         .flatMap(partition -> records.records(partition).stream())
-                        .map(record -> new BatchStreamingEventHandler.StreamingRecord(
-                                record.topic(), record.key(), record.value()))
+                        .map(record -> new BatchStreamingEventHandler.StreamingRecord(record.topic(), record.key(), record.value()))
                         .toList();
                 var futures = handler instanceof BatchStreamingEventHandler batchHandler
                         ? List.of(handlerExecutor.submit(() -> batchHandler.handleBatch(batch)))
                         : batch.stream()
-                                .map(record -> handlerExecutor.submit(() ->
-                                        handler.handle(record.topic(), record.key(), record.value())))
-                                .toList();
+                        .map(record -> handlerExecutor.submit(() ->
+                                handler.handle(record.topic(), record.key(), record.value())))
+                        .toList();
                 for (Future<?> future : futures) {
                     try {
                         future.get();
@@ -89,9 +95,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
                         throw new IllegalStateException("streaming handler failed", failure.getCause());
                     }
                 }
-                if (!records.isEmpty()) {
-                    consumer.commitSync();
-                }
+                consumer.commitSync();
             }
         } catch (WakeupException ignored) {
             // Normal shutdown path.

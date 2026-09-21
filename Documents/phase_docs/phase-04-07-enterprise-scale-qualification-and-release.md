@@ -101,7 +101,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | E4 persistence | `make p4-07-postgres-integration-check` | Tamper probe detected mutation; Flyway and chained verification passed in clean Compose state | Persistence probe passed; final run still needs clean-run identity and bound evidence. |
 | E5 recovery | Kafka restart test plus PostgreSQL repository rehydration test | 4,000 Kafka events recovered exactly; committed case and audit hash rehydrated | Bounded recovery probes passed; one combined distributed recovery report remains open. |
 | E6 parity | Java eligibility/allocation fixture checks | 3 parity/allocation fixture tests passed | Declared fixtures match; full production-path parity evidence remains open. |
-| Combined topology | `make p4-07-combined-integration-check` | 101/101 events processed; batched reruns observed p99 between 212.747 ms and 400.653 ms | Capability binding succeeded; E2 remains above 50 ms, while checkpoint-bounded tail verification now isolates prior local data. |
+| Combined topology | `make p4-07-combined-integration-check` | 100/100 measured events processed; hybrid reruns observed p99 between 212.747 ms and 1,557.413 ms | Capability binding succeeded; E2 remains above 50 ms, while checkpoint-bounded tail verification isolates prior local data. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -174,10 +174,11 @@ metrics. Component passes do not compensate for the combined E2 failure.
 - A second optimization added a virtual-thread batch handler seam and an
   ordered multi-row PostgreSQL audit insert. Inference work now runs
   concurrently per Kafka poll while audit entries are chained and committed
-  in order. The batched smoke processed 101/101 events, reduced the combined
-  test wall time to about 3.9 seconds, and produced observed p99 values in the
-  212.747–400.653 ms range across reruns. This is a substantial throughput
-  improvement, but every observed p99 remains above the 50 ms E2 floor.
+  in order. The hybrid smoke processed all 100 measured events, reduced the
+  combined test wall time in the best run to about 3.9 seconds, and produced
+  observed p99 values from 212.747 ms to 1,557.413 ms across reruns. The
+  variance itself is qualification evidence: the path is not yet stable, and
+  every observed p99 remains above the 50 ms E2 floor.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart

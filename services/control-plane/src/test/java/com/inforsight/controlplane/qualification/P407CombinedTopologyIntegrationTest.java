@@ -7,7 +7,6 @@ import com.inforsight.controlplane.audit.AuditHash;
 import com.inforsight.controlplane.audit.AuditLedgerCheckpoint;
 import com.inforsight.controlplane.audit.AuditLedgerEntry;
 import com.inforsight.controlplane.audit.AuditLedgerRepository;
-import com.inforsight.controlplane.audit.AuditLedgerVerifier;
 import com.inforsight.controlplane.casework.CaseStore;
 import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.HttpInferenceClient;
@@ -40,7 +39,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /** Combined capability binding; this is a smoke run, not the scale gate. */
 class P407CombinedTopologyIntegrationTest {
-    private static final String TOPIC = "policy.lifecycle.v1";
 
     @Test
     void bindsKafkaInferenceCaseAndPostgresAuditInOneRun() throws Exception {
@@ -63,12 +61,13 @@ class P407CombinedTopologyIntegrationTest {
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
+        String topic = "p4_07_combined_" + runToken.replace("-", "").substring(0, 20);
         ExecutorService inferenceExecutor = Executors.newVirtualThreadPerTaskExecutor();
         record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
         BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
             @Override
-            public boolean handle(String topic, String key, String value) {
-                handleBatch(List.of(new StreamingRecord(topic, key, value)));
+            public boolean handle(String topicName, String key, String value) {
+                handleBatch(List.of(new StreamingRecord(topicName, key, value)));
                 return true;
             }
 
@@ -101,33 +100,31 @@ class P407CombinedTopologyIntegrationTest {
             }
         };
         String groupId = "p4-07-combined-" + UUID.randomUUID();
-        KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, TOPIC, "latest");
+        String warmupId = "evt_p407_combined_warmup_" + runToken;
+        try (KafkaProducer<String, String> producer = producer(kafka)) {
+            producer.send(new ProducerRecord<>(topic, warmupId,
+                    event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
+            producer.flush();
+        }
+        KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "latest", 500);
         consumer.start();
         final int eventCount = 100;
         try (KafkaProducer<String, String> producer = producer(kafka)) {
             Thread.sleep(2_000);
-            String warmupId = "evt_p407_combined_warmup_" + runToken;
-            producer.send(new ProducerRecord<>(TOPIC, warmupId,
-                    event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
-            long warmupDeadline = System.nanoTime() + Duration.ofSeconds(30).toNanos();
-            while (accepted.get() < 1 && System.nanoTime() < warmupDeadline) Thread.sleep(50);
-            assertThat(failures).isEmpty();
-            assertThat(accepted).hasValue(1);
-            latencies.clear();
             for (int index = 0; index < eventCount; index++) {
                 String eventId = "evt_p407_combined_" + runToken + "_" + index;
                 String event = event(eventId, "p407-combined-policy-" + runToken + "-" + index, System.nanoTime());
-                producer.send(new ProducerRecord<>(TOPIC, eventId, event));
+                producer.send(new ProducerRecord<>(topic, eventId, event));
             }
             producer.flush();
         }
         long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
-        while (accepted.get() < eventCount + 1 && System.nanoTime() < deadline) Thread.sleep(50);
+        while (accepted.get() < eventCount && System.nanoTime() < deadline) Thread.sleep(50);
         consumer.stop();
         inferenceExecutor.close();
 
         assertThat(failures).isEmpty();
-        assertThat(accepted).hasValue(eventCount + 1);
+        assertThat(accepted).hasValue(eventCount);
         assertThat(latencies).hasSize(eventCount);
         ArrayList<Long> ordered = new ArrayList<>(latencies);
         ordered.sort(Long::compareTo);
