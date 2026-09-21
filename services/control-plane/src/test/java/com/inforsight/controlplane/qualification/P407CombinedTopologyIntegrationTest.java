@@ -77,7 +77,7 @@ class P407CombinedTopologyIntegrationTest {
                     List<Future<Prepared>> futures = records.stream().map(record -> inferenceExecutor.submit(() -> {
                         JsonNode event = mapper.readTree(record.value());
                         String policyId = event.get("policy_id").asText();
-                        InferenceScore score = inference.scoreWithFeatures(policyId,
+                        InferenceScore score = inference.scoreMinimalWithFeatures(policyId,
                                 Instant.parse("2026-09-18T00:00:00Z"), features());
                         return new Prepared(policyId, event.get("event_id").asText(),
                                 event.get("ingress_nanos").asLong(), score);

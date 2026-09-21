@@ -102,6 +102,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | E5 recovery | Kafka restart test plus PostgreSQL repository rehydration test | 4,000 Kafka events recovered exactly; committed case and audit hash rehydrated | Bounded recovery probes passed; one combined distributed recovery report remains open. |
 | E6 parity | Java eligibility/allocation fixture checks | 3 parity/allocation fixture tests passed | Declared fixtures match; full production-path parity evidence remains open. |
 | Combined topology | `make p4-07-combined-integration-check` | 100/100 measured events processed; hybrid reruns observed p99 between 212.747 ms and 1,557.413 ms | Capability binding succeeded; E2 remains above 50 ms, while checkpoint-bounded tail verification isolates prior local data. |
+| Minimal response optimization | Same combined harness with `/v1/score/minimal` and four inference workers | 100/100 measured events processed; p99 546.152 ms | Diagnostic response serialization was removed from the control-plane path and the contract is covered by a serving test; E2 remains above 50 ms. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -184,6 +185,14 @@ metrics. Component passes do not compensate for the combined E2 failure.
   measured 660.538 ms p99. The lack of improvement from 4 to 8 workers shows
   that Python worker count alone is not the controlling bottleneck; the
   default remains one worker until a topology-level capacity plan is declared.
+- The control-plane path now uses a dedicated `/v1/score/minimal` response
+  profile containing only the decision metadata required for case creation,
+  bundle identity, and the human-review authority boundary. The endpoint has
+  a strict serving contract test. With four inference workers, the latest
+  combined run measured 546.152 ms p99, an improvement over the earlier
+  642.293 ms four-worker full-response run, but still more than ten times the
+  50 ms E2 floor. This optimization reduces payload work; it does not resolve
+  the remaining topology bottleneck.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart

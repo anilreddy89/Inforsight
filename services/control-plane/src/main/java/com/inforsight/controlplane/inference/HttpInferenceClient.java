@@ -22,6 +22,7 @@ public class HttpInferenceClient implements InferenceClient {
     private final HttpClient client;
     private final ObjectMapper mapper;
     private final URI scoreUri;
+    private final URI minimalScoreUri;
     private final Duration timeout;
     private final int maxAttempts;
 
@@ -32,6 +33,7 @@ public class HttpInferenceClient implements InferenceClient {
             @Value("${inforsight.inference.max-attempts:2}") int maxAttempts) {
         this.mapper = mapper;
         this.scoreUri = URI.create(baseUrl.replaceAll("/$", "") + "/v1/score");
+        this.minimalScoreUri = URI.create(baseUrl.replaceAll("/$", "") + "/v1/score/minimal");
         this.timeout = timeout;
         this.maxAttempts = Math.max(1, maxAttempts);
         this.client = HttpClient.newBuilder().connectTimeout(timeout).build();
@@ -75,6 +77,33 @@ public class HttpInferenceClient implements InferenceClient {
             throw new InferenceUnavailableException("inference unavailable after " + maxAttempts + " attempts", last);
         } catch (java.io.IOException failure) {
             throw new InferenceUnavailableException("could not encode inference request", failure);
+        }
+    }
+
+    /** Control-plane response profile without explanation payloads. */
+    public InferenceScore scoreMinimalWithFeatures(String policyId, Instant asOf, Map<String, Object> features) {
+        try {
+            Map<String, Object> request = new java.util.LinkedHashMap<>();
+            request.put("policy_id", policyId);
+            request.put("observation_id", asOf.toString());
+            request.put("as_of_date", asOf.toString());
+            request.put("feature_stage", "raw-v6-features");
+            request.put("preprocessing_profile_id", "v6-coefficient-transform-then-bundle-zscore/1.0.0");
+            request.put("features", features);
+            HttpRequest httpRequest = HttpRequest.newBuilder(minimalScoreUri).timeout(timeout)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(request))).build();
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                throw new InferenceUnavailableException("minimal inference returned HTTP " + response.statusCode());
+            }
+            return parse(response.body(), policyId);
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+            throw new InferenceUnavailableException("minimal inference request interrupted", interrupted);
+        } catch (java.io.IOException | RuntimeException failure) {
+            if (failure instanceof InferenceUnavailableException unavailable) throw unavailable;
+            throw new InferenceUnavailableException("minimal inference unavailable", failure);
         }
     }
 
