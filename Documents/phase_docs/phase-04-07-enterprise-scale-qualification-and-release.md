@@ -40,6 +40,26 @@ release decision is made.
 Gate thresholds, workload dimensions, sampling rules, warm-up policy, timeout
 semantics, and failure dispositions must be frozen before qualification runs.
 
+### Local validation profile (non-authoritative)
+
+The E2 threshold remains a production qualification requirement and is not
+relaxed by local development results. Docker Desktop on a developer Mac is
+useful for regression detection, but it is not a controlled enterprise
+benchmark environment. Local runs may therefore use this separate diagnostic
+profile:
+
+| Local band | Interpretation |
+| --- | --- |
+| P99 scored-case <= 250 ms | Acceptable local development baseline |
+| P99 scored-case 250–400 ms | Warning; investigate runtime or topology variance |
+| P99 scored-case > 400 ms | Local regression or invalid environment; do not use as release evidence |
+
+The local profile requires healthy services, explicit warm-up, five repeated
+100-event runs, median and worst-run reporting, zero dropped events, no
+consumer failures, and complete audit-tail verification. It cannot mark E2
+passed, authorize the release, or replace a controlled Linux qualification
+run. The 50 ms production threshold remains unchanged.
+
 ## Scope
 
 - Define the qualification contract and exact workload/configuration identity.
@@ -108,6 +128,13 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | Pooled transactional audit | Same combined harness with Hikari pooling and one transaction around the ledger append | 100/100 measured events processed; p99 540.976 ms; inference batch 220.549 ms; case/audit 122.675 ms | Latest run improved over the prior vectorized run, but remains above 50 ms; E2 is still open. |
 | Four-partition consumer path and bounded polling | Four Kafka partitions/consumers, Hikari pooling, serialized audit transaction scope, and 5 ms Kafka fetch/poll waits | 100/100 measured events processed; audit-tail verification passed; p99 167.133 ms; inference batch 79.398 ms; case/audit 34.117 ms | Best valid combined result so far; queueing and audit-chain correctness improved, but E2 remains above 50 ms. |
 | Asynchronous scored-case/audit split | Qualification-only single ordered audit writer; scored-case completion is measured before audit drain, with the full audit suffix verified before test completion | 100/100 measured events processed; scored-case p99 184.695 ms; audit-tail verification passed; case/audit 46.667 ms | Improves the explicitly measured E2 boundary versus the prior 469.785 ms run, but remains above 50 ms. This does not change P4-04 production ACID semantics. |
+
+The local Docker results in this phase are diagnostic only. Observed scored-case
+values between approximately 183 ms and 470 ms demonstrate environment and
+topology variance, not a production SLO. A controlled Linux run with reserved
+CPU, fixed worker counts, isolated Kafka/PostgreSQL, and repeated-run
+distribution is required before deciding whether the remaining gap is
+environmental, architectural, or both.
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,

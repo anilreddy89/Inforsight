@@ -1364,6 +1364,12 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 - Pre-register and verify Enterprise Performance Gates:
   - **Gate E1 (Streaming Ingestion Throughput):** $\ge 5,000\text{ events/sec}$ with zero drop rate.
   - **Gate E2 (End-to-End Latency SLA):** Event ingress to scored case brief $P_{99} \le 50.0\text{ms}$.
+  - Local Docker validation is diagnostic only and does not relax E2. The phase
+    document defines a separate local band: p99 scored-case latency up to
+    250 ms is an acceptable development baseline, 250–400 ms is a warning
+    band, and values above 400 ms are a local regression or invalid-environment
+    signal. Release qualification still requires the controlled 50 ms
+    production threshold on a dedicated benchmark environment.
   - **Gate E3 (Authority Isolation):** 100% rejection of unapproved outreach in enterprise connectors.
   - **Gate E4 (Audit Ledger Immutability):** 100% tamper detection across distributed database nodes.
   - **Gate E5 (Fault Tolerance & Recovery):** Zero data loss during simulated worker pod kill / restart.
