@@ -184,7 +184,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
         raw_maps = [item.features.to_feature_dict() for item in req.requests]
         try:
-            results = _engine.score_batch(raw_maps)
+            results = _engine.score_minimal_batch(raw_maps)
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Batch inference error: {str(e)}")
         return [

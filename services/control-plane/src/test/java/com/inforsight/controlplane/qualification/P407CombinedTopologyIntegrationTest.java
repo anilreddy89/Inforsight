@@ -55,6 +55,8 @@ class P407CombinedTopologyIntegrationTest {
         CaseStore cases = new CaseStore();
         AtomicLong accepted = new AtomicLong();
         CopyOnWriteArrayList<Long> latencies = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Long> inferenceDurations = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Long> auditDurations = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
@@ -80,13 +82,16 @@ class P407CombinedTopologyIntegrationTest {
                         requests.add(new HttpInferenceClient.InferenceRequest(event.get("policy_id").asText(),
                                 Instant.parse("2026-09-18T00:00:00Z"), features()));
                     }
+                    long inferenceStarted = System.nanoTime();
                     List<InferenceScore> scores = inference.scoreMinimalBatchWithFeatures(requests);
+                    inferenceDurations.add(System.nanoTime() - inferenceStarted);
                     List<Prepared> prepared = new ArrayList<>();
                     for (int index = 0; index < measuredRecords.size(); index++) {
                         JsonNode event = mapper.readTree(measuredRecords.get(index).value());
                         prepared.add(new Prepared(requests.get(index).policyId(), event.get("event_id").asText(),
                                 event.get("ingress_nanos").asLong(), scores.get(index)));
                     }
+                    long auditStarted = System.nanoTime();
                     List<AuditEvent> audits = new ArrayList<>();
                     for (Prepared item : prepared) {
                         cases.create(item.policyId(), Instant.parse("2026-09-18T00:00:00Z"), item.score(), "abstain");
@@ -94,6 +99,7 @@ class P407CombinedTopologyIntegrationTest {
                                 "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
                     }
                     committedEntries.addAll(ledger.appendBatch(audits));
+                    auditDurations.add(System.nanoTime() - auditStarted);
                     for (Prepared item : prepared) latencies.add(System.nanoTime() - item.ingressNanos());
                     accepted.addAndGet(prepared.size());
                 } catch (Exception failure) {
@@ -133,6 +139,8 @@ class P407CombinedTopologyIntegrationTest {
         double p99Millis = ordered.get((int) Math.ceil(ordered.size() * 0.99) - 1) / 1_000_000.0;
         System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-audit=%.3f ms%n",
                 accepted.get(), p99Millis);
+        System.out.printf("P4-07 combined timing: inference-batch=%.3f ms, case-audit=%.3f ms%n",
+                percentileMillis(inferenceDurations, 0.99), percentileMillis(auditDurations, 0.99));
         assertThat(p99Millis).isPositive();
         assertThat(verifyTail(committedEntries, baseline)).isTrue();
     }
@@ -174,6 +182,12 @@ class P407CombinedTopologyIntegrationTest {
             sequence++;
         }
         return !entries.isEmpty();
+    }
+
+    private static double percentileMillis(List<Long> durations, double percentile) {
+        ArrayList<Long> ordered = new ArrayList<>(durations);
+        ordered.sort(Long::compareTo);
+        return ordered.get(Math.max(0, (int) Math.ceil(ordered.size() * percentile) - 1)) / 1_000_000.0;
     }
 
     private static String required(String name) {

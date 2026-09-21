@@ -150,6 +150,10 @@ class TestServingGateway(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual([item["policy_id"] for item in data], [item["policy_id"] for item in requests])
         self.assertTrue(all(item["authorized_to_act"] is False for item in data))
+        for item, request in zip(data, requests):
+            expected = self.engine.score_record(request["features"])
+            self.assertAlmostEqual(item["calibrated_probability"], expected.calibrated_probability, places=6)
+            self.assertEqual(item["risk_tier"], expected.risk_tier)
 
     def test_batch_scoring_endpoint(self) -> None:
         """POST /v1/score/batch correctly scores a batch of records."""

@@ -104,6 +104,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | Combined topology | `make p4-07-combined-integration-check` | 100/100 measured events processed; hybrid reruns observed p99 between 212.747 ms and 1,557.413 ms | Capability binding succeeded; E2 remains above 50 ms, while checkpoint-bounded tail verification isolates prior local data. |
 | Minimal response optimization | Same combined harness with `/v1/score/minimal` and four inference workers | 100/100 measured events processed; p99 546.152 ms | Diagnostic response serialization was removed from the control-plane path and the contract is covered by a serving test; E2 remains above 50 ms. |
 | Minimal batch optimization | Same combined harness with `/v1/score/minimal/batch`, one request per Kafka poll, and Kafka `fetch.max.wait.ms=25` | 100/100 measured events processed; p99 648.437 ms | The batch contract and Kafka path are operational, but this rerun did not improve p99; no performance credit is claimed and E2 remains open. |
+| Vectorized minimal scoring | Same combined harness after replacing per-record explanation scoring with vectorized minimal scoring | 100/100 measured events processed; p99 779.079 ms; inference batch 369.158 ms; case/audit 162.961 ms | The optimized code path is exercised and parity tests pass, but this run was slower; runtime variance remains material and E2 remains open. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -201,6 +202,13 @@ metrics. Component passes do not compensate for the combined E2 failure.
   to topology/runtime variance and that fetch wait is not the controlling
   bottleneck; the batch path remains a structural optimization, not a passing
   E2 measurement.
+- The minimal batch implementation now vectorizes logits and probability
+  calculation and skips explanation construction entirely. The latest bound
+  run decomposed to 369.158 ms inference and 162.961 ms case/audit, with
+  779.079 ms end-to-end p99. Because this was slower than prior runs despite
+  lower algorithmic work, the next optimization must stabilize service/runtime
+  scheduling and capture repeated-run distributions before selecting a new
+  throughput claim.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart
