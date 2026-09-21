@@ -12,6 +12,9 @@ import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.HttpInferenceClient;
 import com.inforsight.controlplane.streaming.KafkaEventConsumer;
 import com.inforsight.controlplane.streaming.BatchStreamingEventHandler;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -27,6 +30,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -67,9 +71,11 @@ class P407CombinedTopologyIntegrationTest {
         CopyOnWriteArrayList<Long> auditDurations = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
+        Object auditTransactionLock = new Object();
         String runToken = UUID.randomUUID().toString();
         String topic = "p4_07_combined_" + runToken.replace("-", "").substring(0, 20);
         String warmupId = "evt_p407_combined_warmup_" + runToken;
+        final int partitionCount = 4;
         record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
         BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
             @Override
@@ -106,7 +112,12 @@ class P407CombinedTopologyIntegrationTest {
                         audits.add(new AuditEvent(UUID.randomUUID(), item.policyId(), 0, "P407_COMBINED_CASE_SCORED",
                                 "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
                     }
-                    List<AuditLedgerEntry> appended = transactions.execute(status -> ledger.appendBatch(audits));
+                    // The hash-chain read and write must share the same serialized transaction scope.
+                    // AuditLedgerRepository's method lock alone ends before this transaction commits.
+                    List<AuditLedgerEntry> appended;
+                    synchronized (auditTransactionLock) {
+                        appended = transactions.execute(status -> ledger.appendBatch(audits));
+                    }
                     if (appended == null) throw new IllegalStateException("audit transaction returned no entries");
                     committedEntries.addAll(appended);
                     auditDurations.add(System.nanoTime() - auditStarted);
@@ -119,28 +130,34 @@ class P407CombinedTopologyIntegrationTest {
             }
         };
         String groupId = "p4-07-combined-" + UUID.randomUUID();
+        createTopic(kafka, topic, partitionCount);
         try (KafkaProducer<String, String> producer = producer(kafka)) {
-            producer.send(new ProducerRecord<>(topic, warmupId,
+            producer.send(new ProducerRecord<>(topic, 0, warmupId,
                     event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
             producer.flush();
         }
-        KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "earliest", 500);
-        consumer.start();
+        List<KafkaEventConsumer> consumers = new ArrayList<>();
+        for (int index = 0; index < partitionCount; index++) {
+            KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "earliest", 500);
+            consumer.start();
+            consumers.add(consumer);
+        }
         final int eventCount = 100;
         try (KafkaProducer<String, String> producer = producer(kafka)) {
             Thread.sleep(2_000);
             for (int index = 0; index < eventCount; index++) {
                 String eventId = "evt_p407_combined_" + runToken + "_" + index;
                 String event = event(eventId, "p407-combined-policy-" + runToken + "-" + index, System.nanoTime());
-                producer.send(new ProducerRecord<>(topic, eventId, event));
+                producer.send(new ProducerRecord<>(topic, index % partitionCount, eventId, event));
             }
             producer.flush();
         }
         long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
         while (accepted.get() < eventCount && System.nanoTime() < deadline) Thread.sleep(50);
-        consumer.stop();
+        consumers.forEach(KafkaEventConsumer::stop);
 
-        assertThat(consumer.terminalFailure()).as("Kafka consumer terminal failure").isNull();
+        consumers.forEach(consumer -> assertThat(consumer.terminalFailure())
+                .as("Kafka consumer terminal failure").isNull());
         assertThat(failures).isEmpty();
         assertThat(accepted).hasValue(eventCount);
         assertThat(latencies).hasSize(eventCount);
@@ -152,7 +169,17 @@ class P407CombinedTopologyIntegrationTest {
         System.out.printf("P4-07 combined timing: inference-batch=%.3f ms, case-audit=%.3f ms%n",
                 percentileMillis(inferenceDurations, 0.99), percentileMillis(auditDurations, 0.99));
         assertThat(p99Millis).isPositive();
-        assertThat(verifyTail(committedEntries, baseline)).isTrue();
+        ArrayList<AuditLedgerEntry> orderedEntries = new ArrayList<>(committedEntries);
+        orderedEntries.sort(Comparator.comparingLong(AuditLedgerEntry::sequence));
+        assertThat(verifyTail(orderedEntries, baseline)).isTrue();
+    }
+
+    private static void createTopic(String bootstrap, String topic, int partitions) throws Exception {
+        Properties properties = new Properties();
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
+        try (AdminClient admin = AdminClient.create(properties)) {
+            admin.createTopics(List.of(new NewTopic(topic, partitions, (short) 1))).all().get();
+        }
     }
 
     private static KafkaProducer<String, String> producer(String bootstrap) {

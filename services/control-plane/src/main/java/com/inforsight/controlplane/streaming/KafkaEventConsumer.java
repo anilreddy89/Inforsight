@@ -63,7 +63,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Integer.toString(Math.max(1, maxPollRecords)));
         // Keep ingress-to-handler latency bounded when the broker has only a small batch available.
         properties.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "1");
-        properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, "25");
+        properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, "5");
         this.consumer = new KafkaConsumer<>(properties);
         this.consumer.subscribe(Arrays.stream(topics.split(",")).map(String::trim).filter(topic -> !topic.isBlank()).toList());
     }
@@ -77,7 +77,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
     private void pollLoop() {
         try {
             while (running) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(250));
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(5));
                 if (records.isEmpty()) continue;
                 var batch = records.partitions().stream()
                         .flatMap(partition -> records.records(partition).stream())

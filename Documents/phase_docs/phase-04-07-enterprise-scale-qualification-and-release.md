@@ -106,6 +106,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | Minimal batch optimization | Same combined harness with `/v1/score/minimal/batch`, one request per Kafka poll, and Kafka `fetch.max.wait.ms=25` | 100/100 measured events processed; p99 648.437 ms | The batch contract and Kafka path are operational, but this rerun did not improve p99; no performance credit is claimed and E2 remains open. |
 | Vectorized minimal scoring | Same combined harness after replacing per-record explanation scoring with vectorized minimal scoring | 100/100 measured events processed; p99 779.079 ms; inference batch 369.158 ms; case/audit 162.961 ms | The optimized code path is exercised and parity tests pass, but this run was slower; runtime variance remains material and E2 remains open. |
 | Pooled transactional audit | Same combined harness with Hikari pooling and one transaction around the ledger append | 100/100 measured events processed; p99 540.976 ms; inference batch 220.549 ms; case/audit 122.675 ms | Latest run improved over the prior vectorized run, but remains above 50 ms; E2 is still open. |
+| Four-partition consumer path and bounded polling | Four Kafka partitions/consumers, Hikari pooling, serialized audit transaction scope, and 5 ms Kafka fetch/poll waits | 100/100 measured events processed; audit-tail verification passed; p99 167.133 ms; inference batch 79.398 ms; case/audit 34.117 ms | Best valid combined result so far; queueing and audit-chain correctness improved, but E2 remains above 50 ms. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -216,6 +217,15 @@ metrics. Component passes do not compensate for the combined E2 failure.
   confirms connection and transaction setup were material contributors, but
   the remaining gap still requires topology-level concurrency and further
   reduction of synchronous work on the critical path.
+- The Kafka qualification path now exercises four partitions with four
+  consumers, bounds both broker fetch wait and consumer poll wait at 5 ms, and
+  serializes the full audit transaction scope so concurrent appends cannot fork
+  the hash chain before commit. The best valid rerun processed 100/100 events,
+  passed checkpoint-bounded audit-tail verification, and measured 167.133 ms
+  p99 (79.398 ms inference batch; 34.117 ms case/audit). A prior 224.023 ms
+  four-partition reading failed ledger-tail verification and is intentionally
+  excluded from evidence. A subsequent all-partition warmup experiment was
+  slower and is also excluded from the performance claim.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart
