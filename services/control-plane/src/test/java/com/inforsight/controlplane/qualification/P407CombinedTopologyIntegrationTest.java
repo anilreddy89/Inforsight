@@ -31,9 +31,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +59,6 @@ class P407CombinedTopologyIntegrationTest {
         CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
         String topic = "p4_07_combined_" + runToken.replace("-", "").substring(0, 20);
-        ExecutorService inferenceExecutor = Executors.newVirtualThreadPerTaskExecutor();
         record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
         BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
             @Override
@@ -74,16 +70,18 @@ class P407CombinedTopologyIntegrationTest {
             @Override
             public void handleBatch(List<StreamingRecord> records) {
                 try {
-                    List<Future<Prepared>> futures = records.stream().map(record -> inferenceExecutor.submit(() -> {
+                    List<HttpInferenceClient.InferenceRequest> requests = records.stream().map(record -> {
                         JsonNode event = mapper.readTree(record.value());
-                        String policyId = event.get("policy_id").asText();
-                        InferenceScore score = inference.scoreMinimalWithFeatures(policyId,
+                        return new HttpInferenceClient.InferenceRequest(event.get("policy_id").asText(),
                                 Instant.parse("2026-09-18T00:00:00Z"), features());
-                        return new Prepared(policyId, event.get("event_id").asText(),
-                                event.get("ingress_nanos").asLong(), score);
-                    })).toList();
+                    }).toList();
+                    List<InferenceScore> scores = inference.scoreMinimalBatchWithFeatures(requests);
                     List<Prepared> prepared = new ArrayList<>();
-                    for (Future<Prepared> future : futures) prepared.add(future.get());
+                    for (int index = 0; index < records.size(); index++) {
+                        JsonNode event = mapper.readTree(records.get(index).value());
+                        prepared.add(new Prepared(requests.get(index).policyId(), event.get("event_id").asText(),
+                                event.get("ingress_nanos").asLong(), scores.get(index)));
+                    }
                     List<AuditEvent> audits = new ArrayList<>();
                     for (Prepared item : prepared) {
                         cases.create(item.policyId(), Instant.parse("2026-09-18T00:00:00Z"), item.score(), "abstain");
@@ -100,13 +98,7 @@ class P407CombinedTopologyIntegrationTest {
             }
         };
         String groupId = "p4-07-combined-" + UUID.randomUUID();
-        String warmupId = "evt_p407_combined_warmup_" + runToken;
-        try (KafkaProducer<String, String> producer = producer(kafka)) {
-            producer.send(new ProducerRecord<>(topic, warmupId,
-                    event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
-            producer.flush();
-        }
-        KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "latest", 500);
+        KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "earliest", 500);
         consumer.start();
         final int eventCount = 100;
         try (KafkaProducer<String, String> producer = producer(kafka)) {
@@ -121,7 +113,6 @@ class P407CombinedTopologyIntegrationTest {
         long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
         while (accepted.get() < eventCount && System.nanoTime() < deadline) Thread.sleep(50);
         consumer.stop();
-        inferenceExecutor.close();
 
         assertThat(failures).isEmpty();
         assertThat(accepted).hasValue(eventCount);

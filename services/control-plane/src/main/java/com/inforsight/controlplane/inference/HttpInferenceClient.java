@@ -13,6 +13,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /** Opt-in adapter for the bounded Python HTTP serving contract. */
@@ -23,6 +25,7 @@ public class HttpInferenceClient implements InferenceClient {
     private final ObjectMapper mapper;
     private final URI scoreUri;
     private final URI minimalScoreUri;
+    private final URI minimalBatchScoreUri;
     private final Duration timeout;
     private final int maxAttempts;
 
@@ -34,6 +37,7 @@ public class HttpInferenceClient implements InferenceClient {
         this.mapper = mapper;
         this.scoreUri = URI.create(baseUrl.replaceAll("/$", "") + "/v1/score");
         this.minimalScoreUri = URI.create(baseUrl.replaceAll("/$", "") + "/v1/score/minimal");
+        this.minimalBatchScoreUri = URI.create(baseUrl.replaceAll("/$", "") + "/v1/score/minimal/batch");
         this.timeout = timeout;
         this.maxAttempts = Math.max(1, maxAttempts);
         this.client = HttpClient.newBuilder().connectTimeout(timeout).build();
@@ -107,8 +111,50 @@ public class HttpInferenceClient implements InferenceClient {
         }
     }
 
+    /** Scores a bounded Kafka poll in one HTTP request using the minimal response profile. */
+    public List<InferenceScore> scoreMinimalBatchWithFeatures(List<InferenceRequest> requests) {
+        if (requests.isEmpty()) return List.of();
+        try {
+            Map<String, Object> body = Map.of("requests", requests.stream().map(request -> {
+                Map<String, Object> payload = new java.util.LinkedHashMap<>();
+                payload.put("policy_id", request.policyId());
+                payload.put("observation_id", request.asOf().toString());
+                payload.put("as_of_date", request.asOf().toString());
+                payload.put("feature_stage", "raw-v6-features");
+                payload.put("preprocessing_profile_id", "v6-coefficient-transform-then-bundle-zscore/1.0.0");
+                payload.put("features", request.features());
+                return payload;
+            }).toList());
+            HttpRequest httpRequest = HttpRequest.newBuilder(minimalBatchScoreUri).timeout(timeout)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body))).build();
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                throw new InferenceUnavailableException("minimal batch inference returned HTTP " + response.statusCode());
+            }
+            JsonNode scores = mapper.readTree(response.body());
+            if (!scores.isArray() || scores.size() != requests.size()) {
+                throw new InferenceUnavailableException("minimal batch inference response count mismatch");
+            }
+            List<InferenceScore> parsed = new ArrayList<>();
+            for (int index = 0; index < requests.size(); index++) {
+                parsed.add(parseNode(scores.get(index), requests.get(index).policyId()));
+            }
+            return parsed;
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+            throw new InferenceUnavailableException("minimal batch inference request interrupted", interrupted);
+        } catch (java.io.IOException | RuntimeException failure) {
+            if (failure instanceof InferenceUnavailableException unavailable) throw unavailable;
+            throw new InferenceUnavailableException("minimal batch inference unavailable", failure);
+        }
+    }
+
     private InferenceScore parse(String body, String policyId) throws java.io.IOException {
-        JsonNode node = mapper.readTree(body);
+        return parseNode(mapper.readTree(body), policyId);
+    }
+
+    private InferenceScore parseNode(JsonNode node, String policyId) {
         boolean authorized = node.path("authorized_to_act").asBoolean(false);
         if (authorized) throw new InferenceUnavailableException("inference response violated ADR 0002 authority boundary");
         String responsePolicy = node.path("policy_id").asText(policyId);
@@ -119,6 +165,8 @@ public class HttpInferenceClient implements InferenceClient {
                 node.path("bundle_version").asText("unknown"),
                 node.path("bundle_digest").asText("unknown"), false);
     }
+
+    public record InferenceRequest(String policyId, Instant asOf, Map<String, Object> features) {}
 
     public static class InferenceUnavailableException extends RuntimeException {
         public InferenceUnavailableException(String message) { super(message); }

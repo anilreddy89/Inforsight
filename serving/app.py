@@ -178,6 +178,28 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
             bundle_digest=_bundle_sha256,
         )
 
+    @app.post("/v1/score/minimal/batch", response_model=list[MinimalScoreResponse], tags=["Scoring"])
+    def score_minimal_batch(req: BatchScoreRequest) -> list[MinimalScoreResponse]:
+        if _engine is None or _bundle is None or _catalog is None:
+            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
+        raw_maps = [item.features.to_feature_dict() for item in req.requests]
+        try:
+            results = _engine.score_batch(raw_maps)
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Batch inference error: {str(e)}")
+        return [
+            MinimalScoreResponse(
+                policy_id=item.policy_id,
+                as_of_date=item.as_of_date,
+                calibrated_probability=round(result.calibrated_probability, 6),
+                risk_tier=result.risk_tier,
+                risk_tier_id=_catalog.map_risk_tier(result.risk_tier, adapter_profile="historical-bundle-display/1.0.0"),
+                bundle_version=_bundle.bundle_version,
+                bundle_digest=_bundle_sha256,
+            )
+            for item, result in zip(req.requests, results)
+        ]
+
     @app.post("/v1/score/batch", response_model=BatchScoreResponse, tags=["Scoring"])
     def score_batch_endpoint(req: BatchScoreRequest) -> BatchScoreResponse:
         if _engine is None:

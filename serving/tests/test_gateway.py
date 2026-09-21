@@ -132,6 +132,25 @@ class TestServingGateway(unittest.TestCase):
         self.assertIs(data["authorized_to_act"], False)
         self.assertEqual(data["action_authority_boundary"], ADR_0002_AUTHORITY_BOUNDARY_NOTICE)
 
+    def test_minimal_batch_scoring_response_contract(self) -> None:
+        """The bounded minimal batch endpoint preserves request order and authority markers."""
+        requests = [
+            {
+                "policy_id": obs.policy_id,
+                "as_of_date": obs.as_of,
+                "feature_stage": "raw-v6-features",
+                "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
+                "features": fmap,
+            }
+            for obs, fmap in zip(self.sample_obs[:2], self.sample_feature_maps[:2])
+        ]
+        resp = self.client.post("/v1/score/minimal/batch", json={"requests": requests})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual([item["policy_id"] for item in data], [item["policy_id"] for item in requests])
+        self.assertTrue(all(item["authorized_to_act"] is False for item in data))
+
     def test_batch_scoring_endpoint(self) -> None:
         """POST /v1/score/batch correctly scores a batch of records."""
         requests = [
