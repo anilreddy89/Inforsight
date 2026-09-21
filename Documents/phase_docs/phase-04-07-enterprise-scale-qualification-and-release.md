@@ -226,6 +226,14 @@ metrics. Component passes do not compensate for the combined E2 failure.
   four-partition reading failed ledger-tail verification and is intentionally
   excluded from evidence. A subsequent all-partition warmup experiment was
   slower and is also excluded from the performance claim.
+- The combined harness now reports the E2 boundary explicitly at scored-case
+  creation, separately from the durable audit append, and waits five seconds
+  after consumer startup to avoid measuring initial group formation. The latest
+  readiness-bounded rerun processed 100/100 events, passed audit-tail
+  verification, and measured 469.785 ms ingress-to-scored-case p99 and
+  479.611 ms ingress-to-audit p99. This confirms the 167.133 ms result remains
+  the best observed valid run, while repeated-run variance and the 50 ms E2
+  failure remain open.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart

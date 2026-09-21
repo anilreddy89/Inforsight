@@ -67,6 +67,7 @@ class P407CombinedTopologyIntegrationTest {
         CaseStore cases = new CaseStore();
         AtomicLong accepted = new AtomicLong();
         CopyOnWriteArrayList<Long> latencies = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Long> caseLatencies = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Long> inferenceDurations = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Long> auditDurations = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
@@ -112,6 +113,8 @@ class P407CombinedTopologyIntegrationTest {
                         audits.add(new AuditEvent(UUID.randomUUID(), item.policyId(), 0, "P407_COMBINED_CASE_SCORED",
                                 "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
                     }
+                    long caseCompleted = System.nanoTime();
+                    for (Prepared item : prepared) caseLatencies.add(caseCompleted - item.ingressNanos());
                     // The hash-chain read and write must share the same serialized transaction scope.
                     // AuditLedgerRepository's method lock alone ends before this transaction commits.
                     List<AuditLedgerEntry> appended;
@@ -144,7 +147,7 @@ class P407CombinedTopologyIntegrationTest {
         }
         final int eventCount = 100;
         try (KafkaProducer<String, String> producer = producer(kafka)) {
-            Thread.sleep(2_000);
+            Thread.sleep(5_000);
             for (int index = 0; index < eventCount; index++) {
                 String eventId = "evt_p407_combined_" + runToken + "_" + index;
                 String event = event(eventId, "p407-combined-policy-" + runToken + "-" + index, System.nanoTime());
@@ -164,8 +167,10 @@ class P407CombinedTopologyIntegrationTest {
         ArrayList<Long> ordered = new ArrayList<>(latencies);
         ordered.sort(Long::compareTo);
         double p99Millis = ordered.get((int) Math.ceil(ordered.size() * 0.99) - 1) / 1_000_000.0;
+        double caseP99Millis = percentileMillis(caseLatencies, 0.99);
         System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-audit=%.3f ms%n",
                 accepted.get(), p99Millis);
+        System.out.printf("P4-07 combined E2 boundary: p99 ingress-to-scored-case=%.3f ms%n", caseP99Millis);
         System.out.printf("P4-07 combined timing: inference-batch=%.3f ms, case-audit=%.3f ms%n",
                 percentileMillis(inferenceDurations, 0.99), percentileMillis(auditDurations, 0.99));
         assertThat(p99Millis).isPositive();
