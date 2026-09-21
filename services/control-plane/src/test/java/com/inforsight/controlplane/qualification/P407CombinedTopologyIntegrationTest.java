@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inforsight.controlplane.audit.AuditEvent;
 import com.inforsight.controlplane.audit.AuditHash;
+import com.inforsight.controlplane.audit.AuditLedgerCheckpoint;
+import com.inforsight.controlplane.audit.AuditLedgerEntry;
 import com.inforsight.controlplane.audit.AuditLedgerRepository;
 import com.inforsight.controlplane.audit.AuditLedgerVerifier;
 import com.inforsight.controlplane.casework.CaseStore;
 import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.HttpInferenceClient;
 import com.inforsight.controlplane.streaming.KafkaEventConsumer;
-import com.inforsight.controlplane.streaming.StreamingEventHandler;
+import com.inforsight.controlplane.streaming.BatchStreamingEventHandler;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -24,11 +26,15 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,32 +55,49 @@ class P407CombinedTopologyIntegrationTest {
         ObjectMapper mapper = new ObjectMapper();
         JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(jdbcUrl, username, password));
         AuditLedgerRepository ledger = new AuditLedgerRepository(jdbc);
+        AuditLedgerCheckpoint baseline = ledger.checkpoint();
         HttpInferenceClient inference = new HttpInferenceClient(mapper, inferenceUrl, Duration.ofSeconds(2), 1);
         CaseStore cases = new CaseStore();
         AtomicLong accepted = new AtomicLong();
         CopyOnWriteArrayList<Long> latencies = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
-        StreamingEventHandler handler = (topic, key, value) -> {
-            try {
-                JsonNode event;
-                try {
-                    event = mapper.readTree(value);
-                } catch (java.io.IOException failure) {
-                    throw new IllegalArgumentException("combined qualification event is not valid JSON", failure);
-                }
-                String policyId = event.get("policy_id").asText();
-                InferenceScore score = inference.scoreWithFeatures(policyId, Instant.parse("2026-09-18T00:00:00Z"), features());
-                cases.create(policyId, Instant.parse("2026-09-18T00:00:00Z"), score, "abstain");
-                ledger.append(new AuditEvent(UUID.randomUUID(), policyId, 0, "P407_COMBINED_CASE_SCORED",
-                        "p407-qualification", Instant.now(), Map.of("event_id", event.get("event_id").asText(), "authorized_to_act", false)));
-                long ingressNanos = event.get("ingress_nanos").asLong();
-                latencies.add(System.nanoTime() - ingressNanos);
-                accepted.incrementAndGet();
+        ExecutorService inferenceExecutor = Executors.newVirtualThreadPerTaskExecutor();
+        record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
+        BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
+            @Override
+            public boolean handle(String topic, String key, String value) {
+                handleBatch(List.of(new StreamingRecord(topic, key, value)));
                 return true;
-            } catch (RuntimeException failure) {
-                failures.add(failure);
-                throw failure;
+            }
+
+            @Override
+            public void handleBatch(List<StreamingRecord> records) {
+                try {
+                    List<Future<Prepared>> futures = records.stream().map(record -> inferenceExecutor.submit(() -> {
+                        JsonNode event = mapper.readTree(record.value());
+                        String policyId = event.get("policy_id").asText();
+                        InferenceScore score = inference.scoreWithFeatures(policyId,
+                                Instant.parse("2026-09-18T00:00:00Z"), features());
+                        return new Prepared(policyId, event.get("event_id").asText(),
+                                event.get("ingress_nanos").asLong(), score);
+                    })).toList();
+                    List<Prepared> prepared = new ArrayList<>();
+                    for (Future<Prepared> future : futures) prepared.add(future.get());
+                    List<AuditEvent> audits = new ArrayList<>();
+                    for (Prepared item : prepared) {
+                        cases.create(item.policyId(), Instant.parse("2026-09-18T00:00:00Z"), item.score(), "abstain");
+                        audits.add(new AuditEvent(UUID.randomUUID(), item.policyId(), 0, "P407_COMBINED_CASE_SCORED",
+                                "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
+                    }
+                    committedEntries.addAll(ledger.appendBatch(audits));
+                    for (Prepared item : prepared) latencies.add(System.nanoTime() - item.ingressNanos());
+                    accepted.addAndGet(prepared.size());
+                } catch (Exception failure) {
+                    failures.add(failure);
+                    throw new IllegalStateException("combined qualification batch failed", failure);
+                }
             }
         };
         String groupId = "p4-07-combined-" + UUID.randomUUID();
@@ -101,6 +124,7 @@ class P407CombinedTopologyIntegrationTest {
         long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
         while (accepted.get() < eventCount + 1 && System.nanoTime() < deadline) Thread.sleep(50);
         consumer.stop();
+        inferenceExecutor.close();
 
         assertThat(failures).isEmpty();
         assertThat(accepted).hasValue(eventCount + 1);
@@ -111,7 +135,7 @@ class P407CombinedTopologyIntegrationTest {
         System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-audit=%.3f ms%n",
                 accepted.get(), p99Millis);
         assertThat(p99Millis).isPositive();
-        assertThat(new AuditLedgerVerifier().verify(ledger.entries()).valid()).isTrue();
+        assertThat(verifyTail(committedEntries, baseline)).isTrue();
     }
 
     private static KafkaProducer<String, String> producer(String bootstrap) {
@@ -139,6 +163,18 @@ class P407CombinedTopologyIntegrationTest {
                 + "\",\"idempotency_key\":\"idem_" + eventId
                 + "\",\"policy_id\":\"" + policyId
                 + "\",\"event_type\":\"policy.issued\",\"ingress_nanos\":" + ingressNanos + "}";
+    }
+
+    private static boolean verifyTail(List<AuditLedgerEntry> entries, AuditLedgerCheckpoint baseline) {
+        String parent = baseline.currentHash();
+        long sequence = baseline.sequence() + 1;
+        for (AuditLedgerEntry entry : entries) {
+            if (entry.sequence() != sequence || !parent.equals(entry.parentHash())) return false;
+            if (!AuditHash.chainHash(entry.parentHash(), entry.canonicalPayload()).equals(entry.currentHash())) return false;
+            parent = entry.currentHash();
+            sequence++;
+        }
+        return !entries.isEmpty();
     }
 
     private static String required(String name) {

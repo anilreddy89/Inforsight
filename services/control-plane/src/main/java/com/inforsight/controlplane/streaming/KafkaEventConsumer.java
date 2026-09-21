@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 /**
  * Opt-in Kafka ingress seam for the P4-07 execution topology.
@@ -29,6 +32,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
     private final KafkaConsumer<String, String> consumer;
     private final StreamingEventHandler handler;
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    private final ExecutorService handlerExecutor = Executors.newVirtualThreadPerTaskExecutor();
     private volatile boolean running;
 
     public KafkaEventConsumer(
@@ -64,9 +68,27 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         try {
             while (running) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(250));
-                records.forEach(record -> {
-                    handler.handle(record.topic(), record.key(), record.value());
-                });
+                var batch = records.partitions().stream()
+                        .flatMap(partition -> records.records(partition).stream())
+                        .map(record -> new BatchStreamingEventHandler.StreamingRecord(
+                                record.topic(), record.key(), record.value()))
+                        .toList();
+                var futures = handler instanceof BatchStreamingEventHandler batchHandler
+                        ? List.of(handlerExecutor.submit(() -> batchHandler.handleBatch(batch)))
+                        : batch.stream()
+                                .map(record -> handlerExecutor.submit(() ->
+                                        handler.handle(record.topic(), record.key(), record.value())))
+                                .toList();
+                for (Future<?> future : futures) {
+                    try {
+                        future.get();
+                    } catch (InterruptedException interrupted) {
+                        Thread.currentThread().interrupt();
+                        throw new IllegalStateException("streaming handler interrupted", interrupted);
+                    } catch (ExecutionException failure) {
+                        throw new IllegalStateException("streaming handler failed", failure.getCause());
+                    }
+                }
                 if (!records.isEmpty()) {
                     consumer.commitSync();
                 }
@@ -74,6 +96,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         } catch (WakeupException ignored) {
             // Normal shutdown path.
         } finally {
+            handlerExecutor.close();
             consumer.close();
         }
     }
