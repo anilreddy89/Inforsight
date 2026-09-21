@@ -20,13 +20,16 @@ public final class AuditLedgerRepository implements AuditAppender {
                 result -> result.next() ? result.getString(1) : AuditHash.GENESIS_HASH);
         String payload = AuditHash.canonicalPayload(event);
         String current = AuditHash.chainHash(parent, payload);
-        jdbc.update("""
+        Long sequence = jdbc.queryForObject("""
                 INSERT INTO audit_ledger (event_id, case_id, case_version, event_type, actor_id, occurred_at_utc,
                 hash_algorithm, canonical_payload, parent_hash, current_hash)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, event.eventId(), event.caseId(), event.caseVersion(), event.eventType(), event.actorId(),
+                RETURNING ledger_sequence
+                """, Long.class, event.eventId(), event.caseId(), event.caseVersion(), event.eventType(), event.actorId(),
                 java.sql.Timestamp.from(event.occurredAt()), AuditHash.ALGORITHM, payload, parent, current);
-        return findByEventId(event.eventId()).orElseThrow();
+        if (sequence == null) throw new IllegalStateException("audit ledger insert did not return a sequence");
+        return new AuditLedgerEntry(sequence, event.eventId(), event.caseId(), event.caseVersion(), event.eventType(),
+                event.actorId(), event.occurredAt(), payload, parent, current);
     }
 
     public Optional<AuditLedgerEntry> findByEventId(java.util.UUID eventId) {

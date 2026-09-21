@@ -15,7 +15,7 @@ regulatory, or autonomous-execution claim.
 | Depends on | P4-06, ADR 0002 human authority boundary |
 | Blocks | Future Phase 5 initiatives |
 | Tracking issue | [#195](https://github.com/anilreddy89/Inforsight/issues/195) |
-| Pull request | TBD |
+| Pull request | [#196](https://github.com/anilreddy89/Inforsight/pull/196) |
 | Branch | `implementation/p4-07-enterprise-scale-qualification` |
 
 ## Objective
@@ -90,7 +90,26 @@ semantics, and failure dispositions must be frozen before qualification runs.
 
 ## Implementation evidence
 
-- `make p4-07-check` passes with 10 focused tests.
+### Qualification findings log
+
+| Evidence run | Command or harness | Result | Qualification meaning |
+| --- | --- | --- | --- |
+| Contract preflight | `make p4-07-check` | 10 Python contract tests and 9 deterministic Java tests passed | Contract, authority, audit-hash, streaming, and parity seams are structurally guarded; this is not distributed qualification. |
+| E1 bounded ingress | `make p4-07-integration-check` with external Compose Kafka | 200,000/200,000 accepted; 15,552.36 events/sec | Kafka broker-to-consumer floor exceeded; inference-to-case and audit were not on this path. |
+| E2 HTTP component | `make p4-07-latency-integration-check` | 100 warmed samples; p99 4.748 ms | HTTP inference-to-case component floor exceeded; Kafka ingress queueing was excluded. |
+| E3 authority | deterministic connector preflight tests | External execution remains disabled and `authorized_to_act` remains false | Local authority isolation evidence only; no live connector dispatch was attempted. |
+| E4 persistence | `make p4-07-postgres-integration-check` | Tamper probe detected mutation; Flyway and chained verification passed in clean Compose state | Persistence probe passed; final run still needs clean-run identity and bound evidence. |
+| E5 recovery | Kafka restart test plus PostgreSQL repository rehydration test | 4,000 Kafka events recovered exactly; committed case and audit hash rehydrated | Bounded recovery probes passed; one combined distributed recovery report remains open. |
+| E6 parity | Java eligibility/allocation fixture checks | 3 parity/allocation fixture tests passed | Declared fixtures match; full production-path parity evidence remains open. |
+| Combined topology | `make p4-07-combined-integration-check` | 101/101 events processed; initial p99 3,790.833 ms; optimized p99 3,273.151 ms | Capability binding succeeded, but E2 failed and persistent-state isolation needs hardening. |
+
+The evidence above is intentionally separated by run. It must not be merged
+into a passing E1–E6 report until one declared run binds the exact workload,
+topology identity, measurement window, event accounting, and all six gate
+metrics. Component passes do not compensate for the combined E2 failure.
+
+- `make p4-07-check` passes with 10 Python contract tests and 9 focused Java
+  authority, audit, streaming, parity, and allocation tests.
 - The dependency-free preflight freezes the 100,000-policy/200,000-event
   workload and E1–E6 gate inventory.
 - Stable manifest SHA-256: `00c7af00458fcd9cefc69864523eac984b125ed70d7640cb60b8bbc7c7499228`.
@@ -139,10 +158,21 @@ semantics, and failure dispositions must be frozen before qualification runs.
   before E2 can be marked complete.
 - The combined opt-in topology smoke bound Kafka ingress, HTTP inference, case
   creation, and PostgreSQL audit in one run. It processed 101/101 events and
-  verified the resulting audit chain, but observed p99 ingress-to-audit latency
-  of 3,790.833 ms. This is a recorded E2 failure, not a qualification pass;
-  the serial consumer/audit path requires performance work before the 50 ms
-  end-to-end floor can be reconsidered.
+  verified the resulting audit chain in the initial clean run, but observed p99
+  ingress-to-audit latency of 3,790.833 ms. This is a recorded E2 failure, not
+  a qualification pass; the serial consumer/audit path requires performance
+  work before the 50 ms end-to-end floor can be reconsidered.
+- An audit append optimization now uses PostgreSQL `INSERT ... RETURNING` to
+  return the committed ledger sequence directly, removing a redundant lookup
+  per event while preserving parent-hash locking and append-only semantics.
+  The optimized rerun processed 101/101 events and measured 3,273.151 ms p99,
+  an observed improvement of 517.682 ms (13.65%), but it still failed the
+  50 ms E2 floor. The rerun also exposed that persistent local test data can
+  make whole-ledger verification fail after prior qualification attempts;
+  clean-run isolation or an explicit checkpoint-bounded verifier is required
+  before using the combined run as final evidence.
+- The current E2 result is therefore `FAIL — optimization in progress`, not
+  `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart
   evidence, and Java/Python production-path parity remain open.
 
