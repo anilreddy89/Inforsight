@@ -105,6 +105,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | Minimal response optimization | Same combined harness with `/v1/score/minimal` and four inference workers | 100/100 measured events processed; p99 546.152 ms | Diagnostic response serialization was removed from the control-plane path and the contract is covered by a serving test; E2 remains above 50 ms. |
 | Minimal batch optimization | Same combined harness with `/v1/score/minimal/batch`, one request per Kafka poll, and Kafka `fetch.max.wait.ms=25` | 100/100 measured events processed; p99 648.437 ms | The batch contract and Kafka path are operational, but this rerun did not improve p99; no performance credit is claimed and E2 remains open. |
 | Vectorized minimal scoring | Same combined harness after replacing per-record explanation scoring with vectorized minimal scoring | 100/100 measured events processed; p99 779.079 ms; inference batch 369.158 ms; case/audit 162.961 ms | The optimized code path is exercised and parity tests pass, but this run was slower; runtime variance remains material and E2 remains open. |
+| Pooled transactional audit | Same combined harness with Hikari pooling and one transaction around the ledger append | 100/100 measured events processed; p99 540.976 ms; inference batch 220.549 ms; case/audit 122.675 ms | Latest run improved over the prior vectorized run, but remains above 50 ms; E2 is still open. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -209,6 +210,12 @@ metrics. Component passes do not compensate for the combined E2 failure.
   lower algorithmic work, the next optimization must stabilize service/runtime
   scheduling and capture repeated-run distributions before selecting a new
   throughput claim.
+- The qualification harness now uses a Hikari connection pool and wraps the
+  audit checkpoint/append work in one transaction. The next run improved to
+  540.976 ms p99, with 220.549 ms inference and 122.675 ms case/audit. This
+  confirms connection and transaction setup were material contributors, but
+  the remaining gap still requires topology-level concurrency and further
+  reduction of synchronous work on the critical path.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart

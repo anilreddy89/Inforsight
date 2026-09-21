@@ -20,7 +20,9 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -48,7 +50,13 @@ class P407CombinedTopologyIntegrationTest {
         Flyway.configure().dataSource(jdbcUrl, username, password).locations("classpath:db/migration").load().migrate();
 
         ObjectMapper mapper = new ObjectMapper();
-        JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(jdbcUrl, username, password));
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(jdbcUrl);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setMaximumPoolSize(4);
+        JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+        TransactionTemplate transactions = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
         AuditLedgerRepository ledger = new AuditLedgerRepository(jdbc);
         AuditLedgerCheckpoint baseline = ledger.checkpoint();
         HttpInferenceClient inference = new HttpInferenceClient(mapper, inferenceUrl, Duration.ofSeconds(2), 1);
@@ -98,7 +106,9 @@ class P407CombinedTopologyIntegrationTest {
                         audits.add(new AuditEvent(UUID.randomUUID(), item.policyId(), 0, "P407_COMBINED_CASE_SCORED",
                                 "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
                     }
-                    committedEntries.addAll(ledger.appendBatch(audits));
+                    List<AuditLedgerEntry> appended = transactions.execute(status -> ledger.appendBatch(audits));
+                    if (appended == null) throw new IllegalStateException("audit transaction returned no entries");
+                    committedEntries.addAll(appended);
                     auditDurations.add(System.nanoTime() - auditStarted);
                     for (Prepared item : prepared) latencies.add(System.nanoTime() - item.ingressNanos());
                     accepted.addAndGet(prepared.size());
