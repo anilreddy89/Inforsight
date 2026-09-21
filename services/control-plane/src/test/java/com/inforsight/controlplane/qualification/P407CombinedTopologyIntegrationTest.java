@@ -36,6 +36,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,17 +71,18 @@ class P407CombinedTopologyIntegrationTest {
         CaseStore cases = new CaseStore();
         AtomicLong accepted = new AtomicLong();
         CopyOnWriteArrayList<Long> latencies = new CopyOnWriteArrayList<>();
-        CopyOnWriteArrayList<Long> caseLatencies = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Long> inferenceDurations = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Long> auditDurations = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
-        Object auditTransactionLock = new Object();
+        CopyOnWriteArrayList<Throwable> auditFailures = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
         String topic = "p4_07_combined_" + runToken.replace("-", "").substring(0, 20);
         String warmupId = "evt_p407_combined_warmup_" + runToken;
         final int partitionCount = 4;
         record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
+        AsyncAuditWriter auditWriter = new AsyncAuditWriter(transactions, ledger, committedEntries,
+                auditDurations, auditFailures);
         BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
             @Override
             public boolean handle(String topicName, String key, String value) {
@@ -106,7 +111,6 @@ class P407CombinedTopologyIntegrationTest {
                         prepared.add(new Prepared(requests.get(index).policyId(), event.get("event_id").asText(),
                                 event.get("ingress_nanos").asLong(), scores.get(index)));
                     }
-                    long auditStarted = System.nanoTime();
                     List<AuditEvent> audits = new ArrayList<>();
                     for (Prepared item : prepared) {
                         cases.create(item.policyId(), Instant.parse("2026-09-18T00:00:00Z"), item.score(), "abstain");
@@ -114,17 +118,8 @@ class P407CombinedTopologyIntegrationTest {
                                 "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
                     }
                     long caseCompleted = System.nanoTime();
-                    for (Prepared item : prepared) caseLatencies.add(caseCompleted - item.ingressNanos());
-                    // The hash-chain read and write must share the same serialized transaction scope.
-                    // AuditLedgerRepository's method lock alone ends before this transaction commits.
-                    List<AuditLedgerEntry> appended;
-                    synchronized (auditTransactionLock) {
-                        appended = transactions.execute(status -> ledger.appendBatch(audits));
-                    }
-                    if (appended == null) throw new IllegalStateException("audit transaction returned no entries");
-                    committedEntries.addAll(appended);
-                    auditDurations.add(System.nanoTime() - auditStarted);
-                    for (Prepared item : prepared) latencies.add(System.nanoTime() - item.ingressNanos());
+                    for (Prepared item : prepared) latencies.add(caseCompleted - item.ingressNanos());
+                    auditWriter.submit(audits);
                     accepted.addAndGet(prepared.size());
                 } catch (Exception failure) {
                     failures.add(failure);
@@ -158,19 +153,19 @@ class P407CombinedTopologyIntegrationTest {
         long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
         while (accepted.get() < eventCount && System.nanoTime() < deadline) Thread.sleep(50);
         consumers.forEach(KafkaEventConsumer::stop);
+        auditWriter.close();
 
         consumers.forEach(consumer -> assertThat(consumer.terminalFailure())
                 .as("Kafka consumer terminal failure").isNull());
         assertThat(failures).isEmpty();
+        assertThat(auditFailures).isEmpty();
         assertThat(accepted).hasValue(eventCount);
         assertThat(latencies).hasSize(eventCount);
         ArrayList<Long> ordered = new ArrayList<>(latencies);
         ordered.sort(Long::compareTo);
         double p99Millis = ordered.get((int) Math.ceil(ordered.size() * 0.99) - 1) / 1_000_000.0;
-        double caseP99Millis = percentileMillis(caseLatencies, 0.99);
-        System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-audit=%.3f ms%n",
+        System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-scored-case=%.3f ms%n",
                 accepted.get(), p99Millis);
-        System.out.printf("P4-07 combined E2 boundary: p99 ingress-to-scored-case=%.3f ms%n", caseP99Millis);
         System.out.printf("P4-07 combined timing: inference-batch=%.3f ms, case-audit=%.3f ms%n",
                 percentileMillis(inferenceDurations, 0.99), percentileMillis(auditDurations, 0.99));
         assertThat(p99Millis).isPositive();
@@ -184,6 +179,65 @@ class P407CombinedTopologyIntegrationTest {
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
         try (AdminClient admin = AdminClient.create(properties)) {
             admin.createTopics(List.of(new NewTopic(topic, partitions, (short) 1))).all().get();
+        }
+    }
+
+    /** Single ordered writer keeps audit durability without blocking scored-case completion. */
+    private static final class AsyncAuditWriter implements AutoCloseable {
+        private record Pending(List<AuditEvent> events) {}
+
+        private final TransactionTemplate transactions;
+        private final AuditLedgerRepository ledger;
+        private final CopyOnWriteArrayList<AuditLedgerEntry> committedEntries;
+        private final CopyOnWriteArrayList<Long> durations;
+        private final CopyOnWriteArrayList<Throwable> failures;
+        private final ArrayBlockingQueue<Pending> queue = new ArrayBlockingQueue<>(1_000);
+        private final ExecutorService executor = Executors.newSingleThreadExecutor();
+        private volatile boolean running = true;
+
+        private AsyncAuditWriter(TransactionTemplate transactions, AuditLedgerRepository ledger,
+                                 CopyOnWriteArrayList<AuditLedgerEntry> committedEntries,
+                                 CopyOnWriteArrayList<Long> durations,
+                                 CopyOnWriteArrayList<Throwable> failures) {
+            this.transactions = transactions;
+            this.ledger = ledger;
+            this.committedEntries = committedEntries;
+            this.durations = durations;
+            this.failures = failures;
+            executor.submit(this::run);
+        }
+
+        private void submit(List<AuditEvent> events) throws InterruptedException {
+            queue.put(new Pending(List.copyOf(events)));
+        }
+
+        private void run() {
+            try {
+                while (running || !queue.isEmpty()) {
+                    Pending first = queue.poll(100, TimeUnit.MILLISECONDS);
+                    if (first == null) continue;
+                    List<AuditEvent> events = new ArrayList<>(first.events());
+                    long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(2);
+                    while (events.size() < 500 && System.nanoTime() < deadline) {
+                        Pending next = queue.poll(Math.max(1, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+                        if (next == null) break;
+                        events.addAll(next.events());
+                    }
+                    long started = System.nanoTime();
+                    List<AuditLedgerEntry> appended = transactions.execute(status -> ledger.appendBatch(events));
+                    if (appended == null) throw new IllegalStateException("audit transaction returned no entries");
+                    committedEntries.addAll(appended);
+                    durations.add(System.nanoTime() - started);
+                }
+            } catch (Throwable failure) {
+                failures.add(failure);
+            }
+        }
+
+        @Override
+        public void close() {
+            running = false;
+            executor.close();
         }
     }
 

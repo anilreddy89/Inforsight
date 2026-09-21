@@ -107,6 +107,7 @@ semantics, and failure dispositions must be frozen before qualification runs.
 | Vectorized minimal scoring | Same combined harness after replacing per-record explanation scoring with vectorized minimal scoring | 100/100 measured events processed; p99 779.079 ms; inference batch 369.158 ms; case/audit 162.961 ms | The optimized code path is exercised and parity tests pass, but this run was slower; runtime variance remains material and E2 remains open. |
 | Pooled transactional audit | Same combined harness with Hikari pooling and one transaction around the ledger append | 100/100 measured events processed; p99 540.976 ms; inference batch 220.549 ms; case/audit 122.675 ms | Latest run improved over the prior vectorized run, but remains above 50 ms; E2 is still open. |
 | Four-partition consumer path and bounded polling | Four Kafka partitions/consumers, Hikari pooling, serialized audit transaction scope, and 5 ms Kafka fetch/poll waits | 100/100 measured events processed; audit-tail verification passed; p99 167.133 ms; inference batch 79.398 ms; case/audit 34.117 ms | Best valid combined result so far; queueing and audit-chain correctness improved, but E2 remains above 50 ms. |
+| Asynchronous scored-case/audit split | Qualification-only single ordered audit writer; scored-case completion is measured before audit drain, with the full audit suffix verified before test completion | 100/100 measured events processed; scored-case p99 184.695 ms; audit-tail verification passed; case/audit 46.667 ms | Improves the explicitly measured E2 boundary versus the prior 469.785 ms run, but remains above 50 ms. This does not change P4-04 production ACID semantics. |
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -234,6 +235,13 @@ metrics. Component passes do not compensate for the combined E2 failure.
   479.611 ms ingress-to-audit p99. This confirms the 167.133 ms result remains
   the best observed valid run, while repeated-run variance and the 50 ms E2
   failure remain open.
+- A qualification-only asynchronous audit writer then moved the durable ledger
+  append off the scored-case handler path while retaining a single ordered
+  writer and requiring the complete audit suffix to drain and verify before the
+  test passed. This produced 100/100 accepted events, 184.695 ms scored-case
+  p99, and 46.667 ms case/audit transaction time. The design is evidence for a
+  possible future topology split only; P4-04's production case-plus-audit ACID
+  boundary remains unchanged and E2 still fails the 50 ms floor.
 - The current E2 result is therefore `FAIL — optimization in progress`, not
   `PASS`; no release authorization or enterprise-scale claim is inferred.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart
