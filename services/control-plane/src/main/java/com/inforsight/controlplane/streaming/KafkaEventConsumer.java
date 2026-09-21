@@ -60,6 +60,9 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Integer.toString(Math.max(1, maxPollRecords)));
+        // Keep ingress-to-handler latency bounded when the broker has only a small batch available.
+        properties.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "1");
+        properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, "25");
         this.consumer = new KafkaConsumer<>(properties);
         this.consumer.subscribe(Arrays.stream(topics.split(",")).map(String::trim).filter(topic -> !topic.isBlank()).toList());
     }
