@@ -137,6 +137,12 @@ semantics, and failure dispositions must be frozen before qualification runs.
   observed p99 was 4.748 ms, below the frozen 50 ms floor. This is bounded
   HTTP component evidence only; Kafka ingress-to-case timing is still required
   before E2 can be marked complete.
+- The combined opt-in topology smoke bound Kafka ingress, HTTP inference, case
+  creation, and PostgreSQL audit in one run. It processed 101/101 events and
+  verified the resulting audit chain, but observed p99 ingress-to-audit latency
+  of 3,790.833 ms. This is a recorded E2 failure, not a qualification pass;
+  the serial consumer/audit path requires performance work before the 50 ms
+  end-to-end floor can be reconsidered.
 - Combined distributed runtime execution, Kafka-to-case latency, fault/restart
   evidence, and Java/Python production-path parity remain open.
 

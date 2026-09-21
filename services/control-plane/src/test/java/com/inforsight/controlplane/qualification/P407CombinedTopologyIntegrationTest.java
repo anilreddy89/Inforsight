@@ -1,0 +1,154 @@
+package com.inforsight.controlplane.qualification;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inforsight.controlplane.audit.AuditEvent;
+import com.inforsight.controlplane.audit.AuditHash;
+import com.inforsight.controlplane.audit.AuditLedgerRepository;
+import com.inforsight.controlplane.audit.AuditLedgerVerifier;
+import com.inforsight.controlplane.casework.CaseStore;
+import com.inforsight.controlplane.domain.InferenceScore;
+import com.inforsight.controlplane.inference.HttpInferenceClient;
+import com.inforsight.controlplane.streaming.KafkaEventConsumer;
+import com.inforsight.controlplane.streaming.StreamingEventHandler;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/** Combined capability binding; this is a smoke run, not the scale gate. */
+class P407CombinedTopologyIntegrationTest {
+    private static final String TOPIC = "policy.lifecycle.v1";
+
+    @Test
+    void bindsKafkaInferenceCaseAndPostgresAuditInOneRun() throws Exception {
+        Assumptions.assumeTrue("1".equals(System.getenv("INFORSIGHT_RUN_P4_07_COMBINED_INTEGRATION")));
+        String kafka = required("INFORSIGHT_P4_07_KAFKA_BOOTSTRAP_SERVERS");
+        String inferenceUrl = required("INFORSIGHT_P4_07_INFERENCE_BASE_URL");
+        String jdbcUrl = env("INFORSIGHT_P4_07_POSTGRES_JDBC_URL", "jdbc:postgresql://localhost:5433/inforsight_enterprise");
+        String username = env("INFORSIGHT_P4_07_POSTGRES_USERNAME", "inforsight_app");
+        String password = env("INFORSIGHT_P4_07_POSTGRES_PASSWORD", "dev_insecure_local_password");
+        Flyway.configure().dataSource(jdbcUrl, username, password).locations("classpath:db/migration").load().migrate();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JdbcTemplate jdbc = new JdbcTemplate(new DriverManagerDataSource(jdbcUrl, username, password));
+        AuditLedgerRepository ledger = new AuditLedgerRepository(jdbc);
+        HttpInferenceClient inference = new HttpInferenceClient(mapper, inferenceUrl, Duration.ofSeconds(2), 1);
+        CaseStore cases = new CaseStore();
+        AtomicLong accepted = new AtomicLong();
+        CopyOnWriteArrayList<Long> latencies = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
+        String runToken = UUID.randomUUID().toString();
+        StreamingEventHandler handler = (topic, key, value) -> {
+            try {
+                JsonNode event;
+                try {
+                    event = mapper.readTree(value);
+                } catch (java.io.IOException failure) {
+                    throw new IllegalArgumentException("combined qualification event is not valid JSON", failure);
+                }
+                String policyId = event.get("policy_id").asText();
+                InferenceScore score = inference.scoreWithFeatures(policyId, Instant.parse("2026-09-18T00:00:00Z"), features());
+                cases.create(policyId, Instant.parse("2026-09-18T00:00:00Z"), score, "abstain");
+                ledger.append(new AuditEvent(UUID.randomUUID(), policyId, 0, "P407_COMBINED_CASE_SCORED",
+                        "p407-qualification", Instant.now(), Map.of("event_id", event.get("event_id").asText(), "authorized_to_act", false)));
+                long ingressNanos = event.get("ingress_nanos").asLong();
+                latencies.add(System.nanoTime() - ingressNanos);
+                accepted.incrementAndGet();
+                return true;
+            } catch (RuntimeException failure) {
+                failures.add(failure);
+                throw failure;
+            }
+        };
+        String groupId = "p4-07-combined-" + UUID.randomUUID();
+        KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, TOPIC, "latest");
+        consumer.start();
+        final int eventCount = 100;
+        try (KafkaProducer<String, String> producer = producer(kafka)) {
+            Thread.sleep(2_000);
+            String warmupId = "evt_p407_combined_warmup_" + runToken;
+            producer.send(new ProducerRecord<>(TOPIC, warmupId,
+                    event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
+            long warmupDeadline = System.nanoTime() + Duration.ofSeconds(30).toNanos();
+            while (accepted.get() < 1 && System.nanoTime() < warmupDeadline) Thread.sleep(50);
+            assertThat(failures).isEmpty();
+            assertThat(accepted).hasValue(1);
+            latencies.clear();
+            for (int index = 0; index < eventCount; index++) {
+                String eventId = "evt_p407_combined_" + runToken + "_" + index;
+                String event = event(eventId, "p407-combined-policy-" + runToken + "-" + index, System.nanoTime());
+                producer.send(new ProducerRecord<>(TOPIC, eventId, event));
+            }
+            producer.flush();
+        }
+        long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
+        while (accepted.get() < eventCount + 1 && System.nanoTime() < deadline) Thread.sleep(50);
+        consumer.stop();
+
+        assertThat(failures).isEmpty();
+        assertThat(accepted).hasValue(eventCount + 1);
+        assertThat(latencies).hasSize(eventCount);
+        ArrayList<Long> ordered = new ArrayList<>(latencies);
+        ordered.sort(Long::compareTo);
+        double p99Millis = ordered.get((int) Math.ceil(ordered.size() * 0.99) - 1) / 1_000_000.0;
+        System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-audit=%.3f ms%n",
+                accepted.get(), p99Millis);
+        assertThat(p99Millis).isPositive();
+        assertThat(new AuditLedgerVerifier().verify(ledger.entries()).valid()).isTrue();
+    }
+
+    private static KafkaProducer<String, String> producer(String bootstrap) {
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        return new KafkaProducer<>(properties);
+    }
+
+    private static Map<String, Object> features() {
+        return Map.ofEntries(Map.entry("tenure_days", 365.0), Map.entry("premium_amount_cents", 1000.0),
+                Map.entry("recent_delay_days", 0.0), Map.entry("recent_failed_payment_count", 0.0),
+                Map.entry("recent_retry_count", 0.0), Map.entry("recent_recovery_count", 1.0),
+                Map.entry("arrears_duration_days", 0.0), Map.entry("rolling_on_time_rate", 1.0),
+                Map.entry("rolling_payment_count", 12.0), Map.entry("recent_notice_count", 0.0),
+                Map.entry("recent_contact_count", 0.0), Map.entry("payment_attribute_missing", 0.0),
+                Map.entry("contact_attribute_missing", 0.0), Map.entry("product_type", "fictional_term_life"),
+                Map.entry("billing_frequency", "monthly"), Map.entry("notice_category", "none"),
+                Map.entry("contact_category", "none"));
+    }
+
+    private static String event(String eventId, String policyId, long ingressNanos) {
+        return "{\"schema_version\":\"1.0.0\",\"event_id\":\"" + eventId
+                + "\",\"idempotency_key\":\"idem_" + eventId
+                + "\",\"policy_id\":\"" + policyId
+                + "\",\"event_type\":\"policy.issued\",\"ingress_nanos\":" + ingressNanos + "}";
+    }
+
+    private static String required(String name) {
+        String value = System.getenv(name);
+        Assumptions.assumeTrue(value != null && !value.isBlank(), name + " is required");
+        return value;
+    }
+
+    private static String env(String name, String fallback) {
+        String value = System.getenv(name);
+        return value == null || value.isBlank() ? fallback : value;
+    }
+}

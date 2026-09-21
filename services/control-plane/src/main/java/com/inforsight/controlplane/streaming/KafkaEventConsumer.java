@@ -36,6 +36,12 @@ public final class KafkaEventConsumer implements SmartLifecycle {
             @Value("${inforsight.streaming.bootstrap-servers:kafka:29092}") String bootstrapServers,
             @Value("${inforsight.streaming.group-id:inforsight-control-plane}") String groupId,
             @Value("${inforsight.streaming.topics:policy.lifecycle.v1,billing.payment.v1,customer.service.v1}") String topics) {
+        this(handler, bootstrapServers, groupId, topics, "earliest");
+    }
+
+    /** Test-only offset policy seam; production configuration remains earliest. */
+    public KafkaEventConsumer(StreamingEventHandler handler, String bootstrapServers, String groupId,
+                              String topics, String autoOffsetReset) {
         this.handler = handler;
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -43,7 +49,7 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         this.consumer = new KafkaConsumer<>(properties);
         this.consumer.subscribe(Arrays.stream(topics.split(",")).map(String::trim).filter(topic -> !topic.isBlank()).toList());
     }
