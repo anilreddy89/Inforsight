@@ -108,6 +108,19 @@ run. The 50 ms production threshold remains unchanged.
 - Release notes and final decision record, including any failed or deferred
   gate and the resulting claim boundary.
 
+## Next qualification step
+
+The next P4-07 task is a controlled Linux benchmark. It must run outside
+Docker Desktop with dedicated CPU allocation, fixed JVM/Python worker counts,
+isolated Kafka and PostgreSQL services, stable runtime versions, and five
+repeated 100-event warm samples. The report must include median and worst-run
+P99 scored-case latency, Kafka-to-handler timing, inference timing, audit-drain
+timing, event accounting, and the audit-tail verification result.
+
+The controlled run may either prove E2 at P99 <= 50 ms or provide bounded
+evidence for a formal target review. It must not silently substitute the local
+250 ms development band for the production gate.
+
 ## Implementation evidence
 
 ### Qualification findings log
