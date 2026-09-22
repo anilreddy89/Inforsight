@@ -141,6 +141,8 @@ evidence for a formal target review. It must not silently substitute the local
 | Pooled transactional audit | Same combined harness with Hikari pooling and one transaction around the ledger append | 100/100 measured events processed; p99 540.976 ms; inference batch 220.549 ms; case/audit 122.675 ms | Latest run improved over the prior vectorized run, but remains above 50 ms; E2 is still open. |
 | Four-partition consumer path and bounded polling | Four Kafka partitions/consumers, Hikari pooling, serialized audit transaction scope, and 5 ms Kafka fetch/poll waits | 100/100 measured events processed; audit-tail verification passed; p99 167.133 ms; inference batch 79.398 ms; case/audit 34.117 ms | Best valid combined result so far; queueing and audit-chain correctness improved, but E2 remains above 50 ms. |
 | Asynchronous scored-case/audit split | Qualification-only single ordered audit writer; scored-case completion is measured before audit drain, with the full audit suffix verified before test completion | 100/100 measured events processed; scored-case p99 184.695 ms; audit-tail verification passed; case/audit 46.667 ms | Improves the explicitly measured E2 boundary versus the prior 469.785 ms run, but remains above 50 ms. This does not change P4-04 production ACID semantics. |
+| Controlled Linux local profile | Five repeated warm runs on OrbStack Linux (12 CPUs, ~8 GB RAM), one inference worker, isolated services | Median p99 95.243 ms; worst p99 112.806 ms; all runs 100/100 | Local validation band passed and confirmed a large Docker Desktop scheduling effect; production E2 remains open. |
+| Controlled Linux worker comparison | Same five-run profile with four inference workers | Median p99 104.645 ms; worst p99 128.632 ms; all runs 100/100 | Four workers were slower and more variable; the one-worker topology remains the local baseline. |
 
 The local Docker results in this phase are diagnostic only. Observed scored-case
 values between approximately 183 ms and 470 ms demonstrate environment and
@@ -148,6 +150,13 @@ topology variance, not a production SLO. A controlled Linux run with reserved
 CPU, fixed worker counts, isolated Kafka/PostgreSQL, and repeated-run
 distribution is required before deciding whether the remaining gap is
 environmental, architectural, or both.
+
+The first controlled OrbStack Linux profile materially reduced the local
+variance: five warm one-worker runs produced a median p99 of 95.243 ms and a
+worst p99 of 112.806 ms. A four-worker comparison was slower (104.645 ms
+median; 128.632 ms worst), so worker multiplication is not credited as an
+optimization. These results are still local evidence and do not pass the 50 ms
+production E2 gate.
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
