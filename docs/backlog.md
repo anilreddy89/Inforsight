@@ -1359,6 +1359,24 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Outcome:** Formal distributed system qualification under high-volume synthetic load, verification of Enterprise Performance Gates (E1–E6), and milestone release closeout. See the [P4-07 phase document](../Documents/phase_docs/phase-04-07-enterprise-scale-qualification-and-release.md).
 
+**Current qualification finding (2026-09-22):** A local Linux-network candidate
+passed one set of five warmed 100-event runs below 50 ms p99 (worst 25.946
+ms), but a later five-run repeat failed (worst 193.314 ms, mostly before Kafka
+acknowledgement). One frozen-identity 200,000-event run reached 46.480 ms p99
+at 6,251.60 scored events/sec; other full-load trials exceeded 50 ms. The fast harness uses an
+in-memory case store and deferred audit, so E2 and all-gates release evidence
+remain open. See the [detailed findings](experiments/p4-07-latency-topology-findings.md);
+no release tag or milestone closeout is authorized by these local results.
+
+**Sequencing decision (2026-09-25):** Keep P4-07 open while later-phase work
+builds a production-matched cloud qualification environment. Starting that
+work does not waive E1–E6 or authorize `v0.4.0-enterprise-scale`; resume the
+same P4-07 qualification when the environment and persistent scored-case path
+are available. Local hardware may contribute to latency variance, but it is
+not established as the sole cause. See the phase document for the resumption
+and release conditions. Other Phase 5 initiatives retain their own
+prerequisites.
+
 **Scope:**
 - Execute distributed stress qualification runner on 100,000 synthetic policies across Kafka streaming cluster.
 - Pre-register and verify Enterprise Performance Gates:
@@ -1380,12 +1398,16 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 **Acceptance checks:**
 - [x] E1–E6 are pre-registered with exact thresholds, workload, and fail-closed semantics.
 - [x] The 100,000-policy workload identity is reproducible and cryptographically bound.
+- [ ] Formal arrival/topology/persistence measurement protocol is frozen and
+  exercised on dedicated Linux resources.
 - [ ] All 6 Enterprise Performance Gates (E1–E6) pass 100%.
 - [ ] Enterprise Qualification Report and cryptographic manifest published.
 - [ ] Release notes document deployment topologies, scaling benchmarks, and operator guides.
 - [ ] Milestone #5 reaches 100% completion on GitHub.
 
-**Depends on:** P4-06. **Blocks:** Future Phase 5 initiatives.
+**Depends on:** P4-06. **Blocks:** `v0.4.0-enterprise-scale` release, Milestone
+#5 closeout, and enterprise-scale claims; does not block Phase 5 work needed
+to establish the cloud qualification environment.
 
 ---
 

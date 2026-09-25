@@ -11,9 +11,9 @@ regulatory, or autonomous-execution claim.
 | --- | --- |
 | Phase | Phase 4 — Enterprise Integration & Scale |
 | Milestone | `v0.4.0-enterprise-scale` (Milestone #5) |
-| Status | In progress through [issue #195](https://github.com/anilreddy89/Inforsight/issues/195) |
+| Status | In progress; cloud-environment qualification remains pending through [issue #195](https://github.com/anilreddy89/Inforsight/issues/195) |
 | Depends on | P4-06, ADR 0002 human authority boundary |
-| Blocks | Future Phase 5 initiatives |
+| Blocks | `v0.4.0-enterprise-scale` release, Milestone #5 closeout, and enterprise-scale claims; not the start of Phase 5 cloud-environment work |
 | Tracking issue | [#195](https://github.com/anilreddy89/Inforsight/issues/195) |
 | Pull request | [#196](https://github.com/anilreddy89/Inforsight/pull/196) |
 | Branch | `implementation/p4-07-enterprise-scale-qualification` |
@@ -88,6 +88,8 @@ run. The 50 ms production threshold remains unchanged.
 - [x] E1–E6 are frozen with exact thresholds, workload, and failure semantics.
 - [x] The 100,000-policy workload is reproducible and cryptographically bound
   to its configuration and runtime versions.
+- [ ] The formal arrival profile, topology identity, resource allocation, and
+  scored-case persistence boundary are versioned and frozen before acceptance.
 - [ ] Throughput and latency evidence is complete, bounded, and reproducible.
 - [ ] Authority isolation and audit tamper scenarios fail closed.
 - [ ] Worker restart/recovery evidence accounts for every event and audit row.
@@ -110,16 +112,51 @@ run. The 50 ms production threshold remains unchanged.
 
 ## Next qualification step
 
-The next P4-07 task is a controlled Linux benchmark. It must run outside
-Docker Desktop with dedicated CPU allocation, fixed JVM/Python worker counts,
-isolated Kafka and PostgreSQL services, stable runtime versions, and five
-repeated 100-event warm samples. The report must include median and worst-run
-P99 scored-case latency, Kafka-to-handler timing, inference timing, audit-drain
-timing, event accounting, and the audit-tail verification result.
+One set of five warmed 100-event runs passed the **local** 50 ms diagnostic
+(median 18.590 ms; worst 25.946 ms), but a later repeat failed (worst 193.314
+ms, dominated by 185.913 ms ingress-to-broker-ack p99). One frozen-identity
+200,000-event run reached 46.480 ms at 6,251.60 scored events/sec; other
+full-load trials exceeded 50 ms. See the
+[detailed topology findings](../../docs/experiments/p4-07-latency-topology-findings.md)
+for the workload, counterexamples, measurement boundary, and limitations.
+
+The next P4-07 task is a controlled **dedicated** Linux qualification run
+outside a shared developer VM. Before it, the arrival profile, resource
+allocation, and scored-case persistence boundary need a versioned decision.
+The run must fix JVM/Python worker counts, isolate Kafka and PostgreSQL,
+record stable runtime versions, and report repeated full-cardinality latency,
+throughput, event accounting, audit-tail verification, and E3–E6 evidence.
 
 The controlled run may either prove E2 at P99 <= 50 ms or provide bounded
 evidence for a formal target review. It must not silently substitute the local
 250 ms development band for the production gate.
+
+## Sequencing decision — 2026-09-25
+
+P4-07 remains **open, not passed** while a production-matched cloud
+qualification environment is built in a later increment. Phase 5 work needed
+to provision and validate that environment may proceed without treating P4-07
+as complete. This is a dependency change for starting that work, not a waiver
+of E1–E6 or permission to release `v0.4.0-enterprise-scale`. Other Phase 5
+initiatives still require their own prerequisites and claim reviews.
+
+The present local topology is not sufficient to decide the production 50 ms
+gate. Local hardware or virtualization may contribute to variance, but the
+observed broker-acknowledgement spike and the in-memory case/deferred-audit
+measurement boundary prevent attributing the gap solely to hardware. The
+[latency/topology findings](../../docs/experiments/p4-07-latency-topology-findings.md)
+retain the passing and failing local runs without promoting either to release
+evidence.
+
+When the later cloud environment is available, resume this same P4-07 issue
+and qualification contract. Before the run, version and freeze the actual
+topology, resource allocation, runtime versions, arrival profile, warm-up,
+measurement boundary, and persistent scored-case behavior. Re-run the frozen
+100,000-policy/200,000-event workload with complete event and audit accounting,
+repeatable E1 throughput and E2 p99 latency, and bound E3–E6 evidence. Record
+the result and a governed pass/fail decision. A failing gate leaves P4-07 and
+the release blocked; any change to a threshold or contract needs a separately
+reviewed amendment, not a retrospective reinterpretation of local evidence.
 
 ## Implementation evidence
 
@@ -128,7 +165,8 @@ evidence for a formal target review. It must not silently substitute the local
 | Evidence run | Command or harness | Result | Qualification meaning |
 | --- | --- | --- | --- |
 | Contract preflight | `make p4-07-check` | 10 Python contract tests and 9 deterministic Java tests passed | Contract, authority, audit-hash, streaming, and parity seams are structurally guarded; this is not distributed qualification. |
-| E1 bounded ingress | `make p4-07-integration-check` with external Compose Kafka | 200,000/200,000 accepted; 15,552.36 events/sec | Kafka broker-to-consumer floor exceeded; inference-to-case and audit were not on this path. |
+| E1 bounded ingress, historical shared topic | `make p4-07-integration-check` with external Compose Kafka | Previously reported 200,000 accepted and 15,552.36 events/sec | The test reused a retained topic; later rerun showed historical records can contaminate accepted counts. Do not use this figure as authoritative E1 evidence; the test now creates unique topics. |
+| E1 isolated-topic ingress and restart | `make p4-07-integration-check` against local Compose Kafka, per-run topics, explicit producer acknowledgements | 200,000/200,000 broker-acknowledged and accepted at 151,382.95 events/sec; separate 4,000/4,000 restart probe; all three integration tests passed | Valid bounded broker-to-consumer evidence after test isolation. The synthetic publisher uses bounded retries without idempotence to avoid local broker sequence faults; this is not the frozen end-to-end producer/topology or full E1–E6 report. |
 | E2 HTTP component | `make p4-07-latency-integration-check` | 100 warmed samples; p99 4.748 ms | HTTP inference-to-case component floor exceeded; Kafka ingress queueing was excluded. |
 | E3 authority | deterministic connector preflight tests | External execution remains disabled and `authorized_to_act` remains false | Local authority isolation evidence only; no live connector dispatch was attempted. |
 | E4 persistence | `make p4-07-postgres-integration-check` | Tamper probe detected mutation; Flyway and chained verification passed in clean Compose state | Persistence probe passed; final run still needs clean-run identity and bound evidence. |
@@ -139,10 +177,14 @@ evidence for a formal target review. It must not silently substitute the local
 | Minimal batch optimization | Same combined harness with `/v1/score/minimal/batch`, one request per Kafka poll, and Kafka `fetch.max.wait.ms=25` | 100/100 measured events processed; p99 648.437 ms | The batch contract and Kafka path are operational, but this rerun did not improve p99; no performance credit is claimed and E2 remains open. |
 | Vectorized minimal scoring | Same combined harness after replacing per-record explanation scoring with vectorized minimal scoring | 100/100 measured events processed; p99 779.079 ms; inference batch 369.158 ms; case/audit 162.961 ms | The optimized code path is exercised and parity tests pass, but this run was slower; runtime variance remains material and E2 remains open. |
 | Pooled transactional audit | Same combined harness with Hikari pooling and one transaction around the ledger append | 100/100 measured events processed; p99 540.976 ms; inference batch 220.549 ms; case/audit 122.675 ms | Latest run improved over the prior vectorized run, but remains above 50 ms; E2 is still open. |
-| Four-partition consumer path and bounded polling | Four Kafka partitions/consumers, Hikari pooling, serialized audit transaction scope, and 5 ms Kafka fetch/poll waits | 100/100 measured events processed; audit-tail verification passed; p99 167.133 ms; inference batch 79.398 ms; case/audit 34.117 ms | Best valid combined result so far; queueing and audit-chain correctness improved, but E2 remains above 50 ms. |
+| Four-partition consumer path and bounded polling | Four Kafka partitions/consumers, Hikari pooling, serialized audit transaction scope, and 5 ms Kafka fetch/poll waits | 100/100 measured events processed; audit-tail verification passed; p99 167.133 ms; inference batch 79.398 ms; case/audit 34.117 ms | Best valid result at that stage; queueing and audit-chain correctness improved, but E2 remained above 50 ms. |
 | Asynchronous scored-case/audit split | Qualification-only single ordered audit writer; scored-case completion is measured before audit drain, with the full audit suffix verified before test completion | 100/100 measured events processed; scored-case p99 184.695 ms; audit-tail verification passed; case/audit 46.667 ms | Improves the explicitly measured E2 boundary versus the prior 469.785 ms run, but remains above 50 ms. This does not change P4-04 production ACID semantics. |
 | Controlled Linux local profile | Five repeated warm runs on OrbStack Linux (12 CPUs, ~8 GB RAM), one inference worker, isolated services | Median p99 95.243 ms; worst p99 112.806 ms; all runs 100/100 | Local validation band passed and confirmed a large Docker Desktop scheduling effect; production E2 remains open. |
 | Controlled Linux worker comparison | Same five-run profile with four inference workers | Median p99 104.645 ms; worst p99 128.632 ms; all runs 100/100 | Four workers were slower and more variable; the one-worker topology remains the local baseline. |
+| Linux-network 50 ms diagnostic | `make p4-07-linux-latency-check`; five full-path warmed 100-event runs | Per-run p99 16.727, 18.590, 18.756, 25.946, and 17.786 ms; median 18.590 ms; worst 25.946 ms; all audit tails verified | Passes an opt-in **local** 50 ms diagnostic, not production E2 or release qualification. |
+| Linux-network diagnostic repeat | Same command after isolated-topic Kafka integration | Per-run p99 18.032, 29.898, 19.112, 18.248, and 193.314 ms; worst ingress-to-ack p99 185.913 ms | Strict local 50 ms diagnostic failed on repetition; the earlier passing set is not a stable result. |
+| Frozen 200,000-event candidate, paced 100/16 ms | One Linux-network run with frozen event digest, one Kafka consumer/inference worker, and deferred audit | 6,251.60 scored events/sec; scored-case p99 46.480 ms; all events and audit tail verified | One local numerical E1/E2 pass, but not repeatable/formal or on persistent scored-case path. Other 200,000-event trials observed 79.732 ms at the same feed with timed ID construction, 66.701 ms at 100/19 ms, and 444.620 ms with smaller polls. |
+| Standard Java test suite | `mvn -q -f services/control-plane/pom.xml test` with local test socket/attach access | Passed; opt-in distributed integration scenarios remain separate | Regression check only, not formal E1–E6 evidence. |
 
 The local Docker results in this phase are diagnostic only. Observed scored-case
 values between approximately 183 ms and 470 ms demonstrate environment and
@@ -151,12 +193,13 @@ CPU, fixed worker counts, isolated Kafka/PostgreSQL, and repeated-run
 distribution is required before deciding whether the remaining gap is
 environmental, architectural, or both.
 
-The first controlled OrbStack Linux profile materially reduced the local
-variance: five warm one-worker runs produced a median p99 of 95.243 ms and a
-worst p99 of 112.806 ms. A four-worker comparison was slower (104.645 ms
-median; 128.632 ms worst), so worker multiplication is not credited as an
-optimization. These results are still local evidence and do not pass the 50 ms
-production E2 gate.
+The first OrbStack Linux profile materially reduced the local variance but
+remained above 50 ms. Moving Java into the same Linux network, completing
+warm-up through inference/audit, and tuning one-consumer fetch/poll batching
+subsequently produced the local sub-50 ms observations recorded above. Worker
+multiplication and CPU pinning were not credited as improvements. The one
+full-cardinality passing run does not override the counterexamples or pass
+the production E2 gate.
 
 The evidence above is intentionally separated by run. It must not be merged
 into a passing E1–E6 report until one declared run binds the exact workload,
@@ -189,12 +232,17 @@ metrics. Component passes do not compensate for the combined E2 failure.
   not use the current Docker Desktop API metadata, but the same consumer test
   passed against the healthy Compose Kafka broker at `localhost:9092`: the
   governed envelope was consumed and its duplicate replay was deduplicated.
-- Against the healthy Compose Kafka broker at `localhost:9092`, the focused
-  frozen-cardinality run accepted 200,000/200,000 events at 15,552.36
-  events/sec, above the E1 5,000 events/sec floor. This is bounded
-  broker-to-consumer evidence only; it is not full end-to-end E1–E6
-  qualification because inference, PostgreSQL audit, restart/replay, parity,
-  latency, authority, and tamper evidence are not yet bound to the run.
+- The original external-Kafka test reused a retained topic, so its earlier
+  200,000-event/15,552.36 events/sec observation is no longer treated as
+  authoritative: a later rerun consumed historical records and failed exact
+  restart accounting. The test now creates a unique topic for every scenario,
+  checks broker acknowledgements, and has a bounded producer timeout. After
+  resolving local broker leader/producer-sequence faults in the **synthetic
+  test publisher only**, the full integration suite passed with 200,000/200,000
+  events at 151,382.95 events/sec and a separate exact 4,000-event restart.
+  This is still only broker-to-consumer evidence; inference, PostgreSQL
+  audit, latency, authority, tamper, restart, and parity must be bound for
+  final E1–E6 qualification.
 - The same external-broker harness restarted the consumer with the same Kafka
   group after a bounded 4,000-event workload. The two consumer instances
   accounted for exactly 4,000 accepted events with no loss; this is bounded
@@ -257,10 +305,9 @@ metrics. Component passes do not compensate for the combined E2 failure.
 - The minimal batch implementation now vectorizes logits and probability
   calculation and skips explanation construction entirely. The latest bound
   run decomposed to 369.158 ms inference and 162.961 ms case/audit, with
-  779.079 ms end-to-end p99. Because this was slower than prior runs despite
-  lower algorithmic work, the next optimization must stabilize service/runtime
-  scheduling and capture repeated-run distributions before selecting a new
-  throughput claim.
+  779.079 ms end-to-end p99. This historical trial was slower than prior runs
+  despite lower algorithmic work; it motivated service/runtime stabilization
+  and repeated-run distributions.
 - The qualification harness now uses a Hikari connection pool and wraps the
   audit checkpoint/append work in one transaction. The next run improved to
   540.976 ms p99, with 220.549 ms inference and 122.675 ms case/audit. This
@@ -272,7 +319,7 @@ metrics. Component passes do not compensate for the combined E2 failure.
   serializes the full audit transaction scope so concurrent appends cannot fork
   the hash chain before commit. The best valid rerun processed 100/100 events,
   passed checkpoint-bounded audit-tail verification, and measured 167.133 ms
-  p99 (79.398 ms inference batch; 34.117 ms case/audit). A prior 224.023 ms
+  p99 (79.398 ms inference batch; 34.117 ms case/audit). Another 224.023 ms
   four-partition reading failed ledger-tail verification and is intentionally
   excluded from evidence. A subsequent all-partition warmup experiment was
   slower and is also excluded from the performance claim.
@@ -281,20 +328,24 @@ metrics. Component passes do not compensate for the combined E2 failure.
   after consumer startup to avoid measuring initial group formation. The latest
   readiness-bounded rerun processed 100/100 events, passed audit-tail
   verification, and measured 469.785 ms ingress-to-scored-case p99 and
-  479.611 ms ingress-to-audit p99. This confirms the 167.133 ms result remains
-  the best observed valid run, while repeated-run variance and the 50 ms E2
-  failure remain open.
+  479.611 ms ingress-to-audit p99. This historical comparison showed large
+  variance before the Linux-network candidate was introduced.
 - A qualification-only asynchronous audit writer then moved the durable ledger
   append off the scored-case handler path while retaining a single ordered
   writer and requiring the complete audit suffix to drain and verify before the
   test passed. This produced 100/100 accepted events, 184.695 ms scored-case
   p99, and 46.667 ms case/audit transaction time. The design is evidence for a
   possible future topology split only; P4-04's production case-plus-audit ACID
-  boundary remains unchanged and E2 still fails the 50 ms floor.
-- The current E2 result is therefore `FAIL — optimization in progress`, not
-  `PASS`; no release authorization or enterprise-scale claim is inferred.
-- Combined distributed runtime execution, Kafka-to-case latency, fault/restart
-  evidence, and Java/Python production-path parity remain open.
+  boundary remains unchanged.
+- A later Linux-network candidate achieved one frozen-cardinality 46.480 ms
+  scored-case p99 run at 6,251.60 events/sec, but a different arrival profile
+  and a smaller Kafka poll exceeded 50 ms; the fast path still uses in-memory
+  cases and asynchronous audit. [The findings record](../../docs/experiments/p4-07-latency-topology-findings.md)
+  distinguishes the candidate from formal acceptance evidence.
+- The current E2 disposition is `OPEN — insufficient repeatable, production-path
+  evidence`, not `PASS`; no release authorization or enterprise-scale claim is
+  inferred. Combined fault/restart, tamper, authority, and Java/Python
+  production-path parity evidence remain open.
 
 ## Current status
 

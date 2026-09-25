@@ -27,25 +27,35 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HexFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Combined capability binding; this is a smoke run, not the scale gate. */
 class P407CombinedTopologyIntegrationTest {
+    private static final String WORKLOAD_NAMESPACE = "p4-07-enterprise-scale-synthetic";
+    private static final String FROZEN_WORKLOAD_SHA256 =
+            "c2cc1d0b524dc2b2bdd7e342adb7a63040d8429be2175403369309fb2e031a33";
 
     @Test
     void bindsKafkaInferenceCaseAndPostgresAuditInOneRun() throws Exception {
@@ -70,19 +80,33 @@ class P407CombinedTopologyIntegrationTest {
         HttpInferenceClient inference = new HttpInferenceClient(mapper, inferenceUrl, Duration.ofSeconds(2), 1);
         CaseStore cases = new CaseStore();
         AtomicLong accepted = new AtomicLong();
-        CopyOnWriteArrayList<Long> latencies = new CopyOnWriteArrayList<>();
-        CopyOnWriteArrayList<Long> inferenceDurations = new CopyOnWriteArrayList<>();
-        CopyOnWriteArrayList<Long> auditDurations = new CopyOnWriteArrayList<>();
+        AtomicLong warmupProcessed = new AtomicLong();
+        List<Long> latencies = Collections.synchronizedList(new ArrayList<>());
+        List<Long> ingressToHandlerDurations = Collections.synchronizedList(new ArrayList<>());
+        List<Long> inferenceDurations = Collections.synchronizedList(new ArrayList<>());
+        List<Long> postInferenceDurations = Collections.synchronizedList(new ArrayList<>());
+        List<Integer> batchSizes = Collections.synchronizedList(new ArrayList<>());
+        record StageSample(String eventId, long ingressNanos, long total, long ingressToHandler, long requestPrep,
+                           long inference, long postInference, int batchSize) {}
+        List<StageSample> stageSamples = Collections.synchronizedList(new ArrayList<>());
+        ConcurrentHashMap<String, Long> producerAcknowledgements = new ConcurrentHashMap<>();
+        CopyOnWriteArrayList<Exception> producerFailures = new CopyOnWriteArrayList<>();
+        List<Long> auditDurations = Collections.synchronizedList(new ArrayList<>());
         CopyOnWriteArrayList<Throwable> failures = new CopyOnWriteArrayList<>();
-        CopyOnWriteArrayList<AuditLedgerEntry> committedEntries = new CopyOnWriteArrayList<>();
+        List<AuditLedgerEntry> committedEntries = Collections.synchronizedList(new ArrayList<>());
         CopyOnWriteArrayList<Throwable> auditFailures = new CopyOnWriteArrayList<>();
         String runToken = UUID.randomUUID().toString();
         String topic = "p4_07_combined_" + runToken.replace("-", "").substring(0, 20);
         String warmupId = "evt_p407_combined_warmup_" + runToken;
-        final int partitionCount = 4;
-        record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score) {}
+        final int partitionCount = Integer.parseInt(env("INFORSIGHT_P4_07_PARTITION_COUNT", "4"));
+        if (partitionCount < 1 || partitionCount > 16) {
+            throw new IllegalArgumentException("partition count must be between 1 and 16");
+        }
+        record Prepared(String policyId, String eventId, long ingressNanos, InferenceScore score,
+                        boolean warmup) {}
         AsyncAuditWriter auditWriter = new AsyncAuditWriter(transactions, ledger, committedEntries,
                 auditDurations, auditFailures);
+        AtomicLong lastCaseCompletedNanos = new AtomicLong();
         BatchStreamingEventHandler handler = new BatchStreamingEventHandler() {
             @Override
             public boolean handle(String topicName, String key, String value) {
@@ -93,34 +117,57 @@ class P407CombinedTopologyIntegrationTest {
             @Override
             public void handleBatch(List<StreamingRecord> records) {
                 try {
-                    List<StreamingRecord> measuredRecords = records.stream()
-                            .filter(record -> !record.value().contains(warmupId)).toList();
-                    if (measuredRecords.isEmpty()) return;
+                    long handlerStarted = System.nanoTime();
+                    List<JsonNode> events = new ArrayList<>();
                     List<HttpInferenceClient.InferenceRequest> requests = new ArrayList<>();
-                    for (StreamingRecord record : measuredRecords) {
+                    int measuredCount = 0;
+                    for (StreamingRecord record : records) {
                         JsonNode event = mapper.readTree(record.value());
+                        events.add(event);
+                        if (!event.get("event_id").asText().startsWith(warmupId)) {
+                            measuredCount++;
+                            ingressToHandlerDurations.add(handlerStarted - event.get("ingress_nanos").asLong());
+                        }
                         requests.add(new HttpInferenceClient.InferenceRequest(event.get("policy_id").asText(),
                                 Instant.parse("2026-09-18T00:00:00Z"), features()));
                     }
                     long inferenceStarted = System.nanoTime();
                     List<InferenceScore> scores = inference.scoreMinimalBatchWithFeatures(requests);
-                    inferenceDurations.add(System.nanoTime() - inferenceStarted);
+                    long inferenceCompleted = System.nanoTime();
                     List<Prepared> prepared = new ArrayList<>();
-                    for (int index = 0; index < measuredRecords.size(); index++) {
-                        JsonNode event = mapper.readTree(measuredRecords.get(index).value());
+                    for (int index = 0; index < events.size(); index++) {
+                        JsonNode event = events.get(index);
                         prepared.add(new Prepared(requests.get(index).policyId(), event.get("event_id").asText(),
-                                event.get("ingress_nanos").asLong(), scores.get(index)));
+                                event.get("ingress_nanos").asLong(), scores.get(index),
+                                event.get("event_id").asText().startsWith(warmupId)));
                     }
                     List<AuditEvent> audits = new ArrayList<>();
                     for (Prepared item : prepared) {
-                        cases.create(item.policyId(), Instant.parse("2026-09-18T00:00:00Z"), item.score(), "abstain");
-                        audits.add(new AuditEvent(UUID.randomUUID(), item.policyId(), 0, "P407_COMBINED_CASE_SCORED",
-                                "p407-qualification", Instant.now(), Map.of("event_id", item.eventId(), "authorized_to_act", false)));
+                        var scoredCase = cases.create(item.policyId(), Instant.parse("2026-09-18T00:00:00Z"),
+                                item.score(), "abstain");
+                        audits.add(new AuditEvent(UUID.randomUUID(), scoredCase.caseId(), 0,
+                                "P407_COMBINED_CASE_SCORED", "p407-qualification", Instant.now(),
+                                Map.of("event_id", item.eventId(), "authorized_to_act", false)));
                     }
                     long caseCompleted = System.nanoTime();
-                    for (Prepared item : prepared) latencies.add(caseCompleted - item.ingressNanos());
+                    if (measuredCount > 0) {
+                        batchSizes.add(measuredCount);
+                        inferenceDurations.add(inferenceCompleted - inferenceStarted);
+                        postInferenceDurations.add(caseCompleted - inferenceCompleted);
+                        for (Prepared item : prepared) {
+                            if (item.warmup()) continue;
+                            long total = caseCompleted - item.ingressNanos();
+                            latencies.add(total);
+                            stageSamples.add(new StageSample(item.eventId(), item.ingressNanos(), total,
+                                    handlerStarted - item.ingressNanos(), inferenceStarted - handlerStarted,
+                                    inferenceCompleted - inferenceStarted, caseCompleted - inferenceCompleted,
+                                    measuredCount));
+                        }
+                    }
                     auditWriter.submit(audits);
-                    accepted.addAndGet(prepared.size());
+                    accepted.addAndGet(measuredCount);
+                    if (measuredCount > 0) lastCaseCompletedNanos.accumulateAndGet(caseCompleted, Math::max);
+                    warmupProcessed.addAndGet(prepared.size() - measuredCount);
                 } catch (Exception failure) {
                     failures.add(failure);
                     throw new IllegalStateException("combined qualification batch failed", failure);
@@ -129,49 +176,153 @@ class P407CombinedTopologyIntegrationTest {
         };
         String groupId = "p4-07-combined-" + UUID.randomUUID();
         createTopic(kafka, topic, partitionCount);
-        try (KafkaProducer<String, String> producer = producer(kafka)) {
-            producer.send(new ProducerRecord<>(topic, 0, warmupId,
-                    event(warmupId, "p407-combined-warmup-" + runToken, System.nanoTime()))).get();
-            producer.flush();
-        }
         List<KafkaEventConsumer> consumers = new ArrayList<>();
-        for (int index = 0; index < partitionCount; index++) {
-            KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "earliest", 500);
+        int consumerCount = Integer.parseInt(env("INFORSIGHT_P4_07_CONSUMER_COUNT", "4"));
+        int maxPollRecords = Integer.parseInt(env("INFORSIGHT_P4_07_MAX_POLL_RECORDS", "500"));
+        int fetchMinBytes = Integer.parseInt(env("INFORSIGHT_P4_07_FETCH_MIN_BYTES", "1"));
+        int fetchMaxWaitMillis = Integer.parseInt(env("INFORSIGHT_P4_07_FETCH_MAX_WAIT_MS", "5"));
+        if (consumerCount < 1 || consumerCount > partitionCount) {
+            throw new IllegalArgumentException("consumer count must be between 1 and " + partitionCount);
+        }
+        if (maxPollRecords < 1 || maxPollRecords > 500) {
+            throw new IllegalArgumentException("max poll records must be between 1 and 500");
+        }
+        for (int index = 0; index < consumerCount; index++) {
+            KafkaEventConsumer consumer = new KafkaEventConsumer(handler, kafka, groupId, topic, "earliest", maxPollRecords,
+                    fetchMinBytes, fetchMaxWaitMillis);
             consumer.start();
             consumers.add(consumer);
         }
-        final int eventCount = 100;
+        final int eventCount = Integer.parseInt(env("INFORSIGHT_P4_07_MEASURED_EVENT_COUNT", "100"));
+        if (eventCount < 1 || eventCount > 200_000) {
+            throw new IllegalArgumentException("measured event count must be between 1 and 200000");
+        }
+        final int producerBurstSize = Integer.parseInt(env("INFORSIGHT_P4_07_PRODUCER_BURST_SIZE", "0"));
+        final int producerBurstIntervalMillis = Integer.parseInt(
+                env("INFORSIGHT_P4_07_PRODUCER_BURST_INTERVAL_MS", "0"));
+        if ((producerBurstSize == 0) != (producerBurstIntervalMillis == 0)
+                || producerBurstSize < 0 || producerBurstIntervalMillis < 0) {
+            throw new IllegalArgumentException("producer burst size and interval must both be positive or both zero");
+        }
+        final int warmupCount = 100;
+        int warmupAuditSampleCount;
+        MessageDigest eventIdDigest = MessageDigest.getInstance("SHA-256");
+        MessageDigest workloadDigest = MessageDigest.getInstance("SHA-256");
+        String[] policyIds = new String[eventCount];
+        String[] eventIds = new String[eventCount];
+        for (int index = 0; index < eventCount; index++) {
+            String policyId = WORKLOAD_NAMESPACE + ":policy:"
+                    + String.format(Locale.ROOT, "%06d", index / 2);
+            int eventNumber = index % 2;
+            String eventId = HexFormat.of().formatHex(eventIdDigest.digest(
+                    ("4072026:" + policyId + ":" + eventNumber).getBytes(StandardCharsets.UTF_8)));
+            policyIds[index] = policyId;
+            eventIds[index] = eventId;
+            workloadDigest.update(("{\"event_id\":\"" + eventId + "\",\"event_number\":" + eventNumber
+                    + ",\"policy_id\":\"" + policyId + "\"}").getBytes(StandardCharsets.UTF_8));
+        }
+        String observedWorkloadSha256 = HexFormat.of().formatHex(workloadDigest.digest());
+        if (eventCount == 200_000) assertThat(observedWorkloadSha256).isEqualTo(FROZEN_WORKLOAD_SHA256);
         try (KafkaProducer<String, String> producer = producer(kafka)) {
             Thread.sleep(5_000);
-            for (int index = 0; index < eventCount; index++) {
-                String eventId = "evt_p407_combined_" + runToken + "_" + index;
-                String event = event(eventId, "p407-combined-policy-" + runToken + "-" + index, System.nanoTime());
-                producer.send(new ProducerRecord<>(topic, index % partitionCount, eventId, event));
+            for (int index = 0; index < warmupCount; index++) {
+                String eventId = warmupId + "_" + index;
+                producer.send(new ProducerRecord<>(topic, index % partitionCount, eventId,
+                        event(eventId, "p407-combined-warmup-policy-" + runToken + "-" + index,
+                                System.nanoTime())));
             }
             producer.flush();
+            long warmupDeadline = System.nanoTime() + Duration.ofSeconds(20).toNanos();
+            while ((warmupProcessed.get() < warmupCount || committedEntries.size() < warmupCount)
+                    && System.nanoTime() < warmupDeadline) Thread.sleep(5);
+            assertThat(warmupProcessed).as("warm-up events must traverse Kafka, inference, and case creation")
+                    .hasValue(warmupCount);
+            assertThat(committedEntries).as("warm-up audit entries must drain before measurement")
+                    .hasSize(warmupCount);
+            warmupAuditSampleCount = auditDurations.size();
+            long measuredStarted = System.nanoTime();
+            for (int index = 0; index < eventCount; index++) {
+                if (producerBurstSize > 0 && index % producerBurstSize == 0) {
+                    long scheduled = measuredStarted + (long) (index / producerBurstSize)
+                            * TimeUnit.MILLISECONDS.toNanos(producerBurstIntervalMillis);
+                    long remaining;
+                    while ((remaining = scheduled - System.nanoTime()) > 0) LockSupport.parkNanos(remaining);
+                }
+                String eventId = eventIds[index];
+                String event = event(eventId, policyIds[index], System.nanoTime());
+                producer.send(new ProducerRecord<>(topic, index % partitionCount, eventId, event),
+                        (metadata, failure) -> {
+                            if (failure == null) producerAcknowledgements.put(eventId, System.nanoTime());
+                            else producerFailures.add(failure);
+                        });
+            }
+            producer.flush();
+            System.out.printf("P4-07 combined workload: run-id=%s, policies=%d, events=%d, sha256=%s%n",
+                    runToken, (eventCount + 1) / 2, eventCount, observedWorkloadSha256);
+            long deadline = System.nanoTime() + Duration.ofSeconds(Math.max(45, 30 + eventCount / 1_000)).toNanos();
+            while (accepted.get() < eventCount && System.nanoTime() < deadline
+                    && failures.isEmpty() && auditFailures.isEmpty()
+                    && consumers.stream().noneMatch(consumer -> consumer.terminalFailure() != null)) Thread.sleep(50);
+            if (accepted.get() == eventCount) {
+                double scoredEventsPerSecond = eventCount * 1_000_000_000.0
+                        / (lastCaseCompletedNanos.get() - measuredStarted);
+                System.out.printf("P4-07 combined throughput: scored-events-per-second=%.2f; "
+                                + "measured-events=%d; producer-burst=%d; burst-interval-ms=%d%n",
+                        scoredEventsPerSecond, eventCount, producerBurstSize, producerBurstIntervalMillis);
+            }
         }
-        long deadline = System.nanoTime() + Duration.ofSeconds(45).toNanos();
-        while (accepted.get() < eventCount && System.nanoTime() < deadline) Thread.sleep(50);
         consumers.forEach(KafkaEventConsumer::stop);
         auditWriter.close();
 
         consumers.forEach(consumer -> assertThat(consumer.terminalFailure())
                 .as("Kafka consumer terminal failure").isNull());
         assertThat(failures).isEmpty();
+        assertThat(producerFailures).isEmpty();
+        assertThat(producerAcknowledgements).hasSize(eventCount);
         assertThat(auditFailures).isEmpty();
         assertThat(accepted).hasValue(eventCount);
         assertThat(latencies).hasSize(eventCount);
+        assertThat(committedEntries).hasSize(warmupCount + eventCount);
         ArrayList<Long> ordered = new ArrayList<>(latencies);
         ordered.sort(Long::compareTo);
         double p99Millis = ordered.get((int) Math.ceil(ordered.size() * 0.99) - 1) / 1_000_000.0;
         System.out.printf("P4-07 combined capability smoke: accepted=%d, p99 ingress-to-scored-case=%.3f ms%n",
                 accepted.get(), p99Millis);
         System.out.printf("P4-07 combined timing: inference-batch=%.3f ms, case-audit=%.3f ms%n",
-                percentileMillis(inferenceDurations, 0.99), percentileMillis(auditDurations, 0.99));
+                percentileMillis(inferenceDurations, 0.99),
+                percentileMillis(auditDurations.subList(warmupAuditSampleCount, auditDurations.size()), 0.99));
+        System.out.printf("P4-07 combined stages: ingress-to-handler p99=%.3f ms, inference-batch p99=%.3f ms, "
+                        + "post-inference-to-case p99=%.3f ms; partitions=%d, consumers=%d, fetch-min-bytes=%d, "
+                        + "fetch-max-wait-ms=%d, max-poll-records=%d, batches=%d, max-batch=%d%n",
+                percentileMillis(ingressToHandlerDurations, 0.99), percentileMillis(inferenceDurations, 0.99),
+                percentileMillis(postInferenceDurations, 0.99), partitionCount, consumerCount, fetchMinBytes,
+                fetchMaxWaitMillis, maxPollRecords, batchSizes.size(),
+                batchSizes.stream().mapToInt(Integer::intValue).max().orElse(0));
+        List<Long> ingressToAck = stageSamples.stream()
+                .map(sample -> producerAcknowledgements.get(sample.eventId()) - sample.ingressNanos()).toList();
+        List<Long> ackToHandler = stageSamples.stream()
+                .map(sample -> sample.ingressNanos() + sample.ingressToHandler()
+                        - producerAcknowledgements.get(sample.eventId())).toList();
+        System.out.printf("P4-07 producer/consumer stages: ingress-to-ack p99=%.3f ms, "
+                        + "ack-to-handler p99=%.3f ms%n",
+                percentileMillis(ingressToAck, 0.99), percentileMillis(ackToHandler, 0.99));
+        stageSamples.stream().sorted(Comparator.comparingLong(StageSample::total).reversed()).limit(3)
+                .forEach(sample -> System.out.printf(
+                        "P4-07 tail event=%s total=%.3f ms ingress-to-handler=%.3f ms prep=%.3f ms "
+                                + "inference=%.3f ms post=%.3f ms batch=%d ack=%.3f ms%n",
+                        sample.eventId(), sample.total() / 1_000_000.0,
+                        sample.ingressToHandler() / 1_000_000.0, sample.requestPrep() / 1_000_000.0,
+                        sample.inference() / 1_000_000.0, sample.postInference() / 1_000_000.0,
+                        sample.batchSize(),
+                        (producerAcknowledgements.get(sample.eventId()) - sample.ingressNanos()) / 1_000_000.0));
         assertThat(p99Millis).isPositive();
         ArrayList<AuditLedgerEntry> orderedEntries = new ArrayList<>(committedEntries);
         orderedEntries.sort(Comparator.comparingLong(AuditLedgerEntry::sequence));
         assertThat(verifyTail(orderedEntries, baseline)).isTrue();
+        AuditLedgerCheckpoint ending = ledger.checkpoint();
+        AuditLedgerEntry finalEntry = orderedEntries.get(orderedEntries.size() - 1);
+        assertThat(ending.sequence()).isEqualTo(finalEntry.sequence());
+        assertThat(ending.currentHash()).isEqualTo(finalEntry.currentHash());
     }
 
     private static void createTopic(String bootstrap, String topic, int partitions) throws Exception {
@@ -188,16 +339,16 @@ class P407CombinedTopologyIntegrationTest {
 
         private final TransactionTemplate transactions;
         private final AuditLedgerRepository ledger;
-        private final CopyOnWriteArrayList<AuditLedgerEntry> committedEntries;
-        private final CopyOnWriteArrayList<Long> durations;
+        private final List<AuditLedgerEntry> committedEntries;
+        private final List<Long> durations;
         private final CopyOnWriteArrayList<Throwable> failures;
         private final ArrayBlockingQueue<Pending> queue = new ArrayBlockingQueue<>(1_000);
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
         private volatile boolean running = true;
 
         private AsyncAuditWriter(TransactionTemplate transactions, AuditLedgerRepository ledger,
-                                 CopyOnWriteArrayList<AuditLedgerEntry> committedEntries,
-                                 CopyOnWriteArrayList<Long> durations,
+                                 List<AuditLedgerEntry> committedEntries,
+                                 List<Long> durations,
                                  CopyOnWriteArrayList<Throwable> failures) {
             this.transactions = transactions;
             this.ledger = ledger;
@@ -208,7 +359,11 @@ class P407CombinedTopologyIntegrationTest {
         }
 
         private void submit(List<AuditEvent> events) throws InterruptedException {
-            queue.put(new Pending(List.copyOf(events)));
+            if (!failures.isEmpty()) throw new IllegalStateException("audit writer failed", failures.get(0));
+            Pending pending = new Pending(List.copyOf(events));
+            while (!queue.offer(pending, 100, TimeUnit.MILLISECONDS)) {
+                if (!failures.isEmpty()) throw new IllegalStateException("audit writer failed", failures.get(0));
+            }
         }
 
         private void run() {
@@ -226,11 +381,12 @@ class P407CombinedTopologyIntegrationTest {
                     long started = System.nanoTime();
                     List<AuditLedgerEntry> appended = transactions.execute(status -> ledger.appendBatch(events));
                     if (appended == null) throw new IllegalStateException("audit transaction returned no entries");
-                    committedEntries.addAll(appended);
                     durations.add(System.nanoTime() - started);
+                    committedEntries.addAll(appended);
                 }
             } catch (Throwable failure) {
                 failures.add(failure);
+                System.err.printf("P4-07 audit writer failure: %s%n", failure);
             }
         }
 
@@ -246,6 +402,7 @@ class P407CombinedTopologyIntegrationTest {
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, env("INFORSIGHT_P4_07_PRODUCER_LINGER_MS", "0"));
         return new KafkaProducer<>(properties);
     }
 
@@ -270,12 +427,12 @@ class P407CombinedTopologyIntegrationTest {
 
     private static boolean verifyTail(List<AuditLedgerEntry> entries, AuditLedgerCheckpoint baseline) {
         String parent = baseline.currentHash();
-        long sequence = baseline.sequence() + 1;
+        long previousSequence = baseline.sequence();
         for (AuditLedgerEntry entry : entries) {
-            if (entry.sequence() != sequence || !parent.equals(entry.parentHash())) return false;
+            if (entry.sequence() <= previousSequence || !parent.equals(entry.parentHash())) return false;
             if (!AuditHash.chainHash(entry.parentHash(), entry.canonicalPayload()).equals(entry.currentHash())) return false;
             parent = entry.currentHash();
-            sequence++;
+            previousSequence = entry.sequence();
         }
         return !entries.isEmpty();
     }

@@ -16,7 +16,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ExecutionException;
-import java.util.List;
 
 /**
  * Opt-in Kafka ingress seam for the P4-07 execution topology.
@@ -52,6 +51,13 @@ public final class KafkaEventConsumer implements SmartLifecycle {
 
     public KafkaEventConsumer(StreamingEventHandler handler, String bootstrapServers, String groupId,
                               String topics, String autoOffsetReset, int maxPollRecords) {
+        this(handler, bootstrapServers, groupId, topics, autoOffsetReset, maxPollRecords, 1, 5);
+    }
+
+    /** Bounded fetch tuning for declared qualification topologies. */
+    public KafkaEventConsumer(StreamingEventHandler handler, String bootstrapServers, String groupId,
+                              String topics, String autoOffsetReset, int maxPollRecords,
+                              int fetchMinBytes, int fetchMaxWaitMillis) {
         this.handler = handler;
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -62,8 +68,8 @@ public final class KafkaEventConsumer implements SmartLifecycle {
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Integer.toString(Math.max(1, maxPollRecords)));
         // Keep ingress-to-handler latency bounded when the broker has only a small batch available.
-        properties.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "1");
-        properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, "5");
+        properties.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, Integer.toString(Math.max(1, fetchMinBytes)));
+        properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, Integer.toString(Math.max(0, fetchMaxWaitMillis)));
         this.consumer = new KafkaConsumer<>(properties);
         this.consumer.subscribe(Arrays.stream(topics.split(",")).map(String::trim).filter(topic -> !topic.isBlank()).toList());
     }
@@ -83,20 +89,24 @@ public final class KafkaEventConsumer implements SmartLifecycle {
                         .flatMap(partition -> records.records(partition).stream())
                         .map(record -> new BatchStreamingEventHandler.StreamingRecord(record.topic(), record.key(), record.value()))
                         .toList();
-                var futures = handler instanceof BatchStreamingEventHandler batchHandler
-                        ? List.of(handlerExecutor.submit(() -> batchHandler.handleBatch(batch)))
-                        : batch.stream()
-                        .map(record -> handlerExecutor.submit(() ->
-                                handler.handle(record.topic(), record.key(), record.value())))
-                        .toList();
-                for (Future<?> future : futures) {
-                    try {
-                        future.get();
-                    } catch (InterruptedException interrupted) {
-                        Thread.currentThread().interrupt();
-                        throw new IllegalStateException("streaming handler interrupted", interrupted);
-                    } catch (ExecutionException failure) {
-                        throw new IllegalStateException("streaming handler failed", failure.getCause());
+                if (handler instanceof BatchStreamingEventHandler batchHandler) {
+                    // The poll loop waits for the batch before committing; a separate
+                    // executor only adds a scheduling hop to this ordered path.
+                    batchHandler.handleBatch(batch);
+                } else {
+                    var futures = batch.stream()
+                            .map(record -> handlerExecutor.submit(() ->
+                                    handler.handle(record.topic(), record.key(), record.value())))
+                            .toList();
+                    for (Future<?> future : futures) {
+                        try {
+                            future.get();
+                        } catch (InterruptedException interrupted) {
+                            Thread.currentThread().interrupt();
+                            throw new IllegalStateException("streaming handler interrupted", interrupted);
+                        } catch (ExecutionException failure) {
+                            throw new IllegalStateException("streaming handler failed", failure.getCause());
+                        }
                     }
                 }
                 consumer.commitSync();

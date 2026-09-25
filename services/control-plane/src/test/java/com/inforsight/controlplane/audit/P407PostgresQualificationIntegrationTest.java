@@ -14,10 +14,12 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** Opt-in Compose PostgreSQL evidence for P4-07 E4/E5. */
 class P407PostgresQualificationIntegrationTest {
@@ -79,6 +81,31 @@ class P407PostgresQualificationIntegrationTest {
         assertThat(restarted.find(initial.caseId())).contains(committed);
         assertThat(restarted.auditHash(initial.caseId(), committed.version())).isPresent();
         assertThat(new AuditLedgerVerifier().verify(ledger.entries()).valid()).isTrue();
+    }
+
+    @Test
+    void rolledBackInsertMayLeaveAValidGapInCommittedLedgerSequences() {
+        AuditLedgerRepository ledger = new AuditLedgerRepository(jdbc);
+        var dataSource = jdbc.getDataSource();
+        assertThat(dataSource).isNotNull();
+        var transactions = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+        String suffix = UUID.randomUUID().toString();
+        AuditLedgerCheckpoint baseline = ledger.checkpoint();
+        AuditLedgerEntry first = ledger.append(event("p407-gap-before-" + suffix, 1, "APPROVED"));
+
+        assertThatThrownBy(() -> transactions.execute(status -> ledger.appendBatch(List.of(
+                event("p407-gap-duplicate-" + suffix, 1, "APPROVED"),
+                event("p407-gap-duplicate-" + suffix, 1, "DISMISSED")))))
+                .isInstanceOf(org.springframework.dao.DataAccessException.class);
+
+        AuditLedgerEntry last = ledger.append(event("p407-gap-after-" + suffix, 1, "APPROVED"));
+        assertThat(last.sequence()).isGreaterThan(first.sequence() + 1);
+        assertThat(first.parentHash()).isEqualTo(baseline.currentHash());
+        assertThat(last.parentHash()).isEqualTo(first.currentHash());
+        assertThat(AuditHash.chainHash(last.parentHash(), last.canonicalPayload()))
+                .isEqualTo(last.currentHash());
+        assertThat(ledger.checkpoint().sequence()).isEqualTo(last.sequence());
+        assertThat(ledger.checkpoint().currentHash()).isEqualTo(last.currentHash());
     }
 
     private static AuditEvent event(String caseId, long version, String decision) {

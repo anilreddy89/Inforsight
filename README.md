@@ -191,6 +191,11 @@ reproducible 100,000-policy distributed qualification, Enterprise Performance
 Gates E1–E6, and the conditional `v0.4.0-enterprise-scale` release. Passing
 synthetic gates will not by itself establish production readiness, regulatory
 approval, or real-customer SLO compliance.
+The [P4-07 latency/topology findings](docs/experiments/p4-07-latency-topology-findings.md)
+record one passing local 50 ms diagnostic set and one sub-50 ms frozen-workload
+run, alongside a failed diagnostic repeat, slower full-load counterexamples,
+and the still-open persistent-path E1–E6
+qualification gate. P4-07 remains in progress; no release decision has been made.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)

@@ -4,7 +4,12 @@ Record each meaningful experiment with its question, data version, observation b
 
 For a synthesized cross-generation ledger of all methods, observable failures, mathematical root causes, and architectural decisions from v1 through v5, see [**The Iteration Ledger**](iteration-ledger.md).
 
-Current machine-readable experiment evidence includes:
+Current experiment evidence and reports include:
+
+- [P4-07 local latency/topology findings](p4-07-latency-topology-findings.md)
+  retain the full-cardinality candidate, repeated small-sample diagnostic,
+  failed configurations, audit-verifier correction, and the still-open E1–E6
+  release boundary. These observations are not a qualified release manifest.
 
 - `phase-rh-12-evidence-reconciliation-1.0.0.json` and `.md` — corrected,
   versioned portfolio evidence under RH-04/RH-05 contracts, with separate

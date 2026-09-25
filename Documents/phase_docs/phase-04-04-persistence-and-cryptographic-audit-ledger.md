@@ -38,7 +38,9 @@ execution authority.
   stale versions are rejected, and a simulated audit failure rolls back the
   case transition.
 - Ledger verification accepts a separately retained head checkpoint, so tail
-  deletion is detectable; it also rejects sequence gaps and reordered input.
+  deletion is detectable; it also rejects duplicated or reordered committed
+  entries. PostgreSQL sequence values can have legitimate gaps after rollback,
+  as recorded in the P4-07 correction below.
   A versioned `AuditLedgerSigner` boundary and deterministic local HMAC adapter
   are test-only/development seams, not a production KMS or key-custody claim.
 - The explicit Spring `persistence` profile selects `PersistentCaseRepository`
@@ -118,8 +120,8 @@ authority boundary.
 - [x] A decision and its corresponding audit record commit atomically, with no
   durable decision state when the audit write fails.
 - [x] Ledger hashes are deterministic and verification detects injected field
-  mutation, checkpointed row deletion, duplication/sequence gaps, or
-  reordering.
+  mutation, checkpointed row deletion, duplicated sequence numbers, or
+  reordering. Unused sequence values after rollback are permitted.
 - [x] Compatible idempotent retries return the original committed result without
   creating duplicate decisions or audit entries.
 - [x] Stale case versions fail with a stable conflict error and do not append a
@@ -170,3 +172,15 @@ name such as `implementation/p4-04-persistence-audit-ledger`.
   behavior only. It does not claim production KMS/key custody, independent
   checkpoint infrastructure, database-role separation, production deployment,
   or autonomous execution.
+
+## P4-07 verification correction (2026-09-22)
+
+The original gapless-sequence assertion was too strict for PostgreSQL
+`BIGSERIAL`: a failed insert transaction can consume sequence values without
+committing ledger rows. The P4-07 frozen workload exposed this with a failed
+qualification batch. [ADR 0017](../../docs/adr/0017-verify-committed-audit-chain-across-sequence-gaps.md)
+records the correction: committed sequence numbers must increase, every
+parent/current hash must verify, and an independently retained head checkpoint
+must match. A numeric gap alone is not evidence of deletion. This amendment
+does not change the P4-04 case-plus-audit ACID transaction boundary or claim
+production checkpoint custody.
