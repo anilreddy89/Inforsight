@@ -13,6 +13,7 @@ cloud environment may later provide the production-matched P4-07 test bed.
 | --- | --- |
 | Status | In progress; P5-01 foundation underway |
 | First increment | [P5-01 issue #197](https://github.com/anilreddy89/Inforsight/issues/197) |
+| Draft pull request | [#198](https://github.com/anilreddy89/Inforsight/pull/198) |
 | Branch | `implementation/p5-01-bounded-agent-workflow` (from updated `main`) |
 | Authority | ADR 0002; deterministic rules and human approval remain authoritative |
 
@@ -52,7 +53,8 @@ screening is a conservative local check, not a complete LLM security proof.
 - [x] P5-01 issue and implementation branch created.
 - [x] `make p5-01-check` passes (seven deterministic tests, including the
   governed human-review state-machine boundary).
-- [ ] Full repository and required PR CI checks pass on the final branch commit.
+- [ ] Required PR CI and review pass on the final branch commit; full local
+  `make check` is not claimed as complete.
 - [ ] P5-02 ADK orchestration and evaluation completed.
 - [ ] P5-03 HITL service integration and audit completed.
 - [ ] Full Phase 5 qualification and review/CI pass before any milestone claim.

@@ -1422,7 +1422,9 @@ not close P4-07 or deploy the Phase 6 cloud environment.
 
 **Issue:** [#197](https://github.com/anilreddy89/Inforsight/issues/197)
 
-**Status:** In progress on `implementation/p5-01-bounded-agent-workflow`
+**Status:** In progress on `implementation/p5-01-bounded-agent-workflow`;
+[draft PR #198](https://github.com/anilreddy89/Inforsight/pull/198) is awaiting
+required CI and review.
 
 **Outcome:** Contract v1 and deterministic evidence/procedure/planner seams
 with fail-closed tests and no execution authority.
