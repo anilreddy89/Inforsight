@@ -721,6 +721,23 @@ const timelineData = [
         checks: "100% pass on Gates E1–E6; 100,000 synthetic policies; docs/release-notes/v0.4.0-enterprise-scale.md; tag v0.4.0-enterprise-scale."
       }
     ]
+  },
+  {
+    phase: "Phase 5: Bounded Agentic Case Workflow",
+    milestone: "Phase 5 plan (milestone not yet assigned)",
+    items: [
+      {
+        id: "P5-01",
+        title: "Review-only evidence, procedure, and planner foundation",
+        status: "In progress",
+        commit: "Issue #197; implementation branch",
+        summary: {
+          tech: "Typed v1 evidence/procedure/planner seams, point-in-time facts, versioned fictional citations, deterministic rules allowlist, and fail-closed abstention; no model or external action tool.",
+          simple: "Build a cautious case assistant that can suggest a cited next step for a person to review, or say it lacks enough reliable information."
+        },
+        checks: "Issue #197; make p5-01-check; Phase 5 plan. ADK orchestration and human-review service integration are later increments. P4-07 remains open; the cloud demo is Phase 6."
+      }
+    ]
   }
 ];
 

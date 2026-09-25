@@ -185,6 +185,15 @@ and the [Infrastructure Guide](infra/README.md). The repository still does not
 claim production cloud deployment, real-policyholder validation, or distributed
 system performance.
 
+### ⏳ Phase 5 — Bounded Agentic Case Workflow
+
+The [Phase 5 plan](Documents/phase_docs/phase-05-agentic-case-workflow-plan.md)
+starts with [P5-01](https://github.com/anilreddy89/Inforsight/issues/197):
+typed fictional evidence and procedure inputs, a deterministic rule-allowed
+planner, and review-only drafts or fail-closed abstention. This foundation is
+not an ADK deployment or autonomous action system. Phase 6 owns the cloud
+demo; P4-07 enterprise-scale qualification remains open.
+
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)
 - Multi-region cloud infrastructure and container orchestration

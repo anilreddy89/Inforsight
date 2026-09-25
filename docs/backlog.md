@@ -1379,8 +1379,30 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 ---
 
+## Phase 5 — Bounded Agentic Case Workflow
+
+The [Phase 5 plan](../Documents/phase_docs/phase-05-agentic-case-workflow-plan.md)
+follows the 14-week plan: evidence, versioned fictional procedure retrieval,
+and conservation planning produce review-only drafts or abstention. It does
+not close P4-07 or deploy the Phase 6 cloud environment.
+
+### P5-01 — Bounded agent workflow foundation
+
+**Issue:** [#197](https://github.com/anilreddy89/Inforsight/issues/197)
+
+**Status:** In progress on `implementation/p5-01-bounded-agent-workflow`
+
+**Outcome:** Contract v1 and deterministic evidence/procedure/planner seams
+with fail-closed tests and no execution authority.
+
+**Acceptance:** Point-in-time evidence, rule-supplied allowlist, versioned
+procedure citations, prompt-injection and timeout abstention, low-confidence
+abstention, `authorized_to_act=false`, and human-review-required output.
+`make p5-01-check` is the focused local gate. P5-02 adds bounded Google ADK
+orchestration; P5-03 adds governed case/HITL integration and audit.
+
 ## Deferred intentionally
 
-- **Direct Causal Uplift ML Models (Phase 5):** Direct causal estimators (Causal Forests, X-Learners, or Double Machine Learning) predicting treatment effects $\tau_i = \mathbb{E}[Y(1) - Y(0) \mid X_i]$ directly from experimental intervention histories remain deferred until real-world intervention outcome datasets are connected.
+- **Direct Causal Uplift ML Models (later research, not Phase 5):** Direct causal estimators (Causal Forests, X-Learners, or Double Machine Learning) predicting treatment effects $\tau_i = \mathbb{E}[Y(1) - Y(0) \mid X_i]$ directly from experimental intervention histories remain deferred until real-world intervention outcome datasets are connected.
 - **Richer Lifecycle Contracts:** Issue age, face amount, acquisition channel, recurring multi-year exposure, reinstatement, policy loans, and cash surrender values will be incorporated as enterprise Policy Administration System (PAS) connectors require them.
 - **Fairness and Demographic Bias Assessment:** A separately governed fairness assessment requires real-world demographic and regulatory compliance benchmarks. We strictly avoid inventing synthetic proxy variables or claiming demographic parity without representative data.
