@@ -16,6 +16,7 @@ WORKDIR /app
 RUN groupadd -r inforsight && useradd -r -g inforsight -s /sbin/nologin -d /app inforsight
 COPY --from=builder --chown=inforsight:inforsight /root/.local /app/.local
 ENV PATH=/app/.local/bin:$PATH \
+    INFORSIGHT_INFERENCE_WORKERS=1 \
     PYTHONPATH=/app \
     INFORSIGHT_MODEL_BUNDLE_PATH=/app/model/model-bundle.json \
     INFORSIGHT_EXPECTED_BUNDLE_SHA256=7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656 \
@@ -29,4 +30,4 @@ USER inforsight
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)" || exit 1
-CMD ["uvicorn", "serving.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "exec uvicorn serving.app:app --host 0.0.0.0 --port 8000 --workers ${INFORSIGHT_INFERENCE_WORKERS:-1}"]

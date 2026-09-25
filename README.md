@@ -185,6 +185,20 @@ and the [Infrastructure Guide](infra/README.md). The repository still does not
 claim production cloud deployment, real-policyholder validation, or distributed
 system performance.
 
+P4-07 remains in progress through [issue #195](https://github.com/anilreddy89/Inforsight/issues/195).
+The partial [PR #196](https://github.com/anilreddy89/Inforsight/pull/196)
+has merged. P4-07 owns the
+reproducible 100,000-policy distributed qualification, Enterprise Performance
+Gates E1–E6, and the conditional `v0.4.0-enterprise-scale` release. Passing
+synthetic gates will not by itself establish production readiness, regulatory
+approval, or real-customer SLO compliance.
+The [P4-07 latency/topology findings](docs/experiments/p4-07-latency-topology-findings.md)
+record one passing local 50 ms diagnostic set and one sub-50 ms frozen-workload
+run, alongside a failed diagnostic repeat, slower full-load counterexamples,
+and the still-open persistent-path E1–E6
+qualification gate. PR #196 merged a partial increment, but P4-07 remains in
+progress; no release decision has been made.
+
 ### ⏳ Phase 5 — Bounded Agentic Case Workflow
 
 The [Phase 5 plan](Documents/phase_docs/phase-05-agentic-case-workflow-plan.md)

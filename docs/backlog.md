@@ -1154,7 +1154,7 @@ PR titles begin with the stable ID, such as `RH-02: Fail closed on missing safet
 - P4-01 stays completed as architecture-inception history; RH-09 amends rather than rewrites it.
 - P4-02 and P4-03 may now start implementation from the reconciled contracts because RH-13 recorded `PROCEED`; their own acceptance gates still apply.
 - P4-04 may refine its future design against RH-10, but must not implement against unsettled audit semantics.
-- P4-05 through P4-07 remain planned and inherit the amended contracts and qualification language after RH-13.
+- P4-05 through P4-06 are complete; P4-07 is now in implementation and inherits the amended contracts and qualification language after RH-13.
 - If schedule pressure requires independent Phase 4 preparation, limit it to reversible research or spike work with no frozen contracts and no release claim.
 - PostgreSQL/KMS deployment, production identity federation, CRM/telephony connectors, Kafka, Kubernetes, multi-region scaling, a new deep-learning or causal/uplift model, and a live LLM are explicitly outside RH.
 - Fresh acceptance seeds are optional: they strengthen confirmation but do not block RH-13 when the post-result protocol change remains disclosed and no fresh-confirmation claim is made.
@@ -1355,13 +1355,39 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 
 **Milestone:** `v0.4.0-enterprise-scale` (Milestone #5)
 
-**Outcome:** Formal distributed system qualification under high-volume synthetic load, verification of Enterprise Performance Gates (E1–E6), and milestone release closeout.
+**Status:** In progress through [issue #195](https://github.com/anilreddy89/Inforsight/issues/195) on branch `implementation/p4-07-enterprise-scale-qualification`.
+
+**Outcome:** Formal distributed system qualification under high-volume synthetic load, verification of Enterprise Performance Gates (E1–E6), and milestone release closeout. See the [P4-07 phase document](../Documents/phase_docs/phase-04-07-enterprise-scale-qualification-and-release.md).
+
+**Current qualification finding (2026-09-22):** A local Linux-network candidate
+passed one set of five warmed 100-event runs below 50 ms p99 (worst 25.946
+ms), but a later five-run repeat failed (worst 193.314 ms, mostly before Kafka
+acknowledgement). One frozen-identity 200,000-event run reached 46.480 ms p99
+at 6,251.60 scored events/sec; other full-load trials exceeded 50 ms. The fast harness uses an
+in-memory case store and deferred audit, so E2 and all-gates release evidence
+remain open. See the [detailed findings](experiments/p4-07-latency-topology-findings.md);
+no release tag or milestone closeout is authorized by these local results.
+
+**Sequencing decision (2026-09-25):** Keep P4-07 open while later-phase work
+builds a production-matched cloud qualification environment. Starting that
+work does not waive E1–E6 or authorize `v0.4.0-enterprise-scale`; resume the
+same P4-07 qualification when the environment and persistent scored-case path
+are available. Local hardware may contribute to latency variance, but it is
+not established as the sole cause. See the phase document for the resumption
+and release conditions. Other Phase 5 initiatives retain their own
+prerequisites.
 
 **Scope:**
 - Execute distributed stress qualification runner on 100,000 synthetic policies across Kafka streaming cluster.
 - Pre-register and verify Enterprise Performance Gates:
   - **Gate E1 (Streaming Ingestion Throughput):** $\ge 5,000\text{ events/sec}$ with zero drop rate.
   - **Gate E2 (End-to-End Latency SLA):** Event ingress to scored case brief $P_{99} \le 50.0\text{ms}$.
+  - Local Docker validation is diagnostic only and does not relax E2. The phase
+    document defines a separate local band: p99 scored-case latency up to
+    250 ms is an acceptable development baseline, 250–400 ms is a warning
+    band, and values above 400 ms are a local regression or invalid-environment
+    signal. Release qualification still requires the controlled 50 ms
+    production threshold on a dedicated benchmark environment.
   - **Gate E3 (Authority Isolation):** 100% rejection of unapproved outreach in enterprise connectors.
   - **Gate E4 (Audit Ledger Immutability):** 100% tamper detection across distributed database nodes.
   - **Gate E5 (Fault Tolerance & Recovery):** Zero data loss during simulated worker pod kill / restart.
@@ -1370,12 +1396,18 @@ See the [P4-03 phase document](../Documents/phase_docs/phase-04-03-java-spring-c
 - Prepare annotated Git release tag `v0.4.0-enterprise-scale` and close GitHub Milestone #5.
 
 **Acceptance checks:**
+- [x] E1–E6 are pre-registered with exact thresholds, workload, and fail-closed semantics.
+- [x] The 100,000-policy workload identity is reproducible and cryptographically bound.
+- [ ] Formal arrival/topology/persistence measurement protocol is frozen and
+  exercised on dedicated Linux resources.
 - [ ] All 6 Enterprise Performance Gates (E1–E6) pass 100%.
 - [ ] Enterprise Qualification Report and cryptographic manifest published.
 - [ ] Release notes document deployment topologies, scaling benchmarks, and operator guides.
 - [ ] Milestone #5 reaches 100% completion on GitHub.
 
-**Depends on:** P4-06. **Blocks:** Future Phase 5 initiatives.
+**Depends on:** P4-06. **Blocks:** `v0.4.0-enterprise-scale` release, Milestone
+#5 closeout, and enterprise-scale claims; does not block Phase 5 work needed
+to establish the cloud qualification environment.
 
 ---
 

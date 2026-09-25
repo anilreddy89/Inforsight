@@ -21,3 +21,4 @@ ADRs capture decisions that are costly or confusing to rediscover. Use the next 
 - [0014 — Enterprise distributed architecture](0014-enterprise-distributed-architecture.md)
 - [0015 — Canonical dual-time domain snapshot](0015-canonical-dual-time-domain-snapshot.md) — accepted through issue #136 and PR #137, merge `fde664ec`
 - [0016 — Preserve signed treatment effects through shared versioned economics](0016-signed-treatment-effects-and-shared-economics.md) — accepted through issue #148 and PR #149, merge `c9eddcf`
+- [0017 — Verify the committed audit chain across PostgreSQL sequence gaps](0017-verify-committed-audit-chain-across-sequence-gaps.md) — proposed in P4-07

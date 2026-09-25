@@ -96,6 +96,23 @@ class ScoreResponse(BaseModel):
     )
 
 
+class MinimalScoreResponse(BaseModel):
+    """Control-plane scoring response without diagnostic explanation payloads."""
+    model_config = ConfigDict(extra="forbid")
+
+    policy_id: str
+    as_of_date: str
+    calibrated_probability: float
+    risk_tier: str
+    risk_tier_id: str
+    bundle_version: str
+    bundle_digest: str
+    authorized_to_act: Literal[False] = False
+    action_authority_boundary: Literal["ADR_0002_REQUIRES_HUMAN_REVIEW"] = Field(
+        default=ADR_0002_AUTHORITY_BOUNDARY_NOTICE
+    )
+
+
 class BatchScoreResponse(BaseModel):
     """Batch scoring response envelope."""
     model_config = ConfigDict(extra="forbid")
