@@ -99,6 +99,62 @@ class TestServingGateway(unittest.TestCase):
         self.assertIs(data["authorized_to_act"], False)
         self.assertEqual(data["action_authority_boundary"], ADR_0002_AUTHORITY_BOUNDARY_NOTICE)
 
+    def test_minimal_scoring_response_contract(self) -> None:
+        """The control-plane response profile omits diagnostics while preserving decision metadata."""
+        fmap = self.sample_feature_maps[0]
+        obs = self.sample_obs[0]
+        payload = {
+            "policy_id": obs.policy_id,
+            "as_of_date": obs.as_of,
+            "feature_stage": "raw-v6-features",
+            "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
+            "features": fmap,
+        }
+        resp = self.client.post("/v1/score/minimal", json=payload)
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        expected = self.engine.score_record(fmap)
+
+        self.assertEqual(set(data), {
+            "policy_id",
+            "as_of_date",
+            "calibrated_probability",
+            "risk_tier",
+            "risk_tier_id",
+            "bundle_version",
+            "bundle_digest",
+            "authorized_to_act",
+            "action_authority_boundary",
+        })
+        self.assertEqual(data["policy_id"], obs.policy_id)
+        self.assertAlmostEqual(data["calibrated_probability"], expected.calibrated_probability, places=6)
+        self.assertEqual(data["risk_tier"], expected.risk_tier)
+        self.assertIs(data["authorized_to_act"], False)
+        self.assertEqual(data["action_authority_boundary"], ADR_0002_AUTHORITY_BOUNDARY_NOTICE)
+
+    def test_minimal_batch_scoring_response_contract(self) -> None:
+        """The bounded minimal batch endpoint preserves request order and authority markers."""
+        requests = [
+            {
+                "policy_id": obs.policy_id,
+                "as_of_date": obs.as_of,
+                "feature_stage": "raw-v6-features",
+                "preprocessing_profile_id": PREPROCESSING_PROFILE_ID,
+                "features": fmap,
+            }
+            for obs, fmap in zip(self.sample_obs[:2], self.sample_feature_maps[:2])
+        ]
+        resp = self.client.post("/v1/score/minimal/batch", json={"requests": requests})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual([item["policy_id"] for item in data], [item["policy_id"] for item in requests])
+        self.assertTrue(all(item["authorized_to_act"] is False for item in data))
+        for item, request in zip(data, requests):
+            expected = self.engine.score_record(request["features"])
+            self.assertAlmostEqual(item["calibrated_probability"], expected.calibrated_probability, places=6)
+            self.assertEqual(item["risk_tier"], expected.risk_tier)
+
     def test_batch_scoring_endpoint(self) -> None:
         """POST /v1/score/batch correctly scores a batch of records."""
         requests = [

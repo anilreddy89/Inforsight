@@ -65,6 +65,7 @@ services:
     environment:
       INFERENCE_HOST: "0.0.0.0"
       INFERENCE_REST_PORT: "8000"
+      INFORSIGHT_INFERENCE_WORKERS: "${INFORSIGHT_INFERENCE_WORKERS:-1}"
       INFORSIGHT_MODEL_BUNDLE_PATH: "/app/model/model-bundle.json"
     healthcheck:
       test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]

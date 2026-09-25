@@ -20,6 +20,11 @@ inforsight:
     base-url: http://localhost:8000
     timeout: 500ms
     max-attempts: 2
+  streaming:
+    enabled: false
+    bootstrap-servers: ${INFORSIGHT_KAFKA_BOOTSTRAP_SERVERS:kafka:29092}
+    group-id: ${INFORSIGHT_KAFKA_GROUP_ID:inforsight-control-plane}
+    topics: ${INFORSIGHT_KAFKA_TOPICS:policy.lifecycle.v1,billing.payment.v1,customer.service.v1}
 ---
 spring:
   config:

@@ -51,6 +51,14 @@ class ScoringResult:
         }
 
 
+@dataclass(frozen=True)
+class MinimalScoringResult:
+    """Decision metadata for the low-latency control-plane response profile."""
+
+    calibrated_probability: float
+    risk_tier: str
+
+
 class BundledInferenceEngine:
     """Portable inference engine constructed only from a validated frozen bundle."""
 
@@ -131,6 +139,13 @@ class BundledInferenceEngine:
         exp_value = math.exp(value)
         return exp_value / (1.0 + exp_value)
 
+    def _risk_tier(self, probability: float) -> str:
+        risk_tier = self.policy.risk_tiers[-1].name
+        for tier in self.policy.risk_tiers:
+            if tier.min_prob <= probability < tier.max_prob:
+                return tier.name
+        return risk_tier
+
     def score_record(self, raw_feature_map: Mapping[str, Any]) -> ScoringResult:
         vector = self.transform_features(raw_feature_map)
         raw_logit = float(self.raw_intercept + np.dot(self.raw_coefs, vector))
@@ -149,11 +164,7 @@ class BundledInferenceEngine:
         ordered = sorted(root_attributions.items(), key=lambda item: item[1], reverse=True)
         top_risk = tuple(item for item in ordered if item[1] > 0.0)[:3]
         top_protective = tuple(item for item in reversed(ordered) if item[1] < 0.0)[:3]
-        risk_tier = self.policy.risk_tiers[-1].name
-        for tier in self.policy.risk_tiers:
-            if tier.min_prob <= probability < tier.max_prob:
-                risk_tier = tier.name
-                break
+        risk_tier = self._risk_tier(probability)
         queues = {
             f"top_{int(queue.capacity_percentile)}_pct": probability >= queue.cutoff_probability
             for queue in self.policy.review_queues
@@ -174,3 +185,22 @@ class BundledInferenceEngine:
         self, raw_feature_maps: Sequence[Mapping[str, Any]]
     ) -> tuple[ScoringResult, ...]:
         return tuple(self.score_record(item) for item in raw_feature_maps)
+
+    def score_minimal_batch(
+        self, raw_feature_maps: Sequence[Mapping[str, Any]]
+    ) -> tuple[MinimalScoringResult, ...]:
+        """Vectorized scoring for callers that do not require explanations."""
+        if not raw_feature_maps:
+            return ()
+        vectors = np.asarray([self.transform_features(item) for item in raw_feature_maps], dtype=float)
+        raw_logits = self.raw_intercept + vectors @ self.raw_coefs
+        calibrated_logits = self.param_a * raw_logits + self.param_b
+        probabilities = np.where(
+            calibrated_logits >= 0.0,
+            1.0 / (1.0 + np.exp(-calibrated_logits)),
+            np.exp(calibrated_logits) / (1.0 + np.exp(calibrated_logits)),
+        )
+        return tuple(
+            MinimalScoringResult(float(probability), self._risk_tier(float(probability)))
+            for probability in probabilities
+        )

@@ -28,12 +28,15 @@ class AuditHashTest {
     @Test
     void checkpointMakesTailDeletionAndCallerReorderingDetectable() {
         var first = entry(1, "00000000-0000-0000-0000-000000000011", AuditHash.GENESIS_HASH);
-        var second = entry(2, "00000000-0000-0000-0000-000000000012", first.currentHash());
-        var checkpoint = new AuditLedgerCheckpoint(2, second.currentHash());
+        var second = entry(3, "00000000-0000-0000-0000-000000000012", first.currentHash());
+        var third = entry(4, "00000000-0000-0000-0000-000000000013", second.currentHash());
+        var checkpoint = new AuditLedgerCheckpoint(3, second.currentHash());
         var verifier = new AuditLedgerVerifier();
+        assertThat(verifier.verify(List.of(first, second), checkpoint).valid()).isTrue();
         assertThat(verifier.verify(List.of(first), checkpoint).failureCode()).isEqualTo("CHECKPOINT_SEQUENCE_MISMATCH");
-        assertThat(verifier.verify(List.of(second, first)).failureCode()).isEqualTo("SEQUENCE_GAP");
-        assertThat(verifier.verify(List.of(first, first)).failureCode()).isEqualTo("SEQUENCE_GAP");
+        assertThat(verifier.verify(List.of(second, first)).failureCode()).isEqualTo("PARENT_HASH_MISMATCH");
+        assertThat(verifier.verify(List.of(first, first)).failureCode()).isEqualTo("NON_MONOTONIC_SEQUENCE");
+        assertThat(verifier.verify(List.of(first, third)).failureCode()).isEqualTo("PARENT_HASH_MISMATCH");
     }
 
     @Test

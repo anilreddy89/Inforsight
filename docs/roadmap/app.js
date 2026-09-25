@@ -712,13 +712,13 @@ const timelineData = [
       {
         id: "P4-07",
         title: "Enterprise Scale Qualification Gate & Release (v0.4.0)",
-        status: "Planned",
-        commit: "Pending",
+        status: "In progress — Issue #195",
+        commit: "Issue #195; implementation/p4-07-enterprise-scale-qualification",
         summary: {
           tech: "Distributed stress qualification across 100,000 synthetic policies; verification of Enterprise Performance Gates E1–E6; release notes and milestone closeout.",
           simple: "Milestone 4.0 Release: Running a 100,000-customer stress test across all cloud services to prove speed, fault tolerance, and bit-for-bit mathematical parity."
         },
-        checks: "100% pass on Gates E1–E6; 100,000 synthetic policies; docs/release-notes/v0.4.0-enterprise-scale.md; tag v0.4.0-enterprise-scale."
+        checks: "Issue #195 is in implementation on branch implementation/p4-07-enterprise-scale-qualification. Scope is the reproducible 100,000-policy distributed qualification, Gates E1–E6, bounded report/manifest, and conditional v0.4.0 release; no production or regulatory claim is implied."
       }
     ]
   }
