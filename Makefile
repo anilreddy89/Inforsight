@@ -17,7 +17,7 @@ run-dashboard:
 check: check-contracts inference-runtime-check check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check phase-03-qualification-check simulator-test
 
 p5-01-check:
-	PYTHONPATH=$(CURDIR) $(PYTHON) -m unittest agents.tests.test_workflow -v
+	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) -m unittest agents.tests.test_workflow -v
 
 check: p5-01-check
 

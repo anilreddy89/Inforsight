@@ -3,6 +3,11 @@ from datetime import datetime, timezone
 import unittest
 
 from agents.workflow import CaseInput, Fact, Procedure, ReviewDraft, build_review_draft
+from inforsight_simulator.workflow.models import (
+    CaseState, HumanReview, IneligibleOverrideError, ReviewDecision,
+    UnauthorizedExecutionError,
+)
+from inforsight_simulator.workflow.state_machine import CaseStateMachine
 
 
 def date(day: int) -> datetime:
@@ -68,15 +73,56 @@ class BoundedWorkflowTest(unittest.TestCase):
                          ("LOW_CONFIDENCE",))
         self.assertEqual(build_review_draft(case(), clock=lambda: (_ for _ in ()).throw(TimeoutError())).reason_codes,
                          ("TOOL_TIMEOUT",))
+        calls = iter((None, None, TimeoutError()))
+        def late_timeout() -> None:
+            outcome = next(calls)
+            if isinstance(outcome, TimeoutError):
+                raise outcome
+        self.assertEqual(build_review_draft(case(), clock=late_timeout).reason_codes,
+                         ("TOOL_TIMEOUT",))
         with self.assertRaises(ValueError):
             ReviewDraft("case", "DRAFT_FOR_REVIEW", "courtesy_reminder", (), (),
                         ("fictional-procedure@2.0",), authorized_to_act=True)
 
-    def test_human_rejection_or_override_cannot_be_applied_by_agent(self) -> None:
+    def test_empty_or_oversized_inputs_abstain(self) -> None:
+        base = case()
+        self.assertEqual(build_review_draft(replace(base, required_fact_keys=())).reason_codes,
+                         ("MISSING_EVIDENCE",))
+        self.assertEqual(build_review_draft(replace(base, minimum_procedure_versions=())).reason_codes,
+                         ("PROCEDURE_VERSION_REQUIRED",))
+        long_fact = replace(base.facts[0], value="x" * 513)
+        self.assertEqual(build_review_draft(replace(base, facts=(long_fact,))).reason_codes,
+                         ("INVALID_EVIDENCE",))
+        long_procedure = replace(base.procedures[0], text="x" * 4097)
+        self.assertEqual(build_review_draft(replace(base, procedures=(long_procedure,))).reason_codes,
+                         ("INVALID_PROCEDURE",))
+
+    def test_human_rejection_and_override_remain_in_governed_workflow(self) -> None:
         draft = build_review_draft(case())
-        self.assertFalse(hasattr(draft, "approve"))
-        self.assertFalse(hasattr(draft, "execute"))
-        self.assertEqual(draft.status, "DRAFT_FOR_REVIEW")
+        machine = CaseStateMachine("case_01918a2b3c4d5e6f7a8b9c0d", "pol_a1b2c3d4e5f60718")
+        for state in (CaseState.CREATED, CaseState.TRIAGED,
+                      CaseState.EVIDENCE_ASSEMBLED, CaseState.RECOMMENDED):
+            machine.transition(state, {}, "2026-09-25T00:00:00Z")
+        with self.assertRaises(UnauthorizedExecutionError):
+            machine.transition(CaseState.EXECUTED, {"agent_draft": draft.action_id},
+                               "2026-09-25T00:01:00Z")
+        rejected = HumanReview("usr_specialist_01", "2026-09-25T00:02:00Z",
+                               ReviewDecision.REJECTED, "REJECT_DRAFT", "Evidence is insufficient.")
+        machine.submit_human_review(rejected, "2026-09-25T00:02:00Z",
+                                    draft.action_id, ("courtesy_reminder",))
+        self.assertEqual(machine.approved_action_type, "abstain")
+
+        other = CaseStateMachine("case_01918a2b3c4d5e6f7a8b9c0e", "pol_a1b2c3d4e5f60718")
+        for state in (CaseState.CREATED, CaseState.TRIAGED,
+                      CaseState.EVIDENCE_ASSEMBLED, CaseState.RECOMMENDED):
+            other.transition(state, {}, "2026-09-25T00:00:00Z")
+        override = HumanReview("usr_specialist_01", "2026-09-25T00:02:00Z",
+                               ReviewDecision.OVERRIDDEN, "OVERRIDE_DRAFT", "Specialist chose an allowed alternative.")
+        with self.assertRaises(IneligibleOverrideError):
+            other.submit_human_review(override, "2026-09-25T00:02:00Z",
+                                      draft.action_id, ("courtesy_reminder",),
+                                      selected_action="specialist_phone_outreach")
+        self.assertEqual(other.current_state, CaseState.RECOMMENDED)
 
 
 if __name__ == "__main__":

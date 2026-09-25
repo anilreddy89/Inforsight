@@ -11,6 +11,8 @@ CONTRACT_VERSION = "1.0.0"
 MAX_FACTS = 128
 MAX_PROCEDURES = 32
 MAX_ACTIONS = 16
+MAX_FACT_VALUE_CHARS = 512
+MAX_PROCEDURE_TEXT_CHARS = 4_096
 _INJECTION_MARKERS = (
     "ignore previous", "ignore all", "system prompt", "developer message",
     "override rules", "authorized_to_act", "execute action", "call tool",
@@ -92,13 +94,18 @@ def build_review_draft(case: CaseInput, *, clock: Callable[[], None] | None = No
             return _abstain(case.case_id, "INPUT_LIMIT_EXCEEDED")
         if not 0 <= case.confidence <= 1 or case.confidence < 0.8:
             return _abstain(case.case_id, "LOW_CONFIDENCE")
+        if not case.facts or not case.required_fact_keys:
+            return _abstain(case.case_id, "MISSING_EVIDENCE")
         if not case.allowed_actions or len(set(case.allowed_actions)) != len(case.allowed_actions):
             return _abstain(case.case_id, "NO_TRUSTED_ACTIONS")
+        if not case.minimum_procedure_versions or len(set(case.minimum_procedure_versions)) != len(case.minimum_procedure_versions):
+            return _abstain(case.case_id, "PROCEDURE_VERSION_REQUIRED")
 
         # Evidence agent: only point-in-time facts with unambiguous values.
         facts: dict[str, Fact] = {}
         for fact in case.facts:
-            if not fact.key or not fact.value or not fact.source_id or fact.observed_at.tzinfo is None:
+            if (not fact.key or not fact.value or not fact.source_id or
+                    len(fact.value) > MAX_FACT_VALUE_CHARS or fact.observed_at.tzinfo is None):
                 return _abstain(case.case_id, "INVALID_EVIDENCE")
             if fact.observed_at > case.as_of:
                 return _abstain(case.case_id, "FUTURE_EVIDENCE")
@@ -108,12 +115,15 @@ def build_review_draft(case: CaseInput, *, clock: Callable[[], None] | None = No
             facts[fact.key] = fact
         if any(key not in facts for key in case.required_fact_keys):
             return _abstain(case.case_id, "MISSING_EVIDENCE")
+        if clock:
+            clock()
 
         # Procedure agent: data-only citations, version and effective-date checked.
         minimums = dict(case.minimum_procedure_versions)
         candidates: list[Procedure] = []
         for procedure in case.procedures:
-            if not procedure.procedure_id or not procedure.text or not procedure.version:
+            if (not procedure.procedure_id or not procedure.text or not procedure.version or
+                    len(procedure.text) > MAX_PROCEDURE_TEXT_CHARS):
                 return _abstain(case.case_id, "INVALID_PROCEDURE")
             if any(marker in procedure.text.lower() for marker in _INJECTION_MARKERS):
                 return _abstain(case.case_id, "PROCEDURE_INJECTION")
@@ -127,6 +137,8 @@ def build_review_draft(case: CaseInput, *, clock: Callable[[], None] | None = No
             return _abstain(case.case_id, "REQUIRED_PROCEDURE_MISSING")
         if not candidates:
             return _abstain(case.case_id, "NO_CURRENT_PROCEDURE")
+        if clock:
+            clock()
 
         # Planner: intersection with the rules allowlist; never infer an action
         # from procedure prose or evidence. Abstain if no cited match exists.

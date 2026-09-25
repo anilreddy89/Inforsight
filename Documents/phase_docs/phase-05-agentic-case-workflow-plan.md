@@ -4,8 +4,8 @@ The 14-week [Natural Build Plan](../14-week-plan/Inforsight_Natural_Build_Plan.p
 and [Phased Implementation Plan](../14-week-plan/Inforsight_Phased_Implementation_and_GitHub_Plan.pdf)
 define Phase 5 as a bounded evidence, procedure, and conservation-planning
 workflow (Weeks 10–11). Cloud deployment is Phase 6. The later Phase 4
-enterprise-scale qualification remains open in [issue #195](https://github.com/anilreddy89/Inforsight/issues/195)
-and [draft PR #196](https://github.com/anilreddy89/Inforsight/pull/196);
+enterprise-scale qualification remains open in [issue #195](https://github.com/anilreddy89/Inforsight/issues/195).
+The partial [PR #196](https://github.com/anilreddy89/Inforsight/pull/196) has merged;
 starting Phase 5 neither passes E1–E6 nor authorizes a release. Phase 6's
 cloud environment may later provide the production-matched P4-07 test bed.
 
@@ -50,7 +50,8 @@ screening is a conservative local check, not a complete LLM security proof.
 
 - [x] Phase 5 scope reconciled to the 14-week plan and P4-07 kept open.
 - [x] P5-01 issue and implementation branch created.
-- [x] `make p5-01-check` passes (six deterministic tests).
+- [x] `make p5-01-check` passes (seven deterministic tests, including the
+  governed human-review state-machine boundary).
 - [ ] Full repository and required PR CI checks pass on the final branch commit.
 - [ ] P5-02 ADK orchestration and evaluation completed.
 - [ ] P5-03 HITL service integration and audit completed.
