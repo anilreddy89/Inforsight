@@ -1440,7 +1440,8 @@ orchestration; P5-03 adds governed case/HITL integration and audit.
 
 **Milestone:** `v0.5.0-agent-workflow` (#7)
 
-**Status:** In progress on `implementation/p5-02-bounded-adk-orchestration`.
+**Status:** Completed; [PR #200](https://github.com/anilreddy89/Inforsight/pull/200)
+merged as `89a291c`, required CI passed, and issue #199 is closed.
 
 **Outcome:** An optional, pinned ADK runner with only fictional case-scoped
 read-only tools. Its structured candidate must exactly match the P5-01
@@ -1448,6 +1449,8 @@ deterministic action and provenance, or the adapter abstains. Offline
 fake-model coverage and `make p5-02-check` / `make p5-02-adk-check` are the
 focused gates. No live model, external action, or production claim is made.
 See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
+P5-03 governed service/HITL integration remains unstarted; the Phase 5
+milestone is not complete.
 
 ## Deferred intentionally
 

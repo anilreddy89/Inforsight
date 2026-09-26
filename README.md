@@ -206,8 +206,10 @@ began with completed [P5-01](https://github.com/anilreddy89/Inforsight/issues/19
 typed fictional evidence and procedure inputs, a deterministic rule-allowed
 planner, and review-only drafts or fail-closed abstention. This foundation is
 not an autonomous action system. [P5-02](https://github.com/anilreddy89/Inforsight/issues/199)
-is now implementing opt-in, offline-tested Google ADK orchestration with
-read-only tools and deterministic output validation. Phase 6 owns the cloud
+is complete in [PR #200](https://github.com/anilreddy89/Inforsight/pull/200):
+opt-in, offline-tested Google ADK orchestration with read-only tools and
+deterministic output validation. P5-03 governed service/HITL integration
+remains. Phase 6 owns the cloud
 demo; P4-07 enterprise-scale qualification remains open.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
