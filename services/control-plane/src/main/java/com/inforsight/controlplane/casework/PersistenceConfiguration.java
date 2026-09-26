@@ -2,6 +2,8 @@ package com.inforsight.controlplane.casework;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inforsight.controlplane.audit.AuditLedgerRepository;
+import com.inforsight.controlplane.agent.AgentDraftStore;
+import com.inforsight.controlplane.agent.PersistentAgentDraftStore;
 import com.inforsight.controlplane.connectors.ConnectorAdapter;
 import com.inforsight.controlplane.connectors.ConnectorPreflightService;
 import com.inforsight.controlplane.connectors.ConnectorTarget;
@@ -28,6 +30,12 @@ public class PersistenceConfiguration {
     CaseWorkflow persistentCaseWorkflow(JdbcTemplate jdbc, ObjectMapper mapper,
                                         PlatformTransactionManager transactionManager, AuditLedgerRepository audit) {
         return new PersistentCaseRepository(jdbc, mapper, new TransactionTemplate(transactionManager), audit);
+    }
+
+    @Bean
+    AgentDraftStore persistentAgentDraftStore(JdbcTemplate jdbc, ObjectMapper mapper,
+                                              PlatformTransactionManager transactionManager, AuditLedgerRepository audit) {
+        return new PersistentAgentDraftStore(jdbc, mapper, new TransactionTemplate(transactionManager), audit);
     }
 
     @Bean

@@ -1,6 +1,9 @@
 package com.inforsight.controlplane.web;
 
 import com.inforsight.controlplane.casework.CaseStore;
+import com.inforsight.controlplane.agent.AgentDraftRecord;
+import com.inforsight.controlplane.agent.AgentDraftStore;
+import com.inforsight.controlplane.agent.AgentDraftSubmission;
 import com.inforsight.controlplane.casework.CaseWorkflow;
 import com.inforsight.controlplane.domain.InferenceScore;
 import com.inforsight.controlplane.inference.InferenceClient;
@@ -23,8 +26,13 @@ public class ControlPlaneController {
     private final CaseWorkflow cases;
     private final EligibilityEngine eligibility;
     private final TriageGuard guard;
+    private final AgentDraftStore agentDrafts;
 
-    public ControlPlaneController(InferenceClient inference, CaseWorkflow cases, EligibilityEngine eligibility, TriageGuard guard) { this.inference = inference; this.cases = cases; this.eligibility = eligibility; this.guard = guard; }
+    public ControlPlaneController(InferenceClient inference, CaseWorkflow cases, EligibilityEngine eligibility,
+                                  TriageGuard guard, AgentDraftStore agentDrafts) {
+        this.inference = inference; this.cases = cases; this.eligibility = eligibility;
+        this.guard = guard; this.agentDrafts = agentDrafts;
+    }
 
     @PostMapping("/triage")
     public TriageResponse triage(@RequestBody TriageRequest request) {
@@ -58,6 +66,16 @@ public class ControlPlaneController {
         CaseStore.CaseRecord record = cases.decide(caseId, request.decision(), request.expectedCaseVersion(), request.idempotencyKey(), request.reviewerId());
         String auditHash = cases.auditHash(record.caseId(), record.version()).orElse("pending-p4-04-audit");
         return new DecisionResponse(record.caseId(), record.state(), auditHash, record.authorizedToAct());
+    }
+
+    @PostMapping("/{caseId}/agent-drafts")
+    public AgentDraftRecord submitAgentDraft(@PathVariable String caseId, @RequestBody AgentDraftSubmission draft) {
+        return agentDrafts.submit(caseId, draft);
+    }
+
+    @GetMapping("/{caseId}/agent-drafts")
+    public AgentDraftRecord agentDraft(@PathVariable String caseId) {
+        return agentDrafts.find(caseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "agent draft not found"));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

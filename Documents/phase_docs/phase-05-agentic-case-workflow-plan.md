@@ -15,7 +15,7 @@ cloud environment may later provide the production-matched P4-07 test bed.
 | First increment | [P5-01 issue #197](https://github.com/anilreddy89/Inforsight/issues/197) |
 | P5-01 merged pull request | [#198](https://github.com/anilreddy89/Inforsight/pull/198), merge `1a327f4` |
 | P5-02 closeout | [issue #199](https://github.com/anilreddy89/Inforsight/issues/199) closed; [PR #200](https://github.com/anilreddy89/Inforsight/pull/200) merged as `89a291c`; [phase document](phase-05-02-bounded-google-adk-orchestration.md) |
-| Next increment | P5-03 governed service/HITL integration; no implementation branch yet |
+| Active increment | [P5-03 issue #202](https://github.com/anilreddy89/Inforsight/issues/202), [phase document](phase-05-03-governed-agent-review-integration.md), branch `implementation/p5-03-governed-agent-review-integration` |
 | Authority | ADR 0002; deterministic rules and human approval remain authoritative |
 
 ## Goal and design
@@ -60,7 +60,8 @@ screening is a conservative local check, not a complete LLM security proof.
   `make check` was not claimed as a separate pass.
 - [x] P5-02 bounded ADK adapter and offline evaluation merged in PR #200;
   required CI passed and issue #199 closed.
-- [ ] P5-03 HITL service integration and audit completed.
+- [ ] P5-03 issue #202 governed draft/HITL service integration and audit
+  completed; implementation and qualification are in progress.
 - [ ] Full Phase 5 qualification and review/CI pass before any milestone claim.
 
 The selective GCP demo remains Phase 6; dedicated-cloud P4-07 qualification

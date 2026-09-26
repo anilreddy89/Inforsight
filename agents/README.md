@@ -26,3 +26,10 @@ ADK installation. For the offline fake-model runner test, install
 
 The [Phase 5 plan](../Documents/phase_docs/phase-05-agentic-case-workflow-plan.md)
 separates the foundation and ADK adapter from later service integration.
+
+P5-03's `control_plane_bridge.py` formats a validated `ReviewDraft` for the
+Java case review endpoint. Submission requires an explicit transport; the
+optional HTTP helper is restricted to the local control plane. The Java
+endpoint treats every submitted draft as untrusted advisory data and never
+uses it as a human approval or action authorization. Run `make p5-03-check`;
+the Docker-backed persistence test is `make p5-03-integration-check`.

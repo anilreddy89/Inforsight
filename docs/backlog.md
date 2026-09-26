@@ -1449,8 +1449,24 @@ deterministic action and provenance, or the adapter abstains. Offline
 fake-model coverage and `make p5-02-check` / `make p5-02-adk-check` are the
 focused gates. No live model, external action, or production claim is made.
 See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
-P5-03 governed service/HITL integration remains unstarted; the Phase 5
+P5-03 governed service/HITL integration is now in progress; the Phase 5
 milestone is not complete.
+
+### P5-03 — Governed agent draft and human-review integration
+
+**Issue:** [#202](https://github.com/anilreddy89/Inforsight/issues/202)
+
+**Milestone:** `v0.5.0-agent-workflow` (#7)
+
+**Status:** In progress on `implementation/p5-03-governed-agent-review-integration`.
+
+**Outcome:** Add an opt-in Python review-draft bridge and a Java control-plane
+submission/read boundary for untrusted, review-only agent material. Bind a
+draft to an existing case version and server-owned point-in-time snapshot;
+persistence-profile draft and hash-chain audit writes must be atomic. The
+existing human decision endpoint alone can change case state. No submitted
+draft is treated as independent proof of eligibility, human approval, or
+execution authority. See the [phase document](../Documents/phase_docs/phase-05-03-governed-agent-review-integration.md).
 
 ## Deferred intentionally
 
