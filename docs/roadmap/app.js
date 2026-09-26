@@ -724,18 +724,29 @@ const timelineData = [
   },
   {
     phase: "Phase 5: Bounded Agentic Case Workflow",
-    milestone: "Phase 5 plan (milestone not yet assigned)",
+    milestone: "v0.5.0-agent-workflow (Milestone #7)",
     items: [
       {
         id: "P5-01",
         title: "Review-only evidence, procedure, and planner foundation",
-        status: "In progress",
-        commit: "Issue #197; implementation branch",
+        status: "Completed",
+        commit: "PR #198; 1a327f4",
         summary: {
           tech: "Typed v1 evidence/procedure/planner seams, point-in-time facts, versioned fictional citations, deterministic rules allowlist, and fail-closed abstention; no model or external action tool.",
           simple: "Build a cautious case assistant that can suggest a cited next step for a person to review, or say it lacks enough reliable information."
         },
-        checks: "Issue #197; make p5-01-check; Phase 5 plan. ADK orchestration and human-review service integration are later increments. P4-07 remains open; the cloud demo is Phase 6."
+        checks: "Issue #197 closed; PR #198 merged; make p5-01-check. ADK orchestration and human-review service integration are separate increments. P4-07 remains open; the cloud demo is Phase 6."
+      },
+      {
+        id: "P5-02",
+        title: "Bounded Google ADK orchestration",
+        status: "In progress",
+        commit: "Issue #199; implementation branch",
+        summary: {
+          tech: "Pinned optional ADK runner with three fictional read-only tools; structured candidates must exactly match deterministic P5-01 action and provenance or abstain.",
+          simple: "Let an offline-tested assistant draft a suggestion, while the existing rules reject anything unsupported and keep a person in charge."
+        },
+        checks: "Issue #199; make p5-02-check and make p5-02-adk-check. No live provider, external action, or production safety claim. P4-07 remains open."
       }
     ]
   }

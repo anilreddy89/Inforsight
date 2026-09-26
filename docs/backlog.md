@@ -1422,9 +1422,8 @@ not close P4-07 or deploy the Phase 6 cloud environment.
 
 **Issue:** [#197](https://github.com/anilreddy89/Inforsight/issues/197)
 
-**Status:** In progress on `implementation/p5-01-bounded-agent-workflow`;
-[draft PR #198](https://github.com/anilreddy89/Inforsight/pull/198) is awaiting
-required CI and review.
+**Status:** Completed; [PR #198](https://github.com/anilreddy89/Inforsight/pull/198)
+merged as `1a327f4`, and issue #197 is closed.
 
 **Outcome:** Contract v1 and deterministic evidence/procedure/planner seams
 with fail-closed tests and no execution authority.
@@ -1434,6 +1433,21 @@ procedure citations, prompt-injection and timeout abstention, low-confidence
 abstention, `authorized_to_act=false`, and human-review-required output.
 `make p5-01-check` is the focused local gate. P5-02 adds bounded Google ADK
 orchestration; P5-03 adds governed case/HITL integration and audit.
+
+### P5-02 — Bounded Google ADK orchestration
+
+**Issue:** [#199](https://github.com/anilreddy89/Inforsight/issues/199)
+
+**Milestone:** `v0.5.0-agent-workflow` (#7)
+
+**Status:** In progress on `implementation/p5-02-bounded-adk-orchestration`.
+
+**Outcome:** An optional, pinned ADK runner with only fictional case-scoped
+read-only tools. Its structured candidate must exactly match the P5-01
+deterministic action and provenance, or the adapter abstains. Offline
+fake-model coverage and `make p5-02-check` / `make p5-02-adk-check` are the
+focused gates. No live model, external action, or production claim is made.
+See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
 
 ## Deferred intentionally
 
