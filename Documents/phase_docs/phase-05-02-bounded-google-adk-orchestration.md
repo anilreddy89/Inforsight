@@ -8,10 +8,10 @@ the adapter cannot create a human approval or execute an action.
 
 | Field | Value |
 | --- | --- |
-| Status | In progress |
+| Status | Completed; merged to `main` in [PR #200](https://github.com/anilreddy89/Inforsight/pull/200) (`89a291c`), issue #199 closed |
 | Milestone | [v0.5.0-agent-workflow](https://github.com/anilreddy89/Inforsight/milestone/7) |
 | Issue | [#199](https://github.com/anilreddy89/Inforsight/issues/199) |
-| Branch | `implementation/p5-02-bounded-adk-orchestration` |
+| Implementation branch | `implementation/p5-02-bounded-adk-orchestration` (merged) |
 | Depends on | P5-01 [PR #198](https://github.com/anilreddy89/Inforsight/pull/198), ADR 0002 |
 | Blocks | P5-03 governed service/HITL integration; not P4-07 qualification |
 
@@ -54,9 +54,10 @@ is required. The fake-model result is not a production-provider claim.
   deterministic P5-01 action and citation result.
 - [x] Malformed, injected, mismatched, overlong, timed-out, and model-error
   scenarios abstain without leaking input content into errors.
-- [ ] Offline fake-model runner and focused checks pass against pinned ADK;
-  CI remains to be verified on the final reviewed commit.
-- [ ] No final holdout, real customer data, credentials, protected artifacts,
+- [x] Offline fake-model runner and focused checks pass against pinned ADK;
+  all required [PR #200 CI checks](https://github.com/anilreddy89/Inforsight/actions/runs/36218175418)
+  passed on the reviewed commit, including the P5-02 ADK job.
+- [x] No final holdout, real customer data, credentials, protected artifacts,
   live actions, or P4-07 release claim changed.
 
 ## Remaining limitations

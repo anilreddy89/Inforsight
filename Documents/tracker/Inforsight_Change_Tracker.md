@@ -112,7 +112,7 @@ Current release milestone: [**v0.4.0-enterprise-scale**](https://github.com/anil
 | P4-06 | Phase 4 — Enterprise Integration & Scale | Cloud infrastructure, Helm charts, and container orchestration. | Completed | [#192](https://github.com/anilreddy89/Inforsight/issues/192) | [#193](https://github.com/anilreddy89/Inforsight/pull/193) | 2026-09-20 | `974b6a0` | [phase document](../phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md), `infra/docker/`, `infra/helm/inforsight`, `infra/docker-compose.yml`, [architecture poster PR #194](https://github.com/anilreddy89/Inforsight/pull/194) | Merged to `main`; Docker images, Compose topology, Helm render/lint, focused infrastructure checks, full local repository validation (546 passed; one optional Kafka integration test skipped), and bounded local health evidence completed. Production cloud deployment, credentials, live external execution, and distributed scale claims remain out of scope. Blocks P4-07. |
 | P4-07 | Phase 4 — Enterprise Integration & Scale | Enterprise scale qualification and release (`v0.4.0-enterprise-scale`). | In progress; cloud qualification pending | [#195](https://github.com/anilreddy89/Inforsight/issues/195) | [#196](https://github.com/anilreddy89/Inforsight/pull/196) | 2026-09-25 | `ba21f41` (partial merge) | [phase document](../phase_docs/phase-04-07-enterprise-scale-qualification-and-release.md), [latency/topology findings](../../docs/experiments/p4-07-latency-topology-findings.md) | PR #196 merged a partial increment; issue #195 is reopened. One local 100-event set met the 50 ms diagnostic, but a repeat failed. One frozen 200,000-event candidate reached p99 46.480 ms; other trials exceeded 50 ms. Later cloud-environment work may proceed while P4-07 remains open; persistent scored-case semantics, repeatable E1/E2, and bound E3–E6 evidence remain required before release or Milestone #5 closeout. |
 | P5-01 | Phase 5 — Bounded Agentic Case Workflow | Define and implement a review-only evidence, procedure, and planner foundation. | Completed | [#197](https://github.com/anilreddy89/Inforsight/issues/197) | [#198](https://github.com/anilreddy89/Inforsight/pull/198) | 2026-09-26 | `1a327f4` | [Phase 5 plan](../phase_docs/phase-05-agentic-case-workflow-plan.md), `agents/workflow.py`, `agents/tests/test_workflow.py` | PR merged and issue closed; focused tests and CI passed. Review-only deterministic contract; no ADK or live action in this increment. |
-| P5-02 | Phase 5 — Bounded Agentic Case Workflow | Bounded opt-in Google ADK orchestration over the P5-01 review-only contract. | In progress | [#199](https://github.com/anilreddy89/Inforsight/issues/199) | TBD | 2026-09-26 | — | [phase document](../phase_docs/phase-05-02-bounded-google-adk-orchestration.md), `agents/adk_adapter.py`, `agents/tests/` | Branch `implementation/p5-02-bounded-adk-orchestration`; pinned ADK, three read-only tools, deterministic output validation, offline fake-model CI. No provider, autonomous action, or P4-07 release claim. |
+| P5-02 | Phase 5 — Bounded Agentic Case Workflow | Bounded opt-in Google ADK orchestration over the P5-01 review-only contract. | Completed | [#199](https://github.com/anilreddy89/Inforsight/issues/199) | [#200](https://github.com/anilreddy89/Inforsight/pull/200) | 2026-09-26 | `89a291c` | [phase document](../phase_docs/phase-05-02-bounded-google-adk-orchestration.md), `agents/adk_adapter.py`, `agents/tests/` | Merged to `main`; issue closed. Pinned ADK, three read-only tools, deterministic output validation, and offline fake-model CI passed. No live provider, autonomous action, P5-03 service integration, or P4-07 release claim. |
 
 ## Current summary
 
@@ -143,23 +143,23 @@ Inforsight successfully completed Phase 2 (Baseline ML) and Phase 3 (Policy Cons
 21. P4-04 is complete and merged in PR #189 (commit `a04d86d`); PostgreSQL persistence, point-in-time snapshot binding, durable queue state, and bounded audit-ledger verification are implemented without a production KMS or autonomous-execution claim.
 22. P4-05 is complete and merged in PR #191 (commit `b59f9ab`); versioned fake-only CRM/contact-center preflight contracts, persisted-case guardrails, idempotency behavior, and PostgreSQL audit evidence are implemented without live transport or autonomous execution.
 
-In one sentence: Phase 2, Phase 3, review hardening, P4-02 through P4-06, and P5-01 are complete; P4-07 remains open while P5-02 is in progress.
+In one sentence: Phase 2, Phase 3, review hardening, P4-02 through P4-06, and P5-01/P5-02 are complete; P4-07 remains open and P5-03 is next.
 
 | Measure | Value |
 | --- | --- |
-| Completed tracked changes | 73 (current completed rows; includes P5-01 closeout) |
+| Completed tracked changes | 74 (current completed rows; includes P5-02 closeout) |
 | Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
 | Planned changes | None |
 | Paused changes | 0 |
-| In-progress changes | 2 (P4-07 qualification and P5-02 implementation) |
+| In-progress changes | 1 (P4-07 qualification) |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 5 — Bounded Agentic Case Workflow (Milestone #7); Phase 4 qualification remains open |
-| Active increment | P5-02 bounded ADK orchestration |
-| Next implementation increment | P5-03 governed service/HITL integration (after P5-02) |
+| Active increment | None in Phase 5; P4-07 qualification remains open |
+| Next implementation increment | P5-03 governed service/HITL integration |
 
 ## Latest verification baseline
 

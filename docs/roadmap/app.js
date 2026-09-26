@@ -740,13 +740,13 @@ const timelineData = [
       {
         id: "P5-02",
         title: "Bounded Google ADK orchestration",
-        status: "In progress",
-        commit: "Issue #199; implementation branch",
+        status: "Completed",
+        commit: "PR #200; 89a291c",
         summary: {
           tech: "Pinned optional ADK runner with three fictional read-only tools; structured candidates must exactly match deterministic P5-01 action and provenance or abstain.",
           simple: "Let an offline-tested assistant draft a suggestion, while the existing rules reject anything unsupported and keep a person in charge."
         },
-        checks: "Issue #199; make p5-02-check and make p5-02-adk-check. No live provider, external action, or production safety claim. P4-07 remains open."
+        checks: "Issue #199 closed; PR #200 merged with required CI passing, including P5-02 Bounded ADK. Offline fake-model validation only; P5-03 service/HITL integration and P4-07 remain open."
       }
     ]
   }
