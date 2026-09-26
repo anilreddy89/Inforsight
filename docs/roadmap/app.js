@@ -721,6 +721,23 @@ const timelineData = [
         checks: "Issue #195 is in implementation on branch implementation/p4-07-enterprise-scale-qualification. Scope is the reproducible 100,000-policy distributed qualification, Gates E1–E6, bounded report/manifest, and conditional v0.4.0 release; no production or regulatory claim is implied."
       }
     ]
+  },
+  {
+    phase: "Phase 5: Bounded Agentic Case Workflow",
+    milestone: "Phase 5 plan (milestone not yet assigned)",
+    items: [
+      {
+        id: "P5-01",
+        title: "Review-only evidence, procedure, and planner foundation",
+        status: "In progress",
+        commit: "Issue #197; implementation branch",
+        summary: {
+          tech: "Typed v1 evidence/procedure/planner seams, point-in-time facts, versioned fictional citations, deterministic rules allowlist, and fail-closed abstention; no model or external action tool.",
+          simple: "Build a cautious case assistant that can suggest a cited next step for a person to review, or say it lacks enough reliable information."
+        },
+        checks: "Issue #197; make p5-01-check; Phase 5 plan. ADK orchestration and human-review service integration are later increments. P4-07 remains open; the cloud demo is Phase 6."
+      }
+    ]
   }
 ];
 
