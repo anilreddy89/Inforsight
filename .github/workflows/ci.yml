@@ -172,6 +172,22 @@ jobs:
       - name: Run complete simulator unit test suite
         run: python -m unittest discover -s simulator/tests -p '${{ matrix.pattern }}' -v
 
+  p5-02-adk-checks:
+    name: P5-02 Bounded ADK
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements-adk.txt
+      - name: Install pinned optional ADK
+        run: python -m pip install -r agents/requirements-adk.txt
+      - name: Validate P5-01 and P5-02 offline seams
+        run: make p5-02-adk-check PYTHON=python
+
   scaffold-checks:
     name: CI Completion Gate (scaffold-checks)
     needs:
@@ -179,6 +195,7 @@ jobs:
       - v1-v3-pipeline-checks
       - v4-v5-diagnostics-checks
       - simulator-unit-tests
+      - p5-02-adk-checks
       - inference-runtime-checks
       - serving-checks
       - dashboard-checks

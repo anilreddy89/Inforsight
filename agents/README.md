@@ -16,5 +16,13 @@ handled by the existing governed decision workflow, not this module.
 The injected deadline callback is checked at each seam; this local module
 does not itself schedule or cancel external tool calls.
 
+P5-02 adds an opt-in ADK adapter in `adk_adapter.py`. It runs with three
+case-scoped read-only tools and validates a JSON candidate against the P5-01
+deterministic result. A mismatch, malformed response, timeout, or model error
+abstains. No model output can authorize action. `make p5-02-check` needs no
+ADK installation. For the offline fake-model runner test, install
+`agents/requirements-adk.txt` in an isolated environment and run
+`make p5-02-adk-check PYTHON=python`. This does not call a provider.
+
 The [Phase 5 plan](../Documents/phase_docs/phase-05-agentic-case-workflow-plan.md)
-separates this foundation from later ADK orchestration and service integration.
+separates the foundation and ADK adapter from later service integration.

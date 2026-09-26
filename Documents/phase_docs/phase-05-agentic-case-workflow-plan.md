@@ -11,10 +11,11 @@ cloud environment may later provide the production-matched P4-07 test bed.
 
 | Field | Value |
 | --- | --- |
-| Status | In progress; P5-01 foundation underway |
+| Status | In progress; P5-01 merged, P5-02 underway |
 | First increment | [P5-01 issue #197](https://github.com/anilreddy89/Inforsight/issues/197) |
-| Draft pull request | [#198](https://github.com/anilreddy89/Inforsight/pull/198) |
-| Branch | `implementation/p5-01-bounded-agent-workflow` (from updated `main`) |
+| P5-01 merged pull request | [#198](https://github.com/anilreddy89/Inforsight/pull/198), merge `1a327f4` |
+| Active P5-02 | [issue #199](https://github.com/anilreddy89/Inforsight/issues/199), [phase document](phase-05-02-bounded-google-adk-orchestration.md) |
+| Branch | `implementation/p5-02-bounded-adk-orchestration` (from updated `main`) |
 | Authority | ADR 0002; deterministic rules and human approval remain authoritative |
 
 ## Goal and design
@@ -50,11 +51,12 @@ screening is a conservative local check, not a complete LLM security proof.
 ## Verification and remaining gates
 
 - [x] Phase 5 scope reconciled to the 14-week plan and P4-07 kept open.
-- [x] P5-01 issue and implementation branch created.
+- [x] P5-01 issue #197 closed by merged PR #198; branch and focused evidence
+  are preserved in the merged history.
 - [x] `make p5-01-check` passes (seven deterministic tests, including the
   governed human-review state-machine boundary).
-- [ ] Required PR CI and review pass on the final branch commit; full local
-  `make check` is not claimed as complete.
+- [x] P5-01 required PR CI passed on the final commit and merged; full local
+  `make check` was not claimed as a separate pass.
 - [ ] P5-02 ADK orchestration and evaluation completed.
 - [ ] P5-03 HITL service integration and audit completed.
 - [ ] Full Phase 5 qualification and review/CI pass before any milestone claim.

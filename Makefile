@@ -21,6 +21,15 @@ p5-01-check:
 
 check: p5-01-check
 
+.PHONY: p5-02-check p5-02-adk-check
+p5-02-check:
+	PYTHONPATH=$(CURDIR) $(PYTHON) -m unittest agents.tests.test_adk_adapter -v
+
+p5-02-adk-check:
+	PYTHONPATH=$(CURDIR) $(PYTHON) -m unittest agents.tests.test_adk_adapter agents.tests.test_adk_runtime -v
+
+check: p5-02-check
+
 read-only-qualification-check:
 	bash scripts/verify_read_only.sh make check
 
