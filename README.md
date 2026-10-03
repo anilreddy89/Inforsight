@@ -211,10 +211,18 @@ opt-in, offline-tested Google ADK orchestration with read-only tools and
 deterministic output validation. [P5-03](https://github.com/anilreddy89/Inforsight/issues/202)
 merged in [PR #203](https://github.com/anilreddy89/Inforsight/pull/203), adding a governed,
 case-bound advisory draft and human-review seam; the draft cannot authorize action.
-[P5-04](https://github.com/anilreddy89/Inforsight/issues/204) is qualifying a
-repeatable local case-review demo and tracking the missing trusted event/rules
-adapter. Phase 6 owns the cloud
+[P5-04](https://github.com/anilreddy89/Inforsight/issues/204) merged in
+[PR #205](https://github.com/anilreddy89/Inforsight/pull/205), qualifying a
+repeatable local case-review demo. [P5-05](https://github.com/anilreddy89/Inforsight/issues/206)
+is implementing the trusted fictional event/rules handoff and full local
+walkthrough. Phase 6 owns the cloud
 demo; P4-07 enterprise-scale qualification remains open.
+
+For the fictional local P5-05 walkthrough, start
+`docker compose -f infra/docker-compose.yml up --build -d`, wait for the
+control plane health endpoint, and run `make p5-05-demo-check`. The
+[Phase 5.05 document](Documents/phase_docs/phase-05-05-trusted-event-agent-handoff.md)
+records the contract, evidence, and limits of this bounded demonstration.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)

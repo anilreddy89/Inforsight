@@ -1,0 +1,117 @@
+openapi: 3.1.0
+info:
+  title: Inforsight fictional local demo handoff
+  version: 1.0.0
+  description: Opt-in persistence-profile demo API; disabled outside the local Compose topology.
+paths:
+  /api/v1/demo/events:
+    post:
+      summary: Project one fictional event into a scored case and server-owned agent handoff
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FictionalEvent'
+      responses:
+        '200':
+          description: Bound, review-only handoff
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustedAgentHandoff'
+        '400':
+          description: Missing, future, or invalid fictional evidence
+        '409':
+          description: Event identity already recorded
+  /api/v1/demo/cases/{caseId}/handoff:
+    get:
+      summary: Read the server-owned handoff for an existing demo case
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: Review-only handoff
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustedAgentHandoff'
+        '404': {description: Handoff not found}
+  /api/v1/demo/cases/{caseId}/audit:
+    get:
+      summary: Verify the local persisted ledger and list this case's events
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: Audit verification and case event types
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [valid, events, entries, verified_entries]
+                properties:
+                  valid: {type: boolean}
+                  events: {type: array, items: {type: string}}
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      required: [event_type, case_version, current_hash, canonical_payload]
+                      properties:
+                        event_type: {type: string}
+                        case_version: {type: integer}
+                        current_hash: {type: string}
+                        canonical_payload: {type: string}
+                  verified_entries: {type: integer, minimum: 0}
+components:
+  schemas:
+    FictionalEvent:
+      type: object
+      additionalProperties: false
+      required: [event_id, policy_id, as_of, observed_at, payment_status, status, tenure_days,
+                 has_active_claim, has_legal_hold, has_registered_dispute, sms_opt_out,
+                 email_opt_out, phone_opt_out, dnc_registered]
+      properties:
+        event_id: {type: string, minLength: 1, maxLength: 128}
+        policy_id: {type: string, minLength: 1, maxLength: 128}
+        as_of: {type: string, format: date-time}
+        observed_at: {type: string, format: date-time}
+        payment_status: {type: string, enum: [late, current]}
+        status: {type: string, enum: [active, grace_period]}
+        tenure_days: {type: integer, minimum: 0, maximum: 36500}
+        has_active_claim: {type: boolean}
+        has_legal_hold: {type: boolean}
+        has_registered_dispute: {type: boolean}
+        sms_opt_out: {type: boolean}
+        email_opt_out: {type: boolean}
+        phone_opt_out: {type: boolean}
+        dnc_registered: {type: boolean}
+    TrustedAgentHandoff:
+      type: object
+      required: [contract_version, case_id, case_version, snapshot_id, event_id, policy_id,
+                 as_of, observed_at, payment_status, allowed_actions, procedure_citation,
+                 procedure_text, procedure_effective_from, procedure_effective_until,
+                 authorized_to_act]
+      properties:
+        contract_version: {type: string, const: 1.0.0}
+        case_id: {type: string}
+        case_version: {type: integer, const: 0}
+        snapshot_id: {type: string}
+        event_id: {type: string}
+        policy_id: {type: string}
+        as_of: {type: string, format: date-time}
+        observed_at: {type: string, format: date-time}
+        payment_status: {type: string, enum: [late, current]}
+        allowed_actions: {type: array, items: {type: string}}
+        procedure_citation: {type: string}
+        procedure_text: {type: string}
+        procedure_effective_from: {type: string, format: date-time}
+        procedure_effective_until: {type: string, format: date-time}
+        authorized_to_act: {type: boolean, const: false}

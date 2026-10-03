@@ -5,6 +5,7 @@ import com.inforsight.controlplane.casework.CaseStore;
 import com.inforsight.controlplane.casework.CaseWorkflow;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,9 +15,14 @@ import java.util.Optional;
 @Profile("!persistence")
 public final class InMemoryAgentDraftStore implements AgentDraftStore {
     private final CaseWorkflow cases;
+    private final TrustedAgentHandoffStore handoffs;
     private final Map<String, AgentDraftRecord> drafts = new HashMap<>();
 
-    public InMemoryAgentDraftStore(CaseWorkflow cases) { this.cases = cases; }
+    public InMemoryAgentDraftStore(CaseWorkflow cases) { this(cases, null); }
+    @Autowired
+    public InMemoryAgentDraftStore(CaseWorkflow cases, TrustedAgentHandoffStore handoffs) {
+        this.cases = cases; this.handoffs = handoffs;
+    }
 
     public synchronized AgentDraftRecord submit(String caseId, AgentDraftSubmission draft) {
         draft.validate(caseId);
@@ -32,6 +38,10 @@ public final class InMemoryAgentDraftStore implements AgentDraftStore {
         String snapshot = "snapshot_" + AuditHash.sha256(current.policyId() + "\n" + current.asOf()
                 + "\n" + current.score().bundleVersion() + "\n" + current.score().bundleDigest()
                 + "\n" + current.score().calibratedProbability() + "\n" + current.score().operationalTier());
+        if (handoffs != null) handoffs.find(caseId).ifPresent(handoff -> {
+            if (!snapshot.equals(handoff.snapshotId())) throw new IllegalStateException("handoff snapshot mismatch");
+            handoff.validateDraft(draft);
+        });
         AgentDraftRecord record = new AgentDraftRecord(caseId, current.version(), snapshot, draft, null, false);
         drafts.put(caseId, record);
         return record;

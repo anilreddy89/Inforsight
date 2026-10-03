@@ -45,6 +45,17 @@ p5-04-demo-check:
 	PYTHONPATH=$(CURDIR) $(PYTHON) -m unittest agents.tests.test_p5_04_local_demo -v
 	PYTHONPATH=$(CURDIR) $(PYTHON) scripts/run_p5_04_local_demo.py
 
+.PHONY: p5-05-check p5-05-integration-check p5-05-demo-check
+p5-05-check:
+	PYTHONPATH=$(CURDIR):$(CURDIR)/simulator/src $(PYTHON) -m unittest agents.tests.test_workflow -v
+	mvn -f services/control-plane/pom.xml -Dtest=TrustedAgentHandoffTest,ControlPlaneControllerTest test
+
+p5-05-integration-check:
+	DOCKER_API_VERSION=1.44 INFORSIGHT_RUN_P5_05_INTEGRATION=1 mvn -f services/control-plane/pom.xml -Dapi.version=1.44 -Dtest=P505PostgresHandoffIntegrationTest test
+
+p5-05-demo-check:
+	PYTHONPATH=$(CURDIR) $(PYTHON) scripts/run_p5_05_end_to_end.py
+
 read-only-qualification-check:
 	bash scripts/verify_read_only.sh make check
 

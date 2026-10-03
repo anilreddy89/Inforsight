@@ -1450,7 +1450,8 @@ fake-model coverage and `make p5-02-check` / `make p5-02-adk-check` are the
 focused gates. No live model, external action, or production claim is made.
 See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
 P5-03 governed service/HITL integration merged in PR #203; P5-04 local demo
-qualification is active and the Phase 5 milestone is not complete.
+qualification merged in PR #205; P5-05 trusted handoff is active and the
+Phase 5 milestone is not complete.
 
 ### P5-03 — Governed agent draft and human-review integration
 
@@ -1472,13 +1473,28 @@ execution authority. See the [phase document](../Documents/phase_docs/phase-05-0
 
 **Issue:** [#204](https://github.com/anilreddy89/Inforsight/issues/204)
 
-**Status:** In progress on `implementation/p5-04-end-to-end-demo`.
+**Status:** Completed through [PR #205](https://github.com/anilreddy89/Inforsight/pull/205), merged as `67d051c`; issue #204 closed and required CI passed.
 
 **Outcome:** A repeatable fictional case-scoring, agent-abstention, human
 rejection, and audit walkthrough with explicit evidence of the remaining
 event-ingress and trusted-rule-provenance gap. The [phase document](../Documents/phase_docs/phase-05-04-local-demo-qualification.md)
 defines the local command and acceptance conditions. Phase 5 milestone
 closeout requires the missing trusted adapter and integrated qualification.
+
+### P5-05 — Trusted fictional event-to-agent handoff
+
+**Issue:** [#206](https://github.com/anilreddy89/Inforsight/issues/206)
+
+**Status:** In progress on `implementation/p5-05-trusted-event-agent-handoff`.
+
+**Outcome:** An opt-in local-only fictional event path projects a bounded
+feature record, computes server-owned eligibility, stores a versioned handoff
+against the persisted case snapshot, and constrains agent draft action and
+citation to that handoff. A separate human decision and audit replay complete
+the walkthrough. See the [phase document](../Documents/phase_docs/phase-05-05-trusted-event-agent-handoff.md)
+and [local demo API contract](../api/openapi/local-demo-v1.yaml). This does not
+establish production event projection, real-world model validity, or P4-07
+enterprise-scale qualification.
 
 ## Deferred intentionally
 

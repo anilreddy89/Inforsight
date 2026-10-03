@@ -19,13 +19,21 @@ public final class PersistentAgentDraftStore implements AgentDraftStore {
     private final ObjectMapper mapper;
     private final TransactionTemplate transactions;
     private final AuditAppender audit;
+    private final TrustedAgentHandoffStore handoffs;
 
     public PersistentAgentDraftStore(JdbcTemplate jdbc, ObjectMapper mapper,
                                      TransactionTemplate transactions, AuditAppender audit) {
+        this(jdbc, mapper, transactions, audit, null);
+    }
+
+    public PersistentAgentDraftStore(JdbcTemplate jdbc, ObjectMapper mapper,
+                                     TransactionTemplate transactions, AuditAppender audit,
+                                     TrustedAgentHandoffStore handoffs) {
         this.jdbc = jdbc;
         this.mapper = mapper;
         this.transactions = transactions;
         this.audit = audit;
+        this.handoffs = handoffs;
     }
 
     public AgentDraftRecord submit(String caseId, AgentDraftSubmission draft) {
@@ -49,6 +57,10 @@ public final class PersistentAgentDraftStore implements AgentDraftStore {
             }
             if (current.version() != draft.expectedCaseVersion() || !"RECOMMENDED".equals(current.state())
                     || current.authorized()) throw new IllegalStateException("case version or state conflict");
+            if (handoffs != null) handoffs.find(caseId).ifPresent(handoff -> {
+                if (!current.snapshotId().equals(handoff.snapshotId())) throw new IllegalStateException("handoff snapshot mismatch");
+                handoff.validateDraft(draft);
+            });
             UUID eventId = UUID.randomUUID();
             jdbc.update("INSERT INTO agent_review_draft (case_id, case_version, snapshot_id, idempotency_key, "
                     + "request_digest, draft_json, audit_event_id) VALUES (?, ?, ?, ?, ?, CAST(? AS jsonb), ?)",

@@ -762,13 +762,24 @@ const timelineData = [
       {
         id: "P5-04",
         title: "Local demo qualification and Phase 5 closeout",
-        status: "In progress",
-        commit: "Issue #204; implementation branch",
+        status: "Completed",
+        commit: "PR #205; 67d051c",
         summary: {
           tech: "Replay a fictional scored case through bounded agent abstention, governed human rejection, and persisted audit; record the missing trusted event/rules adapter before full milestone closeout.",
           simple: "Make one reliable local case-review demo, then connect trusted events and rules before calling the full workflow complete."
         },
-        checks: "Issue #204; make p5-04-demo-check requires the local persistence topology. Full event-to-agent qualification remains open."
+        checks: "Issue #204 closed; PR #205 merged with required CI passing, including a Compose-backed local case-review demo. Full event-to-agent qualification is P5-05."
+      },
+      {
+        id: "P5-05",
+        title: "Trusted fictional event-to-agent handoff",
+        status: "In progress",
+        commit: "Issue #206; implementation branch",
+        summary: {
+          tech: "Opt-in local event projection binds a server-owned rules result and versioned fictional procedure to a scored case snapshot; draft submission and human override checks enforce that binding.",
+          simple: "Trace one fictional event through a scored case, cited assistant draft, human review, and verifiable audit without giving the assistant action authority."
+        },
+        checks: "Issue #206; local demo API contract 1.0.0, focused Java/PostgreSQL checks, and Compose-backed end-to-end CI. Phase 5 milestone remains open pending final review."
       }
     ]
   }
