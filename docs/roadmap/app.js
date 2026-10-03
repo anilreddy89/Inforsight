@@ -774,7 +774,7 @@ const timelineData = [
         id: "P5-05",
         title: "Trusted fictional event-to-agent handoff",
         status: "In progress",
-        commit: "Issue #206; implementation branch",
+        commit: "Issue #206; PR #207 in review",
         summary: {
           tech: "Opt-in local event projection binds a server-owned rules result and versioned fictional procedure to a scored case snapshot; draft submission and human override checks enforce that binding.",
           simple: "Trace one fictional event through a scored case, cited assistant draft, human review, and verifiable audit without giving the assistant action authority."

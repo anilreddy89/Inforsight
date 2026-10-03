@@ -1485,7 +1485,7 @@ closeout requires the missing trusted adapter and integrated qualification.
 
 **Issue:** [#206](https://github.com/anilreddy89/Inforsight/issues/206)
 
-**Status:** In progress on `implementation/p5-05-trusted-event-agent-handoff`.
+**Status:** In progress on `implementation/p5-05-trusted-event-agent-handoff` through [PR #207](https://github.com/anilreddy89/Inforsight/pull/207); final CI and review pending.
 
 **Outcome:** An opt-in local-only fictional event path projects a bounded
 feature record, computes server-owned eligibility, stores a versioned handoff

@@ -4,6 +4,7 @@
 | --- | --- |
 | Status | In progress on `implementation/p5-05-trusted-event-agent-handoff` |
 | Issue | [#206](https://github.com/anilreddy89/Inforsight/issues/206) |
+| Pull request | [#207](https://github.com/anilreddy89/Inforsight/pull/207), review and final CI pending |
 | Predecessor | P5-04 [PR #205](https://github.com/anilreddy89/Inforsight/pull/205), merged as `67d051c` |
 | Milestone | `v0.5.0-agent-workflow` (#7), open |
 
