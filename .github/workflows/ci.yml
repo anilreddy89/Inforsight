@@ -208,6 +208,31 @@ jobs:
       - name: Validate PostgreSQL draft/audit transaction
         run: make p5-03-integration-check
 
+  p5-04-local-demo:
+    name: P5-04 Local Demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Start fictional local topology
+        run: docker compose -f infra/docker-compose.yml up --build -d
+      - name: Wait for control plane
+        run: |
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:8080/actuator/health >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          docker compose -f infra/docker-compose.yml logs --tail=100 control-plane
+          exit 1
+      - name: Replay abstention, human rejection, and audit
+        run: make p5-04-demo-check PYTHON=python
+      - name: Stop topology
+        if: always()
+        run: docker compose -f infra/docker-compose.yml down
+
   scaffold-checks:
     name: CI Completion Gate (scaffold-checks)
     needs:
@@ -217,6 +242,7 @@ jobs:
       - simulator-unit-tests
       - p5-02-adk-checks
       - p5-03-governed-review
+      - p5-04-local-demo
       - inference-runtime-checks
       - serving-checks
       - dashboard-checks

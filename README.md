@@ -209,8 +209,11 @@ not an autonomous action system. [P5-02](https://github.com/anilreddy89/Inforsig
 is complete in [PR #200](https://github.com/anilreddy89/Inforsight/pull/200):
 opt-in, offline-tested Google ADK orchestration with read-only tools and
 deterministic output validation. [P5-03](https://github.com/anilreddy89/Inforsight/issues/202)
-is implementing a governed, case-bound advisory draft and human-review seam;
-the draft cannot authorize action. Phase 6 owns the cloud
+merged in [PR #203](https://github.com/anilreddy89/Inforsight/pull/203), adding a governed,
+case-bound advisory draft and human-review seam; the draft cannot authorize action.
+[P5-04](https://github.com/anilreddy89/Inforsight/issues/204) is qualifying a
+repeatable local case-review demo and tracking the missing trusted event/rules
+adapter. Phase 6 owns the cloud
 demo; P4-07 enterprise-scale qualification remains open.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)

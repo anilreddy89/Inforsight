@@ -11,11 +11,11 @@ cloud environment may later provide the production-matched P4-07 test bed.
 
 | Field | Value |
 | --- | --- |
-| Status | In progress; P5-01 and P5-02 merged, P5-03 remains |
+| Status | In progress; P5-01 through P5-03 merged, P5-04 demo qualification active |
 | First increment | [P5-01 issue #197](https://github.com/anilreddy89/Inforsight/issues/197) |
 | P5-01 merged pull request | [#198](https://github.com/anilreddy89/Inforsight/pull/198), merge `1a327f4` |
 | P5-02 closeout | [issue #199](https://github.com/anilreddy89/Inforsight/issues/199) closed; [PR #200](https://github.com/anilreddy89/Inforsight/pull/200) merged as `89a291c`; [phase document](phase-05-02-bounded-google-adk-orchestration.md) |
-| Active increment | [P5-03 issue #202](https://github.com/anilreddy89/Inforsight/issues/202), [phase document](phase-05-03-governed-agent-review-integration.md), branch `implementation/p5-03-governed-agent-review-integration` |
+| Active increment | [P5-04 issue #204](https://github.com/anilreddy89/Inforsight/issues/204), [phase document](phase-05-04-local-demo-qualification.md), branch `implementation/p5-04-end-to-end-demo` |
 | Authority | ADR 0002; deterministic rules and human approval remain authoritative |
 
 ## Goal and design
@@ -60,8 +60,10 @@ screening is a conservative local check, not a complete LLM security proof.
   `make check` was not claimed as a separate pass.
 - [x] P5-02 bounded ADK adapter and offline evaluation merged in PR #200;
   required CI passed and issue #199 closed.
-- [ ] P5-03 issue #202 governed draft/HITL service integration and audit
-  completed; implementation and qualification are in progress.
+- [x] P5-03 issue #202 governed draft/HITL service integration and audit
+  merged through PR #203 with required CI passing.
+- [ ] P5-04 repeatable local demo and trusted event/rules provenance are
+  qualified; see the [phase document](phase-05-04-local-demo-qualification.md).
 - [ ] Full Phase 5 qualification and review/CI pass before any milestone claim.
 
 The selective GCP demo remains Phase 6; dedicated-cloud P4-07 qualification

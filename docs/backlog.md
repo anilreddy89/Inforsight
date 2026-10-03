@@ -1449,8 +1449,8 @@ deterministic action and provenance, or the adapter abstains. Offline
 fake-model coverage and `make p5-02-check` / `make p5-02-adk-check` are the
 focused gates. No live model, external action, or production claim is made.
 See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
-P5-03 governed service/HITL integration is now in progress; the Phase 5
-milestone is not complete.
+P5-03 governed service/HITL integration merged in PR #203; P5-04 local demo
+qualification is active and the Phase 5 milestone is not complete.
 
 ### P5-03 — Governed agent draft and human-review integration
 
@@ -1458,7 +1458,7 @@ milestone is not complete.
 
 **Milestone:** `v0.5.0-agent-workflow` (#7)
 
-**Status:** In progress on `implementation/p5-03-governed-agent-review-integration`.
+**Status:** Completed through [PR #203](https://github.com/anilreddy89/Inforsight/pull/203), merged as `f05b09b`; issue #202 is closed and required CI passed.
 
 **Outcome:** Add an opt-in Python review-draft bridge and a Java control-plane
 submission/read boundary for untrusted, review-only agent material. Bind a
@@ -1467,6 +1467,18 @@ persistence-profile draft and hash-chain audit writes must be atomic. The
 existing human decision endpoint alone can change case state. No submitted
 draft is treated as independent proof of eligibility, human approval, or
 execution authority. See the [phase document](../Documents/phase_docs/phase-05-03-governed-agent-review-integration.md).
+
+### P5-04 — Local demo qualification and Phase 5 closeout
+
+**Issue:** [#204](https://github.com/anilreddy89/Inforsight/issues/204)
+
+**Status:** In progress on `implementation/p5-04-end-to-end-demo`.
+
+**Outcome:** A repeatable fictional case-scoring, agent-abstention, human
+rejection, and audit walkthrough with explicit evidence of the remaining
+event-ingress and trusted-rule-provenance gap. The [phase document](../Documents/phase_docs/phase-05-04-local-demo-qualification.md)
+defines the local command and acceptance conditions. Phase 5 milestone
+closeout requires the missing trusted adapter and integrated qualification.
 
 ## Deferred intentionally
 
