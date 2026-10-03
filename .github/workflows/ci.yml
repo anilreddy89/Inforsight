@@ -248,6 +248,8 @@ jobs:
           java-version: "21"
           cache: maven
           cache-dependency-path: services/control-plane/pom.xml
+      - name: Install simulator test dependencies
+        run: python -m pip install -e simulator
       - name: Validate trusted handoff and bounded agent
         run: make p5-05-check PYTHON=python
       - name: Validate PostgreSQL handoff and audit
