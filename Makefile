@@ -40,6 +40,11 @@ p5-03-integration-check:
 
 check: p5-03-check
 
+.PHONY: p5-04-demo-check
+p5-04-demo-check:
+	PYTHONPATH=$(CURDIR) $(PYTHON) -m unittest agents.tests.test_p5_04_local_demo -v
+	PYTHONPATH=$(CURDIR) $(PYTHON) scripts/run_p5_04_local_demo.py
+
 read-only-qualification-check:
 	bash scripts/verify_read_only.sh make check
 

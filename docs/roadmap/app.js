@@ -746,18 +746,29 @@ const timelineData = [
           tech: "Pinned optional ADK runner with three fictional read-only tools; structured candidates must exactly match deterministic P5-01 action and provenance or abstain.",
           simple: "Let an offline-tested assistant draft a suggestion, while the existing rules reject anything unsupported and keep a person in charge."
         },
-        checks: "Issue #199 closed; PR #200 merged with required CI passing, including P5-02 Bounded ADK. Offline fake-model validation only; P5-03 service/HITL integration and P4-07 remain open."
+        checks: "Issue #199 closed; PR #200 merged with required CI passing, including P5-02 Bounded ADK. Offline fake-model validation only; P5-03 later merged in PR #203 and P4-07 remains open."
       },
       {
         id: "P5-03",
         title: "Governed agent draft and human-review integration",
-        status: "In progress",
-        commit: "Issue #202; implementation branch",
+        status: "Completed",
+        commit: "PR #203; f05b09b",
         summary: {
           tech: "Opt-in Python bridge and Java review-only draft API, bound to an existing case version and server-owned snapshot; persistence profile atomically records draft and audit evidence without changing case authority.",
           simple: "Keep the assistant's suggestion attached to a real case for a specialist to inspect, while a human decision remains the only way to advance it."
         },
-        checks: "Issue #202; make p5-03-check and Docker-backed make p5-03-integration-check. Submitted provenance is untrusted; no live model or autonomous action. P4-07 remains open."
+        checks: "Issue #202 closed; PR #203 merged with required CI passing. Submitted provenance remains untrusted; no live model or autonomous action. P4-07 remains open."
+      },
+      {
+        id: "P5-04",
+        title: "Local demo qualification and Phase 5 closeout",
+        status: "In progress",
+        commit: "Issue #204; implementation branch",
+        summary: {
+          tech: "Replay a fictional scored case through bounded agent abstention, governed human rejection, and persisted audit; record the missing trusted event/rules adapter before full milestone closeout.",
+          simple: "Make one reliable local case-review demo, then connect trusted events and rules before calling the full workflow complete."
+        },
+        checks: "Issue #204; make p5-04-demo-check requires the local persistence topology. Full event-to-agent qualification remains open."
       }
     ]
   }

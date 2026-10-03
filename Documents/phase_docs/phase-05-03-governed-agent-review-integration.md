@@ -8,7 +8,7 @@ or execute an action.
 
 | Field | Value |
 | --- | --- |
-| Status | In progress |
+| Status | Completed; PR #203 merged as `f05b09b` and required CI passed |
 | Milestone | [v0.5.0-agent-workflow](https://github.com/anilreddy89/Inforsight/milestone/7) |
 | Issue | [#202](https://github.com/anilreddy89/Inforsight/issues/202) |
 | Branch | `implementation/p5-03-governed-agent-review-integration` |
@@ -45,8 +45,7 @@ remain explicit follow-up requirements. No live external action is enabled.
 - [x] Persisted draft plus audit append is transactional and case/snapshot-bound.
 - [x] Focused Java and persistence integration tests cover rejection, replay,
   human decision separation, and audit evidence.
-- [ ] Required CI passes on the final reviewed commit; docs/tracker/roadmap
-  state only evidenced completion.
+- [x] Required CI passed on the merged commit; Phase 5 closeout remains open.
 - [ ] No final holdout, real customer data, credentials, protected artifacts,
   or P4-07 release claim changes.
 
@@ -61,7 +60,7 @@ open until the integrated acceptance and review are completed.
 `make p5-03-check`, `make p5-03-integration-check` (Docker Desktop with Docker
 API 1.44), full control-plane `mvn test`, the RH-09 contract consistency check,
 roadmap JavaScript syntax check, and `git diff --check` passed locally. Required
-PR CI on the final commit is still pending. The existing decision endpoint is
+PR CI passed for PR #203. The existing decision endpoint is
 not changed by this increment; its reviewer identity is request data rather
 than authenticated production identity. Override authorization semantics need
 separate qualification before any production or end-to-end safety claim.
