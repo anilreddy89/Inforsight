@@ -68,4 +68,36 @@ class ControlPlaneControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("BAD_REQUEST"));
     }
+
+    @Test
+    void agentDraftIsReviewOnlyAndDoesNotAdvanceCase() throws Exception {
+        MvcResult triage = mockMvc.perform(post("/api/v1/cases/triage")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"as_of_date\":\"2026-09-18T00:00:00Z\",\"policy_ids\":[\"p-agent\"]}"))
+                .andExpect(status().isOk()).andReturn();
+        String caseId = JsonPath.read(triage.getResponse().getContentAsString(), "$.cases[0].case_id");
+        String draft = "{\"contract_version\":\"1.0.0\",\"case_id\":\"" + caseId + "\","
+                + "\"expected_case_version\":0,\"status\":\"DRAFT_FOR_REVIEW\","
+                + "\"action_id\":\"courtesy_reminder\",\"reason_codes\":[],"
+                + "\"evidence_source_ids\":[\"fictional-event-1\"],"
+                + "\"procedure_citations\":[\"procedure@2.0\"],"
+                + "\"authorized_to_act\":false,\"human_review_required\":true,"
+                + "\"idempotency_key\":\"agent-idem-1\"}";
+        mockMvc.perform(post("/api/v1/cases/{caseId}/agent-drafts", caseId)
+                        .contentType(MediaType.APPLICATION_JSON).content(draft))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorized_to_act").value(false))
+                .andExpect(jsonPath("$.case_version").value(0));
+        mockMvc.perform(get("/api/v1/cases/{caseId}/agent-drafts", caseId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.draft.action_id").value("courtesy_reminder"));
+        mockMvc.perform(get("/api/v1/cases/{caseId}", caseId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_state").value("RECOMMENDED"))
+                .andExpect(jsonPath("$.authorized_to_act").value(false));
+        mockMvc.perform(post("/api/v1/cases/{caseId}/agent-drafts", caseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(draft.replace("\"authorized_to_act\":false", "\"authorized_to_act\":true")))
+                .andExpect(status().isBadRequest());
+    }
 }

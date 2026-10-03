@@ -30,6 +30,16 @@ p5-02-adk-check:
 
 check: p5-02-check
 
+.PHONY: p5-03-check p5-03-integration-check
+p5-03-check:
+	PYTHONPATH=$(CURDIR) $(PYTHON) -m unittest agents.tests.test_control_plane_bridge -v
+	mvn -f services/control-plane/pom.xml -Dtest=AgentDraftStoreTest,ControlPlaneControllerTest test
+
+p5-03-integration-check:
+	DOCKER_API_VERSION=1.44 INFORSIGHT_RUN_P5_03_INTEGRATION=1 mvn -f services/control-plane/pom.xml -Dapi.version=1.44 -Dtest=P503PostgresAgentDraftIntegrationTest test
+
+check: p5-03-check
+
 read-only-qualification-check:
 	bash scripts/verify_read_only.sh make check
 

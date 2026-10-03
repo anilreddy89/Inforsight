@@ -188,6 +188,26 @@ jobs:
       - name: Validate P5-01 and P5-02 offline seams
         run: make p5-02-adk-check PYTHON=python
 
+  p5-03-governed-review:
+    name: P5-03 Governed Review
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: services/control-plane/pom.xml
+      - name: Validate advisory and human-review separation
+        run: make p5-03-check PYTHON=python
+      - name: Validate PostgreSQL draft/audit transaction
+        run: make p5-03-integration-check
+
   scaffold-checks:
     name: CI Completion Gate (scaffold-checks)
     needs:
@@ -196,6 +216,7 @@ jobs:
       - v4-v5-diagnostics-checks
       - simulator-unit-tests
       - p5-02-adk-checks
+      - p5-03-governed-review
       - inference-runtime-checks
       - serving-checks
       - dashboard-checks

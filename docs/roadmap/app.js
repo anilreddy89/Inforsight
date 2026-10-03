@@ -747,6 +747,17 @@ const timelineData = [
           simple: "Let an offline-tested assistant draft a suggestion, while the existing rules reject anything unsupported and keep a person in charge."
         },
         checks: "Issue #199 closed; PR #200 merged with required CI passing, including P5-02 Bounded ADK. Offline fake-model validation only; P5-03 service/HITL integration and P4-07 remain open."
+      },
+      {
+        id: "P5-03",
+        title: "Governed agent draft and human-review integration",
+        status: "In progress",
+        commit: "Issue #202; implementation branch",
+        summary: {
+          tech: "Opt-in Python bridge and Java review-only draft API, bound to an existing case version and server-owned snapshot; persistence profile atomically records draft and audit evidence without changing case authority.",
+          simple: "Keep the assistant's suggestion attached to a real case for a specialist to inspect, while a human decision remains the only way to advance it."
+        },
+        checks: "Issue #202; make p5-03-check and Docker-backed make p5-03-integration-check. Submitted provenance is untrusted; no live model or autonomous action. P4-07 remains open."
       }
     ]
   }

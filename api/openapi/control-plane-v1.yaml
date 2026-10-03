@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Inforsight Enterprise Control Plane API
-  version: 1.0.0
+  version: 1.1.0
   description: >
     Enterprise control plane microservice orchestrating point-in-time policy triage,
     deterministic eligibility firewalls, knapsack uplift optimization, and governed
@@ -95,6 +95,59 @@ paths:
         '404':
           $ref: '#/components/responses/NotFoundError'
 
+  /api/v1/cases/{case_id}/agent-drafts:
+    post:
+      summary: Record one untrusted review-only agent draft for a case
+      description: >
+        Requires an existing recommended case at the expected version. The
+        server binds the draft to its own point-in-time snapshot; persistence
+        profile atomically appends a hash-chain audit event. This request does
+        not authenticate Python agent provenance, advance case state, create
+        human approval, or authorize execution. Deployment authentication is
+        not established by this local implementation.
+      operationId: submitAgentDraft
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentDraftSubmission'
+      responses:
+        '200':
+          description: Advisory draft recorded or identically replayed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDraftRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '409':
+          description: Stale case version, state conflict, or nonidentical replay
+    get:
+      summary: Retrieve the recorded advisory draft for specialist review
+      operationId: getAgentDraft
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Case-bound advisory material retrieved without changing state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDraftRecord'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
   /api/v1/cases/{case_id}/audit-trail:
     get:
       summary: Retrieve immutable cryptographic audit ledger for a case
@@ -120,6 +173,73 @@ paths:
 
 components:
   schemas:
+    AgentDraftSubmission:
+      type: object
+      required: [contract_version, case_id, expected_case_version, status, action_id, reason_codes, evidence_source_ids, procedure_citations, authorized_to_act, human_review_required, idempotency_key]
+      properties:
+        contract_version:
+          type: string
+          const: '1.0.0'
+        case_id:
+          type: string
+          maxLength: 128
+        expected_case_version:
+          type: integer
+          minimum: 0
+        status:
+          type: string
+          enum: [DRAFT_FOR_REVIEW, ABSTAIN]
+        action_id:
+          type: [string, 'null']
+          maxLength: 128
+        reason_codes:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+        evidence_source_ids:
+          type: array
+          maxItems: 128
+          items:
+            type: string
+            maxLength: 128
+        procedure_citations:
+          type: array
+          maxItems: 32
+          items:
+            type: string
+            maxLength: 128
+        authorized_to_act:
+          type: boolean
+          const: false
+        human_review_required:
+          type: boolean
+          const: true
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+
+    AgentDraftRecord:
+      type: object
+      required: [case_id, case_version, snapshot_id, draft, audit_record_hash, authorized_to_act]
+      properties:
+        case_id:
+          type: string
+        case_version:
+          type: integer
+        snapshot_id:
+          type: string
+        draft:
+          $ref: '#/components/schemas/AgentDraftSubmission'
+        audit_record_hash:
+          type: [string, 'null']
+          description: Null in the in-memory profile; SHA-256 ledger hash in persistence profile.
+        authorized_to_act:
+          type: boolean
+          const: false
+
     RiskTier:
       type: string
       enum: [TIER_1_LOW, TIER_2_ELEVATED, TIER_3_HIGH, TIER_4_CRITICAL]
