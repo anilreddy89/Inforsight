@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Local qualification passed on merged `main` baseline `d8b193c`; PR review and CI pending |
+| Status | Completed; PR #210 merged as `c289713`, required CI passed, issue #208 closed |
 | Issue | [#208](https://github.com/anilreddy89/Inforsight/issues/208) |
 | Baseline | `d8b193c` (PR #209 merge), including P5-05 merge `63fcd9b` |
-| Milestone | `v0.5.0-agent-workflow` (#7), open until review and CI pass |
+| Milestone | `v0.5.0-agent-workflow` (#7), closed 2026-10-04 ET |
 | Date | 2026-10-03 ET |
 
 ## Qualification evidence
@@ -35,10 +35,10 @@ The walkthrough returned:
 }
 ```
 
-The demo is reproducible with newly generated IDs; these IDs identify this run only. The event, score, rules, case snapshot, bounded draft, human rejection, and audit verification are exercised by the merged walkthrough. Negative authority and provenance paths are covered by the focused and PostgreSQL tests. CI must repeat the gate on the qualification PR before closure.
+The demo is reproducible with newly generated IDs; these IDs identify this run only. The event, score, rules, case snapshot, bounded draft, human rejection, and audit verification are exercised by the merged walkthrough. Negative authority and provenance paths are covered by the focused and PostgreSQL tests. The qualification PR repeated the required CI gate: all 25 checks completed successfully.
 
 ## Milestone decision
 
-Local qualification passes for the **fictional, bounded Phase 5 demonstration**. Milestone #7 remains open until the qualification PR passes required CI and review; issue #208 remains open for that decision. No contract or artifact version changes are introduced here.
+Local qualification passes for the **fictional, bounded Phase 5 demonstration**. PR #210 merged on 2026-10-04 ET as `c289713`, issue #208 closed, and all 25 CI checks passed. The repository owner merged the PR; GitHub records no separate submitted review. Owner merge is the recorded acceptance decision. With zero open milestone issues, milestone #7 was closed on 2026-10-04 ET. No contract or artifact version changes are introduced here.
 
 This evidence does not qualify a production event consumer, released model scoring, a live model provider, external action, cloud deployment, or P4-07 enterprise-scale readiness. The local Compose topology includes Kafka and an HTTP inference runtime, but this walkthrough uses the opt-in fictional event endpoint and bounded local inference adapter. Phase 6 owns the selective cloud demo. Final holdout and historical model artifacts were not accessed or changed.

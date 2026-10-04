@@ -1451,7 +1451,7 @@ focused gates. No live model, external action, or production claim is made.
 See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
 P5-03 governed service/HITL integration merged in PR #203; P5-04 local demo
 qualification merged in PR #205; P5-05 trusted handoff merged in PR #207.
-[P5-06](https://github.com/anilreddy89/Inforsight/issues/208) tracks integrated qualification; the Phase 5 milestone remains open.
+[P5-06](https://github.com/anilreddy89/Inforsight/issues/208) completed integrated local qualification in PR #210; the bounded Phase 5 milestone is closed.
 
 ### P5-03 — Governed agent draft and human-review integration
 
@@ -1500,7 +1500,7 @@ enterprise-scale qualification.
 
 **Issue:** [#208](https://github.com/anilreddy89/Inforsight/issues/208)
 
-**Status:** In progress. The merged fictional event-to-agent walkthrough passed local qualification on `d8b193c`; see the [evidence record](../Documents/phase_docs/phase-05-06-integrated-local-demo-qualification.md). PR review and CI remain before the Phase 5 milestone decision. P4-07 scale and Phase 6 cloud demo remain separate.
+**Status:** Completed. [PR #210](https://github.com/anilreddy89/Inforsight/pull/210) merged as `c289713`; issue #208 closed, all 25 required CI checks passed, and milestone #7 closed. The fictional event-to-agent walkthrough passed local qualification on `d8b193c`; see the [evidence record](../Documents/phase_docs/phase-05-06-integrated-local-demo-qualification.md). P4-07 scale and Phase 6 cloud demo remain separate.
 
 ## Deferred intentionally
 
