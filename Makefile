@@ -19,6 +19,18 @@ demo-check:
 demo-browser-check:
 	$(NODE) scripts/local_demo_browser.mjs
 
+# Mac-hosted live site: named Cloudflare tunnel, maintenance job, and the
+# isolated inforsight-public Compose project. These targets preserve data.
+.PHONY: public-start public-stop public-status
+public-start:
+	./scripts/public_site.sh start
+
+public-stop:
+	./scripts/public_site.sh stop
+
+public-status:
+	./scripts/public_site.sh status
+
 .PHONY: check test assessment-check boosted-comparison-check boundary-check contract-test dataset-check feature-diagnostics-check feature-pipeline-check inference-runtime-check leakage-check logistic-baseline-check observation-check streaming-check streaming-integration-check p4-02-check p4-02-integration-check p4-03-check p4-04-check p4-04-integration-check p4-05-check p4-06-check p4-07-check p4-07-local-latency-check p4-07-linux-latency-check r2-08-design-check r2-12-diagnostic-contract-check r2-13-diagnostic-readiness-check r2-14-qualification-check r2-14a-diagnostic-contract-check r2-14b-diagnostic-check r2-14ba-diagnostic-contract-check r2-14bb-diagnostic-contract-check r2-14c-contract-check r2-14d-qualification-check v6-evaluation-check v6-acceptance-check scoring-authorization-check simulator-test temporal-split-check v2-acceptance-check v2-corpus-check v2-evaluation-check v3-acceptance-check v3-corpus-check v3-evaluation-check serve-roadmap run-dashboard check-contracts check-v1-v3 check-v4-v5 probability-calibration-check model-explanations-check model-bundle-check final-evaluation-check rules-eligibility-check optimization-check serving-gateway-check assistant-check dashboard-check dashboard-app-test phase-03-qualification-check
 
 .PHONY: read-only-qualification-check read-only-artifact-checks ci-read-only-qualification-check rh12-evidence-check

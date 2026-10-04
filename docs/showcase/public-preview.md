@@ -183,37 +183,35 @@ Cookies and CSRF tokens must not be copied into a public report.
 
 ## Stable named tunnel
 
-No Cloudflare account certificate, tunnel credentials or domain configuration
-was available at initial inspection. A stable hostname requires the user to
-sign in securely and select a domain already on Cloudflare; never paste tokens
-or credentials into chat. There is no need to purchase a domain for the Quick
-Tunnel. Once a connected domain is confirmed, a named tunnel can map only a
-chosen subdomain to `http://127.0.0.1:3100`.
+The domain `aniljonnala.fyi` uses Cloudflare DNS with DNSSEC. The dashboard
+managed `inforsight-public` tunnel publishes only
+`inforsight.aniljonnala.fyi` to `http://127.0.0.1:3100`. Its macOS system
+LaunchDaemon is `/Library/LaunchDaemons/com.cloudflare.cloudflared.plist`.
+The tunnel token is private and must never be printed or committed. The named
+hostname passed the public browser journey, including protected sessions,
+human approval and a verified audit receipt. Evidence is in
+`artifacts/public-demo/browser-named-tunnel/`.
 
-The following are unexecuted setup templates. The login opens Cloudflare's
-browser authentication; keep the generated certificate/credentials private.
+Use the Mac operator command to manage the named tunnel, maintenance agent, and
+public Compose stack together. It disables launchd jobs while stopped so they
+do not restart on reboot, and preserves Docker volumes and secret files:
 
 ```sh
-cloudflared tunnel login
-cloudflared tunnel create inforsight-preview
-cloudflared tunnel route dns inforsight-preview demo.EXISTING-DOMAIN
-cloudflared tunnel --config "$HOME/.cloudflared/inforsight-preview.yml" run inforsight-preview
+make public-status
+make public-stop
+make public-start
 ```
 
-Use a configuration with that tunnel UUID, its local credentials file, one
-ingress rule for `demo.EXISTING-DOMAIN` to the loopback gateway, and a final
-`http_status:404` rule. Do not add private-network routes or other local ports.
-Validate with `cloudflared tunnel ingress validate` using the selected config,
-then repeat public session-isolation and end-to-end tests before handing over
-the stable URL. [Official named-tunnel procedure](https://developers.cloudflare.com/tunnel/features/locally-managed-tunnels/create-local-tunnel/)
+`start` needs Docker Desktop running and a local administrator password for
+`sudo`; it waits for the public session endpoint. Do not use `tunnel-start`
+for the named hostname: that command creates a temporary Quick Tunnel.
 
 ## Stop and teardown
 
 Stop exposure immediately without deleting data:
 
 ```sh
-python3 scripts/public_demo.py tunnel-stop
-python3 scripts/public_demo.py down
+make public-stop
 ```
 
 For full **destructive** removal of this isolated preview only, first retain a
