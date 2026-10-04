@@ -34,6 +34,21 @@ The [recorded local acceptance](docs/showcase/local-demo-acceptance.md) passes
 22 API/broker/database/fault-recovery checks and 17 real browser checks.
 **GCP is Planned and has no deployed demo endpoint.**
 
+## Share the real visitor demo
+
+The [anonymous public preview](docs/showcase/public-preview.md) runs the same
+distributed journey in an isolated Docker project behind a free Cloudflare
+Tunnel. Signed browser sessions own their runs; the server enforces submission,
+polling, concurrency and retention limits. A copied correlation ID does not
+grant another visitor access. Only the frontend/API gateway is exposed.
+
+The preview requires the Mac, Docker and tunnel to stay running. It has no
+billable cloud resources. Deployment, update, backup/restore and teardown
+commands are in the runbook; [public acceptance evidence](docs/showcase/public-demo-acceptance.md)
+records the tested commit, model, URL and complete journey. The
+[permanent zero-cost deployment assessment](docs/architecture/zero-cost-public-deployment.md)
+separates verified Arm compatibility from Oracle account and capacity checks.
+
 > **First falsifiable claim**: Can we generate a realistic fictional in-force policy timeline and predict which active policies are likely to lapse within 90 days — using only information available on the observation date?
 
 ---
@@ -332,6 +347,9 @@ make check
 | [Local demo runbook](docs/showcase/local-demo.md) | Start, inspect, qualify, resume, and reset the distributed visitor demo |
 | [Local demo design and implementation map](docs/showcase/local-demo-design.md) | Screen flow, visual system, component evidence, and remaining scope |
 | [Local acceptance evidence](docs/showcase/local-demo-acceptance.md) | Separate local/GCP results, exact run identities, per-stage evidence, and test counts |
+| [Public preview runbook](docs/showcase/public-preview.md) | Isolated signed sessions, free tunnel, deployment, backup/restore and teardown |
+| [Public acceptance evidence](docs/showcase/public-demo-acceptance.md) | HTTPS journey, visitor isolation, limits, recovery and deployment identities |
+| [Zero-cost hosting assessment](docs/architecture/zero-cost-public-deployment.md) | Oracle Always Free eligibility, Arm/memory evidence, account gates and priced fallback |
 | [Proposed GCP deployment design](docs/architecture/gcp-demo-deployment-recommendation.md) | Cloud Run/Pub/Sub versus Compute Engine/Kafka, cost controls, teardown, and qualification needs; not deployed |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution rules and clean-room boundaries |
 

@@ -1,0 +1,1037 @@
+{
+  "recorded_at": "2026-10-04T17:50:57.626517+00:00",
+  "public_url": "https://combined-scheduling-hand-etc.trycloudflare.com",
+  "runtime_source_commit": "278c274616a2ad95faa37277d0223e0c0fc958bd",
+  "runtime_source_note": "Only documentation was pending when the tested runtime manifest was captured. Runtime source is committed and unchanged during final HTTPS qualification.",
+  "acceptance": {
+    "local_journey": "PASS",
+    "public_https_journey": "PASS",
+    "oracle_deployment_journey": "FAIL - not deployed; secure account eligibility/capacity access unavailable",
+    "gcp_deployment_journey": "FAIL - Planned, not deployed"
+  },
+  "deployment": {
+    "recorded_at": "2026-10-04T17:48:19.527550+00:00",
+    "project": "inforsight-public",
+    "commit": "278c274616a2ad95faa37277d0223e0c0fc958bd",
+    "dirty_paths": [
+      " M README.md",
+      " M docs/showcase/system-walkthrough.md",
+      "?? docs/architecture/zero-cost-public-deployment.md",
+      "?? docs/showcase/public-preview.md"
+    ],
+    "compose_sha256": "c79218ad37efeae7244bdc33fdf014b935782264c0b2e699378da0e9149a772e",
+    "model_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+    "components": [
+      {
+        "service": "control-plane",
+        "image_id": "sha256:f3dd88920d53657322f597f091def933653139fba1c2de46af6d9337cfee4e84",
+        "architecture": "arm64",
+        "container_image_reference": "sha256:f3dd88920d53657322f597f091def933653139fba1c2de46af6d9337cfee4e84",
+        "runtime_platform_digest": "sha256:6a8be2ee09b801e3617e391c9271d895b106857585f0c4d46a4ef480f6777e4a",
+        "healthy": "healthy",
+        "memory_limit_bytes": 1073741824,
+        "memory_peak_bytes": 269684736,
+        "oom_killed": false,
+        "restart_count": 0,
+        "started_at": "2026-10-04T17:45:29.865707585Z",
+        "published_ports": {}
+      },
+      {
+        "service": "demo-runtime",
+        "image_id": "sha256:77a7a2c513d88ed586f1d862c85dd4cb8e511b8fa4ec9addc6abddefc5d28b71",
+        "architecture": "arm64",
+        "container_image_reference": "sha256:98f27d8d127bbdcc0dbfc8f119488391707f88c584cf46540904c932c3b3b770",
+        "runtime_platform_digest": "sha256:81d11c700373ea223a3a575905445fad35a1c66cd09c03bf5e714e56f0a53f5c",
+        "healthy": "healthy",
+        "memory_limit_bytes": 402653184,
+        "memory_peak_bytes": 62767104,
+        "oom_killed": false,
+        "restart_count": 0,
+        "started_at": "2026-10-04T17:36:56.761905333Z",
+        "published_ports": {}
+      },
+      {
+        "service": "frontend",
+        "image_id": "sha256:b5858c89ff495edd13b57643ec251bbd3e438b0013bde9d976fb1836b380964a",
+        "architecture": "arm64",
+        "container_image_reference": "sha256:b5858c89ff495edd13b57643ec251bbd3e438b0013bde9d976fb1836b380964a",
+        "runtime_platform_digest": "sha256:8036e94fe50a903a73936a0711815c443c9d2ab2846d6558678abc9996ee376f",
+        "healthy": "healthy",
+        "memory_limit_bytes": 134217728,
+        "memory_peak_bytes": 21348352,
+        "oom_killed": false,
+        "restart_count": 0,
+        "started_at": "2026-10-04T17:37:13.862597633Z",
+        "published_ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "3100"
+            }
+          ]
+        }
+      },
+      {
+        "service": "inference-runtime",
+        "image_id": "sha256:a710717b90a96fc3a0ecd43679082974a7cc32d17313a318def4a80280e06cbb",
+        "architecture": "arm64",
+        "container_image_reference": "sha256:9703a279810e9e4144862a4eb50c467383f8296c7241ad166e5fee21447014dd",
+        "runtime_platform_digest": "sha256:1800ff63a49194678d496708fe02b8783e9eca73b49f01976cfc6365ccafc15f",
+        "healthy": "healthy",
+        "memory_limit_bytes": 402653184,
+        "memory_peak_bytes": 58769408,
+        "oom_killed": false,
+        "restart_count": 0,
+        "started_at": "2026-10-04T17:45:25.064917763Z",
+        "published_ports": {}
+      },
+      {
+        "service": "kafka",
+        "image_id": "sha256:24cdd3a7fa89d2bed150560ebea81ff1943badfa61e51d66bb541a6b0d7fb047",
+        "architecture": "arm64",
+        "container_image_reference": "sha256:24cdd3a7fa89d2bed150560ebea81ff1943badfa61e51d66bb541a6b0d7fb047",
+        "runtime_platform_digest": "sha256:7057c7db9f2603f9bc8a7c019b10f3baa5281807a0593e3713674df5b706a8a9",
+        "healthy": "healthy",
+        "memory_limit_bytes": 1073741824,
+        "memory_peak_bytes": 592015360,
+        "oom_killed": false,
+        "restart_count": 0,
+        "started_at": "2026-10-04T17:36:56.849569917Z",
+        "published_ports": {}
+      },
+      {
+        "service": "postgres",
+        "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "architecture": "arm64",
+        "container_image_reference": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "runtime_platform_digest": "sha256:2c942175a1255a9abe0366e48c1b401d9f50f835b04dfea13f111609b5530df7",
+        "healthy": "healthy",
+        "memory_limit_bytes": 536870912,
+        "memory_peak_bytes": 66662400,
+        "oom_killed": false,
+        "restart_count": 0,
+        "started_at": "2026-10-04T17:36:56.932445542Z",
+        "published_ports": {}
+      }
+    ],
+    "sum_of_individual_memory_peaks_bytes": 1071247360,
+    "memory_peak_note": "Sum of individual cgroup peaks, not a simultaneous host-RSS measurement; excludes build/host overhead.",
+    "cloud_resources_created": false,
+    "vendor_monthly_cost_usd": 0
+  },
+  "api": {
+    "check_count": 22,
+    "checks": [
+      "submission idempotency and conflicting reuse",
+      "real journey reached human review",
+      "broker acknowledgement matches durable consumer receipt",
+      "point-in-time facts/features independently reconstructed; future evidence excluded",
+      "released HTTP score matches independently loaded verified bundle",
+      "Java eligibility and one-action allocation obey recorded capacity",
+      "real bounded agent cites source evidence without changing human authority",
+      "human decision idempotency",
+      "stale human decision rejected",
+      "every displayed completed stage matches hash-bound persisted evidence",
+      "independent verifier detects modified evidence export",
+      "PostgreSQL inbox, case and human decision persisted once",
+      "PostgreSQL rejects journal row updates",
+      "persisted audit verified",
+      "real Kafka duplicate delivery preserves one inbox, case, decision and audit checkpoint",
+      "malformed broker record quarantined; following public event completes and verifies",
+      "missing-safety-evidence: real abstention, approval blocked, human decision audited",
+      "agent-abstention: real abstention, approval blocked, human decision audited",
+      "inference outage persists failure, blocks downstream work and human approval",
+      "failed run and journal survive control-plane restart",
+      "retry resumes same event without duplicate ingestion or case",
+      "in-flight crash automatically resumes; each stage commits once"
+    ],
+    "run": {
+      "correlation_id": "run_0c28959ff0fd4974a85db491a8e5d682",
+      "event_id": "evt_50680a5b6e794eb6992c2c9492383cb9",
+      "case_id": "case_9add64d5cfba404cb0646d346d29ce93",
+      "case_version": 1,
+      "status": "COMPLETED",
+      "external_execution_enabled": false,
+      "stages": [
+        {
+          "stage": "submission",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:44:58.722085043Z",
+          "duration_ms": 0,
+          "input_refs": [],
+          "output_refs": [
+            "sha256:28964426415f5da285c84752e02b59cfc87348c0353c2387c9d437c14b1787c0"
+          ]
+        },
+        {
+          "stage": "publication",
+          "status": "completed",
+          "producer": "Kafka producer / Java control plane",
+          "completed_at": "2026-10-04T17:44:58.809024834Z",
+          "duration_ms": 41,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/submission"
+          ],
+          "output_refs": [
+            "sha256:ad33a1f8e993bb8454f6b7fdce2edc54867c77f058d33ea28f7451b3be9fb555"
+          ]
+        },
+        {
+          "stage": "ingestion",
+          "status": "completed",
+          "producer": "Kafka consumer / Java control plane",
+          "completed_at": "2026-10-04T17:44:58.823782418Z",
+          "duration_ms": 4,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/publication"
+          ],
+          "output_refs": [
+            "sha256:f2a3523eee790f93064bb662841b3a94b10a03fd461537d2235c64ac51a18fb4"
+          ]
+        },
+        {
+          "stage": "snapshot",
+          "status": "completed",
+          "producer": "Python evidence projection",
+          "completed_at": "2026-10-04T17:44:58.855374084Z",
+          "duration_ms": 19,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/ingestion"
+          ],
+          "output_refs": [
+            "sha256:3c181ede4596f56f370d194ad8b1fa059d06e829d9bfecb4ae35061daeb173dd"
+          ]
+        },
+        {
+          "stage": "score",
+          "status": "completed",
+          "producer": "Python released-model inference",
+          "completed_at": "2026-10-04T17:44:58.901453501Z",
+          "duration_ms": 33,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/snapshot"
+          ],
+          "output_refs": [
+            "sha256:27346d76c2b1106e593314104684d5ccc7ee9cf25e787f82b22a204739e65130"
+          ]
+        },
+        {
+          "stage": "rules",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:44:58.934210501Z",
+          "duration_ms": 21,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/score"
+          ],
+          "output_refs": [
+            "sha256:7a5a8b7acb85e82d90ca2afe1932de90af4397b3cfce544f93fdd861e4ff5521"
+          ]
+        },
+        {
+          "stage": "allocation",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:44:58.964853209Z",
+          "duration_ms": 21,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/rules"
+          ],
+          "output_refs": [
+            "sha256:a53f84045153f6aec2606f3da60f9c5d7c4fd0923933c1ef53cbab37ca8d718e"
+          ]
+        },
+        {
+          "stage": "case",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:44:58.983128459Z",
+          "duration_ms": 9,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/allocation"
+          ],
+          "output_refs": [
+            "sha256:f52b481190364ced52051557f911535b7eb451b10483db0f126deb08718210fd"
+          ]
+        },
+        {
+          "stage": "agent",
+          "status": "completed",
+          "producer": "Python bounded agent workflow",
+          "completed_at": "2026-10-04T17:44:58.999159501Z",
+          "duration_ms": 8,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/case"
+          ],
+          "output_refs": [
+            "sha256:dd41ca8e57eb489ae748abdc867ddf72363889f24f8119420cc9da4f833182f4"
+          ]
+        },
+        {
+          "stage": "decision",
+          "status": "completed",
+          "producer": "Human reviewer / Java control plane",
+          "completed_at": "2026-10-04T17:45:02.058917169Z",
+          "duration_ms": 4,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/agent"
+          ],
+          "output_refs": [
+            "sha256:910ab1f027f534a64caa2f88d5154ddbe52ec34fdc16fa3844cde21ab8f8a907"
+          ]
+        },
+        {
+          "stage": "audit",
+          "status": "completed",
+          "producer": "PostgreSQL / Java SHA-256 verifier",
+          "completed_at": "2026-10-04T17:45:02.080521002Z",
+          "duration_ms": 19,
+          "input_refs": [
+            "run:run_0c28959ff0fd4974a85db491a8e5d682/decision"
+          ],
+          "output_refs": [
+            "sha256:ce7215b371fb61559b792962e0a05007201e3c7eb831b6f1908cb5b25603efbf"
+          ]
+        }
+      ],
+      "broker": {
+        "publication": {
+          "acks": "all",
+          "topic": "inforsight.demo.events.v1",
+          "offset": 19,
+          "event_id": "evt_50680a5b6e794eb6992c2c9492383cb9",
+          "partition": 0,
+          "acknowledged_at": "2026-10-04T17:44:58.803138834Z",
+          "envelope_sha256": "c84f78cc0b18259476bae7777c308f9cfe2f150ceaa9f2905fc706652c39170e",
+          "broker_timestamp": "2026-10-04T17:44:58.778Z"
+        },
+        "ingestion": {
+          "topic": "inforsight.demo.events.v1",
+          "offset": 19,
+          "event_id": "evt_50680a5b6e794eb6992c2c9492383cb9",
+          "partition": 0,
+          "received_at": "2026-10-04T17:44:58.823763001Z",
+          "consumer_group": "inforsight-demo-journey-v1",
+          "envelope_sha256": "c84f78cc0b18259476bae7777c308f9cfe2f150ceaa9f2905fc706652c39170e"
+        }
+      },
+      "snapshot_id": "65df1e6c20eef859bc113bfa6929e09ac335e616868126ce1d7871fd1657b4d6",
+      "excluded_future_events": [
+        "evt_f3a057a484f2e3386de7a80ce1e536ec"
+      ],
+      "score": {
+        "bundle_id": "inforsight-v6-logistic-platt-20260817",
+        "bundle_version": "1.0.0",
+        "bundle_digest": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+        "calibrated_probability": 0.078781,
+        "authorized_to_act": false
+      },
+      "allocation": "payment_method_remediation",
+      "agent": {
+        "status": "DRAFT_FOR_REVIEW",
+        "workflow_id": "inforsight-bounded-agent/1.0.0",
+        "producer": {
+          "service": "demo-runtime",
+          "version": "1.0.0",
+          "worker_id": "bounded-worker-2ccba18676dd4e94b27cecff13011983"
+        },
+        "evidence_source_ids": [
+          "evt_497cd3a6a20afd5c22d7483c937ec31c",
+          "evt_50680a5b6e794eb6992c2c9492383cb9"
+        ],
+        "procedure_citations": [
+          "fictional-local-review@1.0.0"
+        ],
+        "authorized_to_act": false
+      },
+      "human_decision": {
+        "notes": "Acceptance test: reviewed the persisted fictional evidence. No external action.",
+        "case_id": "case_9add64d5cfba404cb0646d346d29ce93",
+        "decision": "APPROVED",
+        "rationale": "FICTIONAL_REVIEW",
+        "reviewer_id": "visitor__YyLN_iqyWozK2sGf771pHOT",
+        "case_version": 1,
+        "committed_at": "2026-10-04T17:45:02.058239586Z",
+        "human_authority": true,
+        "idempotency_key": "5a5d4c6e-ea84-4632-bf25-dedee7811fcf",
+        "selected_action": "payment_method_remediation",
+        "authorized_to_act": false,
+        "expected_case_version": 0,
+        "external_execution_enabled": false
+      }
+    },
+    "audit": {
+      "valid": true,
+      "verified_entries": 21,
+      "head_hash": "9fd04ea21958c6c12c5f9b1ae9bd42aaf39d862e79f78089cfbd14c0d012eb33",
+      "scope": "local demo run SHA-256 chain and persisted checkpoint",
+      "externally_anchored": false,
+      "verified_at": "2026-10-04T17:45:03.036858295Z"
+    }
+  },
+  "browser": {
+    "check_count": 23,
+    "checks": [
+      "automated accessibility: landing",
+      "keyboard skip link and scenario radio navigation",
+      "UI statuses match persisted backend before human decision",
+      "public visitor uses protected cookie and private responses",
+      "another visitor cannot read, review, retry, or resume a copied correlation ID",
+      "public gateway rejects missing CSRF, cross-origin writes and non-demo service routes",
+      "real session rate limit pauses polling without changing persisted stages",
+      "polling honors server Retry-After and recovers",
+      "automated accessibility: journey",
+      "stage input links navigate to persisted upstream evidence",
+      "refresh resumes the same correlation ID and visitor session",
+      "automated accessibility: dossier",
+      "automated accessibility: review",
+      "public UI human approval persisted and audit independently returned valid",
+      "automated accessibility: audit",
+      "automated accessibility: mobile",
+      "mobile no horizontal overflow and reduced-motion enabled",
+      "lost submission response plus refresh reuses committed request identity",
+      "slow real replies do not starve polling; disconnected state preserves evidence and recovers",
+      "lost decision response plus refresh recovers persisted human decision exactly once",
+      "legal-hold abstention is visible and approval unavailable",
+      "architecture labels GCP Planned",
+      "public architecture explains private services and Mac availability"
+    ],
+    "console_errors": [],
+    "run": {
+      "correlation_id": "run_1f79d548a4c34576863d588a4503ae65",
+      "event_id": "evt_6fa6260e0c24498db5d4a0d4f51c9c6a",
+      "case_id": "case_b5115e342b5e42a68a63e74ef07a9d0e",
+      "case_version": 1,
+      "status": "COMPLETED",
+      "external_execution_enabled": false,
+      "stages": [
+        {
+          "stage": "submission",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:46:05.160046129Z",
+          "duration_ms": 0,
+          "input_refs": [],
+          "output_refs": [
+            "sha256:50042161a8ff1fd6fe44286327741f7c1f973344e5596d752b06e697667fb653"
+          ]
+        },
+        {
+          "stage": "publication",
+          "status": "completed",
+          "producer": "Kafka producer / Java control plane",
+          "completed_at": "2026-10-04T17:46:05.272914796Z",
+          "duration_ms": 84,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/submission"
+          ],
+          "output_refs": [
+            "sha256:3451e482c4995ede24b0b4505488921d01d3a5d46ed3cd0b20db9d3e22086b5b"
+          ]
+        },
+        {
+          "stage": "ingestion",
+          "status": "completed",
+          "producer": "Kafka consumer / Java control plane",
+          "completed_at": "2026-10-04T17:46:13.690528383Z",
+          "duration_ms": 4,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/publication"
+          ],
+          "output_refs": [
+            "sha256:441b5d154976eb690fe2905e7f797f2f99ac911aca941e20eed3c70f013e0716"
+          ]
+        },
+        {
+          "stage": "snapshot",
+          "status": "completed",
+          "producer": "Python evidence projection",
+          "completed_at": "2026-10-04T17:46:13.720247675Z",
+          "duration_ms": 22,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/ingestion"
+          ],
+          "output_refs": [
+            "sha256:6806f54604cfd21c107d114d176f3dbcebe2e0a035e282f959a45584284ef410"
+          ]
+        },
+        {
+          "stage": "score",
+          "status": "completed",
+          "producer": "Python released-model inference",
+          "completed_at": "2026-10-04T17:46:13.736425383Z",
+          "duration_ms": 10,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/snapshot"
+          ],
+          "output_refs": [
+            "sha256:9afec80046525551929179e67aa9326c10a77e7062d4564cd6d526d12435e61a"
+          ]
+        },
+        {
+          "stage": "rules",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:46:13.745552550Z",
+          "duration_ms": 4,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/score"
+          ],
+          "output_refs": [
+            "sha256:061a94402764dee59bc8fe1fae89edac45e0fff4d1e7d5f2d5a17d8d0ec7e301"
+          ]
+        },
+        {
+          "stage": "allocation",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:46:13.757590883Z",
+          "duration_ms": 7,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/rules"
+          ],
+          "output_refs": [
+            "sha256:48842a61c9d273f1662eb76287bfa80aa7221b8199ab981a53a61a10f9f94cdf"
+          ]
+        },
+        {
+          "stage": "case",
+          "status": "completed",
+          "producer": "Java control plane",
+          "completed_at": "2026-10-04T17:46:13.791181633Z",
+          "duration_ms": 25,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/allocation"
+          ],
+          "output_refs": [
+            "sha256:268259759cd2f67d6b3fd2193b0ab00b0299bc9c3794e9cc384992fc189fdd26"
+          ]
+        },
+        {
+          "stage": "agent",
+          "status": "completed",
+          "producer": "Python bounded agent workflow",
+          "completed_at": "2026-10-04T17:46:13.806774841Z",
+          "duration_ms": 7,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/case"
+          ],
+          "output_refs": [
+            "sha256:48fe38bd88cae4f242e99308f01446f8c14991f1e3187be9c290549f65a1fd7d"
+          ]
+        },
+        {
+          "stage": "decision",
+          "status": "completed",
+          "producer": "Human reviewer / Java control plane",
+          "completed_at": "2026-10-04T17:47:04.106233045Z",
+          "duration_ms": 1,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/agent"
+          ],
+          "output_refs": [
+            "sha256:e16dcf65eaf714df1ba6eaba6fe9f6d0ed96e10169df57a1fdfc5481902f53d4"
+          ]
+        },
+        {
+          "stage": "audit",
+          "status": "completed",
+          "producer": "PostgreSQL / Java SHA-256 verifier",
+          "completed_at": "2026-10-04T17:47:04.121339128Z",
+          "duration_ms": 13,
+          "input_refs": [
+            "run:run_1f79d548a4c34576863d588a4503ae65/decision"
+          ],
+          "output_refs": [
+            "sha256:663073babd964722815956f9ed6bf15c257ea923c983e24e4346cd72a85f5956"
+          ]
+        }
+      ],
+      "broker": {
+        "publication": {
+          "acks": "all",
+          "topic": "inforsight.demo.events.v1",
+          "offset": 27,
+          "event_id": "evt_6fa6260e0c24498db5d4a0d4f51c9c6a",
+          "partition": 0,
+          "acknowledged_at": "2026-10-04T17:46:05.270205087Z",
+          "envelope_sha256": "b39a972c12d12f419a5fed8af44c5b522bdf41f091c79d44e3ee7decbcd15aab",
+          "broker_timestamp": "2026-10-04T17:46:05.217Z"
+        },
+        "ingestion": {
+          "topic": "inforsight.demo.events.v1",
+          "offset": 27,
+          "event_id": "evt_6fa6260e0c24498db5d4a0d4f51c9c6a",
+          "partition": 0,
+          "received_at": "2026-10-04T17:46:13.690513716Z",
+          "consumer_group": "inforsight-demo-journey-v1",
+          "envelope_sha256": "b39a972c12d12f419a5fed8af44c5b522bdf41f091c79d44e3ee7decbcd15aab"
+        }
+      },
+      "snapshot_id": "7283475b431b59ebbbb4b025c8790cc51d08f436a3af8476df28912fb41cb645",
+      "excluded_future_events": [
+        "evt_b98a0699acce90fecbc03674c8883174"
+      ],
+      "score": {
+        "bundle_id": "inforsight-v6-logistic-platt-20260817",
+        "bundle_version": "1.0.0",
+        "bundle_digest": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+        "calibrated_probability": 0.078781,
+        "authorized_to_act": false
+      },
+      "allocation": "payment_method_remediation",
+      "agent": {
+        "status": "DRAFT_FOR_REVIEW",
+        "workflow_id": "inforsight-bounded-agent/1.0.0",
+        "producer": {
+          "service": "demo-runtime",
+          "version": "1.0.0",
+          "worker_id": "bounded-worker-2ccba18676dd4e94b27cecff13011983"
+        },
+        "evidence_source_ids": [
+          "evt_6fa6260e0c24498db5d4a0d4f51c9c6a",
+          "evt_9724aca4462c0e8d8a16ec831f76068b"
+        ],
+        "procedure_citations": [
+          "fictional-local-review@1.0.0"
+        ],
+        "authorized_to_act": false
+      },
+      "human_decision": {
+        "notes": "Fictional browser review: checked released model, eligibility, allocation and cited evidence.",
+        "case_id": "case_b5115e342b5e42a68a63e74ef07a9d0e",
+        "decision": "APPROVED",
+        "rationale": "Fictional browser review: checked released model, eligibility, allocation and cited evidence.",
+        "reviewer_id": "visitor_Ps54AoRmIfiP8ETxbwGleUGD",
+        "case_version": 1,
+        "committed_at": "2026-10-04T17:47:04.105812045Z",
+        "human_authority": true,
+        "idempotency_key": "eb8da58e-19b7-4b54-91e5-198c3c68d930",
+        "selected_action": "payment_method_remediation",
+        "authorized_to_act": false,
+        "expected_case_version": 0,
+        "external_execution_enabled": false
+      }
+    },
+    "audit": {
+      "valid": true,
+      "verified_entries": 21,
+      "head_hash": "a5a317288a3a264030efb4c89fa1d0edaf9fc87b58310d9088d9d8316e1cdcf7",
+      "scope": "local demo run SHA-256 chain and persisted checkpoint",
+      "externally_anchored": false,
+      "verified_at": "2026-10-04T17:47:04.974319004Z"
+    }
+  },
+  "java_tests": {
+    "aggregate_latest_suite_reports": {
+      "tests": 55,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 14,
+      "passed": 41
+    },
+    "public_security_tests": 9,
+    "note": "Full Java suite plus final focused PostgreSQL capacity-regression rerun; 14 legacy opt-in checks skipped.",
+    "commands": [
+      "DOCKER_API_VERSION=1.44 INFORSIGHT_RUN_DEMO_INTEGRATION=1 mvn -q -f services/control-plane/pom.xml -Dapi.version=1.44 test",
+      "DOCKER_API_VERSION=1.44 INFORSIGHT_RUN_DEMO_INTEGRATION=1 mvn -q -f services/control-plane/pom.xml -Dapi.version=1.44 -Dtest=DemoPublicAccessIntegrationTest test"
+    ]
+  },
+  "backup_restore": {
+    "result": "PASS",
+    "verified_at": "2026-10-04T17:38:43.418086+00:00",
+    "source": {
+      "project": "inforsight-public",
+      "fingerprint": "63bf0d4edb7f6e563189a1bd99e3e21b09746c9aa939defa912d9566be2aa99b",
+      "counts": {
+        "cases": 9,
+        "inbox": 9,
+        "journals": 193,
+        "decisions": 9,
+        "checkpoints": 9
+      },
+      "verified_receipts": [
+        {
+          "run_id": "run_04586917938c4d43a4aa9b6c72125b0f",
+          "verified_entries": 21,
+          "head_hash": "e4069c4640e5eb465d5fa37beb06bd90d998aab0fac090b2f702c265b31aa020"
+        },
+        {
+          "run_id": "run_0ab8a8fabd4241deacc972d54fbf40fc",
+          "verified_entries": 21,
+          "head_hash": "f97f2e3e75de7858e705df94afa89ec7763d0a5e0742cc73631f60a0ad27970f"
+        },
+        {
+          "run_id": "run_15e5c10291484b93a5bf2c06b85867cc",
+          "verified_entries": 21,
+          "head_hash": "976f7c9622a3480ada1e5c1d954fead84af0b6b9e18c2f43b0df79d715030ca3"
+        },
+        {
+          "run_id": "run_2d02ce8e6a26413badee25fc91d1d0bd",
+          "verified_entries": 21,
+          "head_hash": "cfaf141636470903d9d518799b6fb0469efe00feac960e4f60eb4cefae5dc3aa"
+        },
+        {
+          "run_id": "run_39ae0640b244478c9595f0e6c9a290ec",
+          "verified_entries": 22,
+          "head_hash": "7777175c999cd6d07fbe8b287bbff1d75f5d4f01b7aedb0a30acdb408ac64bd3"
+        },
+        {
+          "run_id": "run_869b5a98e4ea497c9b45626139ce7511",
+          "verified_entries": 21,
+          "head_hash": "9dade98dd9027d438a1bd4338fffec13032d0696605f4ab34313ab6e2437c320"
+        },
+        {
+          "run_id": "run_933c0b74d13a4da5a6418908a646106e",
+          "verified_entries": 21,
+          "head_hash": "4e193b802182171af68e6b600a0c6e990f2d4ecaecbf142deac573c8bcf63ad5"
+        },
+        {
+          "run_id": "run_afdb6803032b49e091d40c599da35982",
+          "verified_entries": 24,
+          "head_hash": "113f988df59af24cf9bf649a666761c7619cf8750dc60e15db3ab0b2ba173969"
+        },
+        {
+          "run_id": "run_b230d707f62a4d69bcb1e3667bf48cdf",
+          "verified_entries": 21,
+          "head_hash": "30276213c4e78f97258d80a9b3fc435c6f0e46e2dd0c358a3862e2a07be180cf"
+        }
+      ]
+    },
+    "restored": {
+      "project": "inforsight-public-restore",
+      "fingerprint": "63bf0d4edb7f6e563189a1bd99e3e21b09746c9aa939defa912d9566be2aa99b",
+      "counts": {
+        "cases": 9,
+        "inbox": 9,
+        "journals": 193,
+        "decisions": 9,
+        "checkpoints": 9
+      },
+      "verified_receipts": [
+        {
+          "run_id": "run_04586917938c4d43a4aa9b6c72125b0f",
+          "verified_entries": 21,
+          "head_hash": "e4069c4640e5eb465d5fa37beb06bd90d998aab0fac090b2f702c265b31aa020"
+        },
+        {
+          "run_id": "run_0ab8a8fabd4241deacc972d54fbf40fc",
+          "verified_entries": 21,
+          "head_hash": "f97f2e3e75de7858e705df94afa89ec7763d0a5e0742cc73631f60a0ad27970f"
+        },
+        {
+          "run_id": "run_15e5c10291484b93a5bf2c06b85867cc",
+          "verified_entries": 21,
+          "head_hash": "976f7c9622a3480ada1e5c1d954fead84af0b6b9e18c2f43b0df79d715030ca3"
+        },
+        {
+          "run_id": "run_2d02ce8e6a26413badee25fc91d1d0bd",
+          "verified_entries": 21,
+          "head_hash": "cfaf141636470903d9d518799b6fb0469efe00feac960e4f60eb4cefae5dc3aa"
+        },
+        {
+          "run_id": "run_39ae0640b244478c9595f0e6c9a290ec",
+          "verified_entries": 22,
+          "head_hash": "7777175c999cd6d07fbe8b287bbff1d75f5d4f01b7aedb0a30acdb408ac64bd3"
+        },
+        {
+          "run_id": "run_869b5a98e4ea497c9b45626139ce7511",
+          "verified_entries": 21,
+          "head_hash": "9dade98dd9027d438a1bd4338fffec13032d0696605f4ab34313ab6e2437c320"
+        },
+        {
+          "run_id": "run_933c0b74d13a4da5a6418908a646106e",
+          "verified_entries": 21,
+          "head_hash": "4e193b802182171af68e6b600a0c6e990f2d4ecaecbf142deac573c8bcf63ad5"
+        },
+        {
+          "run_id": "run_afdb6803032b49e091d40c599da35982",
+          "verified_entries": 24,
+          "head_hash": "113f988df59af24cf9bf649a666761c7619cf8750dc60e15db3ab0b2ba173969"
+        },
+        {
+          "run_id": "run_b230d707f62a4d69bcb1e3667bf48cdf",
+          "verified_entries": 21,
+          "head_hash": "30276213c4e78f97258d80a9b3fc435c6f0e46e2dd0c358a3862e2a07be180cf"
+        }
+      ]
+    },
+    "scope": "Independent SHA-256 chains/checkpoints and exact case/decision/inbox persistence comparison; operator-only.",
+    "new_restored_journey": {
+      "result": "PASS",
+      "run_id": "run_214dab7f50df42e0b748ddbd2fc0d31f",
+      "publication": {
+        "acks": "all",
+        "topic": "inforsight.demo.events.v1",
+        "offset": 11,
+        "event_id": "evt_b439172ceb19405c9f61d1b3cdd22a67",
+        "partition": 0,
+        "acknowledged_at": "2026-10-04T17:39:50.247023678Z",
+        "envelope_sha256": "e7a063deda2a301bf79799df85f7ef5ae0d5a677a3c7aceef213937b06a99593",
+        "broker_timestamp": "2026-10-04T17:39:50.183Z"
+      },
+      "ingestion": {
+        "topic": "inforsight.demo.events.v1",
+        "offset": 11,
+        "event_id": "evt_b439172ceb19405c9f61d1b3cdd22a67",
+        "partition": 0,
+        "received_at": "2026-10-04T17:39:50.302629970Z",
+        "consumer_group": "inforsight-demo-journey-v1",
+        "envelope_sha256": "e7a063deda2a301bf79799df85f7ef5ae0d5a677a3c7aceef213937b06a99593"
+      },
+      "score": {
+        "bundle_id": "inforsight-v6-logistic-platt-20260817",
+        "policy_id": "pol_26be6c3210604b0f849a0a49bccbe9b3",
+        "raw_logit": -2.522057,
+        "risk_tier": "Tier 1: Low Risk",
+        "as_of_date": "2026-09-25T12:00:00.000000Z",
+        "risk_tier_id": "TIER_1_LOW",
+        "bundle_digest": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+        "bundle_version": "1.0.0",
+        "catalog_sha256": "d360ed670337912f6b0094d587b5a979c5b8de2ed0a528a184eac36b393f4005",
+        "catalog_version": "1.0.0",
+        "calibrated_logit": -2.459029,
+        "top_risk_drivers": [
+          {
+            "feature_name": "recent_failed_payment_count",
+            "attribution_log_odds": 0.817462
+          },
+          {
+            "feature_name": "recent_delay_days",
+            "attribution_log_odds": 0.701428
+          },
+          {
+            "feature_name": "arrears_duration_days",
+            "attribution_log_odds": 0.19941
+          }
+        ],
+        "authorized_to_act": false,
+        "root_centered_shap": {
+          "tenure_days": 0.004866,
+          "product_type": -0.031829,
+          "notice_category": -0.109307,
+          "contact_category": -0.090248,
+          "billing_frequency": -0.324844,
+          "recent_delay_days": 0.666772,
+          "recent_retry_count": -0.000903,
+          "recent_notice_count": -0.03416,
+          "premium_amount_cents": 0.004354,
+          "recent_contact_count": -0.02351,
+          "rolling_on_time_rate": -1.514511,
+          "arrears_duration_days": 0.199002,
+          "recent_recovery_count": 0.000694,
+          "rolling_payment_count": -0.142736,
+          "contact_attribute_missing": 0.0,
+          "payment_attribute_missing": 0.003003,
+          "recent_failed_payment_count": 0.810699
+        },
+        "calibrated_probability": 0.078781,
+        "top_protective_drivers": [
+          {
+            "feature_name": "rolling_on_time_rate",
+            "attribution_log_odds": -1.358309
+          },
+          {
+            "feature_name": "billing_frequency",
+            "attribution_log_odds": -0.495524
+          },
+          {
+            "feature_name": "contact_category",
+            "attribution_log_odds": -0.493175
+          }
+        ],
+        "preprocessing_profile_id": "v6-coefficient-transform-then-bundle-zscore/1.0.0",
+        "review_queue_eligibility": {
+          "top_1_pct": false,
+          "top_5_pct": false,
+          "top_20_pct": false
+        },
+        "action_authority_boundary": "ADR_0002_REQUIRES_HUMAN_REVIEW",
+        "root_attributions_log_odds": {
+          "tenure_days": -0.02349,
+          "product_type": -0.37045,
+          "notice_category": -0.468697,
+          "contact_category": -0.493175,
+          "billing_frequency": -0.495524,
+          "recent_delay_days": 0.701428,
+          "recent_retry_count": -0.000806,
+          "recent_notice_count": -0.033856,
+          "premium_amount_cents": 0.002692,
+          "recent_contact_count": -0.023891,
+          "rolling_on_time_rate": -1.358309,
+          "arrears_duration_days": 0.19941,
+          "recent_recovery_count": 0.000585,
+          "rolling_payment_count": -0.201387,
+          "contact_attribute_missing": 0.0,
+          "payment_attribute_missing": 0.002621,
+          "recent_failed_payment_count": 0.817462
+        }
+      },
+      "case_id": "case_f056e5e9260d4fd99b4c4cff7401b019",
+      "case_version": 1,
+      "decision": {
+        "notes": "Acceptance test: reviewed the persisted fictional evidence. No external action.",
+        "case_id": "case_f056e5e9260d4fd99b4c4cff7401b019",
+        "decision": "APPROVED",
+        "rationale": "FICTIONAL_REVIEW",
+        "reviewer_id": "visitor_zsrBjtGt8Pe53IgbFcGN6ksk",
+        "case_version": 1,
+        "committed_at": "2026-10-04T17:39:50.778518803Z",
+        "human_authority": true,
+        "idempotency_key": "bcad7b45-11a7-4dea-ad72-dbbb4d68e6be",
+        "selected_action": "payment_method_remediation",
+        "authorized_to_act": false,
+        "expected_case_version": 0,
+        "external_execution_enabled": false
+      },
+      "verified_entries": 21,
+      "head_hash": "78c8e224019818ac1b0cd204c914d11cadc6bf75ca03284d85e233dc53032ef3"
+    },
+    "retention_and_broker_cleanup": {
+      "result": "PASS",
+      "tested_at": "2026-10-04T17:41:51.116807+00:00",
+      "scope": "Only disposable inforsight-public-restore; one completed fixture aged, original preview untouched",
+      "removed_run_id": "run_0ab8a8fabd4241deacc972d54fbf40fc",
+      "retention_receipt": {
+        "correlation_id": "run_0ab8a8fabd4241deacc972d54fbf40fc",
+        "verification_valid": true,
+        "verified_entries": 21,
+        "last_verified_head": "f97f2e3e75de7858e705df94afa89ec7763d0a5e0742cc73631f60a0ad27970f"
+      },
+      "remaining_verified_run_chains": 9,
+      "broker_earliest": "inforsight.demo.events.v1:0:3",
+      "earliest_retained_offset": 3
+    },
+    "operations": {
+      "backup_directory": "/Users/anil/inforsight-backups/public-preview-20261004T1740",
+      "backup_log": "/tmp/inforsight-public-backup.log",
+      "restore_log": "/tmp/inforsight-public-restore.log",
+      "restore_teardown_log": "/tmp/inforsight-public-restore-teardown.log",
+      "restore_test_project_removed": true,
+      "restore_test_volumes_removed": true,
+      "restore_test_secret_state_removed": true,
+      "maintenance_launchagent": "/Users/anil/Library/LaunchAgents/com.inforsight.inforsight-public.maintenance.plist",
+      "maintenance_status": [
+        "state = not running",
+        "program = /opt/homebrew/opt/python@3.14/bin/python3.14",
+        "runs = 1",
+        "last exit code = 0",
+        "state = active",
+        "state = active",
+        "run interval = 600 seconds"
+      ],
+      "active_preview_state": "/Users/anil/.local/share/inforsight-public",
+      "public_url": "https://combined-scheduling-hand-etc.trycloudflare.com",
+      "cloudflared_version": "2026.9.3"
+    },
+    "final_snapshot": {
+      "result": "PASS",
+      "backup_directory": "/Users/anil/inforsight-backups/public-preview-accepted-20261004T1750",
+      "backup_log": "/tmp/inforsight-public-final-backup.log",
+      "backup_manifest": "/Users/anil/inforsight-backups/public-preview-accepted-20261004T1750/backup.json",
+      "deployment_manifest": "/Users/anil/inforsight-backups/public-preview-accepted-20261004T1750/deployment-manifest.json",
+      "created_at": "2026-10-04T17:48:24.195914+00:00",
+      "commit": "278c274616a2ad95faa37277d0223e0c0fc958bd",
+      "model_sha256": "7ac292136d5201f16b02d7bbbaf0448f58124d4209df76e34db6f2f37f12c656",
+      "archive_checksums": {
+        "kafka_data.tgz": "361cbf30711276b46fe3e6c26c2e75cddf35cb6408c80b8cdbb3703633358028",
+        "postgres_data.tgz": "a9eb699dd2e3b95de38bae4658af694a18be7736704b133920221643579765ff"
+      },
+      "components": [
+        {
+          "service": "control-plane",
+          "image_id": "sha256:f3dd88920d53657322f597f091def933653139fba1c2de46af6d9337cfee4e84",
+          "runtime_platform_digest": "sha256:6a8be2ee09b801e3617e391c9271d895b106857585f0c4d46a4ef480f6777e4a",
+          "architecture": "arm64"
+        },
+        {
+          "service": "demo-runtime",
+          "image_id": "sha256:77a7a2c513d88ed586f1d862c85dd4cb8e511b8fa4ec9addc6abddefc5d28b71",
+          "runtime_platform_digest": "sha256:81d11c700373ea223a3a575905445fad35a1c66cd09c03bf5e714e56f0a53f5c",
+          "architecture": "arm64"
+        },
+        {
+          "service": "frontend",
+          "image_id": "sha256:b5858c89ff495edd13b57643ec251bbd3e438b0013bde9d976fb1836b380964a",
+          "runtime_platform_digest": "sha256:8036e94fe50a903a73936a0711815c443c9d2ab2846d6558678abc9996ee376f",
+          "architecture": "arm64"
+        },
+        {
+          "service": "inference-runtime",
+          "image_id": "sha256:a710717b90a96fc3a0ecd43679082974a7cc32d17313a318def4a80280e06cbb",
+          "runtime_platform_digest": "sha256:1800ff63a49194678d496708fe02b8783e9eca73b49f01976cfc6365ccafc15f",
+          "architecture": "arm64"
+        },
+        {
+          "service": "kafka",
+          "image_id": "sha256:24cdd3a7fa89d2bed150560ebea81ff1943badfa61e51d66bb541a6b0d7fb047",
+          "runtime_platform_digest": "sha256:7057c7db9f2603f9bc8a7c019b10f3baa5281807a0593e3713674df5b706a8a9",
+          "architecture": "arm64"
+        },
+        {
+          "service": "postgres",
+          "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "runtime_platform_digest": "sha256:2c942175a1255a9abe0366e48c1b401d9f50f835b04dfea13f111609b5530df7",
+          "architecture": "arm64"
+        }
+      ],
+      "restoration_test": "Earlier snapshot restore and new journey proven above; backup code/schema unchanged. This final snapshot was not separately restored.",
+      "post_backup_https_health": {
+        "url": "https://combined-scheduling-hand-etc.trycloudflare.com/health",
+        "status": 200,
+        "body": "healthy",
+        "cf_ray": "a456055d4bf261e4-ORD",
+        "checked_at": "2026-10-04T17:49:03.209999+00:00"
+      }
+    }
+  },
+  "report_files": [
+    {
+      "path": "artifacts/public-demo/baseline/api.json",
+      "sha256": "66192fdb23d118f07c5890fbfa1226c8a1793a633ddf91152aa93fa897aad101"
+    },
+    {
+      "path": "artifacts/public-demo/baseline/browser.json",
+      "sha256": "105db13f26f141523e3dc10e1026e7a8496aa1efefc91f886c06a3cfb7639fd0"
+    },
+    {
+      "path": "artifacts/public-demo/private-api.json",
+      "sha256": "2fc487b9d5fae8e03e5244f2c0b62ed69c613708fd883a411fa7acfc763118cf"
+    },
+    {
+      "path": "artifacts/public-demo/browser-local/browser.json",
+      "sha256": "c7d873397f5fcc31ace3266181065d10dc867b3754ec41aa1c142c3f800912f4"
+    },
+    {
+      "path": "artifacts/public-demo/public-api.json",
+      "sha256": "3a77ae5579ab86221aad7acbe2a56da0ccec9e67a892dc3aa04ee75b5471c8d2"
+    },
+    {
+      "path": "artifacts/public-demo/browser-public/browser.json",
+      "sha256": "5c6de8c811595632ae964b86634c2a7b9a5dc5e9b057228b87f4a81aed40903c"
+    },
+    {
+      "path": "artifacts/public-demo/backup-restore.json",
+      "sha256": "d09931763be7c95f8f861ebf6c71ef18aca59770d362e7d957357bbaeb3a0e50"
+    },
+    {
+      "path": "artifacts/public-demo/cold-start-manifest.json",
+      "sha256": "e29b8451b00585f9e7c13936561f749938a64adc56b4e21a5254e1c0912d5004"
+    },
+    {
+      "path": "artifacts/public-demo/java-tests.json",
+      "sha256": "45930a2eb2b3e20a43627ebcd9e4832751c485bf8bd8399a506741f86573e952"
+    },
+    {
+      "path": "artifacts/public-demo/https-reachability.json",
+      "sha256": "c2d8cbe416182e060803528c6dfe506542dbcc0c3529803722a8831561889196"
+    }
+  ],
+  "boundaries": [
+    "Clients ran on the Mac against public Cloudflare DNS/HTTPS, not localhost; no independent geographic SLA qualification.",
+    "No externally anchored audit; verification covers the persisted SHA-256 chain and checkpoint.",
+    "Test run IDs do not authorize access from another visitor session.",
+    "No cloud resources created; $0 provisioned vendor hosting cost excludes power and existing internet."
+  ]
+}

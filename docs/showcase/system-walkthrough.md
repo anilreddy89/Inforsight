@@ -1,6 +1,11 @@
 # Fictional local reviewer walkthrough
 
-Open **http://localhost:3000** after `make demo-up`. This walkthrough describes
+Open **http://localhost:3000** after `make demo-up`, or use the operator's
+[public preview URL](public-preview.md). Public runs belong to a signed browser
+session: resuming requires both that session and the correlation ID. Public
+retention and capacity limits are documented in the preview runbook.
+
+This walkthrough describes
 the new opt-in Docker visitor journey, whose outputs are persisted by the Java
 control plane. It is separate from both Streamlit's in-process Python workflow
 and the historical P5 synchronous handoff. Setup and acceptance evidence are in
