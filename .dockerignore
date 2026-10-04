@@ -1,0 +1,16 @@
+.git
+.venv
+.agents
+.claude
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/target
+**/dist
+artifacts
+data
+Documents
+*.log
+.env
+.env.*
+!.env.example

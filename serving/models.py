@@ -13,12 +13,12 @@ ADR_0002_AUTHORITY_BOUNDARY_NOTICE = "ADR_0002_REQUIRES_HUMAN_REVIEW"
 
 class RawFeatures(BaseModel):
     """Raw observation feature vector ingested by the model serving gateway."""
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
     # Numeric features
-    tenure_days: float = Field(..., ge=0.0, description="Policy tenure in years scaled or raw days")
+    tenure_days: float = Field(..., ge=0.0, description="Policy tenure in raw days")
     premium_amount_cents: float = Field(..., ge=0.0, description="Premium amount")
-    recent_delay_days: float = Field(..., ge=0.0, description="Recent delay in days")
+    recent_delay_days: float | None = Field(..., ge=0.0, description="Recent raw delay in days; null is source missingness")
     recent_failed_payment_count: float = Field(..., ge=0.0, description="Failed payment count")
     recent_retry_count: float = Field(..., ge=0.0, description="Retry count")
     recent_recovery_count: float = Field(..., ge=0.0, description="Recovery count")
@@ -74,6 +74,12 @@ class ScoreResponse(BaseModel):
 
     policy_id: str
     as_of_date: str
+    bundle_id: str
+    bundle_version: str
+    bundle_digest: str
+    catalog_version: str
+    catalog_sha256: str
+    preprocessing_profile_id: str
     calibrated_probability: float
     raw_logit: float
     calibrated_logit: float

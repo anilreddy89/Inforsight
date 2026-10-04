@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 import unittest
+from dataclasses import asdict
 from fastapi.testclient import TestClient
 
 from inforsight_inference import ModelBundle, BundledInferenceEngine
@@ -11,6 +12,7 @@ from inforsight_simulator.v6_corpus import generate_v6_corpus, V6CorpusConfig
 from inforsight_simulator.v6_evaluation import _feature_map
 from serving.app import create_app, DEFAULT_BUNDLE_PATH
 from serving.models import ADR_0002_AUTHORITY_BOUNDARY_NOTICE
+from serving.preprocessing import coefficient_features
 from inforsight_inference import PREPROCESSING_PROFILE_ID
 
 
@@ -28,7 +30,9 @@ class TestServingGateway(unittest.TestCase):
         corpus = generate_v6_corpus(V6CorpusConfig(base_seed=20280201))
         eval_obs = [r for r in corpus.observations if r.role == "non_final_evaluation"]
         cls.sample_obs = eval_obs[:5]
-        cls.sample_feature_maps = [_feature_map(obs) for obs in cls.sample_obs]
+        # Requests advertise raw-v6-features; the offline extractor independently
+        # supplies coefficient-space vectors for the expected engine result.
+        cls.sample_feature_maps = [asdict(obs.features) for obs in cls.sample_obs]
 
     def test_health_endpoint(self) -> None:
         """GET /health verifies engine liveness and SHA-256 digest match."""
@@ -48,6 +52,10 @@ class TestServingGateway(unittest.TestCase):
         )
         self.assertTrue(data["bundle_sha256"].startswith("7ac292"))
 
+    def test_raw_coefficient_transform_matches_offline_feature_contract(self) -> None:
+        for obs in self.sample_obs:
+            self.assertEqual(coefficient_features(asdict(obs.features)), _feature_map(obs))
+
     def test_model_info_endpoint(self) -> None:
         """GET /v1/model/info returns full model bundle metadata, risk tiers, and authority boundaries."""
         resp = self.client.get("/v1/model/info")
@@ -64,7 +72,7 @@ class TestServingGateway(unittest.TestCase):
         """POST /v1/score produces bit-for-bit identical probabilities to BundledInferenceEngine."""
         fmap = self.sample_feature_maps[0]
         obs = self.sample_obs[0]
-        expected_result = self.engine.score_record(fmap)
+        expected_result = self.engine.score_record(_feature_map(obs))
 
         payload = {
             "policy_id": obs.policy_id,
@@ -113,7 +121,7 @@ class TestServingGateway(unittest.TestCase):
         resp = self.client.post("/v1/score/minimal", json=payload)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
-        expected = self.engine.score_record(fmap)
+        expected = self.engine.score_record(_feature_map(obs))
 
         self.assertEqual(set(data), {
             "policy_id",
@@ -150,8 +158,8 @@ class TestServingGateway(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual([item["policy_id"] for item in data], [item["policy_id"] for item in requests])
         self.assertTrue(all(item["authorized_to_act"] is False for item in data))
-        for item, request in zip(data, requests):
-            expected = self.engine.score_record(request["features"])
+        for item, obs in zip(data, self.sample_obs[:2]):
+            expected = self.engine.score_record(_feature_map(obs))
             self.assertAlmostEqual(item["calibrated_probability"], expected.calibrated_probability, places=6)
             self.assertEqual(item["risk_tier"], expected.risk_tier)
 
@@ -176,7 +184,7 @@ class TestServingGateway(unittest.TestCase):
         for item, obs, fmap in zip(data["scores"], self.sample_obs, self.sample_feature_maps):
             self.assertEqual(item["policy_id"], obs.policy_id)
             self.assertIs(item["authorized_to_act"], False)
-            expected = self.engine.score_record(fmap)
+            expected = self.engine.score_record(_feature_map(obs))
             self.assertAlmostEqual(item["calibrated_probability"], expected.calibrated_probability, places=6)
 
     def test_input_validation_missing_feature(self) -> None:

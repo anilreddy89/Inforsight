@@ -1,0 +1,319 @@
+openapi: 3.1.0
+info:
+  title: Inforsight fictional distributed demo journey
+  version: 1.0.0
+  description: >-
+    Local Docker only. The Java control plane publishes a persisted fictional
+    event through Kafka, invokes read-only Python adapters and released HTTP
+    inference, and owns rules, allocation, cases, human review and audit.
+    Every completed stage is backed by a PostgreSQL journal record.
+    Fictional reviewer identifiers are labels, not authenticated real identities.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v1/demo/scenarios:
+    get:
+      summary: List implemented scenarios and bounded input constraints
+      responses:
+        "200":
+          description: Local capabilities; GCP is not an available environment
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [environment, external_execution_enabled, scenarios]
+                properties:
+                  environment: { const: local }
+                  external_execution_enabled: { const: false }
+                  scenarios: { type: array, items: { type: object } }
+                  safe_inputs: { type: object }
+  /api/v1/demo/runs:
+    post:
+      summary: Persist a fictional event and outbox before asynchronous Kafka processing
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 128 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [scenario_id]
+              properties:
+                scenario_id:
+                  enum:
+                    [late-payment, missing-safety-evidence, agent-abstention]
+                overrides:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    premium_amount_cents:
+                      {
+                        type: integer,
+                        minimum: 1000,
+                        maximum: 100000,
+                        default: 12500,
+                      }
+                    delay_days:
+                      { type: integer, minimum: 1, maximum: 45, default: 15 }
+      responses:
+        "202": { $ref: "#/components/responses/RunResponse" }
+        "200":
+          {
+            description: Identical request replay returns the existing run,
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/Run" } },
+              },
+          }
+        "400":
+          { description: Unsupported scenario, fields or unsafe input bounds }
+        "409": { description: Idempotency key reused for different input }
+        "503":
+          {
+            description: Source adapter unavailable; no accepted run is claimed,
+          }
+  /api/v1/demo/runs/{correlation_id}:
+    parameters:
+      - { $ref: "#/components/parameters/RunId" }
+    get:
+      summary: Resume the authoritative persisted run after refresh or restart
+      responses:
+        "200": { $ref: "#/components/responses/RunResponse" }
+        "404": { description: Run not found }
+  /api/v1/demo/runs/{correlation_id}/retry:
+    parameters:
+      - { $ref: "#/components/parameters/RunId" }
+    post:
+      summary: Resume a failed run while retaining its event, completed outputs and failed attempts
+      responses:
+        "200": { $ref: "#/components/responses/RunResponse" }
+        "409": { description: Run is not failed }
+  /api/v1/demo/runs/{correlation_id}/decision:
+    parameters:
+      - { $ref: "#/components/parameters/RunId" }
+    post:
+      summary: Atomically persist a fictional human decision, case version and audit record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                [
+                  decision,
+                  expected_case_version,
+                  idempotency_key,
+                  rationale,
+                  reviewer_id,
+                ]
+              properties:
+                decision:
+                  { enum: [APPROVED, REJECTED, REQUEST_MORE_INFORMATION] }
+                expected_case_version: { type: integer, minimum: 0 }
+                idempotency_key: { type: string, minLength: 1, maxLength: 128 }
+                rationale: { type: string, minLength: 1, maxLength: 500 }
+                notes: { type: string, maxLength: 2000 }
+                reviewer_id: { type: string, minLength: 1, maxLength: 128 }
+      responses:
+        "200": { $ref: "#/components/responses/RunResponse" }
+        "400":
+          { description: Invalid decision or attempt to approve an abstention }
+        "409":
+          {
+            description: Not ready,
+            stale version,
+            changed idempotent request,
+            or failed integrity verification,
+          }
+  /api/v1/demo/runs/{correlation_id}/audit:
+    parameters:
+      - { $ref: "#/components/parameters/RunId" }
+    get:
+      summary: Recompute the journal chain and compare its persisted checkpoint
+      responses:
+        "200":
+          description: Verification of the current persisted prefix; validity alone does not mean human review is complete
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  [
+                    valid,
+                    verified_entries,
+                    head_hash,
+                    scope,
+                    externally_anchored,
+                    verified_at,
+                    entries,
+                  ]
+                properties:
+                  valid: { type: boolean }
+                  verified_entries: { type: integer, minimum: 0 }
+                  head_hash: { type: string }
+                  scope: { type: string }
+                  externally_anchored: { const: false }
+                  verified_at: { type: string, format: date-time }
+                  failure_code: { type: string }
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        [
+                          sequence,
+                          event_id,
+                          stage,
+                          event_type,
+                          producer,
+                          occurred_at,
+                          canonical_payload,
+                          parent_hash,
+                          current_hash,
+                          payload,
+                        ]
+                      properties:
+                        sequence: { type: integer, minimum: 1 }
+                        event_id: { type: string }
+                        stage: { type: string }
+                        event_type: { type: string }
+                        producer: { type: string }
+                        occurred_at: { type: string, format: date-time }
+                        canonical_payload:
+                          {
+                            type: string,
+                            description: Exact UTF-8 string used by the hash computation,
+                          }
+                        parent_hash: { type: string }
+                        current_hash:
+                          {
+                            type: string,
+                            description: SHA-256 of parent_hash plus newline plus canonical_payload; genesis is 64 zero characters,
+                          }
+                        payload: { type: object }
+components:
+  parameters:
+    RunId:
+      name: correlation_id
+      in: path
+      required: true
+      schema: { type: string, pattern: "^run_[a-f0-9]{32}$" }
+  responses:
+    RunResponse:
+      description: Persisted run; future stages remain waiting or blocked without invented outputs
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Run" }
+  schemas:
+    Run:
+      type: object
+      required:
+        [
+          correlation_id,
+          event_id,
+          policy_id,
+          scenario_id,
+          status,
+          case_id,
+          case_version,
+          created_at,
+          updated_at,
+          fictional,
+          external_execution_enabled,
+          stages,
+          artifacts,
+        ]
+      properties:
+        correlation_id: { type: string }
+        event_id: { type: string }
+        policy_id: { type: string }
+        scenario_id: { type: string }
+        status:
+          { enum: [WAITING, PROCESSING, AWAITING_REVIEW, FAILED, COMPLETED] }
+        case_id:
+          {
+            type: string,
+            description: Reserved identity; persistence is proven only by the completed case stage,
+          }
+        case_version: { type: integer, minimum: 0 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        fictional: { const: true }
+        external_execution_enabled: { const: false }
+        source:
+          {
+            type: object,
+            description: Submitted fictional source history including explicitly excluded future evidence,
+          }
+        artifacts:
+          {
+            type: object,
+            description: Immutable projection/snapshot,
+            score,
+            rules,
+            allocation and agent outputs; current case and human decision,
+          }
+        stages:
+          type: array
+          items:
+            type: object
+            required:
+              [
+                stage,
+                status,
+                producer,
+                attempt,
+                started_at,
+                completed_at,
+                duration_ms,
+                input_refs,
+                output_refs,
+                evidence,
+              ]
+            properties:
+              stage:
+                {
+                  enum:
+                    [
+                      submission,
+                      publication,
+                      ingestion,
+                      snapshot,
+                      score,
+                      rules,
+                      allocation,
+                      case,
+                      agent,
+                      decision,
+                      audit,
+                    ],
+                }
+              status:
+                {
+                  enum:
+                    [
+                      waiting,
+                      processing,
+                      completed,
+                      abstained,
+                      blocked,
+                      failed,
+                    ],
+                }
+              producer: { type: string }
+              attempt: { type: integer, minimum: 0 }
+              started_at: { type: [string, "null"], format: date-time }
+              completed_at: { type: [string, "null"], format: date-time }
+              duration_ms: { type: [integer, "null"], minimum: 0 }
+              input_refs: { type: array, items: { type: string } }
+              output_refs: { type: array, items: { type: string } }
+              evidence: { type: object }
+              error: { type: object }

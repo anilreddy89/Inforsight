@@ -6,7 +6,7 @@ WORKDIR /build
 
 COPY services/control-plane/pom.xml services/control-plane/pom.xml
 COPY services/control-plane/src services/control-plane/src
-RUN mvn -B -f services/control-plane/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp -f services/control-plane/pom.xml -DskipTests package
 
 FROM eclipse-temurin:21-jre-alpine AS runner
 

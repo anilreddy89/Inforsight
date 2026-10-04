@@ -18,7 +18,7 @@ def main() -> None:
         "infra/docker/Dockerfile.control-plane",
         "FROM maven:",
         "FROM eclipse-temurin:21-jre-alpine",
-        "mvn -B -f services/control-plane/pom.xml -DskipTests package",
+        "mvn -B -ntp -f services/control-plane/pom.xml -DskipTests package",
         "USER inforsight:inforsight",
     )
     require(
