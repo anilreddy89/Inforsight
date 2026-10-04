@@ -11,14 +11,22 @@ import java.util.Map;
 public class PortfolioAllocator {
     public Allocation allocate(List<Candidate> candidates, long budgetMicros, int personnelSeconds) {
         if (budgetMicros < 0 || personnelSeconds < 0) throw new IllegalArgumentException("capacities must be nonnegative");
+        if (candidates.stream().anyMatch(c -> c.costMicros() < 0 || c.personnelSeconds() < 0)) {
+            throw new IllegalArgumentException("candidate resource costs must be nonnegative");
+        }
         List<Candidate> ordered = candidates.stream()
                 .filter(Candidate::eligible)
                 .sorted(Comparator.comparing(Candidate::policyId).thenComparing(Candidate::actionType))
                 .toList();
         Map<Capacity, State> states = new HashMap<>();
         states.put(new Capacity(0, 0), new State(0, List.of()));
-        for (Candidate candidate : ordered) {
+        // Each policy is a multiple-choice group: alternatives must expand only
+        // states from BEFORE this policy, never another action for the same policy.
+        Map<String, List<Candidate>> groups = ordered.stream().collect(java.util.stream.Collectors.groupingBy(
+                Candidate::policyId, java.util.LinkedHashMap::new, java.util.stream.Collectors.toList()));
+        for (List<Candidate> alternatives : groups.values()) {
             Map<Capacity, State> next = new HashMap<>(states);
+            for (Candidate candidate : alternatives) {
             for (Map.Entry<Capacity, State> entry : states.entrySet()) {
                 Capacity current = entry.getKey();
                 long money = current.money() + candidate.costMicros();
@@ -28,6 +36,7 @@ public class PortfolioAllocator {
                 Capacity capacity = new Capacity(money, time);
                 State incumbent = next.get(capacity);
                 if (incumbent == null || better(alternative, incumbent)) next.put(capacity, alternative);
+            }
             }
             states = next;
         }

@@ -1,6 +1,9 @@
 """Replay a fictional, review-only case through the local control plane.
 
-Requires the P4-06 Compose topology with the persistence profile. The agent
+Requires docker-compose.yml plus the explicit docker-compose.p5-04.yml legacy
+overlay. This policy-ID-only harness uses bounded test scoring, not released
+model qualification; the default visitor topology continues to use HTTP scoring.
+The agent
 abstains because this harness has no trusted rules allowlist or case evidence.
 """
 
@@ -35,6 +38,9 @@ def run() -> dict:
     brief = request("GET", path)
     assert brief["current_state"] == "RECOMMENDED"
     assert brief["authorized_to_act"] is False
+    assert brief["grounding_hash"] == "not-a-production-digest", (
+        "P5-04 requires the explicit legacy review-only Compose overlay; "
+        "use make demo-check to qualify the released-model visitor journey")
 
     from datetime import datetime, timezone
     case = CaseInput(case_id, datetime(2026, 9, 25, tzinfo=timezone.utc),
@@ -57,7 +63,9 @@ def run() -> dict:
     audit_hash = decision["audit_record_hash"]
     assert len(audit_hash) == 64 and all(char in "0123456789abcdef" for char in audit_hash)
     assert request("GET", path)["current_state"] == "DISMISSED"
-    return {"case_id": case_id, "score": brief["calibrated_probability"],
+    return {"qualification_scope": "p5-04-legacy-review-only",
+            "scoring_adapter": "bounded-local-adapter",
+            "case_id": case_id, "score": brief["calibrated_probability"],
             "draft_status": draft.status, "human_decision": "REJECTED",
             "audit_record_hash": audit_hash, "authorized_to_act": False}
 

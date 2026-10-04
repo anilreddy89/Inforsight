@@ -11,6 +11,49 @@
 
 **Inforsight** is a clean-room conservation case intelligence system for in-force life-insurance policies. It reconstructs fictional policy timelines from immutable event streams, estimates near-term lapse or surrender risk without leaking future information, separates prediction from action authority, and keeps a human reviewer in control of every intervention.
 
+## Run the interactive local demo
+
+With Docker Compose available, run `make demo-up` and open
+**http://localhost:3000**. Choose **Run a fictional case**, submit a late payment,
+inspect the recorded journey, and make a fictional human decision. Copy the
+correlation ID or keep the run URL to resume after refresh.
+
+The opt-in Docker journey connects actual Kafka publication and consumption,
+point-in-time Python projection, released-model HTTP inference, Java rules and
+one-policy allocation, PostgreSQL case persistence, a bounded agent, human
+review, and audit verification. The browser reads persisted backend evidence;
+it does not advance stages on a timer. The model and agent remain advisory, and
+approval never enables customer contact or external execution.
+
+Run `make demo-check` for the API journey and fault/recovery qualification, and
+`make demo-browser-check` for browser interaction checks. Setup, exact evidence
+locations, reset behavior, and limits are in the [local demo runbook](docs/showcase/local-demo.md).
+The latest generated `artifacts/local-demo/acceptance.json` is the acceptance
+record for the tested stack; a frontend build alone is not an acceptance pass.
+The [recorded local acceptance](docs/showcase/local-demo-acceptance.md) passes
+22 API/broker/database/fault-recovery checks and 17 real browser checks.
+**GCP is Planned and has no deployed demo endpoint.**
+
+## Share the real visitor demo
+
+The [anonymous public preview](docs/showcase/public-preview.md) runs the same
+distributed journey in an isolated Docker project behind a free Cloudflare
+Tunnel. Signed browser sessions own their runs; the server enforces submission,
+polling, concurrency and retention limits. A copied correlation ID does not
+grant another visitor access. Only the frontend/API gateway is exposed.
+
+The preview requires the Mac, Docker and tunnel to stay running. It has no
+billable cloud resources. Deployment, update, backup/restore and teardown
+commands are in the runbook; [public acceptance evidence](docs/showcase/public-demo-acceptance.md)
+records the tested commit, model, URL and complete journey. The
+[permanent zero-cost deployment assessment](docs/architecture/zero-cost-public-deployment.md)
+separates verified Arm compatibility from Oracle account and capacity checks.
+
+On the host Mac, use `make public-start`, `make public-stop`, and
+`make public-status` to manage the entire live preview at
+<https://inforsight.aniljonnala.fyi>. These targets preserve its data;
+`public-start` requires Docker Desktop and local administrator access.
+
 > **First falsifiable claim**: Can we generate a realistic fictional in-force policy timeline and predict which active policies are likely to lapse within 90 days — using only information available on the observation date?
 
 ---
@@ -113,7 +156,11 @@ No component in Inforsight can autonomously contact a customer or alter a policy
 
 ![Inforsight target architecture](docs/assets/inforsight-target-architecture.png)
 
-This diagram shows the intended long-term system boundary. Components are introduced incrementally only after their assumptions and interfaces are validated. Current implementation covers the event simulation, ML pipeline, and model bundle layers.
+This diagram shows the intended long-term system boundary. The implemented
+local visitor journey now also connects Java, Kafka, HTTP inference, PostgreSQL,
+and the bounded agent. Its narrow single-policy scope does not establish the
+enterprise-scale or cloud targets shown in the diagram. See the
+[current implementation map](docs/showcase/local-demo-design.md).
 
 ---
 
@@ -218,11 +265,12 @@ merged in [PR #207](https://github.com/anilreddy89/Inforsight/pull/207), adding 
 walkthrough. [P5-06](https://github.com/anilreddy89/Inforsight/issues/208) completed integrated Phase 5 local qualification in [PR #210](https://github.com/anilreddy89/Inforsight/pull/210); milestone #7 is closed. Its [evidence record](Documents/phase_docs/phase-05-06-integrated-local-demo-qualification.md) shows the passing local replay and CI. Phase 6 owns the cloud
 demo, starting with [P6-01](https://github.com/anilreddy89/Inforsight/issues/212) under milestone #8; P4-07 enterprise-scale qualification remains open.
 
-For the fictional local P5-05 walkthrough, start
-`docker compose -f infra/docker-compose.yml up --build -d`, wait for the
-control plane health endpoint, and run `make p5-05-demo-check`. The
-[Phase 5.05 document](Documents/phase_docs/phase-05-05-trusted-event-agent-handoff.md)
-records the contract, evidence, and limits of this bounded demonstration.
+The historical P5-05/P5-06 evidence covers a synchronous event endpoint,
+bounded scoring, and a host-run agent bridge. It does not prove Kafka ingestion,
+released-model scoring, or allocation in one distributed run. Those historical
+records remain unchanged. Use `make demo-up`, the visitor UI, and `make demo-check`
+for the new opt-in journey; its separate [contract](api/openapi/demo-journey-v1.yaml)
+and [runbook](docs/showcase/local-demo.md) define the acceptance boundary.
 
 ### ⏳ Phase 4 — Enterprise Integration & Scale (Roadmap)
 - Enterprise distributed infrastructure (Java 21/Spring Boot microservices, Apache Kafka event streaming)
@@ -254,8 +302,10 @@ records the contract, evidence, and limits of this bounded demonstration.
 data-contracts/   Versioned fictional data schemas (JSON Schema Draft 2020-12)
 simulator/        Seeded policy-event generator and ML pipeline (Python)
 ml/               Reserved for finalized modeling artifacts
-services/         Java control-plane services and deterministic rules (deferred)
-agents/           Bounded evidence, procedure, and planning assistants (deferred)
+services/         Java control plane, deterministic rules, allocation, case/audit storage
+agents/           Bounded evidence, procedure, and planning assistants
+demo_runtime/     Read-only fictional source projection, valuation, and agent HTTP adapter
+frontend/         React/TypeScript visitor demo and same-origin local gateway
 infra/            Local and cloud infrastructure, added only when justified
 docs/             Assumptions, 16 ADRs, 80+ experiment artifacts, modeling contracts
 scripts/          Repository validation and developer utilities
@@ -267,7 +317,10 @@ learnings/        Phase-by-phase R&D notebooks
 
 ## Getting started
 
-**Requirements:** Python 3.11+, GNU Make, Git
+**Visitor demo:** Docker Compose and GNU Make; see the [local demo runbook](docs/showcase/local-demo.md).
+
+**Repository checks:** Python 3.11+, GNU Make, Git, and dependencies for the
+selected checks. These checks are separate from the running Docker acceptance.
 
 ```bash
 git clone https://github.com/anilreddy89/Inforsight.git
@@ -296,6 +349,13 @@ make check
 | [MODEL_CARD.md](MODEL_CARD.md) | Full model card with metrics, ethics, and limitations |
 | [Realism boundary](docs/realism-boundary.md) | Modeled, simplified, and excluded behavior |
 | [Reviewer walkthrough](docs/showcase/system-walkthrough.md) | Bounded synthetic reviewer journey |
+| [Local demo runbook](docs/showcase/local-demo.md) | Start, inspect, qualify, resume, and reset the distributed visitor demo |
+| [Local demo design and implementation map](docs/showcase/local-demo-design.md) | Screen flow, visual system, component evidence, and remaining scope |
+| [Local acceptance evidence](docs/showcase/local-demo-acceptance.md) | Separate local/GCP results, exact run identities, per-stage evidence, and test counts |
+| [Public preview runbook](docs/showcase/public-preview.md) | Isolated signed sessions, free tunnel, deployment, backup/restore and teardown |
+| [Public acceptance evidence](docs/showcase/public-demo-acceptance.md) | HTTPS journey, visitor isolation, limits, recovery and deployment identities |
+| [Zero-cost hosting assessment](docs/architecture/zero-cost-public-deployment.md) | Oracle Always Free eligibility, Arm/memory evidence, account gates and priced fallback |
+| [Proposed GCP deployment design](docs/architecture/gcp-demo-deployment-recommendation.md) | Cloud Run/Pub/Sub versus Compute Engine/Kafka, cost controls, teardown, and qualification needs; not deployed |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution rules and clean-room boundaries |
 
 ---

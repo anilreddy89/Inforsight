@@ -32,6 +32,7 @@ from serving.models import (
 )
 from serving.monitoring import DriftMonitor
 from serving.monitoring.monitor import OutcomeJoinError
+from serving.preprocessing import coefficient_features
 
 DEFAULT_BUNDLE_PATH = (
     Path(__file__).resolve().parent.parent / "docs" / "experiments" / "phase-02-10-model-bundle.json"
@@ -111,7 +112,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         )
 
     def _format_scoring_response(req: ScoreRequest, result: ScoringResult) -> ScoreResponse:
-        if _catalog is None:
+        if _catalog is None or _bundle is None:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Catalog not loaded")
         tier_id = _catalog.map_risk_tier(
             result.risk_tier, adapter_profile="historical-bundle-display/1.0.0"
@@ -119,6 +120,12 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         return ScoreResponse(
             policy_id=req.policy_id,
             as_of_date=req.as_of_date,
+            bundle_id=_bundle.bundle_id,
+            bundle_version=_bundle.bundle_version,
+            bundle_digest=_bundle_sha256,
+            catalog_version=_catalog.version,
+            catalog_sha256=_catalog.sha256,
+            preprocessing_profile_id=req.preprocessing_profile_id,
             calibrated_probability=round(result.calibrated_probability, 6),
             raw_logit=round(result.raw_logit, 6),
             calibrated_logit=round(result.calibrated_logit, 6),
@@ -146,7 +153,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         raw_map = req.features.to_feature_dict()
         t0 = time.perf_counter()
         try:
-            result = _engine.score_record(raw_map)
+            result = _engine.score_record(coefficient_features(raw_map))
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Inference error: {str(e)}")
         latency_ms = (time.perf_counter() - t0) * 1000.0
@@ -165,7 +172,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         if _engine is None or _bundle is None or _catalog is None:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
         try:
-            result = _engine.score_record(req.features.to_feature_dict())
+            result = _engine.score_record(coefficient_features(req.features.to_feature_dict()))
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Inference error: {str(e)}")
         return MinimalScoreResponse(
@@ -184,7 +191,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Engine not loaded")
         raw_maps = [item.features.to_feature_dict() for item in req.requests]
         try:
-            results = _engine.score_minimal_batch(raw_maps)
+            results = _engine.score_minimal_batch([coefficient_features(item) for item in raw_maps])
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Batch inference error: {str(e)}")
         return [
@@ -207,7 +214,7 @@ def create_app(bundle_path: Path | str | None = None) -> FastAPI:
         raw_maps = [r.features.to_feature_dict() for r in req.requests]
         t0 = time.perf_counter()
         try:
-            results = _engine.score_batch(raw_maps)
+            results = _engine.score_batch([coefficient_features(item) for item in raw_maps])
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Batch inference error: {str(e)}")
         latency_ms = (time.perf_counter() - t0) * 1000.0

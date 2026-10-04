@@ -1,67 +1,101 @@
-# Infrastructure
+# Local demo infrastructure
 
-Infrastructure starts local and grows only to satisfy demonstrated needs. Cloud resources must be reproducible, observable, tagged, budget-controlled, and removable. No cloud infrastructure is provisioned by the Phase 0 scaffold.
+`make demo-up` builds and starts the **inforsight-demo** Docker Compose project.
+Open **http://localhost:3000** for the visitor UI. GCP remains **Planned**; these
+files do not establish a live cloud deployment or P4-07 enterprise-scale pass.
 
----
+| Service | Runtime | Host address | Responsibility |
+| --- | --- | --- | --- |
+| `frontend` | React/TypeScript assets, nginx | `127.0.0.1:3000` | Same-origin visitor UI and allowlisted demo API proxy |
+| `control-plane` | Java 21 / Spring Boot | `127.0.0.1:8080` | Durable run/outbox/inbox, Kafka worker, rules, allocation, human review, journal verification |
+| `kafka` | `confluentinc/cp-kafka:7.6.0`, KRaft | `127.0.0.1:9092` | Actual publication and consumption on `inforsight.demo.events.v1` |
+| `inference-runtime` | Python / FastAPI | `127.0.0.1:8000` | Verified released-model HTTP score and explanation; no gRPC endpoint |
+| `demo-runtime` | Python / FastAPI | Private `demo-runtime:8001` | Read-only fictional source construction, point-in-time projection, valuation, bounded agent |
+| `postgres` | `postgres:16-alpine` | `127.0.0.1:5433` | Demo artifacts, case versions, decisions, append-only journal, local checkpoint |
 
-## Architecture Overview
+The internal broker address is `kafka:29092`; PostgreSQL uses internal port
+5432. Override `INFORSIGHT_DEMO_PORT` or `INFORSIGHT_POSTGRES_PORT` for host port
+conflicts. Credentials in Compose are local development values. Services bind
+to loopback on the host, and the read-only adapter has no database or external
+execution tools. The gateway rejects legacy `/api/` routes.
 
-![Phase 4.06 Architecture Poster](../docs/assets/phase-04-06-architecture-poster.jpg)
+Compose explicitly enables the persistence profile and new demo journey,
+selects HTTP inference, and disables external execution. The older general
+streaming consumer is not the new demo worker; its default setting does not
+describe the actual demo topic consumer. The HTTP journey validates the exact
+released bundle and never falls back to bounded hash scoring.
 
-### Polyglot Service Matrix
+### Historical P5-04 qualification
 
-| Service | Technology & Image | Ports | Health Probe | Authority Boundary (ADR 0002) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Streaming Gateway** | `confluentinc/cp-kafka:7.6.0` (KRaft mode) | `9092` (host)<br>`29092` (internal) | `kafka-broker-api-versions --bootstrap-server localhost:9092` | Event ingestion & bitemporal streams |
-| **Inference Engine** | Python 3.12 / FastAPI (`infra/docker/Dockerfile.inference`) | `8000` | `GET /health` | **Perception Only**: `authorized_to_act: false`, zero DB access |
-| **Control Plane** | Java 21 / Spring Boot 3 (`infra/docker/Dockerfile.control-plane`) | `8080` | `GET /actuator/health` | **Sole Action Authority**: Rules firewall, knapsack solver, HITL triage |
-| **Persistence & Audit** | `postgres:16-alpine` (Flyway migrations) | `5432` (internal)<br>`5433` (host) | `pg_isready -U inforsight_app -d inforsight_enterprise` | Immutable append-only SHA-256 hash-chained audit ledger |
+The older `make p5-04-demo-check` harness supplies a policy ID without feature
+snapshots. Run it with the explicit review-only overlay:
 
----
+```sh
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml up --build -d --wait
+make p5-04-demo-check
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml down
+```
 
-## Runnable Local Evidence Artifacts
+This overlay selects bounded test scoring and disables the visitor journey.
+It qualifies persisted abstention, human rejection and audit only; it is not
+released-model or Kafka journey evidence. Never apply it to the public
+deployment. The default local and public configurations retain HTTP scoring;
+use `make demo-check` to qualify the complete visitor journey.
 
-P4-06 provides runnable local evidence artifacts:
+## Commands
 
-- `docker-compose.yml` starts the bounded Kafka, PostgreSQL, inference, and
-  Java control-plane topology with health checks. Its credentials are local
-  development values only.
-- `docker/Dockerfile.control-plane` builds the Spring Boot service through a
-  Maven builder stage and runs the JRE image as a non-root user.
-- `docker/Dockerfile.inference` builds the bounded HTTP inference runtime
-  through a Python builder stage and runs it as a non-root user.
-- `helm/inforsight` renders the control-plane, inference, PostgreSQL, service,
-  probe, resource, and HPA configuration. It is a deployment configuration
-  baseline, not proof of a live cluster, cloud readiness, or production SLO.
+```sh
+make demo-up
+docker compose -f infra/docker-compose.yml ps
+curl --fail http://localhost:3000/api/v1/demo/scenarios
+curl --fail http://localhost:8080/actuator/health
+curl --fail http://localhost:8000/health
+make demo-check
+make demo-browser-check
+make demo-down
+```
 
-## Validation & Local Commands
+`demo-up` returns after starting containers; allow health/startup to complete
+before opening a case. `demo-check` deliberately interrupts dedicated demo
+containers to test failure and restart recovery, so use it when no interactive
+review is in progress. Python and browser-check dependencies are documented in
+the [runbook](../docs/showcase/local-demo.md).
 
-Run the static gate with `make p4-06-check`. If Docker is available, validate
-the Compose file with `docker compose -f infra/docker-compose.yml config` and
-build the images from the repository root.
+`make demo-down` preserves named PostgreSQL and Kafka volumes. Use
+`make demo-reset` to stop the dedicated project **and delete its fictional
+volumes**, then `make demo-up` to start clean. Existing run URLs will no longer
+resolve after reset. There is no public reset endpoint and no per-run retention
+or cleanup scheduler. Export evidence before deleting storage.
 
-1. **Static Validation Gate (No Docker required):**
-   ```bash
-   make p4-06-check
-   ```
+## Durability and scope
 
-2. **Start Local Topology:**
-   ```bash
-   docker compose -f infra/docker-compose.yml up --build -d
-   ```
+Flyway migrations V6/V7 create isolated `demo_*` tables and ingress quarantine.
+Each stage completion is committed with its run projection and journal entry;
+case insertion and human review use the same transaction boundary. Kafka and
+PostgreSQL retain state across service restarts. A single Java worker resumes
+persisted unfinished work, skips committed stages, and deduplicates ingestion.
+Broker redelivery and repeated read-only HTTP calls remain possible: this is
+not distributed exactly-once execution or a multi-worker deployment.
 
-3. **Verify Health Endpoints:**
-   ```bash
-   # Inference health probe
-   curl -s http://localhost:8000/health
+The journal hashes exact stored payload bytes and compares a checkpoint in the
+same PostgreSQL trust domain. A trigger rejects normal row updates/deletes.
+This detects the tested corruption modes; it is not externally anchored,
+KMS-backed, or resistant to a database administrator rewriting all evidence.
 
-   # Control Plane actuator health probe
-   curl -s http://localhost:8080/actuator/health
-   ```
+## Existing deployment artifacts
 
-4. **Tear Down Local Stack:**
-   ```bash
-   docker compose -f infra/docker-compose.yml down -v
-   ```
+The [Phase 4.06 architecture record](../Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md)
+and architecture poster remain historical packaging evidence. The Helm chart
+is a configuration baseline; it does not yet deploy the full visitor journey.
+`make p4-06-check` validates infrastructure structure but is not the end-to-end
+acceptance test. `make demo-check` writes the current local acceptance result
+and component evidence to `artifacts/local-demo/acceptance.json`.
 
-For detailed specifications, architectural trade-offs, and boundary definitions, see the [Phase 4.06 Documentation](../Documents/phase_docs/phase-04-06-cloud-infrastructure-helm-and-orchestration.md).
+No cloud resources are provisioned by this local workflow. A cloud design must
+separately qualify deployment, telemetry, cost/teardown controls, and the same
+full journey before GCP can become an available environment.
+
+The [GCP deployment recommendation](../docs/architecture/gcp-demo-deployment-recommendation.md)
+compares Cloud Run/Pub/Sub and Compute Engine/Kafka with cost, observability,
+teardown, and P4-07 qualification requirements. It is a proposal, not deployed
+infrastructure.

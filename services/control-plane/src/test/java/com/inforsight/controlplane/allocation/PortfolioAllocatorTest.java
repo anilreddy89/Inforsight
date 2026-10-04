@@ -12,6 +12,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PortfolioAllocatorTest {
     @Test
+    void neverAllocatesTwoActionsToOnePolicyEvenWhenBothFit() {
+        var result = new PortfolioAllocator().allocate(List.of(
+                new PortfolioAllocator.Candidate("p-1", "email", 1, 0, 2, true),
+                new PortfolioAllocator.Candidate("p-1", "sms", 1, 0, 3, true),
+                new PortfolioAllocator.Candidate("p-2", "email", 1, 0, 2, true)), 3, 0);
+        assertThat(result.selected()).extracting(PortfolioAllocator.Candidate::policyId).containsExactly("p-1", "p-2");
+        assertThat(result.objectiveMicros()).isEqualTo(5);
+        assertThat(result.usedMoneyMicros()).isEqualTo(2);
+    }
+
+    @Test
+    void keepsAbstentionWhenEveryCandidateHasNegativeUtility() {
+        var result = new PortfolioAllocator().allocate(List.of(
+                new PortfolioAllocator.Candidate("p-1", "email", 1, 0, -2, true)), 10, 10);
+        assertThat(result.selected()).isEmpty();
+        assertThat(result.objectiveMicros()).isZero();
+    }
+    @Test
     void choosesHighestNetUtilityWithinIntegerCapacitiesWithStableTies() {
         var allocator = new PortfolioAllocator();
         var result = allocator.allocate(List.of(

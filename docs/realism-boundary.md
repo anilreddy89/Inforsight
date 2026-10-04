@@ -1,8 +1,63 @@
 # Inforsight realism boundary
 
-This document defines what the current reference implementation models, what it
-simplifies, and what it intentionally excludes. RH-12 uses this boundary when
-describing corrected evidence.
+This document defines what the reference implementations model, what they
+simplify, and what they intentionally exclude. RH-12 uses this boundary when
+describing corrected cohort evidence. The newer local visitor demo has the
+additional, narrower runtime boundary below; its acceptance does not replace
+RH-12 or close P4-07 enterprise-scale qualification.
+
+## Local visitor demo
+
+The opt-in Docker journey connects real Kafka publication/consumption,
+point-in-time Python projection, released-model HTTP inference, Java rules and
+allocation, PostgreSQL persistence, a deterministic bounded agent, fictional
+human review, and local audit verification. Completed UI stages are projections
+of committed evidence, not timed animation. Qualification for a particular run
+is recorded by `artifacts/local-demo/acceptance.json`; see the
+[runbook](showcase/local-demo.md).
+
+- All source records and review procedures are fictional. The fixed observation
+  cutoff is `2026-09-25T12:00:00Z`; live processing timestamps are separate.
+  Later recovery evidence is retained in source history and excluded from the
+  snapshot. Missing safety evidence remains unknown.
+- The existing released bundle is scored over projected raw V6 features using
+  the explicit coefficient-transform-then-bundle-z-score seam. Its bytes are
+  unchanged. There is no bounded hash adapter fallback.
+- The portfolio allocation component handles **one fictional policy** with a
+  fixed $30 direct-cost capacity and 1,800 personnel seconds. At most one
+  eligible action can be allocated. This does not demonstrate multi-policy
+  portfolio scale or enterprise performance.
+- Modeled candidate effects come from the existing deterministic fictional
+  uplift/economics code. They are not measured causal intervention effects.
+- The containerized agent reuses the deterministic bounded planner. It has no
+  hosted LLM requirement, execution tools, CRM credentials, or telephony route.
+  Its internal fixed confidence gate is not a measured confidence estimate.
+- A visitor is a fictional reviewer label, not an authenticated licensed
+  caseworker. Approval, rejection, and request information are recorded with a
+  rationale and case version. Approval still has `authorized_to_act: false` and
+  cannot contact a customer or change a real policy. An abstention cannot be
+  approved as an action. Request information does not implement a later
+  evidence-collection or re-review loop.
+- A single local worker, transactional outbox/inbox and journal, and persisted
+  service artifacts support the tested retry/restart cases. Repeated read-only
+  calls and broker redelivery remain possible. Multi-worker coordination,
+  distributed exactly-once behavior, production availability, and sustained
+  performance are not established.
+- The audit verifier checks exact persisted payload hashes, the local
+  checkpoint, displayed artifacts, and case-version provenance. PostgreSQL
+  rejects ordinary updates/deletes to journal rows. The checkpoint is in the
+  same database trust domain, not externally anchored. Database-administrator
+  resistance and KMS authenticity are not claimed.
+- The local UI/API binds to loopback, uses a named Docker project and isolated
+  `demo_*` records, and is reset through a local volume-deletion command. Public
+  multi-tenant access, authenticated reviewer identity, rate limits, and
+  retention automation remain deployment work.
+- GCP is **Planned**. There is no cloud environment selector, provisioned
+  deployment, or passing cloud journey evidence.
+
+Streamlit's in-process Python workflow and the historical P5 synchronous,
+bounded-score, host-agent demonstration remain separate. Neither is used as
+proof of this Kafka/released-model journey. Historical evidence is preserved.
 
 ## Modeled
 
@@ -47,8 +102,9 @@ describing corrected evidence.
   synthetic corpus intentionally contains no demographic attributes.
 - Macroeconomic shocks, product features outside the fictional term/whole-life
   surface, and governed production servicing evidence.
-- Network, sustained-load, distributed durability, KMS authenticity, and
-  enterprise cloud performance.
+- Production network/SLO claims, sustained load, distributed durability beyond
+  the explicit local fault/recovery checks, KMS authenticity, and enterprise
+  cloud performance.
 - Final-holdout access. RH-12 records `not_accessed` for the final holdout.
 
 ## Required claim language

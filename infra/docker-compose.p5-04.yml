@@ -1,0 +1,8 @@
+# Historical P5-04 review-only qualification, not the visitor journey.
+# Its policy-ID-only triage predates feature snapshots and uses the explicitly
+# bounded test adapter. Never apply this overlay to the public deployment.
+services:
+  control-plane:
+    environment:
+      INFORSIGHT_INFERENCE_TRANSPORT: "bounded"
+      INFORSIGHT_JOURNEY_ENABLED: "false"
