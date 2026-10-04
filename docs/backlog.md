@@ -1500,7 +1500,7 @@ enterprise-scale qualification.
 
 **Issue:** [#208](https://github.com/anilreddy89/Inforsight/issues/208)
 
-**Status:** Open. Qualify the merged fictional event-to-agent walkthrough on a clean checkout, record evidence and CI, then make the Phase 5 milestone decision. P4-07 scale and Phase 6 cloud demo remain separate.
+**Status:** In progress. The merged fictional event-to-agent walkthrough passed local qualification on `d8b193c`; see the [evidence record](../Documents/phase_docs/phase-05-06-integrated-local-demo-qualification.md). PR review and CI remain before the Phase 5 milestone decision. P4-07 scale and Phase 6 cloud demo remain separate.
 
 ## Deferred intentionally
 
