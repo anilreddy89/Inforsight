@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Status | In progress on `implementation/p5-05-trusted-event-agent-handoff` |
+| Status | Completed; merged to `main` as `63fcd9b` |
 | Issue | [#206](https://github.com/anilreddy89/Inforsight/issues/206) |
-| Pull request | [#207](https://github.com/anilreddy89/Inforsight/pull/207), review and final CI pending |
+| Pull request | [#207](https://github.com/anilreddy89/Inforsight/pull/207), merged 2026-10-03 ET |
 | Predecessor | P5-04 [PR #205](https://github.com/anilreddy89/Inforsight/pull/205), merged as `67d051c` |
 | Milestone | `v0.5.0-agent-workflow` (#7), open |
 
@@ -57,7 +57,9 @@ daemon. No cloud resources or external actions are used.
   and persisted audit replay verifies the draft and decision.
 - [x] Focused Java/Python checks, PostgreSQL integration, the full control-plane
   test suite, and the live Compose walkthrough pass locally on 2026-10-03.
-- [ ] Required CI and review pass on the final commit.
+- [x] Required CI and review passed before merge of PR #207.
+
+Integrated Phase 5 qualification and the milestone decision remain [P5-06](https://github.com/anilreddy89/Inforsight/issues/208).
 
 This is a fictional local demonstration. It is not a Kafka policy-event
 consumer, production event

@@ -11,11 +11,11 @@ cloud environment may later provide the production-matched P4-07 test bed.
 
 | Field | Value |
 | --- | --- |
-| Status | In progress; P5-01 through P5-04 merged, P5-05 trusted handoff active |
+| Status | In progress; P5-01 through P5-05 merged, P5-06 integrated qualification open |
 | First increment | [P5-01 issue #197](https://github.com/anilreddy89/Inforsight/issues/197) |
 | P5-01 merged pull request | [#198](https://github.com/anilreddy89/Inforsight/pull/198), merge `1a327f4` |
 | P5-02 closeout | [issue #199](https://github.com/anilreddy89/Inforsight/issues/199) closed; [PR #200](https://github.com/anilreddy89/Inforsight/pull/200) merged as `89a291c`; [phase document](phase-05-02-bounded-google-adk-orchestration.md) |
-| Active increment | [P5-05 issue #206](https://github.com/anilreddy89/Inforsight/issues/206), [phase document](phase-05-05-trusted-event-agent-handoff.md), branch `implementation/p5-05-trusted-event-agent-handoff` |
+| Active increment | [P5-06 issue #208](https://github.com/anilreddy89/Inforsight/issues/208), integrated qualification and milestone decision |
 | Authority | ADR 0002; deterministic rules and human approval remain authoritative |
 
 ## Goal and design
@@ -64,9 +64,9 @@ screening is a conservative local check, not a complete LLM security proof.
   merged through PR #203 with required CI passing.
 - [x] P5-04 repeatable local case-review demo merged through PR #205, with
   required CI passing; see the [phase document](phase-05-04-local-demo-qualification.md).
-- [ ] P5-05 trusted fictional event/rules handoff and full local replay are
-  qualified; see the [phase document](phase-05-05-trusted-event-agent-handoff.md).
-- [ ] Full Phase 5 qualification and review/CI pass before any milestone claim.
+- [x] P5-05 trusted fictional event/rules handoff and full local replay are
+  merged in PR #207 with required CI passing; see the [phase document](phase-05-05-trusted-event-agent-handoff.md).
+- [ ] P5-06 full Phase 5 qualification and review/CI pass before any milestone claim; see [issue #208](https://github.com/anilreddy89/Inforsight/issues/208).
 
 The selective GCP demo remains Phase 6; dedicated-cloud P4-07 qualification
 must still freeze topology, arrivals, persistent-case measurement, and E1–E6

@@ -214,8 +214,8 @@ case-bound advisory draft and human-review seam; the draft cannot authorize acti
 [P5-04](https://github.com/anilreddy89/Inforsight/issues/204) merged in
 [PR #205](https://github.com/anilreddy89/Inforsight/pull/205), qualifying a
 repeatable local case-review demo. [P5-05](https://github.com/anilreddy89/Inforsight/issues/206)
-is implementing the trusted fictional event/rules handoff and full local
-walkthrough. Phase 6 owns the cloud
+merged in [PR #207](https://github.com/anilreddy89/Inforsight/pull/207), adding the trusted fictional event/rules handoff and full local
+walkthrough. [P5-06](https://github.com/anilreddy89/Inforsight/issues/208) tracks integrated Phase 5 qualification and milestone closeout. Phase 6 owns the cloud
 demo; P4-07 enterprise-scale qualification remains open.
 
 For the fictional local P5-05 walkthrough, start
