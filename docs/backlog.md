@@ -1450,8 +1450,8 @@ fake-model coverage and `make p5-02-check` / `make p5-02-adk-check` are the
 focused gates. No live model, external action, or production claim is made.
 See the [phase document](../Documents/phase_docs/phase-05-02-bounded-google-adk-orchestration.md).
 P5-03 governed service/HITL integration merged in PR #203; P5-04 local demo
-qualification merged in PR #205; P5-05 trusted handoff is active and the
-Phase 5 milestone is not complete.
+qualification merged in PR #205; P5-05 trusted handoff merged in PR #207.
+[P5-06](https://github.com/anilreddy89/Inforsight/issues/208) tracks integrated qualification; the Phase 5 milestone remains open.
 
 ### P5-03 — Governed agent draft and human-review integration
 
@@ -1485,7 +1485,7 @@ closeout requires the missing trusted adapter and integrated qualification.
 
 **Issue:** [#206](https://github.com/anilreddy89/Inforsight/issues/206)
 
-**Status:** In progress on `implementation/p5-05-trusted-event-agent-handoff` through [PR #207](https://github.com/anilreddy89/Inforsight/pull/207); final CI and review pending.
+**Status:** Completed. [PR #207](https://github.com/anilreddy89/Inforsight/pull/207) merged as `63fcd9b`; issue #206 closed.
 
 **Outcome:** An opt-in local-only fictional event path projects a bounded
 feature record, computes server-owned eligibility, stores a versioned handoff
@@ -1495,6 +1495,12 @@ the walkthrough. See the [phase document](../Documents/phase_docs/phase-05-05-tr
 and [local demo API contract](../api/openapi/local-demo-v1.yaml). This does not
 establish production event projection, real-world model validity, or P4-07
 enterprise-scale qualification.
+
+### P5-06 — Integrated Phase 5 local demo qualification
+
+**Issue:** [#208](https://github.com/anilreddy89/Inforsight/issues/208)
+
+**Status:** Open. Qualify the merged fictional event-to-agent walkthrough on a clean checkout, record evidence and CI, then make the Phase 5 milestone decision. P4-07 scale and Phase 6 cloud demo remain separate.
 
 ## Deferred intentionally
 

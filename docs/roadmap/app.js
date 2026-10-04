@@ -773,13 +773,24 @@ const timelineData = [
       {
         id: "P5-05",
         title: "Trusted fictional event-to-agent handoff",
-        status: "In progress",
-        commit: "Issue #206; PR #207 in review",
+        status: "Completed",
+        commit: "PR #207; 63fcd9b",
         summary: {
           tech: "Opt-in local event projection binds a server-owned rules result and versioned fictional procedure to a scored case snapshot; draft submission and human override checks enforce that binding.",
           simple: "Trace one fictional event through a scored case, cited assistant draft, human review, and verifiable audit without giving the assistant action authority."
         },
-        checks: "Issue #206; local demo API contract 1.0.0, focused Java/PostgreSQL checks, and Compose-backed end-to-end CI. Phase 5 milestone remains open pending final review."
+        checks: "Issue #206 closed; PR #207 merged with required CI passing. Phase 5 milestone remains open pending P5-06 integrated qualification."
+      },
+      {
+        id: "P5-06",
+        title: "Integrated Phase 5 local demo qualification",
+        status: "Planned",
+        commit: "Issue #208 open",
+        summary: {
+          tech: "Qualify the merged event-to-agent walkthrough on a clean checkout and record evidence, CI, review, and a milestone decision.",
+          simple: "Check the complete fictional demo and decide whether Phase 5 can close."
+        },
+        checks: "Issue #208 open; Phase 5 milestone remains open until integrated qualification and review pass."
       }
     ]
   }
