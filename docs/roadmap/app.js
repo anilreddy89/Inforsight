@@ -784,13 +784,13 @@ const timelineData = [
       {
         id: "P5-06",
         title: "Integrated Phase 5 local demo qualification",
-        status: "Planned",
-        commit: "Issue #208 open",
+        status: "In progress",
+        commit: "Issue #208; local qualification passed",
         summary: {
           tech: "Qualify the merged event-to-agent walkthrough on a clean checkout and record evidence, CI, review, and a milestone decision.",
           simple: "Check the complete fictional demo and decide whether Phase 5 can close."
         },
-        checks: "Issue #208 open; Phase 5 milestone remains open until integrated qualification and review pass."
+        checks: "Issue #208 open; local tests and Compose replay passed on d8b193c. Review and CI remain before the Phase 5 milestone decision."
       }
     ]
   }

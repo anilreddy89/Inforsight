@@ -1,7 +1,7 @@
 # Inforsight Change Tracker
 
 Last reviewed: 2026-10-03
-Current repository branch: `docs/p5-05-merge-closeout`
+Current repository branch: `implementation/p5-06-phase-5-qualification`
 
 ## Purpose
 
@@ -116,7 +116,7 @@ Current release milestone: [**v0.4.0-enterprise-scale**](https://github.com/anil
 | P5-03 | Phase 5 — Bounded Agentic Case Workflow | Governed case-bound advisory draft, persistence audit, and human-review separation. | Completed | [#202](https://github.com/anilreddy89/Inforsight/issues/202) | [#203](https://github.com/anilreddy89/Inforsight/pull/203) | 2026-10-03 | `f05b09b` | [phase document](../phase_docs/phase-05-03-governed-agent-review-integration.md), `agents/control_plane_bridge.py`, `services/control-plane/` | Required CI passed and issue closed. Advisory draft is bound to an existing case version and server-owned snapshot; transactional PostgreSQL audit does not grant action authority. |
 | P5-04 | Phase 5 — Bounded Agentic Case Workflow | Local case-review demo qualification. | Completed | [#204](https://github.com/anilreddy89/Inforsight/issues/204) | [#205](https://github.com/anilreddy89/Inforsight/pull/205) | 2026-10-03 | `67d051c` | [phase document](../phase_docs/phase-05-04-local-demo-qualification.md), `scripts/run_p5_04_local_demo.py` | Compose-backed fictional case score, abstaining draft, human rejection, and persisted audit passed required CI. Trusted event/rules-to-agent provenance remains P5-05. |
 | P5-05 | Phase 5 — Bounded Agentic Case Workflow | Trusted fictional event/rules handoff and full local replay. | Completed | [#206](https://github.com/anilreddy89/Inforsight/issues/206) | [#207](https://github.com/anilreddy89/Inforsight/pull/207) | 2026-10-03 | `63fcd9b` | [phase document](../phase_docs/phase-05-05-trusted-event-agent-handoff.md), `api/openapi/local-demo-v1.yaml`, `scripts/run_p5_05_end_to_end.py` | Local-only server-owned handoff binds event, score, rules, case snapshot, draft, human review, and audit; PR merged, issue closed, required CI passed; integrated Phase 5 qualification remains P5-06. |
-| P5-06 | Phase 5 — Bounded Agentic Case Workflow | Integrated local demo qualification and milestone decision. | Planned | [#208](https://github.com/anilreddy89/Inforsight/issues/208) | — | TBD | — | [Phase 5 plan](../phase_docs/phase-05-agentic-case-workflow-plan.md) | Clean-checkout end-to-end replay, exact evidence and CI record, review, and explicit milestone decision remain pending. |
+| P5-06 | Phase 5 — Bounded Agentic Case Workflow | Integrated local demo qualification and milestone decision. | In progress | [#208](https://github.com/anilreddy89/Inforsight/issues/208) | — | TBD | — | [qualification evidence](../phase_docs/phase-05-06-integrated-local-demo-qualification.md) | Local tests and Compose replay passed on `d8b193c`; review, CI, and milestone decision pending. |
 
 ## Current summary
 
@@ -147,22 +147,22 @@ Inforsight successfully completed Phase 2 (Baseline ML) and Phase 3 (Policy Cons
 21. P4-04 is complete and merged in PR #189 (commit `a04d86d`); PostgreSQL persistence, point-in-time snapshot binding, durable queue state, and bounded audit-ledger verification are implemented without a production KMS or autonomous-execution claim.
 22. P4-05 is complete and merged in PR #191 (commit `b59f9ab`); versioned fake-only CRM/contact-center preflight contracts, persisted-case guardrails, idempotency behavior, and PostgreSQL audit evidence are implemented without live transport or autonomous execution.
 
-In one sentence: Phase 2, Phase 3, review hardening, P4-02 through P4-06, and P5-01 through P5-05 are complete; P4-07 remains open and P5-06 integrated qualification is pending.
+In one sentence: Phase 2, Phase 3, review hardening, P4-02 through P4-06, and P5-01 through P5-05 are complete; P4-07 remains open and P5-06 local qualification passed; review and CI remain.
 
 | Measure | Value |
 | --- | --- |
 | Completed tracked changes | 77 (adds merged P5-05) |
 | Implemented locally changes | 1 (RH-07; intentionally uncommitted) |
-| Planned changes | 1 (P5-06 integrated Phase 5 qualification) |
+| Planned changes | None |
 | Paused changes | 0 |
-| In-progress changes | 1 (P4-07 qualification) |
+| In-progress changes | 2 (P4-07 and P5-06 qualification) |
 | Completed Phase 1 increments | 7 of 7 (100% complete) |
 | Completed Phase 2 increments | 12 of 12 (100% complete) |
 | Completed Phase 2R increments | 24 of 24 (100% complete) |
 | Completed Phase 3 increments | 11 of 11 (100% complete) |
 | In-progress Phase 3 increments | 0 |
 | Active Phase | Phase 5 — Bounded Agentic Case Workflow (Milestone #7); Phase 4 qualification remains open |
-| Active increment | P5-06 integrated qualification is next; P4-07 qualification remains open |
+| Active increment | P5-06 local qualification passed; review and CI pending; P4-07 remains open |
 | Next implementation increment | P5-06 integrated Phase 5 qualification and milestone decision (issue #208) |
 
 ## Latest verification baseline
