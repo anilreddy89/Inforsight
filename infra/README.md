@@ -25,6 +25,23 @@ streaming consumer is not the new demo worker; its default setting does not
 describe the actual demo topic consumer. The HTTP journey validates the exact
 released bundle and never falls back to bounded hash scoring.
 
+### Historical P5-04 qualification
+
+The older `make p5-04-demo-check` harness supplies a policy ID without feature
+snapshots. Run it with the explicit review-only overlay:
+
+```sh
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml up --build -d --wait
+make p5-04-demo-check
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml down
+```
+
+This overlay selects bounded test scoring and disables the visitor journey.
+It qualifies persisted abstention, human rejection and audit only; it is not
+released-model or Kafka journey evidence. Never apply it to the public
+deployment. The default local and public configurations retain HTTP scoring;
+use `make demo-check` to qualify the complete visitor journey.
+
 ## Commands
 
 ```sh

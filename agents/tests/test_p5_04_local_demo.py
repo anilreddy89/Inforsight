@@ -23,6 +23,7 @@ class LocalDemoTest(unittest.TestCase):
             if len(calls) > 5:
                 return {"current_state": "DISMISSED", "authorized_to_act": False}
             return {"current_state": "RECOMMENDED", "authorized_to_act": False,
+                    "grounding_hash": "not-a-production-digest",
                     "calibrated_probability": 0.3}
 
         def fake_submit(draft, **kwargs):
@@ -35,7 +36,20 @@ class LocalDemoTest(unittest.TestCase):
             result = run()
         self.assertFalse(result["authorized_to_act"])
         self.assertEqual(result["human_decision"], "REJECTED")
+        self.assertEqual(result["qualification_scope"], "p5-04-legacy-review-only")
         self.assertEqual(calls[-1][1], "/api/v1/cases/case-fictional")
+
+    def test_refuses_to_claim_released_model_qualification(self) -> None:
+        responses = [
+            {"total_evaluated": 1, "cases": [{"case_id": "case-fictional"}]},
+            {"current_state": "RECOMMENDED", "authorized_to_act": False,
+             "grounding_hash": "released-model-digest"},
+        ]
+        with patch("scripts.run_p5_04_local_demo.request", side_effect=responses), \
+                patch("scripts.run_p5_04_local_demo.submit_review_draft") as submit:
+            with self.assertRaisesRegex(AssertionError, "legacy review-only Compose overlay"):
+                run()
+            submit.assert_not_called()
 
 
 if __name__ == "__main__":

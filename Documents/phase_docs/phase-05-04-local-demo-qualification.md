@@ -19,13 +19,21 @@ workflow described in the 14-week plan.
 
 ## Run
 
-1. Start the local persistence topology with
-   `docker compose -f infra/docker-compose.yml up --build -d` and wait for the
+1. Start the historical review-only persistence topology with
+   `docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml up --build -d` and wait for the
    control-plane service to become ready.
 2. Run `make p5-04-demo-check` from the repository root. It runs a focused
    offline test and the live HTTP walkthrough. Each run creates a new fictional
    case and prints its case ID, score, draft status, decision, and audit hash.
-3. Stop with `docker compose -f infra/docker-compose.yml down`.
+3. Stop with `docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml down`.
+
+The explicit P5-04 overlay selects the bounded test scorer and disables the
+new visitor journey. This harness supplies only a policy ID, not the features
+required by released-model HTTP inference. Its result is review/persistence
+qualification, not real-model or Kafka journey evidence. The default local and
+public Compose files retain HTTP scoring; use `make demo-check` for the complete
+released-model visitor journey. Do not apply the historical overlay to a public
+deployment.
 
 This command requires local ports 8080 and the Compose dependencies. The
 PostgreSQL volume is retained by the stop command; remove it only intentionally.

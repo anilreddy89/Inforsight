@@ -217,8 +217,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Start fictional local topology
-        run: docker compose -f infra/docker-compose.yml up --build -d
+      - name: Start historical P5-04 review-only topology
+        run: docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml up --build -d
       - name: Wait for control plane
         run: |
           for attempt in $(seq 1 60); do
@@ -229,9 +229,12 @@ jobs:
           exit 1
       - name: Replay abstention, human rejection, and audit
         run: make p5-04-demo-check PYTHON=python
+      - name: Capture failed legacy demo diagnostics
+        if: failure()
+        run: docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml logs --tail=150 control-plane inference-runtime
       - name: Stop topology
         if: always()
-        run: docker compose -f infra/docker-compose.yml down
+        run: docker compose -f infra/docker-compose.yml -f infra/docker-compose.p5-04.yml down
 
   p5-05-trusted-handoff:
     name: P5-05 Trusted Handoff
