@@ -63,7 +63,7 @@ public class ControlPlaneController {
 
     @PostMapping("/{caseId}/decision")
     public DecisionResponse decision(@PathVariable String caseId, @RequestBody DecisionRequest request) {
-        CaseStore.CaseRecord record = cases.decide(caseId, request.decision(), request.expectedCaseVersion(), request.idempotencyKey(), request.reviewerId());
+        CaseStore.CaseRecord record = cases.decide(caseId, request.decision(), request.expectedCaseVersion(), request.idempotencyKey(), request.reviewerId(), request.selectedAction());
         String auditHash = cases.auditHash(record.caseId(), record.version()).orElse("pending-p4-04-audit");
         return new DecisionResponse(record.caseId(), record.state(), auditHash, record.authorizedToAct());
     }

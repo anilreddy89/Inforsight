@@ -91,6 +91,7 @@ services:
       INFORSIGHT_DB_PASSWORD: "dev_insecure_local_password"
       INFORSIGHT_EXTERNAL_EXECUTION_ENABLED: "false"
       INFORSIGHT_AUTHORIZED_TO_ACT: "false"
+      INFORSIGHT_DEMO_ENABLED: "true"
       INFORSIGHT_INFERENCE_BASE_URL: "http://inference-runtime:8000"
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
     depends_on:

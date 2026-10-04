@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Map;
 
 /** Bounded local adapter; the production gRPC transport is a separately versioned integration. */
 @Component
@@ -18,5 +19,14 @@ public class BoundedInferenceClient implements InferenceClient {
         double probability = hash / 1000.0;
         String tier = probability >= .75 ? "TIER_4_CRITICAL" : probability >= .50 ? "TIER_3_HIGH" : probability >= .25 ? "TIER_2_ELEVATED" : "TIER_1_LOW";
         return new InferenceScore(policyId, probability, tier, "bounded-local-adapter", "not-a-production-digest", false);
+    }
+
+    @Override
+    public InferenceScore scoreWithFeatures(String policyId, Instant asOf, Map<String, Object> features) {
+        Objects.requireNonNull(features);
+        int hash = Math.floorMod(Objects.hash(policyId, asOf, features), 1000);
+        double probability = hash / 1000.0;
+        String tier = probability >= .75 ? "TIER_4_CRITICAL" : probability >= .50 ? "TIER_3_HIGH" : probability >= .25 ? "TIER_2_ELEVATED" : "TIER_1_LOW";
+        return new InferenceScore(policyId, probability, tier, "bounded-local-feature-adapter", "not-a-production-digest", false);
     }
 }

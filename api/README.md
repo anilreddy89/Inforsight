@@ -2,6 +2,10 @@
 
 This directory contains versioned OpenAPI 3.1 specifications defining the REST interfaces exposed by the Java 21 / Spring Boot 3 Control Plane service for caseworker UIs, enterprise CRMs, and operational orchestration.
 
+`openapi/local-demo-v1.yaml` separately specifies the opt-in fictional P5-05
+event-to-agent handoff. Its endpoints are disabled by default and are not a
+production policy-event API.
+
 ## Directory Structure
 
 ```text

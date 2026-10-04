@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | In progress on `implementation/p5-04-end-to-end-demo` |
+| Status | Completed through PR #205, merged as `67d051c`; required CI passed |
 | Issue | [#204](https://github.com/anilreddy89/Inforsight/issues/204) |
 | Predecessor | [P5-03 PR #203](https://github.com/anilreddy89/Inforsight/pull/203), merged as `f05b09b`; required CI passed |
 | Milestone | `v0.5.0-agent-workflow` (#7), still open |
@@ -37,7 +37,7 @@ No live model provider, external customer action, or customer data is used.
 - [x] The local Compose walkthrough passed on 2026-10-03 with a real
   PostgreSQL-backed control plane: one scored case, `ABSTAIN` draft, human
   `REJECTED` decision, 64-character audit hash, and no action authority.
-  Final PR CI and review are still pending.
+  Final PR CI and review passed in PR #205.
 - [ ] A trusted event-to-score-to-rule-evidence adapter supplies the agent
   input from the same versioned case snapshot. The current triage path scores
   a supplied policy ID and calls eligibility, but persists `abstain` as its
@@ -45,6 +45,8 @@ No live model provider, external customer action, or customer data is used.
   rules allowlist. A fabricated allowlist must not be used to claim integration.
 - [ ] Human override semantics and end-to-end replay are qualified against
   that trusted adapter before Phase 5 milestone closeout.
-- [ ] Documentation, trackers, final CI, and review are reconciled after merge.
+- [x] Documentation, trackers, final CI, and review were reconciled after merge.
+
+The remaining integration gates are tracked by [P5-05 issue #206](https://github.com/anilreddy89/Inforsight/issues/206).
 
 P4-07 enterprise-scale gates and Phase 6 cloud deployment are separate work.

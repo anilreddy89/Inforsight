@@ -6,6 +6,7 @@ import com.inforsight.controlplane.audit.AuditAppender;
 import com.inforsight.controlplane.audit.AuditEvent;
 import com.inforsight.controlplane.audit.AuditHash;
 import com.inforsight.controlplane.domain.InferenceScore;
+import com.inforsight.controlplane.agent.TrustedAgentHandoffStore;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -22,12 +23,19 @@ public final class PersistentCaseRepository implements CaseWorkflow {
     private final ObjectMapper mapper;
     private final TransactionTemplate transactions;
     private final AuditAppender audit;
+    private final TrustedAgentHandoffStore handoffs;
 
     public PersistentCaseRepository(JdbcTemplate jdbc, ObjectMapper mapper, TransactionTemplate transactions, AuditAppender audit) {
+        this(jdbc, mapper, transactions, audit, null);
+    }
+
+    public PersistentCaseRepository(JdbcTemplate jdbc, ObjectMapper mapper, TransactionTemplate transactions,
+                                    AuditAppender audit, TrustedAgentHandoffStore handoffs) {
         this.jdbc = jdbc;
         this.mapper = mapper;
         this.transactions = transactions;
         this.audit = audit;
+        this.handoffs = handoffs;
     }
 
     public CaseStore.CaseRecord create(CaseStore.CaseRecord record) {
@@ -65,9 +73,15 @@ public final class PersistentCaseRepository implements CaseWorkflow {
     }
 
     public CaseStore.CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey, String actorId) {
+        return decide(caseId, decision, expectedVersion, idempotencyKey, actorId, null);
+    }
+
+    @Override
+    public CaseStore.CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey,
+                                       String actorId, String selectedAction) {
         if (idempotencyKey == null || idempotencyKey.isBlank()) throw new IllegalArgumentException("idempotency_key is required");
         if (actorId == null || actorId.isBlank()) throw new IllegalArgumentException("reviewer_id is required");
-        String requestDigest = requestDigest(caseId, decision, expectedVersion, actorId);
+        String requestDigest = requestDigest(caseId, decision, expectedVersion, actorId, selectedAction);
         return transactions.execute(status -> {
             Optional<IdempotentDecision> replay = idempotent(caseId, idempotencyKey);
             if (replay.isPresent()) {
@@ -78,16 +92,40 @@ public final class PersistentCaseRepository implements CaseWorkflow {
             }
             CaseStore.CaseRecord current = lockedCase(caseId);
             if (current.version() != expectedVersion) throw new IllegalStateException("case version conflict");
+            var trustedHandoff = handoffs == null ? Optional.<com.inforsight.controlplane.agent.TrustedAgentHandoff>empty()
+                    : handoffs.find(caseId);
+            trustedHandoff.ifPresent(handoff -> {
+                if (!snapshotId(current).equals(handoff.snapshotId())) throw new IllegalStateException("handoff snapshot mismatch");
+                if (!java.util.Set.of("APPROVED", "OVERRIDDEN", "REJECTED").contains(decision)) {
+                    throw new IllegalArgumentException("invalid trusted human decision");
+                }
+                if ("APPROVED".equals(decision) || "OVERRIDDEN".equals(decision)) {
+                    if (selectedAction == null || "abstain".equals(selectedAction)
+                            || !handoff.allowedActions().contains(selectedAction)) {
+                        throw new IllegalArgumentException("human action is not allowed by trusted handoff");
+                    }
+                }
+            });
             boolean authorized = "APPROVED".equals(decision) || "OVERRIDDEN".equals(decision);
             CaseStore.CaseRecord updated = new CaseStore.CaseRecord(current.caseId(), current.policyId(), current.asOf(), current.score(),
-                    current.recommendedAction(), "APPROVED".equals(decision) ? "HUMAN_REVIEWED" : "DISMISSED", current.version() + 1, authorized);
+                    trustedHandoff.isPresent() && authorized && selectedAction != null
+                            ? selectedAction : current.recommendedAction(),
+                    "APPROVED".equals(decision) ? "HUMAN_REVIEWED" : "DISMISSED", current.version() + 1, authorized);
             int changed = jdbc.update("""
                     UPDATE control_case SET state = ?, case_version = ?, recommendation_json = CAST(? AS jsonb), updated_at_utc = ?
                     WHERE case_id = ? AND case_version = ?
                     """, updated.state(), updated.version(), encode(updated), Timestamp.from(Instant.now()), caseId, current.version());
             if (changed != 1) throw new IllegalStateException("case version conflict");
+            Map<String, Object> decisionEvidence = new java.util.LinkedHashMap<>();
+            decisionEvidence.put("decision", decision);
+            decisionEvidence.put("idempotency_key", idempotencyKey);
+            decisionEvidence.put("authorized_to_act", authorized);
+            if (trustedHandoff.isPresent()) {
+                decisionEvidence.put("snapshot_id", snapshotId(current));
+                if (selectedAction != null) decisionEvidence.put("selected_action", selectedAction);
+            }
             audit.append(new AuditEvent(UUID.randomUUID(), caseId, updated.version(), "HUMAN_DECISION_RECORDED", actorId,
-                    Instant.now(), Map.of("decision", decision, "idempotency_key", idempotencyKey, "authorized_to_act", authorized)));
+                    Instant.now(), decisionEvidence));
             jdbc.update("""
                     INSERT INTO decision_idempotency (case_id, idempotency_key, request_digest, response_json, committed_case_version)
                     VALUES (?, ?, ?, CAST(? AS jsonb), ?)
@@ -109,8 +147,8 @@ public final class PersistentCaseRepository implements CaseWorkflow {
         return records.stream().findFirst();
     }
 
-    private static String requestDigest(String caseId, String decision, long expectedVersion, String actorId) {
-        return AuditHash.sha256(caseId + "\n" + expectedVersion + "\n" + decision + "\n" + actorId);
+    private static String requestDigest(String caseId, String decision, long expectedVersion, String actorId, String selectedAction) {
+        return AuditHash.sha256(caseId + "\n" + expectedVersion + "\n" + decision + "\n" + actorId + "\n" + selectedAction);
     }
 
     private CaseStore.CaseRecord lockedCase(String caseId) {
@@ -145,7 +183,7 @@ public final class PersistentCaseRepository implements CaseWorkflow {
                 + record.score().bundleDigest() + "\n" + record.score().calibratedProbability() + "\n" + record.score().operationalTier());
     }
 
-    private static String snapshotId(CaseStore.CaseRecord record) {
+    public static String snapshotId(CaseStore.CaseRecord record) {
         return "snapshot_" + snapshotEvidenceDigest(record);
     }
 

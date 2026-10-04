@@ -10,5 +10,9 @@ public interface CaseWorkflow {
     CaseStore.CaseRecord create(String policyId, Instant asOf, InferenceScore score, String action);
     Optional<CaseStore.CaseRecord> find(String caseId);
     CaseStore.CaseRecord decide(String caseId, String decision, long expectedVersion, String idempotencyKey, String actorId);
+    default CaseStore.CaseRecord decide(String caseId, String decision, long expectedVersion,
+                                       String idempotencyKey, String actorId, String selectedAction) {
+        return decide(caseId, decision, expectedVersion, idempotencyKey, actorId);
+    }
     default Optional<String> auditHash(String caseId, long caseVersion) { return Optional.empty(); }
 }

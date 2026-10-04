@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inforsight.controlplane.audit.AuditLedgerRepository;
 import com.inforsight.controlplane.agent.AgentDraftStore;
 import com.inforsight.controlplane.agent.PersistentAgentDraftStore;
+import com.inforsight.controlplane.agent.PersistentTrustedAgentHandoffStore;
+import com.inforsight.controlplane.agent.TrustedAgentHandoffStore;
 import com.inforsight.controlplane.connectors.ConnectorAdapter;
 import com.inforsight.controlplane.connectors.ConnectorPreflightService;
 import com.inforsight.controlplane.connectors.ConnectorTarget;
@@ -28,14 +30,21 @@ public class PersistenceConfiguration {
 
     @Bean
     CaseWorkflow persistentCaseWorkflow(JdbcTemplate jdbc, ObjectMapper mapper,
-                                        PlatformTransactionManager transactionManager, AuditLedgerRepository audit) {
-        return new PersistentCaseRepository(jdbc, mapper, new TransactionTemplate(transactionManager), audit);
+                                        PlatformTransactionManager transactionManager, AuditLedgerRepository audit,
+                                        TrustedAgentHandoffStore handoffs) {
+        return new PersistentCaseRepository(jdbc, mapper, new TransactionTemplate(transactionManager), audit, handoffs);
+    }
+
+    @Bean
+    TrustedAgentHandoffStore trustedAgentHandoffStore(JdbcTemplate jdbc, ObjectMapper mapper) {
+        return new PersistentTrustedAgentHandoffStore(jdbc, mapper);
     }
 
     @Bean
     AgentDraftStore persistentAgentDraftStore(JdbcTemplate jdbc, ObjectMapper mapper,
-                                              PlatformTransactionManager transactionManager, AuditLedgerRepository audit) {
-        return new PersistentAgentDraftStore(jdbc, mapper, new TransactionTemplate(transactionManager), audit);
+                                              PlatformTransactionManager transactionManager, AuditLedgerRepository audit,
+                                              TrustedAgentHandoffStore handoffs) {
+        return new PersistentAgentDraftStore(jdbc, mapper, new TransactionTemplate(transactionManager), audit, handoffs);
     }
 
     @Bean
