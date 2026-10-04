@@ -184,6 +184,20 @@ public class DemoStore {
         });
     }
 
+    /** Abandoned review expiry is an actual persisted transition, never a human decision. */
+    public void expireReview(String id) {
+        mutate(id,run->{
+            if(!run.path("status").asText().equals("AWAITING_REVIEW"))throw new IllegalStateException("only abandoned review may expire");
+            run.put("status","EXPIRED").put("expired_at",Instant.now().toString());
+            for(String name:List.of("decision","audit")){
+                ObjectNode step=stage(run,name);step.put("status","blocked").put("producer","Java demo retention worker");
+                step.set("error",mapper.createObjectNode().put("code","RUN_EXPIRED").put("retryable",false)
+                        .put("message","The abandoned fictional review expired without a human decision. Completed evidence remains intact until retention cleanup."));
+                journal(run,name,"blocked",step,"Java demo retention worker");
+            }
+        });
+    }
+
     public ObjectNode decide(String id,JsonNode request) {
         String key=required(request,"idempotency_key",128); String digest=hash(request);
         return tx.execute(status->{
@@ -318,16 +332,19 @@ public class DemoStore {
         journal(run,name,status,step);
     }
     private void journal(ObjectNode run,String stage,String status,JsonNode evidence) {
+        journal(run,stage,status,evidence,producer(stage));
+    }
+    private void journal(ObjectNode run,String stage,String status,JsonNode evidence,String producer) {
         String id=run.path("correlation_id").asText();
         var prior=jdbc.query("SELECT sequence,head_hash FROM demo_checkpoint WHERE correlation_id=?",(rs,row)->Map.entry(rs.getLong(1),rs.getString(2)),id);
         long sequence=prior.isEmpty()?1:prior.getFirst().getKey()+1;String parent=prior.isEmpty()?GENESIS:prior.getFirst().getValue();
         Instant now=Instant.now();String event="evt_"+uuid();
         ObjectNode payload=mapper.createObjectNode().put("correlation_id",id).put("source_event_id",run.path("event_id").asText())
                 .put("journal_event_id",event).put("stage",stage).put("status",status).put("case_version",run.path("case_version").asLong())
-                .put("occurred_at",now.toString()).put("producer",producer(stage));payload.set("evidence",evidence.deepCopy());
+                .put("occurred_at",now.toString()).put("producer",producer);payload.set("evidence",evidence.deepCopy());
         String canonical=encode(payload);String hash=AuditHash.sha256(parent+"\n"+canonical);
         jdbc.update("INSERT INTO demo_journal(correlation_id,sequence,event_id,stage,event_type,occurred_at,producer,canonical_payload,parent_hash,current_hash) VALUES(?,?,?,?,?,?,?,?,?,?)",
-                id,sequence,event,stage,stage+"."+status,Timestamp.from(now),producer(stage),canonical,parent,hash);
+                id,sequence,event,stage,stage+"."+status,Timestamp.from(now),producer,canonical,parent,hash);
         jdbc.update("INSERT INTO demo_checkpoint(correlation_id,sequence,head_hash) VALUES(?,?,?) ON CONFLICT(correlation_id) DO UPDATE SET sequence=excluded.sequence,head_hash=excluded.head_hash",id,sequence,hash);
     }
     private static void duration(ObjectNode step) {if(step.path("started_at").isTextual()&&step.path("completed_at").isTextual())step.put("duration_ms",Math.max(0,Duration.between(Instant.parse(step.path("started_at").asText()),Instant.parse(step.path("completed_at").asText())).toMillis()));}

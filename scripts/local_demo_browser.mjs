@@ -6,7 +6,7 @@ const require = createRequire(resolve("frontend/package.json"));
 const { chromium, expect } = require("@playwright/test");
 const { default: AxeBuilder } = require("@axe-core/playwright");
 const base = process.env.DEMO_URL || "http://localhost:3000";
-const output = resolve("artifacts/local-demo");
+const output = resolve(process.env.DEMO_OUTPUT || "artifacts/local-demo");
 await mkdir(output, { recursive: true });
 const report = {
   result: "FAIL",
@@ -26,8 +26,89 @@ const record = (check, evidence) => {
   report.checks.push({ check, passed: true, evidence });
   console.log(`PASS ${check}`);
 };
-const getRun = async (id) =>
-  (await context.request.get(`${base}/api/v1/demo/runs/${id}`)).json();
+const getRun = async (id) => {
+  const response = await context.request.get(`${base}/api/v1/demo/runs/${id}`);
+  expect(response.status()).toBe(200);
+  return response.json();
+};
+let visitor;
+async function publicIsolation(id) {
+  if (!visitor.public_mode) return;
+  const sessionCookie = (await context.cookies(base)).find((cookie) => cookie.name === "__Host-inforsight_session");
+  expect(sessionCookie, "signed visitor cookie").toBeTruthy();
+  expect(sessionCookie.httpOnly).toBe(true);
+  expect(sessionCookie.sameSite).toBe("Strict");
+  if (new URL(base).protocol === "https:") expect(sessionCookie.secure).toBe(true);
+  record("public visitor uses protected cookie and private responses", {
+    cookie_name: sessionCookie.name,
+    http_only: sessionCookie.httpOnly,
+    same_site: sessionCookie.sameSite,
+    secure: sessionCookie.secure,
+    expires_at: visitor.expires_at,
+    limits: visitor.limits,
+  });
+  const other = await browser.newContext();
+  try {
+    const otherSession = await (await other.request.get(`${base}/api/v1/demo/session`)).json();
+    expect(otherSession.session_tag).not.toBe(visitor.session_tag);
+    for (const suffix of ["", "/audit"])
+      expect((await other.request.get(`${base}/api/v1/demo/runs/${id}${suffix}`)).status()).toBe(404);
+    const headers = { "X-Demo-CSRF": otherSession.csrf_token, Origin: new URL(base).origin };
+    expect((await other.request.post(`${base}/api/v1/demo/runs/${id}/retry`, { headers, data: {} })).status()).toBe(404);
+    expect((await other.request.post(`${base}/api/v1/demo/runs/${id}/decision`, {
+      headers,
+      data: { decision: "REJECTED", expected_case_version: 0, idempotency_key: crypto.randomUUID(), rationale: "Must be denied to another visitor." },
+    })).status()).toBe(404);
+    const otherPage = await other.newPage();
+    await otherPage.goto(`${base}/?run=${id}`);
+    await expect(otherPage.getByText("This run is unavailable in this browser", { exact: true })).toBeVisible();
+    await expect(otherPage.getByTestId("stage-score")).toHaveCount(0);
+    record("another visitor cannot read, review, retry, or resume a copied correlation ID", { correlation_id: id, denied_status: 404 });
+  } finally {
+    await other.close();
+  }
+  const noCsrf = await context.request.post(`${base}/api/v1/demo/runs`, {
+    headers: { "Idempotency-Key": crypto.randomUUID(), Origin: new URL(base).origin }, data: { scenario_id: "late-payment", overrides: {} },
+  });
+  expect(noCsrf.status()).toBe(403);
+  const crossOrigin = await context.request.post(`${base}/api/v1/demo/runs`, {
+    headers: { "Idempotency-Key": crypto.randomUUID(), "X-Demo-CSRF": visitor.csrf_token, Origin: "https://untrusted.invalid" }, data: { scenario_id: "late-payment", overrides: {} },
+  });
+  expect(crossOrigin.status()).toBe(403);
+  for (const path of ["/api/v1/demo/reset", "/api/v1/health", "/api/v1/score"])
+    expect((await context.request.get(`${base}${path}`)).status()).toBe(404);
+  record("public gateway rejects missing CSRF, cross-origin writes and non-demo service routes");
+}
+async function publicLimitState(id) {
+  if (!visitor.public_mode || process.env.DEMO_BROWSER_LIMITS !== "1") return;
+  let limited;
+  let retryAfter = 0;
+  const bound = Number(visitor.limits.polls_per_minute ?? 120) * 2 + 3;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    for (let index = 0; index < bound; index++) {
+      const response = await context.request.get(`${base}/api/v1/demo/runs/${id}`);
+      if (response.status() === 429) { limited = response; break; }
+      expect(response.status()).toBe(200);
+      // Pace real requests below the gateway limit to test the durable session limit.
+      await page.waitForTimeout(65);
+    }
+    expect(limited, "real session poll budget must be enforced").toBeTruthy();
+    retryAfter = Number(limited.headers()["retry-after"]);
+    if (retryAfter > 3) break;
+    // At a fixed-window boundary a short rejection can end before the next UI read.
+    // Repeat against the next real window so the visible paused state is observable.
+    await page.waitForTimeout((retryAfter + 1) * 1000);
+    limited = undefined;
+  }
+  expect(retryAfter).toBeGreaterThan(0);
+  await expect(page.getByText("Polling paused by service", { exact: true })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId("stage-agent")).toHaveAttribute("data-status", "completed");
+  await expect(page.getByTestId("stage-decision")).toHaveAttribute("data-status", "waiting");
+  await page.screenshot({ path: `${output}/rate-limit-evidence.png`, fullPage: true });
+  record("real session rate limit pauses polling without changing persisted stages", { retry_after_seconds: retryAfter, correlation_id: id });
+  await expect(page.getByText("Reading live backend state", { exact: true })).toBeVisible({ timeout: retryAfter * 1000 + 20000 });
+  record("polling honors server Retry-After and recovers");
+}
 async function accessible(label) {
   const result = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -62,6 +143,10 @@ try {
   await expect(
     page.getByRole("button", { name: "Start this case" }),
   ).toBeEnabled();
+  const sessionResponse = await context.request.get(`${base}/api/v1/demo/session`);
+  expect(sessionResponse.status()).toBe(200);
+  visitor = await sessionResponse.json();
+  report.public_mode = visitor.public_mode;
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Skip to content" }),
@@ -93,6 +178,8 @@ try {
     correlation_id: id,
     stages: before.stages,
   });
+  await publicIsolation(id);
+  await publicLimitState(id);
   await page.screenshot({
     path: `${output}/journey-desktop.png`,
     fullPage: true,
@@ -113,7 +200,9 @@ try {
   await page.reload();
   await ready();
   expect(new URL(page.url()).searchParams.get("run")).toBe(id);
-  record("refresh resumes the same correlation ID");
+  const resumedSession = await (await context.request.get(`${base}/api/v1/demo/session`)).json();
+  expect(resumedSession.session_tag).toBe(visitor.session_tag);
+  record("refresh resumes the same correlation ID and visitor session");
   await page.getByRole("button", { name: "Case dossier", exact: true }).click();
   await expect(
     page.getByText("What the model sees", { exact: true }),
@@ -286,6 +375,11 @@ try {
   await page.getByRole("button", { name: "Architecture", exact: true }).click();
   await expect(page.getByText("Planned", { exact: true })).toBeVisible();
   record("architecture labels GCP Planned");
+  if (visitor.public_mode) {
+    await expect(page.getByText("Public preview", { exact: true })).toBeVisible();
+    await expect(page.getByText("One public gateway. Isolated visitor sessions.", { exact: true })).toBeVisible();
+    record("public architecture explains private services and Mac availability");
+  }
   expect(report.console_errors).toEqual([]);
   report.result = "PASS";
 } catch (error) {

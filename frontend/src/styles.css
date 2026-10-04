@@ -2487,3 +2487,19 @@ main:focus {
 .stage-row {
   scroll-margin-top: 24px;
 }
+
+.visitor-notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-bottom: 1px solid #e2e9f5;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  color: #536680;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.visitor-notice > svg { flex-shrink: 0; margin-top: 2px; }
+.visitor-notice p { margin: 0; }
+.visitor-notice strong { color: #30445f; }
+.resume-form > p { grid-column: 1 / -1; margin: 5px 0 0; }

@@ -44,6 +44,10 @@ import {
 } from "./icons";
 import {
   api,
+  ApiError,
+  asError,
+  getSession,
+  requestTitle,
   array,
   date,
   duration,
@@ -57,6 +61,7 @@ import {
   type ScenarioCatalog,
   type Stage,
   type StageStatus,
+  type VisitorSession,
 } from "./api";
 
 type View = "journey" | "dossier" | "review" | "audit" | "architecture";
@@ -322,8 +327,9 @@ export default function App() {
   const [run, setRun] = useState<Run | null>(null);
   const [view, setView] = useState<View>("journey");
   const [catalog, setCatalog] = useState<ScenarioCatalog | null>(null);
-  const [catalogError, setCatalogError] = useState("");
-  const [error, setError] = useState("");
+  const [catalogError, setCatalogError] = useState<Error | null>(null);
+  const [session, setSession] = useState<VisitorSession | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [busy, setBusy] = useState(false);
   const [connection, setConnection] = useState<
     "loading" | "connected" | "disconnected"
@@ -342,11 +348,21 @@ export default function App() {
 
   const loadCatalog = useCallback(async () => {
     try {
+      const currentSession = await getSession();
+      const previousTag = stored<string>("inforsight.visitor-tag");
+      if (previousTag !== currentSession.session_tag) {
+        // A new cookie must never claim to recover another visitor’s pending POST.
+        pendingSubmission.current = null;
+        submissionKey.current = "";
+        remember("inforsight.pending-submission", null);
+        remember("inforsight.visitor-tag", currentSession.session_tag);
+      }
+      setSession(currentSession);
       const response = await api<ScenarioCatalog>("/scenarios");
       setCatalog(response);
-      setCatalogError("");
+      setCatalogError(null);
     } catch (e) {
-      setCatalogError((e as Error).message);
+      setCatalogError(asError(e));
     }
   }, []);
   useEffect(() => {
@@ -364,15 +380,19 @@ export default function App() {
           : response,
       );
       setConnection("connected");
-      setError("");
+      setError(null);
       if (response.audit) setAudit(response.audit);
-      return true;
+      return { connected: true, delay: 1500, stop: ["COMPLETED", "EXPIRED"].includes(response.status) };
     } catch (e) {
       if (sequence === requestSequence.current) {
         setConnection("disconnected");
-        setError((e as Error).message);
+        setError(asError(e));
       }
-      return false;
+      return {
+        connected: false,
+        delay: e instanceof ApiError ? Math.max(1500, e.retryAfterSeconds * 1000) : 1500,
+        stop: e instanceof ApiError && [401, 403, 404, 410].includes(e.status),
+      };
     }
   }, []);
   useEffect(() => {
@@ -385,12 +405,15 @@ export default function App() {
     // starve successful responses; no elapsed timer changes workflow status.
     const poll = async () => {
       if (!active) return;
+      let serverDelay = 0;
       if (document.visibilityState === "visible") {
-        const connected = await refreshRun(runId);
-        failures = connected ? 0 : Math.min(failures + 1, 3);
+        const result = await refreshRun(runId);
+        if (result?.stop) return;
+        failures = result?.connected ? 0 : Math.min(failures + 1, 3);
+        serverDelay = result?.delay ?? 0;
       }
       if (active)
-        timer = window.setTimeout(poll, Math.min(1500 * 2 ** failures, 10000));
+        timer = window.setTimeout(poll, Math.max(serverDelay, Math.min(1500 * 2 ** failures, 10000)));
     };
     void poll();
     return () => {
@@ -427,7 +450,7 @@ export default function App() {
     setRunId("");
     setRun(null);
     setAudit(null);
-    setError("");
+    setError(null);
     setView("journey");
     submissionKey.current = "";
     pendingSubmission.current = null;
@@ -435,7 +458,7 @@ export default function App() {
   };
   const launch = async () => {
     setBusy(true);
-    setError("");
+    setError(null);
     try {
       const overrides: unknown = JSON.parse(overrideText);
       if (
@@ -461,7 +484,7 @@ export default function App() {
       pendingSubmission.current = null;
       remember("inforsight.pending-submission", null);
     } catch (e) {
-      setError((e as Error).message);
+      setError(asError(e));
     } finally {
       setBusy(false);
     }
@@ -469,7 +492,7 @@ export default function App() {
   const retry = async () => {
     if (!run) return;
     setBusy(true);
-    setError("");
+    setError(null);
     try {
       setRun(
         await api<Run>(
@@ -482,7 +505,7 @@ export default function App() {
         ),
       );
     } catch (e) {
-      setError((e as Error).message);
+      setError(asError(e));
     } finally {
       setBusy(false);
     }
@@ -490,11 +513,11 @@ export default function App() {
   const verifyAudit = async () => {
     if (!runId) return;
     setAuditBusy(true);
-    setError("");
+    setError(null);
     try {
       setAudit(await api<Audit>(`/runs/${encodeURIComponent(runId)}/audit`));
     } catch (e) {
-      setError((e as Error).message);
+      setError(asError(e));
     } finally {
       setAuditBusy(false);
     }
@@ -508,6 +531,7 @@ export default function App() {
       (s) => s.status === "completed" || s.status === "abstained",
     ).length ?? 0;
   const stageTotal = run?.stages.length ?? orderedStages.length;
+  const inaccessible = error instanceof ApiError && [401, 403, 404, 410].includes(error.status);
 
   return (
     <>
@@ -531,7 +555,7 @@ export default function App() {
           <div className="header-right">
             <span className="environment">
               <span />
-              Local Docker
+              {session ? (session.public_mode ? "Public preview" : "Local Docker") : catalogError ? "Demo unavailable" : "Connecting to demo"}
             </span>
             <span className="fictional-label">
               <LockKeyhole size={13} />
@@ -541,6 +565,17 @@ export default function App() {
         </div>
       </header>
       <main id="main" tabIndex={-1}>
+        {session?.public_mode && (
+          <div className="visitor-notice content-width" role="note">
+            <LockKeyhole size={17} aria-hidden="true" />
+            <p>
+              <strong>Your fictional cases belong to this browser.</strong>{" "}
+              A signed visitor cookie protects your runs at this website address. Run links
+              work only with that cookie; clearing it removes access. Cases are temporary.
+              Completed runs are retained for up to {session.limits.retention_hours ?? 24} hours.
+            </p>
+          </div>
+        )}
         {!runId && view !== "architecture" ? (
           <>
             <section className="hero content-width">
@@ -645,8 +680,8 @@ export default function App() {
                   <div role="alert" className="notice danger">
                     <Info size={18} />
                     <div>
-                      <strong>Demo services are unavailable</strong>
-                      <p>{catalogError} No run has started.</p>
+                      <strong>{requestTitle(catalogError)}</strong>
+                      <p>{catalogError.message} No run has started.</p>
                       <button
                         className="text-link"
                         onClick={() => void loadCatalog()}
@@ -863,11 +898,14 @@ export default function App() {
                       <ArrowRight size={15} />
                     </button>
                   </div>
+                  {session?.public_mode && (
+                    <p className="small muted">Use the browser and website address that created the run. A correlation ID is a reference, not an access credential.</p>
+                  )}
                 </form>
                 {error && (
                   <div role="alert" className="notice danger">
                     <Info size={18} />
-                    <p>{error}</p>
+                    <div><strong>{requestTitle(error)}</strong><p>{error.message}</p></div>
                   </div>
                 )}
               </div>
@@ -894,7 +932,7 @@ export default function App() {
                     : run
                       ? (scenarioCopy.find((s) => s.id === run.scenario_id)
                           ?.title ?? words(run.scenario_id))
-                      : "Connecting to your case…"}
+                      : inaccessible ? "This case is unavailable here." : "Connecting to your case…"}
                 </h1>
               </div>
               {run && (
@@ -915,10 +953,14 @@ export default function App() {
                 <div className={`connection connection-${connection}`}>
                   <span />
                   {connection === "connected"
-                    ? "Reading live backend state"
+                    ? (["COMPLETED", "EXPIRED"].includes(run?.status ?? "") ? "Persisted record loaded" : "Reading live backend state")
                     : connection === "loading"
                       ? "Connecting to services"
-                      : "Connection interrupted"}
+                      : error instanceof ApiError && [429, 503].includes(error.status)
+                        ? "Polling paused by service"
+                        : error instanceof ApiError && [401, 403, 404, 410].includes(error.status)
+                          ? "Run access unavailable"
+                          : "Connection interrupted"}
                 </div>
                 {run && (
                   <span className="last-updated">
@@ -952,12 +994,10 @@ export default function App() {
                 <Info size={18} />
                 <div>
                   <strong>
-                    {connection === "disconnected"
-                      ? "The connection needs attention"
-                      : "The request could not be completed"}
+                    {requestTitle(error)}
                   </strong>
-                  <p>{error}</p>
-                  {runId && (
+                  <p>{error.message}</p>
+                  {runId && !(error instanceof ApiError && [401, 403, 404, 410, 429, 503].includes(error.status)) && (
                     <button
                       className="text-link"
                       onClick={() => void refreshRun(runId)}
@@ -965,20 +1005,27 @@ export default function App() {
                       Reconnect to this run
                     </button>
                   )}
+                  {error instanceof ApiError && [401, 403].includes(error.status) && (
+                    <button className="text-link" onClick={() => window.location.assign(window.location.pathname)}>Start a fresh visitor session</button>
+                  )}
+                  {error instanceof ApiError && [404, 410].includes(error.status) && (
+                    <button className="text-link" onClick={goHome}>Choose a new fictional case</button>
+                  )}
                 </div>
               </div>
             )}
             <div className="sr-only" aria-live="polite">
               {run
                 ? `${words(run.status)}. ${completed} of ${stageTotal} stages recorded.`
-                : "Connecting to the backend."}
+                : inaccessible ? "Run access is unavailable in this visitor session." : "Connecting to the backend."}
             </div>
             {view === "architecture" ? (
-              <Architecture run={run} />
+              <Architecture run={run} session={session} />
             ) : !run ? (
-              <Empty title="Waiting for the persisted run">
-                Your correlation ID is in this page’s address. No stage is
-                marked complete until the backend returns its evidence.
+              <Empty title={inaccessible ? "No accessible run evidence" : "Waiting for the persisted run"}>
+                {inaccessible
+                  ? "Use the original browser session and website address, or return to the scenarios to start a new fictional case."
+                  : "No stage is marked complete until the backend returns its persisted evidence. Run access requires the original visitor session."}
               </Empty>
             ) : (
               <>
@@ -1081,6 +1128,12 @@ export default function App() {
                             <ArrowRight size={15} />
                           </button>
                         </div>
+                      )}
+                      {run.status === "EXPIRED" && (
+                        <Panel title="This review window has ended" icon={Clock3}>
+                          <p className="small">The backend expired this unattended run. Recorded evidence remains readable until cleanup; review and retry are unavailable.</p>
+                          <button className="button secondary full" onClick={goHome}>Choose a new fictional case</button>
+                        </Panel>
                       )}
                       {run.status === "FAILED" && (
                         <Panel title="Processing stopped" icon={Info}>
@@ -1648,7 +1701,7 @@ function Review({
   >(pendingDecision.current?.decision ?? null);
   const [notes, setNotes] = useState(pendingDecision.current?.rationale ?? "");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Error | null>(null);
   const decisionKey = useRef(pendingDecision.current?.key ?? "");
   const agent = run.artifacts.agent;
   const recorded = run.artifacts.decision;
@@ -1659,7 +1712,7 @@ function Review({
     e.preventDefault();
     if (!decision || !ready) return;
     setBusy(true);
-    setError("");
+    setError(null);
     decisionKey.current ||= crypto.randomUUID();
     remember(`inforsight.pending-decision.${run.correlation_id}`, {
       key: decisionKey.current,
@@ -1685,7 +1738,7 @@ function Review({
       );
       remember(`inforsight.pending-decision.${run.correlation_id}`, null);
     } catch (e) {
-      setError((e as Error).message);
+      setError(asError(e));
     } finally {
       setBusy(false);
     }
@@ -1845,12 +1898,12 @@ function Review({
               placeholder="What informed your decision?"
             />
             <p className="small muted">
-              Recorded as fictional-demo-reviewer · case version{" "}
+              Recorded as a fictional visitor · case version{" "}
               {run.case_version ?? "pending"}
             </p>
             {error && (
               <div role="alert" className="notice danger small">
-                {error}
+                <div><strong>{requestTitle(error)}</strong>{error.message}</div>
               </div>
             )}
             <button
@@ -1863,8 +1916,7 @@ function Review({
             </button>
             {!ready && (
               <p className="small muted">
-                Review becomes available when all prerequisite stages are
-                recorded.
+                {run.status === "EXPIRED" ? "This run has expired. It no longer accepts a review decision." : "Review becomes available when all prerequisite stages are recorded."}
               </p>
             )}
           </form>
@@ -2017,7 +2069,7 @@ function AuditView({
   );
 }
 
-function Architecture({ run }: { run: Run | null }) {
+function Architecture({ run, session }: { run: Run | null; session: VisitorSession | null }) {
   const nodes = [
     {
       id: "bus",
@@ -2069,7 +2121,7 @@ function Architecture({ run }: { run: Run | null }) {
     <>
       <div className="architecture-intro">
         <div>
-          <p className="eyebrow">LOCAL DOCKER TOPOLOGY</p>
+          <p className="eyebrow">{session ? (session.public_mode ? "PUBLIC PREVIEW · PRIVATE SERVICES" : "LOCAL DOCKER TOPOLOGY") : "SERVICE TOPOLOGY"}</p>
           <h2>Every component has a clear job.</h2>
           <p>
             Highlighting follows the backend’s recorded processing state. If a
@@ -2078,6 +2130,17 @@ function Architecture({ run }: { run: Run | null }) {
         </div>
         <Badge>{run ? "Bound to this run" : "Architecture overview"}</Badge>
       </div>
+      {session?.public_mode && (
+        <div className="notice neutral" role="note">
+          <LockKeyhole size={20} aria-hidden="true" />
+          <div>
+            <strong>One public gateway. Isolated visitor sessions.</strong>
+            <p>Only this website and its same-origin demo API are exposed. Kafka, PostgreSQL, Java and Python services use a private Docker network. This Mac-hosted preview is available only while the owner’s Mac, Docker stack and tunnel are running.</p>
+            <p>Your visitor session expires {date(session.expires_at ?? undefined)}. Run retention can end sooner. A visitor cookie identifies a fictional reviewer; it does not verify a real person’s identity.</p>
+            <Technical value={session.limits} label="Inspect public capacity and retention limits" />
+          </div>
+        </div>
+      )}
       <div className="architecture-nodes">
         {nodes.map((node) => {
           const active = run?.stages.some(

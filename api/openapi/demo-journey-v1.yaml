@@ -1,40 +1,89 @@
 openapi: 3.1.0
 info:
   title: Inforsight fictional distributed demo journey
-  version: 1.0.0
-  description: >-
-    Local Docker only. The Java control plane publishes a persisted fictional
-    event through Kafka, invokes read-only Python adapters and released HTTP
-    inference, and owns rules, allocation, cases, human review and audit.
-    Every completed stage is backed by a PostgreSQL journal record.
-    Fictional reviewer identifiers are labels, not authenticated real identities.
+  version: 1.1.0
+  description: 'Real fictional demo running the Java control plane, Kafka, PostgreSQL, read-only Python adapters
+    and released-model HTTP inference. Every completed stage is backed by persisted journal evidence. Public
+    preview uses the same-origin gateway and signed, isolated visitor sessions; a correlation ID alone grants
+    no access. Public reviewers are server-assigned pseudonyms, not verified real identities. All decisions
+    remain fictional and cannot authorize external action. No public reset or customer outreach endpoint exists.
+
+
+    In public mode, first GET /api/v1/demo/session and retain its host-only HttpOnly SameSite=Strict Secure
+    cookie. Send the returned csrf_token in X-Demo-CSRF and the matching gateway Origin on every POST. The
+    Origin hostname and port must match Host; no CORS is enabled. Call session bootstrap before other API requests.
+    The signing secret and PostgreSQL session row survive restarts. Cookie lifetime is seven days and is not
+    extended by polling. Losing the cookie or its signing secret prevents access to prior runs; session_tag
+    is not a credential.
+
+
+    Local development can explicitly disable public mode. In that mode cookie, CSRF and public quotas are not
+    required; the session response reports public_mode=false. This exception must never be exposed as the public
+    preview.
+
+
+    Completed and failed public runs are retained for 24 hours after their last persisted state change. Reviews
+    expire only after age 48 hours and owner inactivity 24 hours: an actual Java retention-worker event sets
+    EXPIRED and blocks the unfinished decision/audit stages without inventing a human decision. Their existing
+    evidence remains for another 24 hours. WAITING and PROCESSING runs are never expired or purged. Cleanup
+    verifies the whole chain before atomically deleting it; damaged evidence is preserved. A minimal owner-bound
+    verification-head tombstone remains seven days. Its owner receives 410 after deletion; another visitor
+    receives 404. A tombstone is not a replacement audit receipt. Quota buckets expire after 48 hours; expired
+    sessions are removed only when no retained run or tombstone references them. GCP remains Planned.'
 servers:
-  - url: http://localhost:3000
+- url: /
+  description: The same-origin frontend/API gateway; public preview requires HTTPS.
+- url: http://localhost:3000
+  description: Private local development only; public-mode protections may be disabled.
 paths:
   /api/v1/demo/scenarios:
     get:
       summary: List implemented scenarios and bounded input constraints
       responses:
-        "200":
-          description: Local capabilities; GCP is not an available environment
+        '200':
+          description: Implemented capabilities and bounded fictional inputs.
           content:
             application/json:
               schema:
                 type: object
-                required: [environment, external_execution_enabled, scenarios]
+                required:
+                - environment
+                - external_execution_enabled
+                - scenarios
                 properties:
-                  environment: { const: local }
-                  external_execution_enabled: { const: false }
-                  scenarios: { type: array, items: { type: object } }
-                  safe_inputs: { type: object }
+                  environment:
+                    enum:
+                    - local
+                    - public-preview
+                  external_execution_enabled:
+                    const: false
+                  scenarios:
+                    type: array
+                    items:
+                      type: object
+                  safe_inputs:
+                    type: object
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+      security: []
+      description: Can bootstrap a missing visitor cookie, but does not return its CSRF token. Prefer GET /session
+        first. Public requests consume read quotas; no GCP environment selector is advertised.
   /api/v1/demo/runs:
     post:
       summary: Persist a fictional event and outbox before asynchronous Kafka processing
       parameters:
-        - name: Idempotency-Key
-          in: header
-          required: true
-          schema: { type: string, minLength: 1, maxLength: 128 }
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 128
+        description: Client-generated retry identity; scoped to the visitor session in public mode. Keep it
+          stable when retrying an uncertain response.
+      - $ref: '#/components/parameters/Origin'
       requestBody:
         required: true
         content:
@@ -42,61 +91,124 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [scenario_id]
+              required:
+              - scenario_id
               properties:
                 scenario_id:
                   enum:
-                    [late-payment, missing-safety-evidence, agent-abstention]
+                  - late-payment
+                  - missing-safety-evidence
+                  - agent-abstention
                 overrides:
                   type: object
                   additionalProperties: false
                   properties:
                     premium_amount_cents:
-                      {
-                        type: integer,
-                        minimum: 1000,
-                        maximum: 100000,
-                        default: 12500,
-                      }
+                      type: integer
+                      minimum: 1000
+                      maximum: 100000
+                      default: 12500
                     delay_days:
-                      { type: integer, minimum: 1, maximum: 45, default: 15 }
+                      type: integer
+                      minimum: 1
+                      maximum: 45
+                      default: 15
       responses:
-        "202": { $ref: "#/components/responses/RunResponse" }
-        "200":
-          {
-            description: Identical request replay returns the existing run,
-            content:
-              {
-                application/json:
-                  { schema: { $ref: "#/components/schemas/Run" } },
-              },
-          }
-        "400":
-          { description: Unsupported scenario, fields or unsafe input bounds }
-        "409": { description: Idempotency key reused for different input }
-        "503":
-          {
-            description: Source adapter unavailable; no accepted run is claimed,
-          }
+        '202':
+          $ref: '#/components/responses/RunResponse'
+        '200':
+          description: Identical request replay returns the existing run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Run'
+        '400':
+          description: Unsupported scenario, unsupported fields or unsafe input bounds.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Retained idempotency key reused for different input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '401':
+          $ref: '#/components/responses/SessionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '403':
+          $ref: '#/components/responses/CsrfInvalid'
+      security:
+      - VisitorSession: []
+        CsrfToken: []
+      description: Submission idempotency is scoped to the signed visitor and retained run. Another visitor
+        may use the same client key without collision or gaining access. An identical retained request returns
+        its original run without resubmission to Kafka; concurrent replays may return either 200 or 202 with
+        that same run. Changing the body under a retained key returns 409. After full retention deletion, the
+        key may create a new run. Resource quotas and capacity checks are durable and transactional.
   /api/v1/demo/runs/{correlation_id}:
     parameters:
-      - { $ref: "#/components/parameters/RunId" }
+    - $ref: '#/components/parameters/RunId'
     get:
       summary: Resume the authoritative persisted run after refresh or restart
       responses:
-        "200": { $ref: "#/components/responses/RunResponse" }
-        "404": { description: Run not found }
+        '200':
+          $ref: '#/components/responses/RunResponse'
+        '404':
+          $ref: '#/components/responses/RunNotFound'
+        '401':
+          $ref: '#/components/responses/SessionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '410':
+          $ref: '#/components/responses/RunExpired'
+      description: Read only this signed visitor's persisted run. Refresh/restart resume requires both its
+        correlation ID and the original valid session cookie. GET and HEAD both enforce ownership and read
+        quotas. Every completed stage comes from persisted evidence; waiting, blocked and failed stages are
+        not counted as completed.
   /api/v1/demo/runs/{correlation_id}/retry:
     parameters:
-      - { $ref: "#/components/parameters/RunId" }
+    - $ref: '#/components/parameters/RunId'
     post:
       summary: Resume a failed run while retaining its event, completed outputs and failed attempts
       responses:
-        "200": { $ref: "#/components/responses/RunResponse" }
-        "409": { description: Run is not failed }
+        '200':
+          $ref: '#/components/responses/RunResponse'
+        '409':
+          description: Run is not FAILED.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '401':
+          $ref: '#/components/responses/SessionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '404':
+          $ref: '#/components/responses/RunNotFound'
+        '410':
+          $ref: '#/components/responses/RunExpired'
+        '403':
+          $ref: '#/components/responses/CsrfInvalid'
+      security:
+      - VisitorSession: []
+        CsrfToken: []
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      description: Only FAILED runs owned by this visitor can resume. Enforces retry/request limits and processing
+        capacity; unresolved publication retries reuse their existing reservation. Retains correlation/event
+        IDs, completed outputs, failed attempts and evidence. EXPIRED runs cannot retry.
   /api/v1/demo/runs/{correlation_id}/decision:
     parameters:
-      - { $ref: "#/components/parameters/RunId" }
+    - $ref: '#/components/parameters/RunId'
     post:
       summary: Atomically persist a fictional human decision, case version and audit record
       requestBody:
@@ -107,213 +219,589 @@ paths:
               type: object
               additionalProperties: false
               required:
-                [
-                  decision,
-                  expected_case_version,
-                  idempotency_key,
-                  rationale,
-                  reviewer_id,
-                ]
+              - decision
+              - expected_case_version
+              - idempotency_key
+              - rationale
               properties:
                 decision:
-                  { enum: [APPROVED, REJECTED, REQUEST_MORE_INFORMATION] }
-                expected_case_version: { type: integer, minimum: 0 }
-                idempotency_key: { type: string, minLength: 1, maxLength: 128 }
-                rationale: { type: string, minLength: 1, maxLength: 500 }
-                notes: { type: string, maxLength: 2000 }
-                reviewer_id: { type: string, minLength: 1, maxLength: 128 }
+                  enum:
+                  - APPROVED
+                  - REJECTED
+                  - REQUEST_MORE_INFORMATION
+                expected_case_version:
+                  type: integer
+                  minimum: 0
+                idempotency_key:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                rationale:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                notes:
+                  type: string
+                  maxLength: 2000
+                reviewer_id:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                  description: Required only in local mode. Public mode ignores/replaces it with a stable server-assigned
+                    visitor pseudonym; it is not authenticated real-world identity.
       responses:
-        "200": { $ref: "#/components/responses/RunResponse" }
-        "400":
-          { description: Invalid decision or attempt to approve an abstention }
-        "409":
-          {
-            description: Not ready,
-            stale version,
-            changed idempotent request,
-            or failed integrity verification,
-          }
+        '200':
+          $ref: '#/components/responses/RunResponse'
+        '400':
+          description: Invalid decision, invalid field bounds or attempt to approve an abstention.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Not ready, expired, stale case version, changed idempotent request, or failed integrity
+            verification.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '401':
+          $ref: '#/components/responses/SessionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '404':
+          $ref: '#/components/responses/RunNotFound'
+        '410':
+          $ref: '#/components/responses/RunExpired'
+        '403':
+          $ref: '#/components/responses/CsrfInvalid'
+      security:
+      - VisitorSession: []
+        CsrfToken: []
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      description: Requires this visitor's session, current case version, an intact audit chain and AWAITING_REVIEW.
+        Public reviewer_id is assigned server-side from the session fingerprint; client-provided identity labels
+        are ignored. An exact decision-key replay returns the saved response. APPROVED is forbidden for an
+        abstention or ineligible/unallocated draft. All decisions, including approval, retain authorized_to_act=false
+        and external_execution_enabled=false. REQUEST_MORE_INFORMATION records a fictional review outcome;
+        it does not trigger collection or outreach.
   /api/v1/demo/runs/{correlation_id}/audit:
     parameters:
-      - { $ref: "#/components/parameters/RunId" }
+    - $ref: '#/components/parameters/RunId'
     get:
       summary: Recompute the journal chain and compare its persisted checkpoint
       responses:
-        "200":
-          description: Verification of the current persisted prefix; validity alone does not mean human review is complete
+        '200':
+          description: Verification of the current persisted prefix; validity alone does not mean human review
+            is complete
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  [
-                    valid,
-                    verified_entries,
-                    head_hash,
-                    scope,
-                    externally_anchored,
-                    verified_at,
-                    entries,
-                  ]
+                - valid
+                - verified_entries
+                - head_hash
+                - scope
+                - externally_anchored
+                - verified_at
+                - entries
                 properties:
-                  valid: { type: boolean }
-                  verified_entries: { type: integer, minimum: 0 }
-                  head_hash: { type: string }
-                  scope: { type: string }
-                  externally_anchored: { const: false }
-                  verified_at: { type: string, format: date-time }
-                  failure_code: { type: string }
+                  valid:
+                    type: boolean
+                  verified_entries:
+                    type: integer
+                    minimum: 0
+                  head_hash:
+                    type: string
+                  scope:
+                    type: string
+                  externally_anchored:
+                    const: false
+                  verified_at:
+                    type: string
+                    format: date-time
+                  failure_code:
+                    type: string
                   entries:
                     type: array
                     items:
                       type: object
                       required:
-                        [
-                          sequence,
-                          event_id,
-                          stage,
-                          event_type,
-                          producer,
-                          occurred_at,
-                          canonical_payload,
-                          parent_hash,
-                          current_hash,
-                          payload,
-                        ]
+                      - sequence
+                      - event_id
+                      - stage
+                      - event_type
+                      - producer
+                      - occurred_at
+                      - canonical_payload
+                      - parent_hash
+                      - current_hash
+                      - payload
                       properties:
-                        sequence: { type: integer, minimum: 1 }
-                        event_id: { type: string }
-                        stage: { type: string }
-                        event_type: { type: string }
-                        producer: { type: string }
-                        occurred_at: { type: string, format: date-time }
+                        sequence:
+                          type: integer
+                          minimum: 1
+                        event_id:
+                          type: string
+                        stage:
+                          type: string
+                        event_type:
+                          type: string
+                        producer:
+                          type: string
+                        occurred_at:
+                          type: string
+                          format: date-time
                         canonical_payload:
-                          {
-                            type: string,
-                            description: Exact UTF-8 string used by the hash computation,
-                          }
-                        parent_hash: { type: string }
+                          type: string
+                          description: Exact UTF-8 string used by the hash computation
+                        parent_hash:
+                          type: string
                         current_hash:
-                          {
-                            type: string,
-                            description: SHA-256 of parent_hash plus newline plus canonical_payload; genesis is 64 zero characters,
-                          }
-                        payload: { type: object }
+                          type: string
+                          description: SHA-256 of parent_hash plus newline plus canonical_payload; genesis
+                            is 64 zero characters
+                        payload:
+                          type: object
+        '401':
+          $ref: '#/components/responses/SessionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '404':
+          $ref: '#/components/responses/RunNotFound'
+        '410':
+          $ref: '#/components/responses/RunExpired'
+      description: Owner-only verification of the persisted journal, checkpoint, case versions and displayed
+        completed-stage evidence under a consistent run lock. GET and HEAD enforce ownership and read quotas.
+        The chain is locally anchored, not externally notarized. Verification of an unfinished prefix does
+        not complete human review. After whole-run retention deletion this endpoint returns 410 to the owner,
+        never a fabricated receipt.
+  /api/v1/demo/session:
+    get:
+      summary: Bootstrap or reuse this browser's signed visitor session
+      description: 'Reuses a valid cookie without spending another session-mint allowance. Missing/invalid
+        cookies cause a new bounded session to be issued. Serialize this request before other API requests.
+        Responses are private and Cache-Control: no-store.'
+      security: []
+      responses:
+        '200':
+          description: Visitor-session metadata; no run or customer data is exposed.
+          headers:
+            Set-Cookie:
+              description: Set only when issuing a new public session; __Host-inforsight_session with Path=/,
+                Secure, HttpOnly, SameSite=Strict and Max-Age=604800. No Domain attribute.
+              schema:
+                type: string
+            Cache-Control:
+              schema:
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          $ref: '#/components/responses/Unavailable'
 components:
   parameters:
     RunId:
       name: correlation_id
       in: path
       required: true
-      schema: { type: string, pattern: "^run_[a-f0-9]{32}$" }
+      schema:
+        type: string
+        pattern: ^run_[a-f0-9]{32}$
+    Origin:
+      name: Origin
+      in: header
+      required: true
+      description: Public mode requires an HTTP(S) origin whose hostname and normalized port match the gateway
+        Host. Browser fetch supplies this automatically. Missing, null or mismatched origins are rejected.
+        Local development with public mode disabled does not require this header.
+      schema:
+        type: string
+        format: uri
+        maxLength: 512
   responses:
     RunResponse:
       description: Persisted run; future stages remain waiting or blocked without invented outputs
       content:
         application/json:
-          schema: { $ref: "#/components/schemas/Run" }
+          schema:
+            $ref: '#/components/schemas/Run'
+    ErrorResponse:
+      description: Structured public-demo error; no fabricated stage completion is returned.
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    SessionRequired:
+      description: '401 SESSION_REQUIRED: visitor cookie is missing, invalid or expired. Reload session bootstrap;
+        a new session cannot read an old session''s runs.'
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    CsrfInvalid:
+      description: '403 CSRF_INVALID: missing or invalid X-Demo-CSRF, or missing/mismatched Origin. No mutation
+        is authorized.'
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RunNotFound:
+      description: '404 NOT_FOUND: unknown run or another visitor''s run, including a run created without public
+        ownership. The response does not disclose which case applies.'
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RunExpired:
+      description: '410 RUN_EXPIRED: this owner''s run passed retention and its full evidence was removed.
+        Other visitors receive 404. No complete audit receipt is claimed.'
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RateLimited:
+      description: '429 RATE_LIMITED: durable per-session or overall request quota exhausted. Retry-After and
+        retry_after_seconds identify the remaining window.'
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unavailable:
+      description: 503 DEMO_CAPACITY when concurrent-processing or retained-run caps are reached; DEMO_UNAVAILABLE
+        for unavailable evidence storage; dependency-specific codes when a required source adapter cannot respond.
+        Capacity and store errors include Retry-After. No completed state or accepted run is fabricated.
+      headers:
+        Retry-After:
+          description: When retryable due to quota, capacity or store availability, seconds before another
+            attempt.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
   schemas:
     Run:
       type: object
       required:
-        [
-          correlation_id,
-          event_id,
-          policy_id,
-          scenario_id,
-          status,
-          case_id,
-          case_version,
-          created_at,
-          updated_at,
-          fictional,
-          external_execution_enabled,
-          stages,
-          artifacts,
-        ]
+      - correlation_id
+      - event_id
+      - policy_id
+      - scenario_id
+      - status
+      - case_id
+      - case_version
+      - created_at
+      - updated_at
+      - fictional
+      - external_execution_enabled
+      - stages
+      - artifacts
       properties:
-        correlation_id: { type: string }
-        event_id: { type: string }
-        policy_id: { type: string }
-        scenario_id: { type: string }
+        correlation_id:
+          type: string
+        event_id:
+          type: string
+        policy_id:
+          type: string
+        scenario_id:
+          type: string
         status:
-          { enum: [WAITING, PROCESSING, AWAITING_REVIEW, FAILED, COMPLETED] }
+          enum:
+          - WAITING
+          - PROCESSING
+          - AWAITING_REVIEW
+          - FAILED
+          - COMPLETED
+          - EXPIRED
+          description: EXPIRED is a persisted abandoned-review transition. Its unfinished decision/audit stages
+            remain blocked; no human decision or successful audit stage is fabricated.
         case_id:
-          {
-            type: string,
-            description: Reserved identity; persistence is proven only by the completed case stage,
-          }
-        case_version: { type: integer, minimum: 0 }
-        created_at: { type: string, format: date-time }
-        updated_at: { type: string, format: date-time }
-        fictional: { const: true }
-        external_execution_enabled: { const: false }
+          type: string
+          description: Reserved identity; persistence is proven only by the completed case stage
+        case_version:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        fictional:
+          const: true
+        external_execution_enabled:
+          const: false
         source:
-          {
-            type: object,
-            description: Submitted fictional source history including explicitly excluded future evidence,
-          }
+          type: object
+          description: Submitted fictional source history including explicitly excluded future evidence
         artifacts:
-          {
-            type: object,
-            description: Immutable projection/snapshot,
-            score,
-            rules,
-            allocation and agent outputs; current case and human decision,
-          }
+          type: object
+          description: Immutable projection/snapshot, score, rules, allocation and agent outputs; current persisted
+            case and human decision, when produced.
         stages:
           type: array
           items:
             type: object
             required:
-              [
-                stage,
-                status,
-                producer,
-                attempt,
-                started_at,
-                completed_at,
-                duration_ms,
-                input_refs,
-                output_refs,
-                evidence,
-              ]
+            - stage
+            - status
+            - producer
+            - attempt
+            - started_at
+            - completed_at
+            - duration_ms
+            - input_refs
+            - output_refs
+            - evidence
             properties:
               stage:
-                {
-                  enum:
-                    [
-                      submission,
-                      publication,
-                      ingestion,
-                      snapshot,
-                      score,
-                      rules,
-                      allocation,
-                      case,
-                      agent,
-                      decision,
-                      audit,
-                    ],
-                }
+                enum:
+                - submission
+                - publication
+                - ingestion
+                - snapshot
+                - score
+                - rules
+                - allocation
+                - case
+                - agent
+                - decision
+                - audit
               status:
-                {
-                  enum:
-                    [
-                      waiting,
-                      processing,
-                      completed,
-                      abstained,
-                      blocked,
-                      failed,
-                    ],
-                }
-              producer: { type: string }
-              attempt: { type: integer, minimum: 0 }
-              started_at: { type: [string, "null"], format: date-time }
-              completed_at: { type: [string, "null"], format: date-time }
-              duration_ms: { type: [integer, "null"], minimum: 0 }
-              input_refs: { type: array, items: { type: string } }
-              output_refs: { type: array, items: { type: string } }
-              evidence: { type: object }
-              error: { type: object }
+                enum:
+                - waiting
+                - processing
+                - completed
+                - abstained
+                - blocked
+                - failed
+              producer:
+                type: string
+              attempt:
+                type: integer
+                minimum: 0
+              started_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              completed_at:
+                type:
+                - string
+                - 'null'
+                format: date-time
+              duration_ms:
+                type:
+                - integer
+                - 'null'
+                minimum: 0
+              input_refs:
+                type: array
+                items:
+                  type: string
+              output_refs:
+                type: array
+                items:
+                  type: string
+              evidence:
+                type: object
+              error:
+                type: object
+        expired_at:
+          type: string
+          format: date-time
+          description: Present after an actual abandoned-review expiry event.
+        environment:
+          const: local
+          description: Execution topology of this journey. Public HTTPS exposure is reported separately by
+            /session as public-preview.
+    ApiError:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        retry_after_seconds:
+          type: integer
+          minimum: 1
+    Session:
+      type: object
+      required:
+      - public_mode
+      - environment
+      - csrf_token
+      - session_tag
+      - expires_at
+      - limits
+      properties:
+        public_mode:
+          type: boolean
+        environment:
+          enum:
+          - local
+          - public-preview
+          description: Exposure context. public-preview currently executes the same local Docker workflow;
+            it does not imply cloud hosting.
+        csrf_token:
+          type:
+          - string
+          - 'null'
+          description: Required public-mutation header value; null when public mode is disabled. Never put
+            it in a URL.
+        session_tag:
+          type: string
+          description: Stable noncredential fingerprint for namespacing browser pending-request storage; local
+            when protections are disabled. It grants no run access.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Signed-cookie/database expiry; null when public mode is disabled.
+        limits:
+          type: object
+          required:
+          - submissions_per_hour
+          - polls_per_minute
+          - retries_per_hour
+          - concurrent_processing_runs
+          - retained_runs
+          - retention_hours
+          - abandoned_review_hours
+          properties:
+            submissions_per_hour:
+              type: integer
+              minimum: 1
+              default: 12
+            polls_per_minute:
+              type: integer
+              minimum: 1
+              default: 120
+            retries_per_hour:
+              type: integer
+              minimum: 1
+              default: 3
+            concurrent_processing_runs:
+              type: integer
+              minimum: 1
+              default: 2
+              description: Admission reservations for active processing or attempted publications awaiting
+                durable ingestion. A retry reuses its own reservation.
+            retained_runs:
+              type: integer
+              minimum: 1
+              default: 12
+            retention_hours:
+              type: integer
+              minimum: 1
+              default: 24
+            abandoned_review_hours:
+              type: integer
+              minimum: 1
+              default: 48
+  securitySchemes:
+    VisitorSession:
+      type: apiKey
+      in: cookie
+      name: __Host-inforsight_session
+      description: Signed, host-only, Secure, HttpOnly, SameSite=Strict cookie issued by session bootstrap.
+        A correlation ID or session_tag cannot replace it. Private HTTP-only validation may explicitly use
+        inforsight_session with secure cookies disabled; that configuration is not a public deployment.
+    CsrfToken:
+      type: apiKey
+      in: header
+      name: X-Demo-CSRF
+      description: Session-derived csrf_token returned by GET /session. Required together with the session
+        cookie and matching Origin on every public POST.
+security:
+- VisitorSession: []
+x-public-default-limits:
+  session_lifetime_seconds: 604800
+  submissions_per_hour:
+    per_session: 12
+    overall: 120
+  get_and_head_per_minute:
+    per_session: 120
+    overall: 1200
+  retries_per_hour:
+    per_session: 3
+    overall: 30
+  decision_requests_per_hour:
+    per_session: 30
+    overall: 180
+  all_requests_per_minute:
+    per_session: 240
+    overall: 2400
+  new_sessions_per_hour:
+    overall: 100
+  concurrent_processing_runs:
+    per_session: 2
+    overall: 8
+  retained_runs:
+    per_session: 12
+    overall: 200
+  notes: Durable PostgreSQL fixed-window counters and transactional capacity checks survive restart. Processing
+    capacity counts WAITING/PROCESSING plus attempted publications still awaiting a durable inbox even if the
+    run is FAILED; late broker delivery cannot revive an unreserved run. Retrying such a run reuses its reservation.
+    A score failure after durable ingestion releases processing capacity. All retained public runs count toward
+    retention caps. Replayed submissions do not consume another submission allowance but do count toward request
+    limits. Per-session limits are returned by /session; operator configuration can change quota/cap defaults.

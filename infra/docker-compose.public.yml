@@ -1,0 +1,177 @@
+# Isolated anonymous preview. Do not merge with docker-compose.yml: its development
+# credentials, ports and volumes intentionally do not belong to this deployment.
+# scripts/public_demo.py supplies paths to generated, local-only secret files.
+name: inforsight-public
+
+x-runtime: &runtime
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  kafka:
+    <<: *runtime
+    image: confluentinc/cp-kafka:7.6.0
+    mem_limit: 1g
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
+      # Offset-aware maintenance deletes only records no retained run or consumer
+      # needs. A time/size cutoff could discard work while the worker is offline.
+      KAFKA_LOG_RETENTION_HOURS: -1
+      KAFKA_LOG_RETENTION_BYTES: -1
+      KAFKA_LOG_SEGMENT_BYTES: 16777216
+      CLUSTER_ID: 'SW5mb3JzaWdodFB1YmxpYw'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:29092 >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [private]
+
+  postgres:
+    <<: *runtime
+    image: postgres:16-alpine
+    mem_limit: 512m
+    command: ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=40"]
+    environment:
+      POSTGRES_DB: inforsight_enterprise
+      POSTGRES_USER: inforsight_app
+      POSTGRES_PASSWORD_FILE: /run/secrets/INFORSIGHT_DB_PASSWORD
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - runtime_secrets:/run/secrets:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inforsight_app -d inforsight_enterprise"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [private]
+
+  inference-runtime:
+    <<: *runtime
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.inference
+    mem_limit: 384m
+    environment:
+      INFORSIGHT_INFERENCE_WORKERS: "1"
+      INFORSIGHT_MODEL_BUNDLE_PATH: /app/model/model-bundle.json
+      PYTHONDONTWRITEBYTECODE: "1"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+    networks: [private]
+
+  demo-runtime:
+    <<: *runtime
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.demo-runtime
+    mem_limit: 384m
+    environment:
+      INFORSIGHT_EXTERNAL_EXECUTION_ENABLED: "false"
+      PYTHONDONTWRITEBYTECODE: "1"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+    networks: [private]
+
+  control-plane:
+    <<: *runtime
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.control-plane
+    mem_limit: 1g
+    environment:
+      JAVA_OPTS: "-Xms128m -XX:MaxRAMPercentage=60 -Djava.security.egd=file:/dev/./urandom"
+      SPRING_PROFILES_ACTIVE: persistence
+      SPRING_CONFIG_IMPORT: configtree:/run/secrets/
+      INFORSIGHT_DB_URL: jdbc:postgresql://postgres:5432/inforsight_enterprise
+      INFORSIGHT_DB_USERNAME: inforsight_app
+      INFORSIGHT_EXTERNAL_EXECUTION_ENABLED: "false"
+      INFORSIGHT_AUTHORIZED_TO_ACT: "false"
+      INFORSIGHT_DEMO_ENABLED: "false"
+      INFORSIGHT_JOURNEY_ENABLED: "true"
+      INFORSIGHT_INFERENCE_TRANSPORT: http
+      INFORSIGHT_INFERENCE_BASE_URL: http://inference-runtime:8000
+      INFORSIGHT_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      INFORSIGHT_DEMO_RUNTIME_BASE_URL: http://demo-runtime:8001
+      INFORSIGHT_DEMO_PUBLIC_ENABLED: "true"
+      INFORSIGHT_DEMO_SESSION_SECRET_FILE: /run/secrets/demo_session_secret
+      INFORSIGHT_DEMO_COOKIE_SECURE: "true"
+      INFORSIGHT_DEMO_SUBMISSIONS_PER_HOUR: "12"
+      INFORSIGHT_DEMO_GLOBAL_SUBMISSIONS_PER_HOUR: "120"
+      INFORSIGHT_DEMO_POLLS_PER_MINUTE: "120"
+      INFORSIGHT_DEMO_GLOBAL_POLLS_PER_MINUTE: "1200"
+      INFORSIGHT_DEMO_RETRIES_PER_HOUR: "3"
+      INFORSIGHT_DEMO_GLOBAL_RETRIES_PER_HOUR: "30"
+      INFORSIGHT_DEMO_DECISIONS_PER_HOUR: "30"
+      INFORSIGHT_DEMO_GLOBAL_DECISIONS_PER_HOUR: "180"
+      INFORSIGHT_DEMO_CONCURRENT_RUNS: "2"
+      INFORSIGHT_DEMO_GLOBAL_CONCURRENT_RUNS: "8"
+      INFORSIGHT_DEMO_RETAINED_RUNS: "12"
+      INFORSIGHT_DEMO_GLOBAL_RETAINED_RUNS: "200"
+      INFORSIGHT_DEMO_GLOBAL_SESSIONS_PER_HOUR: "100"
+    volumes:
+      - runtime_secrets:/run/secrets:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
+      retries: 12
+    depends_on:
+      postgres: {condition: service_healthy}
+      kafka: {condition: service_healthy}
+      inference-runtime: {condition: service_healthy}
+      demo-runtime: {condition: service_healthy}
+    networks: [private]
+
+  frontend:
+    <<: *runtime
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    mem_limit: 128m
+    ports:
+      - "127.0.0.1:${INFORSIGHT_PUBLIC_PORT:-3100}:80"
+    depends_on:
+      control-plane: {condition: service_healthy}
+    networks: [private, gateway]
+
+networks:
+  private:
+    internal: true
+  gateway:
+    driver: bridge
+
+volumes:
+  kafka_data:
+  postgres_data:
+  # Initialized by the operator CLI: mode0400 owner100:101 inside Docker.
+  # Compose file-backed secret uid/mode remapping is not portable on Docker Desktop.
+  runtime_secrets:

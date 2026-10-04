@@ -1,18 +1,20 @@
 """Qualify the real Docker demo through its public HTTP gateway.
 
 No mocked clients or expected success payloads. The optional fault probes stop
-real containers belonging only to the inforsight-demo Compose project.
+real containers belonging only to the explicitly selected Compose project.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import http.cookiejar
 import json
 import sys
 import subprocess
 import time
 import urllib.error
 import urllib.request
+import urllib.parse
 import uuid
 from pathlib import Path
 
@@ -22,13 +24,41 @@ STAGES = ["submission", "publication", "ingestion", "snapshot", "score", "rules"
 
 
 class Qualification:
-    def __init__(self, base: str):
+    def __init__(self, base: str, *, compose_file="infra/docker-compose.yml", public=False, loopback_public=False):
         self.base = base.rstrip("/")
+        self.compose_file = str(ROOT / compose_file)
+        self.public = public
+        self.loopback_public = loopback_public
         self.results: list[dict] = []
         self.runs: list[str] = []
+        self.cookies = http.cookiejar.CookieJar()
+        self.http = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies))
+        self.csrf = None
+        self.session = None
+        if public:
+            parsed = urllib.parse.urlparse(self.base)
+            if parsed.scheme != "https" and not (loopback_public and parsed.hostname in ("localhost", "127.0.0.1")):
+                raise ValueError("Public qualification requires HTTPS; --loopback-public is only for private pre-exposure checks")
+            self.session = self.request("/api/v1/demo/session")
+            assert self.session["public_mode"] is True
+            self.csrf = self.session["csrf_token"]
+            assert len(self.csrf) >= 32
+            assert len(list(self.cookies)) == 1
+            cookie = next(iter(self.cookies))
+            assert cookie.secure and cookie.has_nonstandard_attr("HttpOnly")
 
-    def request(self, path: str, body=None, *, key=None, expected=(200, 201, 202)):
+    def request(self, path: str, body=None, *, key=None, expected=(200, 201, 202), csrf=True, origin=None, extra_headers=None):
         headers = {"Accept": "application/json"}
+        # The only HTTP exception is an explicitly selected loopback preflight.
+        # The server still sets Secure; the public HTTPS pass uses CookieJar normally.
+        if self.loopback_public:
+            headers["Cookie"] = "; ".join(f"{c.name}={c.value}" for c in self.cookies)
+        if body is not None and self.public:
+            headers["Origin"] = origin or self.base
+            if csrf and self.csrf:
+                headers["X-Demo-CSRF"] = self.csrf
+        if extra_headers:
+            headers.update(extra_headers)
         if key:
             headers["Idempotency-Key"] = key
         data = None if body is None else json.dumps(body).encode()
@@ -36,11 +66,14 @@ class Qualification:
             headers["Content-Type"] = "application/json"
         req = urllib.request.Request(self.base + path, data=data, headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=30) as response:
+            with self.http.open(req, timeout=30) as response:
                 code, raw = response.status, response.read()
         except urllib.error.HTTPError as error:
             code, raw = error.code, error.read()
-        parsed = json.loads(raw) if raw else {}
+        try:
+            parsed = json.loads(raw) if raw else {}
+        except ValueError:
+            parsed = {"gateway_message": raw.decode(errors="replace")[:256]}
         assert code in expected, (path, code, parsed)
         return parsed
 
@@ -63,7 +96,7 @@ class Qualification:
             last = self.get(rid)
             if predicate(last):
                 return last
-            time.sleep(0.2)
+            time.sleep(0.6 if self.public else 0.2)
         raise AssertionError(f"run {rid} did not reach expected state: {json.dumps(last)}")
 
     @staticmethod
@@ -85,22 +118,19 @@ class Qualification:
             "reviewer_id": "fictional-acceptance-reviewer",
         }, expected=expected)
 
-    @staticmethod
-    def compose(*args):
-        subprocess.run(["docker", "compose", "-f", str(ROOT / "infra/docker-compose.yml"), *args], cwd=ROOT, check=True)
+    def compose(self, *args):
+        subprocess.run(["docker", "compose", "-f", self.compose_file, *args], cwd=ROOT, check=True)
 
-    @staticmethod
-    def sql(statement, *, succeeds=True):
-        result = subprocess.run(["docker", "compose", "-f", str(ROOT / "infra/docker-compose.yml"), "exec", "-T", "postgres",
+    def sql(self, statement, *, succeeds=True):
+        result = subprocess.run(["docker", "compose", "-f", self.compose_file, "exec", "-T", "postgres",
             "psql", "-U", "inforsight_app", "-d", "inforsight_enterprise", "-At", "-c", statement],
             cwd=ROOT, capture_output=True, text=True)
         assert (result.returncode == 0) is succeeds, result.stderr
         return result.stdout.strip() if succeeds else result.stderr.strip()
 
-    @staticmethod
-    def kafka(*args, records=None):
+    def kafka(self, *args, records=None):
         """Use the real broker CLI; records go to stdin, never shell text."""
-        result = subprocess.run(["docker", "compose", "-f", str(ROOT / "infra/docker-compose.yml"),
+        result = subprocess.run(["docker", "compose", "-f", self.compose_file,
             "exec", "-T", "kafka", *args], cwd=ROOT, input=records, capture_output=True,
             text=True, timeout=45)
         assert result.returncode == 0, (args, result.stderr)
@@ -110,16 +140,21 @@ class Qualification:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", default="http://localhost:3000")
-    parser.add_argument("--faults", action="store_true", help="Interrupt only the dedicated demo containers to test recovery")
+    parser.add_argument("--faults", action="store_true", help="Interrupt only the selected dedicated Compose containers")
+    parser.add_argument("--compose-file", default="infra/docker-compose.yml")
+    parser.add_argument("--public", action="store_true", help="Require signed visitor session and same-origin CSRF")
+    parser.add_argument("--loopback-public", action="store_true", help="Allow private pre-exposure HTTP on loopback only")
     parser.add_argument("--output", default="artifacts/local-demo/acceptance.json")
     args = parser.parse_args()
-    q = Qualification(args.base_url)
-    report = {"local_result": "FAIL", "gcp_result": "FAIL — Planned; not deployed", "base_url": args.base_url, "checks": q.results, "runs": q.runs}
+    q = Qualification(args.base_url, compose_file=args.compose_file, public=args.public, loopback_public=args.loopback_public)
+    report = {"local_result": "FAIL", "gcp_result": "FAIL — Planned; not deployed", "public_result": "FAIL" if args.public else "NOT_RUN", "base_url": args.base_url, "compose_file": args.compose_file, "loopback_preflight": args.loopback_public, "checks": q.results, "runs": q.runs}
     output = ROOT / args.output
     output.parent.mkdir(parents=True, exist_ok=True)
     try:
         qualify(q, args.faults, report)
         report["local_result"] = "PASS"
+        if args.public:
+            report["public_result"] = "PASS_PRIVATE_PREFLIGHT" if args.loopback_public else "PASS"
     finally:
         output.write_text(json.dumps(report, indent=2) + "\n")
         print(f"Evidence: {output}", flush=True)
@@ -298,7 +333,7 @@ def fault_checks(q: Qualification):
         q.record("failed run and journal survive control-plane restart", rid)
     finally:
         q.compose("start", "inference-runtime")
-    wait_inference()
+    wait_inference(q)
     q.request(f"/api/v1/demo/runs/{rid}/retry", {})
     ready = q.ready(rid)
     assert ready["event_id"] == run["event_id"]
@@ -343,15 +378,15 @@ def wait_gateway(q):
     raise AssertionError("gateway did not recover")
 
 
-def wait_inference():
-    deadline = time.monotonic() + 30
+def wait_inference(q):
+    deadline = time.monotonic() + 45
     while time.monotonic() < deadline:
-        try:
-            with urllib.request.urlopen("http://localhost:8000/health", timeout=2) as response:
-                if json.load(response)["engine_status"] == "ready":
-                    return
-        except OSError:
-            time.sleep(.25)
+        result = subprocess.run(["docker", "compose", "-f", q.compose_file, "exec", "-T", "inference-runtime",
+            "python", "-c", "import json,urllib.request; assert json.load(urllib.request.urlopen('http://localhost:8000/health',timeout=2))['engine_status']=='ready'"],
+            cwd=ROOT, capture_output=True, text=True, timeout=10)
+        if result.returncode == 0:
+            return
+        time.sleep(.5)
     raise AssertionError("inference did not recover")
 
 

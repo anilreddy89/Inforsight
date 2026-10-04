@@ -57,9 +57,47 @@ export type ScenarioCatalog = {
   safe_inputs?: Evidence;
 };
 
-export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+export type VisitorSession = {
+  public_mode: boolean;
+  session_tag: string;
+  csrf_token: string | null;
+  expires_at: string | null;
+  environment: "local" | "public-preview";
+  limits: Record<string, number>;
+};
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly code: string,
+    readonly retryAfterSeconds = 0,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+export function asError(value: unknown): Error {
+  return value instanceof Error ? value : new Error(String(value));
+}
+export function requestTitle(error: Error): string {
+  if (!(error instanceof ApiError)) return "The connection needs attention";
+  if (error.status === 401) return "Your visitor session is unavailable";
+  if (error.status === 403) return "Your visitor session needs to be refreshed";
+  if (error.status === 404) return "This run is unavailable in this browser";
+  if (error.status === 410) return "This run’s retention period has ended";
+  if (error.status === 429) return "Please give the demo a moment";
+  if (error.code === "DEMO_CAPACITY") return "The preview is at capacity";
+  if (error.status >= 500) return "Demo services are temporarily unavailable";
+  return "The request could not be completed";
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/v1/demo${path}`, {
     ...init,
+    credentials: "same-origin",
+    cache: "no-store",
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
   const body = await response.text();
@@ -67,22 +105,53 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     data = body ? JSON.parse(body) : {};
   } catch {
-    throw new Error(
-      `The service returned an unreadable response (${response.status}).`,
+    throw new ApiError(
+      response.status >= 500
+        ? "The preview gateway cannot reach its services. Please try again shortly."
+        : `The service returned an unreadable response (${response.status}).`,
+      response.status,
+      "UNREADABLE_RESPONSE",
     );
   }
   if (!response.ok) {
     const value = data as Evidence;
-    throw new Error(
-      String(
-        value.message ??
-          value.detail ??
-          value.error ??
-          `Request failed (${response.status}).`,
-      ),
-    );
+    const retryHeader = response.headers.get("Retry-After");
+    const retrySeconds = retryHeader
+      ? (/^\d+$/.test(retryHeader) ? Number(retryHeader) : Math.max(0, (Date.parse(retryHeader) - Date.now()) / 1000))
+      : Number(value.retry_after_seconds ?? 0);
+    let message = String(value.message ?? value.detail ?? value.error ?? `Request failed (${response.status}).`);
+    if (response.status === 401 || response.status === 403)
+      message += " Reload the page to establish your visitor session. Clearing cookies removes access to earlier runs.";
+    if (response.status === 404)
+      message = "A correlation ID does not grant access. Use the browser and website address that created this run, with its original visitor cookie.";
+    if (response.status === 410)
+      message = "The backend has removed this temporary run under its retention policy. You can start a new fictional case.";
+    if (retrySeconds > 0)
+      message += ` Try again after ${new Date(Date.now() + retrySeconds * 1000).toLocaleTimeString()}. Your recorded stage evidence is unchanged.`;
+    throw new ApiError(message, response.status, String(value.code ?? "REQUEST_FAILED"), Number.isFinite(retrySeconds) ? retrySeconds : 0);
   }
   return data as T;
+}
+
+let visitorSession: Promise<VisitorSession> | undefined;
+export function getSession(): Promise<VisitorSession> {
+  // Cookie authentication stays HttpOnly; only the CSRF proof is held in memory.
+  visitorSession ??= request<VisitorSession>("/session").catch((error) => {
+    visitorSession = undefined;
+    throw error;
+  });
+  return visitorSession;
+}
+export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  const session = await getSession();
+  const mutating = init?.method && !["GET", "HEAD"].includes(init.method.toUpperCase());
+  return request<T>(path, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      ...(mutating && session.csrf_token ? { "X-Demo-CSRF": session.csrf_token } : {}),
+    },
+  });
 }
 
 export function text(value: unknown, fallback = "Not available"): string {
