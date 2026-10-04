@@ -215,8 +215,8 @@ case-bound advisory draft and human-review seam; the draft cannot authorize acti
 [PR #205](https://github.com/anilreddy89/Inforsight/pull/205), qualifying a
 repeatable local case-review demo. [P5-05](https://github.com/anilreddy89/Inforsight/issues/206)
 merged in [PR #207](https://github.com/anilreddy89/Inforsight/pull/207), adding the trusted fictional event/rules handoff and full local
-walkthrough. [P5-06](https://github.com/anilreddy89/Inforsight/issues/208) tracks integrated Phase 5 qualification and milestone closeout. Its [evidence record](Documents/phase_docs/phase-05-06-integrated-local-demo-qualification.md) shows a passing local replay; review and CI remain. Phase 6 owns the cloud
-demo; P4-07 enterprise-scale qualification remains open.
+walkthrough. [P5-06](https://github.com/anilreddy89/Inforsight/issues/208) completed integrated Phase 5 local qualification in [PR #210](https://github.com/anilreddy89/Inforsight/pull/210); milestone #7 is closed. Its [evidence record](Documents/phase_docs/phase-05-06-integrated-local-demo-qualification.md) shows the passing local replay and CI. Phase 6 owns the cloud
+demo, starting with [P6-01](https://github.com/anilreddy89/Inforsight/issues/212) under milestone #8; P4-07 enterprise-scale qualification remains open.
 
 For the fictional local P5-05 walkthrough, start
 `docker compose -f infra/docker-compose.yml up --build -d`, wait for the

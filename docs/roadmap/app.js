@@ -779,18 +779,18 @@ const timelineData = [
           tech: "Opt-in local event projection binds a server-owned rules result and versioned fictional procedure to a scored case snapshot; draft submission and human override checks enforce that binding.",
           simple: "Trace one fictional event through a scored case, cited assistant draft, human review, and verifiable audit without giving the assistant action authority."
         },
-        checks: "Issue #206 closed; PR #207 merged with required CI passing. Phase 5 milestone remains open pending P5-06 integrated qualification."
+        checks: "Issue #206 closed; PR #207 merged with required CI passing. P5-06 later qualified the integrated local demo; Phase 5 milestone #7 closed."
       },
       {
         id: "P5-06",
         title: "Integrated Phase 5 local demo qualification",
-        status: "In progress",
-        commit: "Issue #208; local qualification passed",
+        status: "Completed",
+        commit: "PR #210; c289713",
         summary: {
           tech: "Qualify the merged event-to-agent walkthrough on a clean checkout and record evidence, CI, review, and a milestone decision.",
           simple: "Check the complete fictional demo and decide whether Phase 5 can close."
         },
-        checks: "Issue #208 open; local tests and Compose replay passed on d8b193c. Review and CI remain before the Phase 5 milestone decision."
+        checks: "Issue #208 closed; PR #210 merged, all 25 required CI checks passed, and Phase 5 milestone #7 closed. P4-07 scale and Phase 6 cloud work remain separate."
       }
     ]
   }
