@@ -329,6 +329,10 @@ export default function App() {
   const [catalog, setCatalog] = useState<ScenarioCatalog | null>(null);
   const [catalogError, setCatalogError] = useState<Error | null>(null);
   const [session, setSession] = useState<VisitorSession | null>(null);
+  const [cookieNoticeDismissed, setCookieNoticeDismissed] = useState(
+    () => stored<boolean>("inforsight.cookie-notice.v1") === true,
+  );
+  const cookieNoticeLink = useRef<HTMLButtonElement>(null);
   const [error, setError] = useState<Error | null>(null);
   const [busy, setBusy] = useState(false);
   const [connection, setConnection] = useState<
@@ -1201,11 +1205,46 @@ export default function App() {
         <span>
           Fictional policies · advisory recommendations · human authority
         </span>
+        {session?.public_mode && (
+          <button
+            ref={cookieNoticeLink}
+            className="text-link"
+            onClick={() => {
+              remember("inforsight.cookie-notice.v1", null);
+              setCookieNoticeDismissed(false);
+            }}
+          >
+            Cookie notice
+          </button>
+        )}
         <button className="text-link" onClick={() => setView("architecture")}>
           System architecture
           <ArrowUpRight size={13} />
         </button>
       </footer>
+      {session?.public_mode && !cookieNoticeDismissed && (
+        <section className="cookie-notice" aria-label="Cookie notice">
+          <div className="cookie-notice-inner content-width">
+            <LockKeyhole size={22} aria-hidden="true" />
+            <p>
+              <strong>A cookie keeps your fictional cases private.</strong>
+              Inforsight uses an essential session cookie to protect your runs and
+              let you resume them in this browser. It lasts up to seven days;
+              cases may expire sooner. Clearing the cookie removes access to your runs.
+            </p>
+            <button
+              className="button primary"
+              onClick={() => {
+                remember("inforsight.cookie-notice.v1", true);
+                setCookieNoticeDismissed(true);
+                cookieNoticeLink.current?.focus({ preventScroll: true });
+              }}
+            >
+              Got it
+            </button>
+          </div>
+        </section>
+      )}
     </>
   );
 }
