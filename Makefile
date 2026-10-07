@@ -336,3 +336,18 @@ contract-test:
 
 simulator-test:
 	$(PYTHON) -m unittest discover -s simulator/tests -v
+
+.PHONY: traffic-dashboard traffic-check
+traffic-dashboard:
+	python3 scripts/traffic_dashboard.py
+
+traffic-check:
+	python3 -m unittest discover -s scripts/tests -p test_traffic_dashboard.py -v
+	python3 scripts/tests/check_traffic_gateway.py
+
+.PHONY: traffic-docker-check
+traffic-docker-check:
+	python3 -m unittest discover -s scripts/tests -p 'test_*traffic*.py' -v
+	docker build -f infra/docker/Dockerfile.traffic -t inforsight-traffic-test-dashboard .
+	docker build -f frontend/Dockerfile -t inforsight-traffic-test-frontend .
+	python3 scripts/tests/check_traffic_docker.py

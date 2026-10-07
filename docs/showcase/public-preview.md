@@ -1,9 +1,9 @@
 # Anonymous public visitor preview
 
-The public preview runs the real six-service journey in a separate
+The public preview runs the real six-service journey plus a local traffic dashboard in a separate
 `inforsight-public` Docker Compose project. It does not reuse the local
-`inforsight-demo` database, Kafka volumes, or development password. The only
-published host port is the frontend gateway, bound to `127.0.0.1:3100`.
+`inforsight-demo` database, Kafka volumes, or development password. The frontend gateway binds to `127.0.0.1:3100`; the traffic dashboard binds
+to `127.0.0.1:3111`. Only the gateway is forwarded by Cloudflare.
 
 Internet HTTPS → Cloudflare → outbound `cloudflared` on the Mac → loopback
 Nginx/React gateway → private Java control plane → private Kafka, PostgreSQL,
@@ -139,8 +139,8 @@ to make a local test pass.
 
 ## Backup and restore
 
-The backup command stops all six services for a consistent cold snapshot of
-both Kafka and PostgreSQL and resumes them in a `finally` block. In-flight work
+The backup command stops all services for a consistent cold snapshot of
+Kafka, PostgreSQL, traffic logs, and the traffic SQLite database and resumes them in a `finally` block. In-flight work
 resumes from durable state on startup. Visitors see an unavailable response
 during this maintenance window. It also copies the matching database/signing
 secrets and records SHA-256 checksums. Store this sensitive directory outside
@@ -156,7 +156,7 @@ python3 scripts/check_public_backup.py --restore-state "$HOME/.local/share/infor
 ```
 
 Restore refuses existing target volumes. This avoids overwriting the preview
-or the previously verified local stack. It pins all six services to the
+or the previously verified local stack. It pins all recorded services to the
 backup manifest's recorded local Docker image IDs, and refuses restoration if
 an image is missing. Docker can replace an image index when only its build
 attestation changes; the recorder accepts such an index only after verifying
@@ -207,7 +207,9 @@ make public-rebuild # Build and publish the current checked-out code
 `sudo`; it waits for the public session endpoint. Do not use `tunnel-start`
 for the named hostname: that command creates a temporary Quick Tunnel.
 
-`public-start` reuses existing images. After a code change, `public-rebuild`
+`public-start` reuses existing images after a one-time traffic upgrade: if the
+gateway lacks file logging or the dashboard image is missing, it builds those
+images before starting the stack. It never rebuilds image-pinned restores. After a code change, `public-rebuild`
 builds the images from the current branch (including React assets), updates
 containers, waits for their health checks, enables the named tunnel and
 maintenance job if necessary, and checks the public session endpoint. It keeps
@@ -240,3 +242,78 @@ Remove the private state and backup directories only after deciding no recovery
 is needed. If a named tunnel was created later, remove only its selected DNS
 record and tunnel, never the shared Cloudflare zone. No paid resource exists
 in this preview to leave accruing charges.
+
+## Local traffic dashboard
+
+`make public-start` starts the dashboard and collector with the app. Open
+**http://127.0.0.1:3111** on the Docker host; no login is required. The first
+start builds the dashboard and upgrades the frontend image if file logging is
+not installed. Subsequent starts reuse those images; `make public-rebuild`
+rebuilds all services. `make public-stop` stops the dashboard too. No change to
+Cloudflare routing is needed, and port 3111 must never be forwarded publicly.
+
+The new `traffic-dashboard` image runs as UID 10001 with a read-only root
+filesystem, all Linux capabilities dropped, and no Docker socket or app secrets.
+It is on a separate analytics network, not the frontend or backend networks.
+Only its host loopback port is published. Host and browser fetch-metadata checks
+reject DNS rebinding and cross-site browser requests. Local OS users/processes
+can still access it; this is a local-only dashboard, not a per-user login boundary.
+
+Two project-scoped named volumes persist through restarts, rebuilds, and
+`compose down`:
+
+- `traffic_data`: SQLite counts and deduplication records, writable only by the
+  dashboard service.
+- `traffic_logs`: gateway traffic logs, mounted read-only by the dashboard.
+
+The gateway emits timestamp, random request ID, and schema version only. It
+counts successful HTML GET requests to `/` (including query/run links) and
+`/index.html`, with HTTP 200 or 304. Refreshes and bots can count. API polling,
+assets, health checks, other paths, HEAD requests, and in-app navigation do not.
+These are **page views, not unique people**. No visitor login or analytics cookie
+is added. Traffic records contain no IPs, query strings, cookies, referrers, or
+user agents; upstream Cloudflare and nginx error logs have separate behavior.
+
+The collector reads the shared logs every 30 seconds. Refresh the dashboard to
+see new counts. Deduplication prevents re-counting after restarts and rotations.
+It retains request IDs for 30 days and hourly counts for 365 days; cleanup runs
+on successful collection. The gateway checks rotation every minute, rotating at
+1 MB with 30 archives. The active file can exceed 1 MB between checks. Shared
+logs survive gateway recreation, so collection can catch up after downtime until
+the retained logs are exhausted. No traffic before instrumentation is available,
+and gaps are not reconstructed or represented as proven zero usage.
+
+The public backup/restore command includes both analytics volumes alongside
+Kafka/PostgreSQL. `compose down --volumes` deletes them, like all other app data.
+Older six-service backups remain restorable with their pinned images and without
+the dashboard. Upgrade them deliberately after preserving a backup; do not
+silently substitute new images into an image-pinned restore.
+
+The default display timezone is America/New_York. For an alternate public app
+port, the operator selects that port plus 11 for analytics (e.g. 3102 → 3113).
+Set `INFORSIGHT_TRAFFIC_PORT` to override, using the same setting for startup,
+validation, and backup. The port must differ from the app port. Direct Compose
+usage requires `COMPOSE_PROFILES=traffic`; the operator commands set it for you.
+
+If the deployment moves to a remote host, access the dashboard through SSH:
+
+```sh
+ssh -N -L 3111:127.0.0.1:3111 your-server
+```
+
+The optional host Python collector remains available through
+`make traffic-dashboard`, with its own independent database under
+`~/.local/share/inforsight-traffic/`. Stop that collector before starting the
+Docker dashboard on the same port. Existing host-collected counts are not
+imported automatically; the Docker dashboard starts from retained shared logs.
+
+Verify without touching the deployed stack:
+
+```sh
+make traffic-check        # Python tests and isolated nginx filtering check
+make traffic-docker-check # Build images; test isolated Compose startup and persistence
+```
+
+The Docker check recreates its own gateway and dashboard, verifies retained
+counts/logs and rotation, checks loopback publishing and isolation, then removes
+only its test containers and volumes.

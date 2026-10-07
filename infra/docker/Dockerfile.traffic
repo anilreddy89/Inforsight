@@ -1,0 +1,11 @@
+FROM python:3.13-alpine
+LABEL com.inforsight.traffic.dashboard.version="1"
+RUN apk add --no-cache tzdata \
+    && addgroup -g 10001 traffic && adduser -D -u 10001 -G traffic traffic \
+    && mkdir /data && chown traffic:traffic /data
+WORKDIR /app
+COPY scripts/traffic_dashboard.py /app/traffic_dashboard.py
+USER 10001:10001
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+EXPOSE 3111
+CMD ["python", "/app/traffic_dashboard.py", "--container", "--log-dir", "/traffic", "--state-dir", "/data"]
