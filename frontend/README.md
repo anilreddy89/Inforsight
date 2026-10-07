@@ -40,3 +40,45 @@ The repository Compose file builds `frontend/Dockerfile` from the repository roo
 
 The root acceptance scripts exercise the real public gateway and backend. Build
 success alone is not journey acceptance.
+
+## Transaction flow
+
+Open **Transaction flow** from any case, or follow the **Explore transaction flow**
+button in Live journey. The view is also addressable with `?run=<id>&view=flow`.
+Its component map follows the eleven persisted checkpoints with selectable
+handoffs, input/output evidence, recorded durations, zoom, and drag-to-pan.
+The inspector can follow the current checkpoint or stay on a selected component.
+
+Live updates share the existing serial polling; no new requests or workflow
+actions are issued by the visualization. Connections describe workflow order.
+Payload inspection resolves recorded references and stage outputs, rather than
+claiming to capture HTTP or Kafka messages. Missing evidence stays unavailable.
+
+Replay freezes the current record, walks only checkpoints with persisted
+timestamps, and continues receiving live updates in the background. Playback is
+illustrative, not to scale; return to live to inspect newer evidence. Reduced
+motion disables animated packets and starts replay paused. Keyboard users can
+move between graph components with arrow keys and operate the timeline, payload
+tabs, and replay slider.
+
+Run isolated UI contract and accessibility tests with `npm run test:flow`.
+With the local Docker backend available on port 8080, run
+`INFORSIGHT_FLOW_LIVE=1 npm run test:flow` to include a real-backend smoke test.
+The test server uses port 4173. Test fixtures exist only in the test suite.
+
+## Recent runs
+
+The **Recent runs** button beside **Resume a previous run** opens a searchable
+browser history. It keeps up to 20 successfully created or opened cases in
+`localStorage`, ordered by last visit, and synchronizes across tabs. Each entry
+contains only the correlation ID, scenario, last known status, and timestamps;
+case evidence, payloads, and credentials are never saved in the history.
+
+History is scoped to the current visitor session and website origin. Opening a
+saved entry uses the normal authenticated run endpoint. Removed or unavailable
+runs are labeled after an unsuccessful open; removing an entry or clearing the
+list does not delete backend cases. Storage failures fall back to in-tab history.
+Earlier runs cannot be backfilled automatically: history starts when this feature
+is used, including when an older run is reopened from a saved URL or ID.
+
+Run focused checks with `npx playwright test tests/recent-runs.spec.ts`.

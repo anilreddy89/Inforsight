@@ -63,8 +63,11 @@ import {
   type StageStatus,
   type VisitorSession,
 } from "./api";
+import TransactionFlow from "./TransactionFlow";
+import RecentRuns from "./RecentRuns";
+import { useRecentRuns } from "./recent-runs";
 
-type View = "journey" | "dossier" | "review" | "audit" | "architecture";
+type View = "journey" | "flow" | "dossier" | "review" | "audit" | "architecture";
 function stored<T>(key: string): T | null {
   try {
     const value = sessionStorage.getItem(key);
@@ -168,6 +171,7 @@ const stageInfo: Record<
 const orderedStages = Object.keys(stageInfo);
 const views: { id: View; label: string; icon: LucideIcon }[] = [
   { id: "journey", label: "Live journey", icon: GitBranch },
+  { id: "flow", label: "Transaction flow", icon: Activity },
   { id: "dossier", label: "Case dossier", icon: FileText },
   { id: "review", label: "Human review", icon: FileCheck2 },
   { id: "audit", label: "Audit trail", icon: Fingerprint },
@@ -325,7 +329,9 @@ export default function App() {
   );
   const [runId, setRunId] = useState(initialId);
   const [run, setRun] = useState<Run | null>(null);
-  const [view, setView] = useState<View>("journey");
+  const [view, setView] = useState<View>(() =>
+    new URLSearchParams(window.location.search).get("view") === "flow" ? "flow" : "journey",
+  );
   const [catalog, setCatalog] = useState<ScenarioCatalog | null>(null);
   const [catalogError, setCatalogError] = useState<Error | null>(null);
   const [session, setSession] = useState<VisitorSession | null>(null);
@@ -345,10 +351,25 @@ export default function App() {
     JSON.stringify(pendingSubmission.current?.overrides ?? {}, null, 2),
   );
   const [resume, setResume] = useState("");
+  const [recentOpen, setRecentOpen] = useState(false);
+  const recentRuns = useRecentRuns(run?.correlation_id === runId ? run : null, session);
   const [audit, setAudit] = useState<Audit | null>(null);
   const [auditBusy, setAuditBusy] = useState(false);
   const submissionKey = useRef(pendingSubmission.current?.key ?? "");
   const requestSequence = useRef(0);
+
+  useEffect(() => {
+    if (runId && error instanceof ApiError && [404, 410].includes(error.status)) {
+      recentRuns.markUnavailable(runId, error.status);
+    }
+  }, [runId, error, recentRuns.markUnavailable]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (view === "flow") url.searchParams.set("view", "flow");
+    else url.searchParams.delete("view");
+    window.history.replaceState({}, "", url);
+  }, [view]);
 
   const loadCatalog = useCallback(async () => {
     try {
@@ -435,13 +456,19 @@ export default function App() {
       setRun(null);
       setAudit(null);
       setRunId(nextId);
+      setView(new URLSearchParams(window.location.search).get("view") === "flow" ? "flow" : "journey");
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, [runId]);
   const openRun = (id: string) => {
+    requestSequence.current++;
+    setError(null);
+    setRun((previous) => previous?.correlation_id === id ? previous : null);
+    setRecentOpen(false);
     const url = new URL(window.location.href);
     url.searchParams.set("run", id);
+    url.searchParams.delete("view");
     window.history.pushState({}, "", url);
     setRunId(id);
     setView("journey");
@@ -450,6 +477,7 @@ export default function App() {
   const goHome = () => {
     const url = new URL(window.location.href);
     url.searchParams.delete("run");
+    url.searchParams.delete("view");
     window.history.pushState({}, "", url);
     setRunId("");
     setRun(null);
@@ -882,11 +910,24 @@ export default function App() {
                     if (resume.trim()) openRun(resume.trim());
                   }}
                 >
-                  <label htmlFor="resume">
-                    <RotateCcw size={16} />
-                    Resume a previous run
-                  </label>
-                  <div>
+                  <div className="resume-heading">
+                    <label htmlFor="resume">
+                      <RotateCcw size={16} />
+                      Resume a previous run
+                    </label>
+                    <button
+                      type="button"
+                      className="recent-runs-trigger"
+                      aria-haspopup="dialog"
+                      disabled={!session}
+                      onClick={() => setRecentOpen(true)}
+                    >
+                      <Clock3 size={15} />
+                      Recent runs
+                      {recentRuns.entries.length > 0 && <span className="recent-runs-trigger-count">{recentRuns.entries.length}</span>}
+                    </button>
+                  </div>
+                  <div className="resume-inputs">
                     <input
                       id="resume"
                       value={resume}
@@ -1033,6 +1074,14 @@ export default function App() {
               </Empty>
             ) : (
               <>
+                {view === "flow" && (
+                  <TransactionFlow
+                    key={run.correlation_id}
+                    run={run}
+                    connection={connection}
+                    onReview={() => setView("review")}
+                  />
+                )}
                 {view === "journey" && (
                   <div className="journey-layout">
                     <Panel
@@ -1062,6 +1111,14 @@ export default function App() {
                     </Panel>
                     <aside className="journey-sidebar">
                       <Panel title="Your case at a glance" icon={FileText}>
+                        <button
+                          className="button secondary full flow-entry-button"
+                          onClick={() => setView("flow")}
+                        >
+                          <Activity size={16} />
+                          Explore transaction flow
+                          <ArrowRight size={15} />
+                        </button>
                         <dl>
                           <Fact
                             label="Scenario"
@@ -1222,6 +1279,16 @@ export default function App() {
           <ArrowUpRight size={13} />
         </button>
       </footer>
+      <RecentRuns
+        open={recentOpen}
+        entries={recentRuns.entries}
+        persistent={recentRuns.persistent}
+        titleFor={(id) => scenarioCopy.find((scenario) => scenario.id === id)?.title ?? words(id)}
+        onDismiss={() => setRecentOpen(false)}
+        onOpen={openRun}
+        onRemove={recentRuns.remove}
+        onClear={recentRuns.clear}
+      />
       {session?.public_mode && !cookieNoticeDismissed && (
         <section className="cookie-notice" aria-label="Cookie notice">
           <div className="cookie-notice-inner content-width">
