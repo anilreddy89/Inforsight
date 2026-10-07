@@ -53,6 +53,10 @@ On the host Mac, use `make public-start`, `make public-stop`, and
 `make public-status` to manage the entire live preview at
 <https://inforsight.aniljonnala.fyi>. These targets preserve its data;
 `public-start` requires Docker Desktop and local administrator access.
+After changing code, run `make public-rebuild` to build the current branch,
+update the containers, start the named tunnel if needed, and check the public
+URL. Docker installs frontend dependencies and builds React inside the image;
+no separate local `npm run build` is required. Refresh your browser afterward.
 
 > **First falsifiable claim**: Can we generate a realistic fictional in-force policy timeline and predict which active policies are likely to lapse within 90 days — using only information available on the observation date?
 

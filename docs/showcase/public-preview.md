@@ -200,11 +200,21 @@ do not restart on reboot, and preserves Docker volumes and secret files:
 make public-status
 make public-stop
 make public-start
+make public-rebuild # Build and publish the current checked-out code
 ```
 
 `start` needs Docker Desktop running and a local administrator password for
 `sudo`; it waits for the public session endpoint. Do not use `tunnel-start`
 for the named hostname: that command creates a temporary Quick Tunnel.
+
+`public-start` reuses existing images. After a code change, `public-rebuild`
+builds the images from the current branch (including React assets), updates
+containers, waits for their health checks, enables the named tunnel and
+maintenance job if necessary, and checks the public session endpoint. It keeps
+volumes and secrets; visitors may see brief unavailability during replacement.
+Refresh the browser to load the updated assets. This is a build/start/health
+command, not the full end-to-end acceptance suite. It refuses an image-pinned
+restore deployment so an upgrade cannot silently bypass its recovery boundary.
 
 ## Stop and teardown
 
