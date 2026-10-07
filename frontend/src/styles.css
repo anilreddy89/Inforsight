@@ -711,6 +711,51 @@ textarea:disabled {
   font-size: 11px;
   color: #536680;
 }
+.cookie-notice {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  padding: 18px 0 calc(18px + env(safe-area-inset-bottom, 0px));
+  background: #fff;
+  border-top: 1px solid #dce4f1;
+  box-shadow: 0 -4px 20px #1b315112;
+}
+.cookie-notice-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.cookie-notice-inner > svg {
+  flex-shrink: 0;
+  color: #52647e;
+}
+.cookie-notice p {
+  flex: 1;
+  margin: 0;
+  color: #52647e;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.cookie-notice strong {
+  display: block;
+  color: #1b3151;
+  margin-bottom: 3px;
+}
+.cookie-notice .button {
+  flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  .cookie-notice-inner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .cookie-notice-inner > svg {
+    display: none;
+  }
+  .cookie-notice p {
+    flex-basis: 100%;
+  }
+}
 .workspace {
   padding-top: 32px;
   min-height: 75vh;

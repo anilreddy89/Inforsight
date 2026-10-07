@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Start, stop, or inspect the Mac-hosted public preview without deleting data.
+# Build, start, stop, or inspect the Mac-hosted preview without deleting data.
 set -euo pipefail
 
 cd "${0:A:h}/.."
@@ -28,12 +28,20 @@ case "${1:-}" in
     python3 scripts/public_demo.py down
     print 'Public demo stopped. Docker volumes and secrets were preserved.'
     ;;
-  start)
+  start|rebuild)
     docker info >/dev/null
     test -f "$tunnel_plist"
     test -f "$maintenance_plist"
+    if [[ "$1" == rebuild && -f "$HOME/.local/share/inforsight-public/restore-images.json" ]]; then
+      print -u2 'This deployment is pinned to restored images. Follow the backup/upgrade runbook before rebuilding.'
+      exit 1
+    fi
     sudo -v
-    python3 scripts/public_demo.py up --no-build
+    if [[ "$1" == rebuild ]]; then
+      python3 scripts/public_demo.py up
+    else
+      python3 scripts/public_demo.py up --no-build
+    fi
     launchctl enable "$maintenance_target"
     if ! loaded "$maintenance_target"; then
       launchctl bootstrap "gui/$(id -u)" "$maintenance_plist"
@@ -70,7 +78,7 @@ case "${1:-}" in
     print "Public URL: unavailable ($host)"
     ;;
   *)
-    print -u2 'Usage: scripts/public_site.sh {start|stop|status}'
+    print -u2 'Usage: scripts/public_site.sh {start|rebuild|stop|status}'
     exit 2
     ;;
 esac

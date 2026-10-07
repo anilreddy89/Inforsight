@@ -21,9 +21,12 @@ demo-browser-check:
 
 # Mac-hosted live site: named Cloudflare tunnel, maintenance job, and the
 # isolated inforsight-public Compose project. These targets preserve data.
-.PHONY: public-start public-stop public-status
+.PHONY: public-start public-rebuild public-stop public-status
 public-start:
 	./scripts/public_site.sh start
+
+public-rebuild:
+	./scripts/public_site.sh rebuild
 
 public-stop:
 	./scripts/public_site.sh stop
