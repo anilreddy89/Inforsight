@@ -28,7 +28,8 @@ COMPOSE = ROOT / "infra/docker-compose.public.yml"
 DEFAULT_STATE = Path.home() / ".local/share/inforsight-public"
 TOPIC = "inforsight.demo.events.v1"
 GROUP = "inforsight-demo-journey-v1"
-SERVICES = ("kafka", "postgres", "inference-runtime", "demo-runtime", "control-plane", "frontend")
+SERVICES = ("kafka", "postgres", "inference-runtime", "demo-runtime", "control-plane", "frontend", "traffic-dashboard")
+DATA_VOLUMES = ("postgres_data", "kafka_data", "traffic_data", "traffic_logs")
 
 
 def command(args, *, capture=False, check=True, **kwargs):
@@ -49,10 +50,27 @@ class Preview:
         if project == "inforsight-demo" or not re.fullmatch(r"inforsight-public(?:-[a-z0-9-]+)?", project):
             raise SystemExit("Refusing to operate on anything except an isolated inforsight-public project.")
 
+    def services(self):
+        restored = self.state / "restore-images.json"
+        if restored.exists():
+            return tuple(json.loads(restored.read_text())["services"])
+        return SERVICES
+
+    def data_volumes(self):
+        return DATA_VOLUMES if "traffic-dashboard" in self.services() else DATA_VOLUMES[:2]
+
+    def traffic_port(self):
+        port = int(os.environ.get("INFORSIGHT_TRAFFIC_PORT", self.settings["port"] + 11))
+        if not 1024 <= port <= 65535 or port == self.settings["port"]:
+            raise SystemExit("Set INFORSIGHT_TRAFFIC_PORT to a distinct port in 1024..65535.")
+        return port
+
     def env(self):
         self.require()
         return {**os.environ, "INFORSIGHT_PUBLIC_SECRET_DIR": str(self.state / "secrets"),
-                "INFORSIGHT_PUBLIC_PORT": str(self.settings["port"])}
+                "INFORSIGHT_PUBLIC_PORT": str(self.settings["port"]),
+                "INFORSIGHT_TRAFFIC_PORT": str(self.traffic_port()),
+                "COMPOSE_PROFILES": "traffic" if "traffic-dashboard" in self.services() else ""}
 
     def compose(self, *args, **kwargs):
         self.require()
@@ -89,16 +107,23 @@ class Preview:
 
     def validate(self):
         config = json.loads(self.compose("config", "--format", "json", capture=True).stdout)
-        assert set(config["services"]) == set(SERVICES)
+        assert set(config["services"]) == set(self.services())
         for name, service in config["services"].items():
             assert service["restart"] == "unless-stopped", name
             assert int(service["mem_limit"]) > 0, name
             ports = service.get("ports", [])
-            if name == "frontend":
+            if name in ("frontend", "traffic-dashboard"):
                 assert len(ports) == 1 and ports[0]["host_ip"] == "127.0.0.1"
             else:
                 assert not ports, f"Private service has published ports: {name}"
                 assert set(service["networks"]) == {"private"}, name
+        if "traffic-dashboard" in self.services():
+            dashboard = config["services"]["traffic-dashboard"]
+            assert set(dashboard["networks"]) == {"analytics"}
+            assert dashboard["read_only"] is True and dashboard["cap_drop"] == ["ALL"]
+            mounts = {v["target"]: v for v in dashboard["volumes"]}
+            assert set(mounts) == {"/data", "/traffic"}
+            assert mounts["/traffic"]["read_only"] is True
         assert config["networks"]["private"]["internal"] is True
         env = config["services"]["control-plane"]["environment"]
         assert env["INFORSIGHT_DEMO_PUBLIC_ENABLED"] == "true"
@@ -112,9 +137,25 @@ class Preview:
         print("PASS isolated topology, private service ports, authority flags, resource limits and secret permissions")
         return config
 
+    def ensure_traffic_images(self):
+        # Upgrade the gateway once to add file logging, and build the new sidecar.
+        # Pinned restores must never silently substitute newer images.
+        if (self.state / "restore-images.json").exists():
+            return
+        for service, label, version in (
+                ("frontend", "com.inforsight.traffic.version", "2"),
+                ("traffic-dashboard", "com.inforsight.traffic.dashboard.version", "1")):
+            result = command(["docker", "image", "inspect", self.settings["project"] + "-" + service],
+                             capture=True, check=False)
+            images = json.loads(result.stdout) if result.returncode == 0 else []
+            if not images or (images[0]["Config"].get("Labels") or {}).get(label) != version:
+                self.compose("build", service)
+
     def up(self, build=True):
         self.validate()
         self.provision_secrets()
+        if not build:
+            self.ensure_traffic_images()
         args = ["up", "-d", "--wait", "--wait-timeout", "180"]
         if build and not (self.state / "restore-images.json").exists():
             args.append("--build")
@@ -233,13 +274,18 @@ chown -R 100:101 /target
     def validate_runtime(self):
         ids = self.compose("ps", "-q", capture=True).stdout.split()
         items = json.loads(command(["docker", "inspect", *ids], capture=True).stdout) if ids else []
-        assert len(items) == len(SERVICES), "All six services must be running before public exposure."
+        assert len(items) == len(self.services()), "All configured services must be running before public exposure."
         for item in items:
             service = item["Config"]["Labels"]["com.docker.compose.service"]
             assert item["State"].get("Health", {}).get("Status") == "healthy", service
             ports = item["HostConfig"]["PortBindings"] or {}
             if service == "frontend":
                 assert ports == {"80/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(self.settings["port"])}]}
+            elif service == "traffic-dashboard":
+                assert ports == {"3111/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(self.traffic_port())}]}
+                assert set(item["NetworkSettings"]["Networks"]) == {self.settings["project"] + "_analytics"}
+                assert item["HostConfig"]["ReadonlyRootfs"] is True
+                assert item["Config"]["User"] == "10001:10001"
             else:
                 assert not ports, f"Private runtime publishes a port: {service}"
                 assert set(item["NetworkSettings"]["Networks"]) == {self.settings["project"] + "_private"}, service
@@ -340,7 +386,7 @@ chown -R 100:101 /target
         destination.chmod(0o700)
         self.compose("stop", "-t", "40")
         try:
-            for name in ("postgres_data", "kafka_data"):
+            for name in self.data_volumes():
                 volume = self.settings["project"] + "_" + name
                 command(["docker", "run", "--rm", "--network", "none", "--user", "0",
                          "-v", f"{volume}:/source:ro", "-v", f"{destination}:/backup",
@@ -364,18 +410,20 @@ chown -R 100:101 /target
         info = json.loads((source / "backup.json").read_text())
         manifest = json.loads((source / "deployment-manifest.json").read_text())
         components = manifest["components"]
-        if {c["service"] for c in components} != set(SERVICES):
-            raise SystemExit("Backup must record all six runtime images.")
+        recorded_services = {c["service"] for c in components}
+        if recorded_services not in (set(SERVICES), set(SERVICES) - {"traffic-dashboard"}):
+            raise SystemExit("Backup must record all runtime images (legacy six-service backups are supported).")
+        volumes = DATA_VOLUMES if "traffic-dashboard" in recorded_services else DATA_VOLUMES[:2]
         for component in components:
             image_id = component["image_id"]
             if not re.fullmatch(r"sha256:[0-9a-f]{64}", image_id):
                 raise SystemExit("Invalid recorded image identity.")
             if command(["docker", "image", "inspect", image_id], capture=True, check=False).returncode != 0:
                 raise SystemExit("Load the backup's recorded Docker images before restoring its volumes.")
-        if set(info["checksums"]) != {"postgres_data.tgz", "kafka_data.tgz"}:
-            raise SystemExit("Backup must contain both PostgreSQL and Kafka archives.")
+        if set(info["checksums"]) != {name + ".tgz" for name in volumes}:
+            raise SystemExit("Backup must contain every runtime data volume archive.")
         for name, checksum in info["checksums"].items():
-            if name not in ("postgres_data.tgz", "kafka_data.tgz"):
+            if name not in {volume + ".tgz" for volume in volumes}:
                 raise SystemExit("Unexpected backup member.")
             assert hashlib.sha256((source / name).read_bytes()).hexdigest() == checksum, name
             with tarfile.open(source / name, "r:gz") as archive:
@@ -383,12 +431,12 @@ chown -R 100:101 /target
                     paths = [member.name] + ([member.linkname] if member.issym() or member.islnk() else [])
                     if member.isdev() or any(Path(p).is_absolute() or ".." in Path(p).parts for p in paths):
                         raise SystemExit("Backup contains an unsafe archive path or device.")
-        for name in ("postgres_data", "kafka_data"):
+        for name in volumes:
             volume = self.settings["project"] + "_" + name
             probe = command(["docker", "volume", "inspect", volume], capture=True, check=False)
             if probe.returncode == 0:
                 raise SystemExit(f"Refusing to replace existing volume {volume}. Initialize a fresh restore project/state directory.")
-        for name in ("postgres_data", "kafka_data"):
+        for name in volumes:
             volume = self.settings["project"] + "_" + name
             command(["docker", "volume", "create", "--label", "com.docker.compose.project=" + self.settings["project"],
                      "--label", "com.docker.compose.volume=" + name, volume], capture=True)
@@ -400,7 +448,7 @@ chown -R 100:101 /target
             (self.state / "secrets" / name).chmod(0o600)
         (self.state / "restore-images.json").write_text(json.dumps({"services": {
             c["service"]: {"image": c["image_id"]} for c in components}}, indent=2) + "\n")
-        print("Restored both volumes and matching signing/database secrets. Start this isolated project, then verify saved audit receipts.")
+        print("Restored runtime volumes and matching signing/database secrets. Start this isolated project, then verify saved audit receipts.")
 
 
 def now():

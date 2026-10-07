@@ -162,14 +162,47 @@ services:
     depends_on:
       control-plane: {condition: service_healthy}
     networks: [private, gateway]
+    volumes:
+      - traffic_logs:/var/log/inforsight
+
+  traffic-dashboard:
+    profiles: [traffic]
+    <<: *runtime
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.traffic
+    mem_limit: 128m
+    cpus: 0.5
+    read_only: true
+    cap_drop: [ALL]
+    ports:
+      - "127.0.0.1:${INFORSIGHT_TRAFFIC_PORT:-3111}:3111"
+    environment:
+      TRAFFIC_TIMEZONE: America/New_York
+      TRAFFIC_PUBLIC_PORT: ${INFORSIGHT_TRAFFIC_PORT:-3111}
+    volumes:
+      - traffic_data:/data
+      - traffic_logs:/traffic:ro
+    networks: [analytics]
+    depends_on:
+      frontend: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3111/', timeout=3)"]
+      interval: 10s
+      timeout: 4s
+      retries: 6
 
 networks:
   private:
     internal: true
   gateway:
     driver: bridge
+  analytics:
+    driver: bridge
 
 volumes:
+  traffic_data:
+  traffic_logs:
   kafka_data:
   postgres_data:
   # Initialized by the operator CLI: mode0400 owner100:101 inside Docker.
