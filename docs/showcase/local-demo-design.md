@@ -11,19 +11,22 @@ Python decision-engine demonstration.
 **Landing → scenario picker → live journey → dossier → human review → audit.**
 Architecture is available from the header on every page, the landing hero and
 its architecture showcase, the live journey, the run navigation, and the footer. The
+model timeline is available from the header, a landing band, the case dossier and
+the footer. The
 run's correlation ID stays in `?run=<id>` across view changes and refresh.
 A resume field accepts an existing correlation ID. There is one local
 environment; **GCP is Planned** and has no environment selector.
 
 | View | Main components | Example copy and truthful behavior |
 | --- | --- | --- |
-| Landing | One-sentence explanation, static journey overview, primary CTA, architecture entry | “From one event. To an informed human decision.” The overview is labeled as a target journey, not live execution. |
+| Landing | One-sentence explanation, static journey overview, primary CTA, model-history band, architecture entry | “From one event. To an informed human decision.” The overview is labeled as a target journey, not live execution. |
 | Scenario picker | Three backend-enabled cards, safe JSON input inspector, submission, resume | “Submit one event and follow what the services actually record.” Disabled or absent capabilities do not become runnable through UI defaults. |
 | Live journey | Eleven expandable stages, status and producer, correlation ID, evidence links, failure/retry notice | “Awaiting service result” while processing. Timestamps and duration come from committed backend records. |
 | Case dossier | Facts at cutoff, unknown safety evidence, excluded future source IDs, score and explanations, eligibility reasons, modeled valuation/allocation, cited draft | “Unknown — evidence unavailable.” No fabricated negative fact or measured agent confidence. |
 | Human review | Exact case evidence, approve/reject/request-information choices, required rationale, version, recorded outcome | “The agent has no action authority.” Approval is disabled for abstention and rejected server-side. |
 | Audit trail | Verification result/scope, current case and reviewer decision, expandable journal events and hashes | Validity comes from an explicit verification request. Partial chain validity is not whole-run completion. |
 | Architecture | Seven linked views (system map, request sequence, data and model lineage, run lifecycle, security layers, audit chain, database schema) with an inspector, numbered dataflow and illustrative walkthrough; deployment status with GCP Planned | Highlighting follows recorded stage status from the existing polling, and live chips show persisted values. Without a run, the reference design is shown. Fast completed work remains inspectable even if no active highlight was observed. |
+| Model timeline | Groundwork, six data-design generations and the release as a vertical timeline with verdicts, headline figures and record links; generation chips; development counts; judging principles; released bundle identity | “Six generations to one model we could defend.” Every figure comes from a decision record pinned to the release tag. The page states that the results recover a synthetic process and do not establish real-world performance. |
 
 Desktop uses a constrained content width, an ordered journey rail, and adjacent
 summary/evidence panels. Mobile stacks panels, keeps the stage list readable,

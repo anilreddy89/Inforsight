@@ -32,6 +32,7 @@ export { default as Gauge } from "lucide-react/dist/esm/icons/gauge.js";
 export { default as GitBranch } from "lucide-react/dist/esm/icons/git-branch.js";
 export { default as Globe } from "lucide-react/dist/esm/icons/globe.js";
 export { default as Hash } from "lucide-react/dist/esm/icons/hash.js";
+export { default as History } from "lucide-react/dist/esm/icons/history.js";
 export { default as Hourglass } from "lucide-react/dist/esm/icons/hourglass.js";
 export { default as Info } from "lucide-react/dist/esm/icons/info.js";
 export { default as Laptop } from "lucide-react/dist/esm/icons/laptop.js";

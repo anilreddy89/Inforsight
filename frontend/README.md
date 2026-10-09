@@ -121,3 +121,26 @@ The explorer loads on demand, so the journey's initial bundle does not grow. Run
 `npx playwright test tests/architecture.spec.ts` for isolated contract and
 accessibility checks, and `INFORSIGHT_FLOW_LIVE=1 npx playwright test
 tests/architecture-live.spec.ts` against the local Docker backend.
+
+## Model timeline
+
+The timeline shows how the released risk model was reached: the groundwork, six
+generations of the synthetic data design, and the release. Each milestone gives
+what was tried, what the pre-declared gates found, what changed, the verdict, one
+headline figure, and a link to its record pinned to the `v0.2.0-risk-model` tag.
+Development counts, the principles every step was judged by, and the released
+bundle's identity sit alongside.
+
+It is reachable from **Model timeline** in the header, the landing band (whose
+generation chips open that milestone directly), **How this model was built** in
+the case dossier, and the footer. **Back** returns to the view, and architecture
+lens, that opened it. The page is addressable with `?view=model` and loads on
+demand. Below 1,100 px the header buttons show icons only; their names remain in
+the accessible name and tooltip.
+
+The content is typed data in `src/model-history.ts`. Every figure comes from the
+linked decision record or the model card, and dates come from the repository
+history. Change it only alongside a governed record, and keep the statement that
+the results are synthetic and establish no real-world performance. Run
+`npx playwright test tests/model-timeline.spec.ts` for isolated contract and
+accessibility checks.
