@@ -158,6 +158,10 @@ class Preview:
             self.ensure_traffic_images()
         args = ["up", "-d", "--wait", "--wait-timeout", "180"]
         if build and not (self.state / "restore-images.json").exists():
+            # A cached tag never refreshes itself. Fetch patched service and base
+            # images so a rebuild also picks up upstream security fixes.
+            self.compose("pull", "--ignore-buildable", "--quiet")
+            self.compose("build", "--pull")
             args.append("--build")
         else:
             args.append("--no-build")

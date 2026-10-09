@@ -7,7 +7,7 @@ services:
   # Streaming Gateway: Apache Kafka (KRaft mode, zero ZooKeeper dependency)
   # ============================================================================
   kafka:
-    image: confluentinc/cp-kafka:7.6.0
+    image: confluentinc/cp-kafka:7.9.10
     ports:
       - "127.0.0.1:9092:9092"
     volumes:
@@ -26,7 +26,9 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/var/lib/kafka/data'
-      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      # Canonical base64 of the same cluster UUID. Kafka 3.9+ compares this text with
+      # meta.properties literally, so existing volumes keep their identity.
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qg'
     healthcheck:
       test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
       interval: 10s

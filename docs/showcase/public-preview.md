@@ -137,6 +137,28 @@ may explicitly send the test session cookie to the loopback gateway; browser
 acceptance uses the public HTTPS origin. Never weaken the public cookie flag
 to make a local test pass.
 
+### Image updates
+
+Cached image tags never refresh themselves, so `public-rebuild` runs
+`docker compose pull --ignore-buildable` and `docker compose build --pull`
+before replacing containers. `public-start` reuses the images already on the Mac.
+
+- The gateway uses `nginx:stable-alpine`, which follows nginx's supported stable
+  branch. Versioned branch tags such as `1.27` stop receiving fixes about a year
+  after release; `1.27-alpine` was last updated in April 2025.
+- PostgreSQL 16, Python 3.12/3.13, Temurin 21 and Node 22 images follow their
+  supported release lines and receive patch updates on each rebuild.
+- Kafka is pinned to an exact Confluent Platform release,
+  `confluentinc/cp-kafka:7.9.10` (Apache Kafka 3.9). Confluent's standard support
+  for 7.9 ends on 2027-02-19. Plan and qualify the move to Kafka 4.x
+  (Confluent Platform 8.x) before then; it is a major-version upgrade and the
+  P4-02 integration test client also needs review.
+- The Java and Python application dependencies are pinned separately in
+  `pom.xml` and the requirements files and need their own reviews.
+
+Rebuild at least monthly, and before any demonstration, to pick up fixes. Take a
+backup first when an image's major or minor version changes.
+
 ## Backup and restore
 
 The backup command stops all services for a consistent cold snapshot of
@@ -210,8 +232,8 @@ for the named hostname: that command creates a temporary Quick Tunnel.
 `public-start` reuses existing images after a one-time traffic upgrade: if the
 gateway lacks file logging or the dashboard image is missing, it builds those
 images before starting the stack. It never rebuilds image-pinned restores. After a code change, `public-rebuild`
-builds the images from the current branch (including React assets), updates
-containers, waits for their health checks, enables the named tunnel and
+pulls current base and service images, builds the images from the current branch
+(including React assets), updates containers, waits for their health checks, enables the named tunnel and
 maintenance job if necessary, and checks the public session endpoint. It keeps
 volumes and secrets; visitors may see brief unavailability during replacement.
 Refresh the browser to load the updated assets. This is a build/start/health

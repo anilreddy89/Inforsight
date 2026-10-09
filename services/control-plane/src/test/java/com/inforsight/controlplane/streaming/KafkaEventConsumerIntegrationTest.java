@@ -33,7 +33,7 @@ class KafkaEventConsumerIntegrationTest {
             exercise(externalBootstrap, topic("envelope"));
             return;
         }
-        DockerImageName image = DockerImageName.parse("confluentinc/cp-kafka:7.6.0")
+        DockerImageName image = DockerImageName.parse("confluentinc/cp-kafka:7.9.10")
                 .asCompatibleSubstituteFor("apache/kafka");
         try (KafkaContainer kafka = new KafkaContainer(image)) {
             kafka.start();

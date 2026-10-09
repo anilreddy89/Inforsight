@@ -5,7 +5,9 @@ RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-FROM nginx:1.27-alpine
+# Track nginx's supported stable branch; versioned branch tags stop receiving
+# updates about a year after release. `make public-rebuild` pulls the latest.
+FROM nginx:stable-alpine
 LABEL com.inforsight.traffic.version="2"
 RUN apk add --no-cache logrotate && mkdir -p /var/log/inforsight
 COPY frontend/traffic-logrotate.conf /etc/traffic-logrotate.conf
