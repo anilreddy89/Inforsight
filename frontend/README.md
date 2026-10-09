@@ -82,3 +82,42 @@ Earlier runs cannot be backfilled automatically: history starts when this featur
 is used, including when an older run is reopened from a saved URL or ID.
 
 Run focused checks with `npx playwright test tests/recent-runs.spec.ts`.
+
+## Architecture explorer
+
+The explorer is reachable from the **Architecture** button in the header on every
+page, **Explore the architecture** in the landing hero, the landing showcase (which
+opens any view directly), the banner above the live journey's stages, the run
+navigation, and the footer. The header button and the run tab show **New** until
+the visitor opens the explorer once; that flag lives in session storage only. The
+view is addressable with `?view=architecture&lens=<view>`:
+
+| View | `lens` | Shows |
+| --- | --- | --- |
+| System map | `system` | Containers, Docker networks, published ports, volumes and operator jobs, for the local stack or the Mac-hosted preview |
+| Request sequence | `sequence` | The 42 numbered calls of one run across the browser, nginx, Java, PostgreSQL, Kafka and both Python services, grouped by stage |
+| Data & model lineage | `lineage` | The offline v6 model factory that produced the pinned bundle, and the per-run evidence chain from source history to verified journal |
+| Run lifecycle | `lifecycle` | Run, stage and case state machines with each allowed transition and its trigger |
+| Security layers | `security` | Edge, gateway, session, request contract, authority, integrity and container controls |
+| Audit chain | `audit` | How journal rows are hashed and the nine checks the verifier runs |
+| Database schema | `schema` | The eleven `demo_*` tables, keys and foreign keys from Flyway V6–V8 |
+
+The diagrams are typed data in `src/architecture-model.ts`, and each component
+lists the source files it describes. Update the model when Compose, nginx, Java,
+Python or migrations change those facts.
+
+With a run open, components, connections, stages and states follow the run's
+persisted record through the existing polling. Live chips show recorded values such
+as the Kafka offset, calibrated probability, selected action and verified journal
+head. The explorer issues no requests of its own; **Load and verify this run's
+chain** calls the existing audit endpoint only when the visitor asks. Without a run,
+the view shows the reference design. The walkthrough highlights the numbered
+dataflow in order: it is illustrative, executes nothing, and starts paused under
+reduced motion. Animation marks recorded activity, not captured packets. A fast
+stage can finish between polls without ever appearing as processing. GCP remains
+Planned.
+
+The explorer loads on demand, so the journey's initial bundle does not grow. Run
+`npx playwright test tests/architecture.spec.ts` for isolated contract and
+accessibility checks, and `INFORSIGHT_FLOW_LIVE=1 npx playwright test
+tests/architecture-live.spec.ts` against the local Docker backend.

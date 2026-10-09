@@ -1,4 +1,6 @@
 import {
+  lazy,
+  Suspense,
   useCallback,
   useEffect,
   useRef,
@@ -19,7 +21,6 @@ import {
   Circle,
   CircleDashed,
   Clock3,
-  Cloud,
   Code2,
   Copy,
   Database,
@@ -65,9 +66,19 @@ import {
 } from "./api";
 import TransactionFlow from "./TransactionFlow";
 import RecentRuns from "./RecentRuns";
+import ArchitectureTeaser from "./ArchitectureTeaser";
 import { useRecentRuns } from "./recent-runs";
+import type { LensId } from "./architecture-lenses";
+
+// The architecture model is large; load it only when the view is opened.
+const ArchitectureExplorer = lazy(() => import("./ArchitectureExplorer"));
 
 type View = "journey" | "flow" | "dossier" | "review" | "audit" | "architecture";
+/** Only the flow and architecture views are addressable; other views follow the run. */
+function viewFromUrl(): View {
+  const value = new URLSearchParams(window.location.search).get("view");
+  return value === "flow" || value === "architecture" ? value : "journey";
+}
 function stored<T>(key: string): T | null {
   try {
     const value = sessionStorage.getItem(key);
@@ -329,9 +340,7 @@ export default function App() {
   );
   const [runId, setRunId] = useState(initialId);
   const [run, setRun] = useState<Run | null>(null);
-  const [view, setView] = useState<View>(() =>
-    new URLSearchParams(window.location.search).get("view") === "flow" ? "flow" : "journey",
-  );
+  const [view, setView] = useState<View>(viewFromUrl);
   const [catalog, setCatalog] = useState<ScenarioCatalog | null>(null);
   const [catalogError, setCatalogError] = useState<Error | null>(null);
   const [session, setSession] = useState<VisitorSession | null>(null);
@@ -339,6 +348,9 @@ export default function App() {
     () => stored<boolean>("inforsight.cookie-notice.v1") === true,
   );
   const cookieNoticeLink = useRef<HTMLButtonElement>(null);
+  const [architectureSeen, setArchitectureSeen] = useState(
+    () => stored<boolean>("inforsight.architecture-seen.v1") === true,
+  );
   const [error, setError] = useState<Error | null>(null);
   const [busy, setBusy] = useState(false);
   const [connection, setConnection] = useState<
@@ -365,8 +377,14 @@ export default function App() {
   }, [runId, error, recentRuns.markUnavailable]);
 
   useEffect(() => {
+    if (view !== "architecture" || architectureSeen) return;
+    setArchitectureSeen(true);
+    remember("inforsight.architecture-seen.v1", true);
+  }, [view, architectureSeen]);
+
+  useEffect(() => {
     const url = new URL(window.location.href);
-    if (view === "flow") url.searchParams.set("view", "flow");
+    if (view === "flow" || view === "architecture") url.searchParams.set("view", view);
     else url.searchParams.delete("view");
     window.history.replaceState({}, "", url);
   }, [view]);
@@ -456,7 +474,7 @@ export default function App() {
       setRun(null);
       setAudit(null);
       setRunId(nextId);
-      setView(new URLSearchParams(window.location.search).get("view") === "flow" ? "flow" : "journey");
+      setView(viewFromUrl());
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -487,6 +505,15 @@ export default function App() {
     submissionKey.current = "";
     pendingSubmission.current = null;
     remember("inforsight.pending-submission", null);
+  };
+  const openArchitecture = (lens?: LensId) => {
+    if (lens) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("lens", lens);
+      window.history.replaceState(window.history.state, "", url);
+    }
+    setView("architecture");
+    window.scrollTo({ top: 0 });
   };
   const launch = async () => {
     setBusy(true);
@@ -585,6 +612,17 @@ export default function App() {
             <span className="brand-subtitle">Interactive demo</span>
           </button>
           <div className="header-right">
+            <button
+              type="button"
+              className={`header-architecture ${view === "architecture" ? "active" : ""}`}
+              aria-current={view === "architecture" ? "page" : undefined}
+              onClick={() => openArchitecture()}
+            >
+              <Network size={15} aria-hidden="true" />
+              <span className="header-architecture-label">Architecture</span>
+              <span className="sr-only"> explorer</span>
+              {!architectureSeen && <span className="new-badge">New</span>}
+            </button>
             <span className="environment">
               <span />
               {session ? (session.public_mode ? "Public preview" : "Local Docker") : catalogError ? "Demo unavailable" : "Connecting to demo"}
@@ -628,17 +666,20 @@ export default function App() {
                   advisory recommendations—with human review and a verifiable
                   audit trail.
                 </p>
-                <a className="button primary" href="#scenarios">
-                  Run a fictional case
-                  <ArrowRight size={17} />
-                </a>
-                <button
-                  className="text-link hero-secondary"
-                  onClick={() => setView("architecture")}
-                >
-                  Explore the architecture
-                  <ArrowUpRight size={15} />
-                </button>
+                <div className="hero-actions">
+                  <a className="button primary" href="#scenarios">
+                    Run a fictional case
+                    <ArrowRight size={17} />
+                  </a>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => openArchitecture()}
+                  >
+                    <Network size={16} aria-hidden="true" />
+                    Explore the architecture
+                  </button>
+                </div>
                 <div className="hero-assurance">
                   <ShieldCheck size={17} />
                   <span>
@@ -955,6 +996,7 @@ export default function App() {
                 )}
               </div>
             </section>
+            <ArchitectureTeaser onOpen={openArchitecture} />
           </>
         ) : (
           <div className="workspace content-width">
@@ -1031,6 +1073,9 @@ export default function App() {
                     run?.status === "AWAITING_REVIEW" && (
                       <span className="tab-dot" />
                     )}
+                  {item.id === "architecture" && !architectureSeen && (
+                    <span className="tab-new" aria-hidden="true">New</span>
+                  )}
                 </button>
               ))}
             </nav>
@@ -1065,7 +1110,31 @@ export default function App() {
                 : inaccessible ? "Run access is unavailable in this visitor session." : "Connecting to the backend."}
             </div>
             {view === "architecture" ? (
-              <Architecture run={run} session={session} />
+              <Suspense
+                fallback={
+                  <Empty title="Loading the architecture" icon={Network}>
+                    Preparing the diagrams.
+                  </Empty>
+                }
+              >
+                <ArchitectureExplorer
+                  run={run}
+                  session={session}
+                  catalog={catalog}
+                  catalogError={catalogError}
+                  connection={connection}
+                  audit={audit}
+                  auditBusy={auditBusy}
+                  onVerifyAudit={() => void verifyAudit()}
+                  onStartCase={() => {
+                    goHome();
+                    window.setTimeout(() =>
+                      document.getElementById("scenarios")?.scrollIntoView({ block: "start" }),
+                    );
+                  }}
+                  notice={session?.public_mode && <PublicPreviewNotice session={session} />}
+                />
+              </Suspense>
             ) : !run ? (
               <Empty title={inaccessible ? "No accessible run evidence" : "Waiting for the persisted run"}>
                 {inaccessible
@@ -1093,6 +1162,27 @@ export default function App() {
                         Each step reflects a persisted backend result. Open a
                         step to see who produced it and what changed.
                       </p>
+                      <div className="architecture-callout">
+                        <span className="architecture-callout-icon">
+                          <Network size={19} aria-hidden="true" />
+                        </span>
+                        <div>
+                          <h3>Watch this case move through the system</h3>
+                          <p>
+                            {["COMPLETED", "EXPIRED", "FAILED"].includes(run.status)
+                              ? "See where each recorded step ran, from the gateway to the audit journal."
+                              : "The architecture view follows this run: each component lights up as the backend records its stage."}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="button secondary"
+                          onClick={() => openArchitecture()}
+                        >
+                          Open the live architecture
+                          <ArrowRight size={15} />
+                        </button>
+                      </div>
                       <ol className="stage-list">
                         {orderedStages.map((key, index) => {
                           const stage = run.stages.find((s) => s.stage === key);
@@ -1274,7 +1364,7 @@ export default function App() {
             Cookie notice
           </button>
         )}
-        <button className="text-link" onClick={() => setView("architecture")}>
+        <button className="text-link" onClick={() => openArchitecture()}>
           System architecture
           <ArrowUpRight size={13} />
         </button>
@@ -2175,149 +2265,16 @@ function AuditView({
   );
 }
 
-function Architecture({ run, session }: { run: Run | null; session: VisitorSession | null }) {
-  const nodes = [
-    {
-      id: "bus",
-      title: "Event bus",
-      technology: "Apache Kafka",
-      icon: Network,
-      stages: ["publication", "ingestion"],
-      description:
-        "Acknowledges the fictional event and delivers it to the control plane.",
-    },
-    {
-      id: "java",
-      title: "Control plane",
-      technology: "Java / Spring Boot",
-      icon: GitBranch,
-      stages: ["submission", "ingestion", "rules", "allocation", "decision"],
-      description:
-        "Orchestrates the run, enforces eligibility, allocates capacity, and records the reviewer’s decision.",
-    },
-    {
-      id: "python",
-      title: "Risk inference",
-      technology: "Python / FastAPI",
-      icon: Activity,
-      stages: ["score"],
-      description:
-        "Loads the verified released model and returns risk with feature contributions.",
-    },
-    {
-      id: "postgres",
-      title: "Persistence & audit",
-      technology: "PostgreSQL",
-      icon: Database,
-      stages: ["case", "audit"],
-      description:
-        "Retains run evidence, case versions, human decisions, and the audit chain.",
-    },
-    {
-      id: "agent",
-      title: "Evidence & agent",
-      technology: "Bounded Python workflow",
-      icon: Sparkles,
-      stages: ["snapshot", "agent"],
-      description:
-        "Projects observation-time facts, then drafts within cited procedures or abstains.",
-    },
-  ];
+function PublicPreviewNotice({ session }: { session: VisitorSession }) {
   return (
-    <>
-      <div className="architecture-intro">
-        <div>
-          <p className="eyebrow">{session ? (session.public_mode ? "PUBLIC PREVIEW · PRIVATE SERVICES" : "LOCAL DOCKER TOPOLOGY") : "SERVICE TOPOLOGY"}</p>
-          <h2>Every component has a clear job.</h2>
-          <p>
-            Highlighting follows the backend’s recorded processing state. If a
-            stage finishes between polls, its evidence remains in the journey.
-          </p>
-        </div>
-        <Badge>{run ? "Bound to this run" : "Architecture overview"}</Badge>
+    <div className="notice neutral" role="note">
+      <LockKeyhole size={20} aria-hidden="true" />
+      <div>
+        <strong>One public gateway. Isolated visitor sessions.</strong>
+        <p>Only this website and its same-origin demo API are exposed. Kafka, PostgreSQL, Java and Python services use a private Docker network. This Mac-hosted preview is available only while the owner’s Mac, Docker stack and tunnel are running.</p>
+        <p>Your visitor session expires {date(session.expires_at ?? undefined)}. Run retention can end sooner. A visitor cookie identifies a fictional reviewer; it does not verify a real person’s identity.</p>
+        <Technical value={session.limits} label="Inspect public capacity and retention limits" />
       </div>
-      {session?.public_mode && (
-        <div className="notice neutral" role="note">
-          <LockKeyhole size={20} aria-hidden="true" />
-          <div>
-            <strong>One public gateway. Isolated visitor sessions.</strong>
-            <p>Only this website and its same-origin demo API are exposed. Kafka, PostgreSQL, Java and Python services use a private Docker network. This Mac-hosted preview is available only while the owner’s Mac, Docker stack and tunnel are running.</p>
-            <p>Your visitor session expires {date(session.expires_at ?? undefined)}. Run retention can end sooner. A visitor cookie identifies a fictional reviewer; it does not verify a real person’s identity.</p>
-            <Technical value={session.limits} label="Inspect public capacity and retention limits" />
-          </div>
-        </div>
-      )}
-      <div className="architecture-nodes">
-        {nodes.map((node) => {
-          const active = run?.stages.some(
-            (s) => node.stages.includes(s.stage) && s.status === "processing",
-          );
-          const finished = run?.stages.some(
-            (s) =>
-              node.stages.includes(s.stage) &&
-              ["completed", "abstained"].includes(s.status),
-          );
-          return (
-            <div
-              className={`architecture-node ${active ? "node-active" : ""}`}
-              key={node.id}
-            >
-              <div className="node-top">
-                <node.icon size={26} />
-                {active ? (
-                  <Badge status="processing">Processing</Badge>
-                ) : finished ? (
-                  <Badge status="completed">Evidence recorded</Badge>
-                ) : (
-                  <Badge>{run ? "Waiting" : "Component"}</Badge>
-                )}
-              </div>
-              <h3>{node.title}</h3>
-              <code>{node.technology}</code>
-              <p>{node.description}</p>
-            </div>
-          );
-        })}
-      </div>
-      <div className="architecture-bottom">
-        <Panel title="A deliberate authority boundary" icon={ShieldCheck}>
-          <p>
-            The inference service and agent return advisory results. The Java
-            control plane enforces eligibility and stores human review. External
-            CRM and telephony actions are disabled.
-          </p>
-          <div className="boundary-flow">
-            <span>
-              <Activity size={18} />
-              Model
-            </span>
-            <ArrowRight size={15} />
-            <span>
-              <Sparkles size={18} />
-              Agent
-            </span>
-            <ArrowRight size={15} />
-            <span className="human">
-              <FileCheck2 size={18} />
-              Human review
-            </span>
-          </div>
-        </Panel>
-        <Panel title="GCP deployment" eyebrow="ROADMAP" icon={Cloud}>
-          <Badge status="waiting">Planned</Badge>
-          <p>
-            This journey must pass locally before a cloud environment is
-            enabled. GCP has no available demo endpoint or verified deployment
-            run here.
-          </p>
-          <ul className="roadmap-list">
-            <li>Reproducible infrastructure and private services</li>
-            <li>Persistent storage, secrets, and TLS</li>
-            <li>Correlated telemetry and spending controls</li>
-            <li>Deployment and full-journey verification</li>
-          </ul>
-        </Panel>
-      </div>
-    </>
+    </div>
   );
 }

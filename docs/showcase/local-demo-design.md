@@ -9,7 +9,8 @@ Python decision-engine demonstration.
 ## Screen flow and navigation
 
 **Landing → scenario picker → live journey → dossier → human review → audit.**
-Architecture is available from the landing view and the run navigation. The
+Architecture is available from the header on every page, the landing hero and
+its architecture showcase, the live journey, the run navigation, and the footer. The
 run's correlation ID stays in `?run=<id>` across view changes and refresh.
 A resume field accepts an existing correlation ID. There is one local
 environment; **GCP is Planned** and has no environment selector.
@@ -22,7 +23,7 @@ environment; **GCP is Planned** and has no environment selector.
 | Case dossier | Facts at cutoff, unknown safety evidence, excluded future source IDs, score and explanations, eligibility reasons, modeled valuation/allocation, cited draft | “Unknown — evidence unavailable.” No fabricated negative fact or measured agent confidence. |
 | Human review | Exact case evidence, approve/reject/request-information choices, required rationale, version, recorded outcome | “The agent has no action authority.” Approval is disabled for abstention and rejected server-side. |
 | Audit trail | Verification result/scope, current case and reviewer decision, expandable journal events and hashes | Validity comes from an explicit verification request. Partial chain validity is not whole-run completion. |
-| Architecture | Kafka, Java control plane, Python inference, PostgreSQL/audit, Python agent/projection; roadmap | Highlighting follows recorded processing state. Fast completed work remains inspectable even if no active highlight was observed. |
+| Architecture | Seven linked views (system map, request sequence, data and model lineage, run lifecycle, security layers, audit chain, database schema) with an inspector, numbered dataflow and illustrative walkthrough; deployment status with GCP Planned | Highlighting follows recorded stage status from the existing polling, and live chips show persisted values. Without a run, the reference design is shown. Fast completed work remains inspectable even if no active highlight was observed. |
 
 Desktop uses a constrained content width, an ordered journey rail, and adjacent
 summary/evidence panels. Mobile stacks panels, keeps the stage list readable,

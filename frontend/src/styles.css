@@ -290,8 +290,84 @@ details[open] > summary > svg:last-child {
 .text-link:hover {
   color: var(--blue);
 }
-.hero-secondary {
-  margin-left: 22px;
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+/* Persistent entry point to the architecture explorer. */
+.header-architecture {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid #c9d8f6;
+  border-radius: 7px;
+  background: #eff4ff;
+  color: #1f4fc4;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  transition:
+    background 0.16s,
+    border-color 0.16s;
+}
+.header-architecture:hover {
+  background: #e2ebff;
+  border-color: #a9c1f2;
+}
+.header-architecture.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+.new-badge,
+.tab-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+}
+.tab-new {
+  font-size: 9px;
+}
+.architecture-callout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 22px;
+  padding: 14px 16px;
+  border: 1px solid #cfdcf6;
+  border-radius: 11px;
+  background: linear-gradient(160deg, #f1f6ff, #fff 75%);
+}
+.architecture-callout-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #e3ecff;
+  color: var(--blue);
+}
+.architecture-callout h3 {
+  margin: 0 0 5px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.architecture-callout p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
 }
 .hero-assurance {
   display: flex;
@@ -1666,117 +1742,6 @@ textarea:disabled {
 .scope-note > svg {
   margin-top: 3px;
 }
-.architecture-intro {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 25px;
-  margin: 32px 0 27px;
-}
-.architecture-intro h2 {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-.architecture-intro p:not(.eyebrow) {
-  font-size: 14px;
-  color: #536680;
-  max-width: 620px;
-  margin-bottom: 0;
-}
-.architecture-nodes {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  margin-bottom: 28px;
-}
-.architecture-node {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 21px 18px;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-  min-width: 0;
-}
-.node-top {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
-  margin-bottom: 20px;
-  color: #536680;
-}
-.node-top .badge {
-  font-size: 11px;
-}
-.architecture-node h3 {
-  font-size: 14px;
-  line-height: 1.3;
-  margin-bottom: 7px;
-  font-weight: 600;
-}
-.architecture-node code {
-  font-size: 11px;
-  color: #536680;
-  display: block;
-  line-height: 1.5;
-  min-height: 28px;
-}
-.architecture-node p {
-  font-size: 11px;
-  line-height: 1.8;
-  color: #536680;
-  margin: 15px 0 0;
-}
-.node-active {
-  border-color: #779ced;
-  background: #f0f5ff;
-  box-shadow: 0 0 0 2px #e3edff;
-}
-.node-active .node-top > svg {
-  color: var(--blue);
-}
-.architecture-bottom {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
-}
-.architecture-bottom p {
-  font-size: 14px;
-  color: #536680;
-  margin-top: 14px;
-}
-.boundary-flow {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-top: 27px;
-  font-size: 11px;
-  color: #536680;
-}
-.boundary-flow > span {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 11px;
-  background: #f6f8fc;
-  border: 1px solid #e5ebf3;
-  border-radius: 6px;
-}
-.boundary-flow > .human {
-  background: #edf3ff;
-  color: #446fba;
-  border-color: #d6e2f8;
-}
-.roadmap-list {
-  font-size: 11px;
-  line-height: 2.2;
-  color: #536680;
-  padding-left: 16px;
-  margin-bottom: 0;
-}
 .skip-link {
   position: absolute;
   left: 20px;
@@ -1833,10 +1798,6 @@ main:focus {
   .hero h1 {
     font-size: 51px;
   }
-  .hero-secondary {
-    margin: 18px 0 0;
-    display: flex;
-  }
   .hero-assurance {
     margin-top: 22px;
     font-size: 11px;
@@ -1860,12 +1821,6 @@ main:focus {
   .audit-grid {
     grid-template-columns: minmax(0, 1fr) 300px;
     gap: 18px;
-  }
-  .architecture-nodes {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .architecture-node:last-child {
-    grid-column: span 2;
   }
   .tab-nav {
     gap: 25px;
@@ -1978,9 +1933,6 @@ main:focus {
   .last-updated {
     display: none;
   }
-  .architecture-bottom {
-    grid-template-columns: 1fr;
-  }
   .workspace-title h1 {
     font-size: 27px;
   }
@@ -2022,6 +1974,33 @@ main:focus {
   .content-width {
     width: calc(100% - 36px);
   }
+  .header-right {
+    gap: 10px;
+  }
+  .header-architecture {
+    padding: 7px 9px;
+  }
+  /* Phones show only the icon; the label stays in the accessible name. */
+  .header-architecture-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .hero-actions .button {
+    flex: 1 1 auto;
+  }
+  .architecture-callout {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .architecture-callout > .button {
+    grid-column: 1 / -1;
+  }
   .header-inner {
     width: calc(100% - 32px);
     height: 64px;
@@ -2060,11 +2039,6 @@ main:focus {
     font-size: 13px;
   }
   .hero .eyebrow {
-    font-size: 11px;
-  }
-  .hero-secondary {
-    display: inline-flex;
-    margin: 0 0 0 17px;
     font-size: 11px;
   }
   .hero .button {
@@ -2413,65 +2387,6 @@ main:focus {
   .audit-entries summary span {
     font-size: 11px;
     line-height: 1.6;
-  }
-  .architecture-intro {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 15px;
-  }
-  .architecture-intro h2 {
-    font-size: 25px;
-    line-height: 1.3;
-  }
-  .architecture-intro p:not(.eyebrow) {
-    font-size: 13px;
-  }
-  .architecture-nodes {
-    grid-template-columns: 1fr;
-    gap: 13px;
-  }
-  .architecture-node:last-child {
-    grid-column: auto;
-  }
-  .architecture-node {
-    padding: 21px;
-  }
-  .node-top {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  .architecture-node h3 {
-    font-size: 17px;
-  }
-  .architecture-node code {
-    font-size: 11px;
-    min-height: 0;
-  }
-  .architecture-node p {
-    font-size: 13px;
-  }
-  .node-top .badge {
-    font-size: 11px;
-  }
-  .architecture-bottom p {
-    font-size: 13px;
-  }
-  .boundary-flow {
-    gap: 8px;
-    flex-wrap: wrap;
-    font-size: 11px;
-  }
-  .boundary-flow > span {
-    padding: 9px;
-    gap: 5px;
-  }
-  .boundary-flow > span svg {
-    width: 15px;
-  }
-  .roadmap-list {
-    font-size: 13px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,199 @@
+/* Landing-page invitation into the architecture explorer. */
+.architecture-teaser {
+  padding: 60px 0 66px;
+  border-top: 1px solid #e3e9f2;
+  background: linear-gradient(180deg, #f6f8fb 0%, #edf2fa 100%);
+}
+.architecture-teaser-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 56px;
+  align-items: center;
+}
+.architecture-teaser-copy .eyebrow {
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+.architecture-teaser-copy h2 {
+  margin: 0 0 14px;
+  font-size: 31px;
+  line-height: 1.18;
+  letter-spacing: -1px;
+}
+.architecture-teaser-copy p:not(.eyebrow) {
+  max-width: 520px;
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.architecture-teaser-preview {
+  position: relative;
+  padding: 34px 16px 14px;
+  border-radius: 16px;
+  background-color: #0f1d33;
+  background-image:
+    radial-gradient(ellipse at 50% 45%, #183555 0%, transparent 70%),
+    radial-gradient(circle, #829cbb1f 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    18px 18px;
+  box-shadow: 0 14px 34px #172d5029;
+}
+.architecture-teaser-preview svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.architecture-teaser-caption {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  color: #9fb3ce;
+  font-size: 9.5px;
+  font-weight: 750;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+.teaser-edge,
+.teaser-route {
+  fill: none;
+  stroke: #5f86b3;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.teaser-route {
+  stroke: #6fe6fb;
+  stroke-width: 2.2;
+  stroke-dasharray: 6 7;
+  animation: teaser-dash 0.9s linear infinite;
+  filter: drop-shadow(0 0 3px #59d3e766);
+}
+.teaser-packet {
+  fill: #a8f4ff;
+  stroke: #58d6ea;
+  filter: drop-shadow(0 0 5px #68e6ff);
+}
+.teaser-node rect:first-child {
+  fill: #fff;
+  stroke: #b8c7dc;
+}
+.teaser-node.is-active rect:first-child {
+  stroke: #67d9f3;
+  stroke-width: 2;
+  animation: teaser-glow 1.9s ease-in-out infinite;
+}
+.teaser-node text {
+  fill: #1a2f4e;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+.architecture-teaser-lenses {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: 10px;
+  list-style: none;
+  margin: 36px 0 0;
+  padding: 0;
+}
+.architecture-teaser-lenses li {
+  display: flex;
+}
+.architecture-teaser-lenses button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid #dde5ef;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--navy);
+  text-align: left;
+  transition:
+    border-color 160ms,
+    box-shadow 160ms,
+    transform 160ms;
+}
+.architecture-teaser-lenses button:hover {
+  border-color: #b6c8ed;
+  box-shadow: 0 6px 18px #243d6214;
+  transform: translateY(-1px);
+}
+.architecture-teaser-lenses button > svg {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: #6b84ad;
+}
+.architecture-teaser-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #edf3ff;
+  color: #2c5fd6;
+}
+.architecture-teaser-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.architecture-teaser-text strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+.architecture-teaser-text span {
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+@keyframes teaser-dash {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+@keyframes teaser-glow {
+  0%,
+  100% {
+    stroke-opacity: 1;
+  }
+  50% {
+    stroke-opacity: 0.45;
+  }
+}
+@media (max-width: 900px) {
+  .architecture-teaser-top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+@media (max-width: 600px) {
+  .architecture-teaser {
+    padding: 40px 0 44px;
+  }
+  .architecture-teaser-copy h2 {
+    font-size: 24px;
+  }
+  .architecture-teaser-copy p:not(.eyebrow) {
+    font-size: 13px;
+  }
+  .architecture-teaser-lenses {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .teaser-route,
+  .teaser-node.is-active rect:first-child {
+    animation: none;
+  }
+  .teaser-packet {
+    display: none;
+  }
+  .architecture-teaser-lenses button {
+    transition: none;
+  }
+}
