@@ -125,8 +125,10 @@ export const milestones: Milestone[] = [
     title: "Searching for any workable setting",
     tried:
       "Stopped once because the diagnostic thresholds were undefined, froze them as exact truth tables, then ran 17 diagnostics, including a 320-setting search.",
-    found: "None of the 320 settings met the signal targets while keeping monthly hazard below 0.20.",
-    learned: "The additive proportional-hazards design could not deliver both, so the hazard link itself had to change.",
+    found:
+      "No setting reached AUC 0.70; the best was 0.593. Larger coefficients pushed peak monthly hazard as high as 0.88 without improving AUC.",
+    learned:
+      "No setting of the additive proportional-hazards design recovered the signal at a realistic lapse rate, so the hazard link itself had to change.",
     verdict: "stopped",
     verdictLabel: "Stopped: infeasible",
     short: "Infeasible",
@@ -144,7 +146,7 @@ export const milestones: Milestone[] = [
     found:
       "On 20 reserved seeds: median AUC 0.7031, all 20 at or above 0.65, and every primary gate passed. Four secondary checks failed, so Protocol 3.0.0 returned redesign.",
     learned:
-      "Bounding the hazard resolved the trade-off. After those results, ADR 0013 revised the four secondary thresholds with a stated rationale and left every primary gate unchanged. The re-run on the same seeds under Protocol 3.1.0 returned proceed.",
+      "The bounded link recovered the signal while monthly hazard stayed at or below 0.15. After those results, ADR 0013 revised the four secondary thresholds with a stated rationale and left every primary gate unchanged. The re-run on the same seeds under Protocol 3.1.0 returned proceed.",
     verdict: "proceed",
     verdictLabel: "Proceed under Protocol 3.1.0",
     short: "Proceed",
