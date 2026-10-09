@@ -44,7 +44,7 @@ class KafkaIntegrationTest(unittest.TestCase):
     def test_dlq_and_10000_event_out_of_order_gate(self) -> None:
         from kafka import KafkaConsumer, KafkaProducer
 
-        with KafkaContainer("confluentinc/cp-kafka:7.6.0") as container:
+        with KafkaContainer("confluentinc/cp-kafka:7.9.10") as container:
             bootstrap = container.get_bootstrap_server()
             producer = KafkaProducer(bootstrap_servers=bootstrap)
             topic = "policy.lifecycle.v1"

@@ -8,7 +8,7 @@ files do not establish a live cloud deployment or P4-07 enterprise-scale pass.
 | --- | --- | --- | --- |
 | `frontend` | React/TypeScript assets, nginx | `127.0.0.1:3000` | Same-origin visitor UI and allowlisted demo API proxy |
 | `control-plane` | Java 21 / Spring Boot | `127.0.0.1:8080` | Durable run/outbox/inbox, Kafka worker, rules, allocation, human review, journal verification |
-| `kafka` | `confluentinc/cp-kafka:7.6.0`, KRaft | `127.0.0.1:9092` | Actual publication and consumption on `inforsight.demo.events.v1` |
+| `kafka` | `confluentinc/cp-kafka:7.9.10`, KRaft | `127.0.0.1:9092` | Actual publication and consumption on `inforsight.demo.events.v1` |
 | `inference-runtime` | Python / FastAPI | `127.0.0.1:8000` | Verified released-model HTTP score and explanation; no gRPC endpoint |
 | `demo-runtime` | Python / FastAPI | Private `demo-runtime:8001` | Read-only fictional source construction, point-in-time projection, valuation, bounded agent |
 | `postgres` | `postgres:16-alpine` | `127.0.0.1:5433` | Demo artifacts, case versions, decisions, append-only journal, local checkpoint |

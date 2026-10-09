@@ -2,7 +2,7 @@
 # historical full-stack Phase 4 topology sketch in docker-compose.yml.
 services:
   kafka:
-    image: confluentinc/cp-kafka:7.6.0
+    image: confluentinc/cp-kafka:7.9.10
     container_name: inforsight-kafka-p402
     ports:
       - "9092:9092"
@@ -20,7 +20,9 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      # Canonical base64 of the same cluster UUID. Kafka 3.9+ compares this text with
+      # meta.properties literally, so existing volumes keep their identity.
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qg
     healthcheck:
       test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
       interval: 5s
@@ -28,7 +30,7 @@ services:
       retries: 12
 
   kafka-init:
-    image: confluentinc/cp-kafka:7.6.0
+    image: confluentinc/cp-kafka:7.9.10
     container_name: inforsight-kafka-p402-init
     depends_on:
       kafka:

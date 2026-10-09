@@ -19,7 +19,7 @@ with tempfile.TemporaryDirectory() as directory:
     container = subprocess.check_output(['docker', 'create', '-p', '127.0.0.1::80',
         '--label', 'com.docker.compose.project=inforsight-traffic-test',
         '--label', 'com.docker.compose.service=frontend', '--label', 'com.inforsight.traffic.version=1',
-        'nginx:1.27-alpine'], text=True).strip()
+        'nginx:stable-alpine'], text=True).strip()
     try:
         subprocess.run(['docker', 'cp', str(ROOT/'frontend/nginx.conf'), f'{container}:/etc/nginx/conf.d/default.conf'], check=True)
         subprocess.run(['docker', 'cp', str(folder)+'/.', f'{container}:/usr/share/nginx/html'], check=True)
