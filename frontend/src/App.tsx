@@ -28,6 +28,7 @@ import {
   FileText,
   Fingerprint,
   GitBranch,
+  History,
   Info,
   Layers3,
   LockKeyhole,
@@ -67,17 +68,19 @@ import {
 import TransactionFlow from "./TransactionFlow";
 import RecentRuns from "./RecentRuns";
 import ArchitectureTeaser from "./ArchitectureTeaser";
+import ModelBand from "./ModelBand";
 import { useRecentRuns } from "./recent-runs";
 import type { LensId } from "./architecture-lenses";
 
 // The architecture model is large; load it only when the view is opened.
 const ArchitectureExplorer = lazy(() => import("./ArchitectureExplorer"));
+const ModelTimeline = lazy(() => import("./ModelTimeline"));
 
-type View = "journey" | "flow" | "dossier" | "review" | "audit" | "architecture";
-/** Only the flow and architecture views are addressable; other views follow the run. */
+type View = "journey" | "flow" | "dossier" | "review" | "audit" | "architecture" | "model";
+/** Only the flow, architecture and model views are addressable; other views follow the run. */
 function viewFromUrl(): View {
   const value = new URLSearchParams(window.location.search).get("view");
-  return value === "flow" || value === "architecture" ? value : "journey";
+  return value === "flow" || value === "architecture" || value === "model" ? value : "journey";
 }
 function stored<T>(key: string): T | null {
   try {
@@ -348,6 +351,9 @@ export default function App() {
     () => stored<boolean>("inforsight.cookie-notice.v1") === true,
   );
   const cookieNoticeLink = useRef<HTMLButtonElement>(null);
+  // The model timeline is a standalone page; Back returns to the view (and lens) that opened it.
+  const [modelReturn, setModelReturn] = useState<{ view: View; lens?: LensId }>({ view: "journey" });
+  const [modelFocus, setModelFocus] = useState<string>();
   const [architectureSeen, setArchitectureSeen] = useState(
     () => stored<boolean>("inforsight.architecture-seen.v1") === true,
   );
@@ -384,7 +390,7 @@ export default function App() {
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    if (view === "flow" || view === "architecture") url.searchParams.set("view", view);
+    if (view === "flow" || view === "architecture" || view === "model") url.searchParams.set("view", view);
     else url.searchParams.delete("view");
     window.history.replaceState({}, "", url);
   }, [view]);
@@ -515,6 +521,15 @@ export default function App() {
     setView("architecture");
     window.scrollTo({ top: 0 });
   };
+  const openModelTimeline = (step?: string) => {
+    if (view !== "model") {
+      const lens = new URLSearchParams(window.location.search).get("lens") as LensId | null;
+      setModelReturn({ view, lens: view === "architecture" ? (lens ?? undefined) : undefined });
+    }
+    setModelFocus(step);
+    setView("model");
+    window.scrollTo({ top: 0 });
+  };
   const launch = async () => {
     setBusy(true);
     setError(null);
@@ -612,17 +627,30 @@ export default function App() {
             <span className="brand-subtitle">Interactive demo</span>
           </button>
           <div className="header-right">
-            <button
-              type="button"
-              className={`header-architecture ${view === "architecture" ? "active" : ""}`}
-              aria-current={view === "architecture" ? "page" : undefined}
-              onClick={() => openArchitecture()}
-            >
-              <Network size={15} aria-hidden="true" />
-              <span className="header-architecture-label">Architecture</span>
-              <span className="sr-only"> explorer</span>
-              {!architectureSeen && <span className="new-badge">New</span>}
-            </button>
+            <nav className="header-nav" aria-label="Explore how Inforsight works">
+              <button
+                type="button"
+                className={`header-nav-button ${view === "architecture" ? "active" : ""}`}
+                aria-current={view === "architecture" ? "page" : undefined}
+                title="Architecture explorer"
+                onClick={() => openArchitecture()}
+              >
+                <Network size={15} aria-hidden="true" />
+                <span className="header-nav-label">Architecture</span>
+                <span className="sr-only"> explorer</span>
+                {!architectureSeen && <span className="new-badge">New</span>}
+              </button>
+              <button
+                type="button"
+                className={`header-nav-button ${view === "model" ? "active" : ""}`}
+                aria-current={view === "model" ? "page" : undefined}
+                title="Model timeline"
+                onClick={() => openModelTimeline()}
+              >
+                <History size={15} aria-hidden="true" />
+                <span className="header-nav-label">Model timeline</span>
+              </button>
+            </nav>
             <span className="environment">
               <span />
               {session ? (session.public_mode ? "Public preview" : "Local Docker") : catalogError ? "Demo unavailable" : "Connecting to demo"}
@@ -646,7 +674,34 @@ export default function App() {
             </p>
           </div>
         )}
-        {!runId && view !== "architecture" ? (
+        {view === "model" ? (
+          <Suspense
+            fallback={
+              <div className="content-width">
+                <Empty title="Loading the model timeline" icon={History}>
+                  Preparing the timeline.
+                </Empty>
+              </div>
+            }
+          >
+            <ModelTimeline
+              backLabel={
+                modelReturn.view === "architecture"
+                  ? "Back to the architecture"
+                  : runId
+                    ? "Back to your case"
+                    : "All scenarios"
+              }
+              onBack={() => {
+                if (modelReturn.view === "architecture") return openArchitecture(modelReturn.lens);
+                setView(modelReturn.view);
+                window.scrollTo({ top: 0 });
+              }}
+              focus={modelFocus}
+              onOpenLineage={() => openArchitecture("lineage")}
+            />
+          </Suspense>
+        ) : !runId && view !== "architecture" ? (
           <>
             <section className="hero content-width">
               <div className="hero-copy">
@@ -996,6 +1051,7 @@ export default function App() {
                 )}
               </div>
             </section>
+            <ModelBand onOpen={openModelTimeline} />
             <ArchitectureTeaser onOpen={openArchitecture} />
           </>
         ) : (
@@ -1323,7 +1379,11 @@ export default function App() {
                   </div>
                 )}
                 {view === "dossier" && (
-                  <Dossier run={run} onReview={() => setView("review")} />
+                  <Dossier
+                    run={run}
+                    onReview={() => setView("review")}
+                    onModelHistory={() => openModelTimeline()}
+                  />
                 )}
                 {view === "review" && (
                   <Review
@@ -1364,6 +1424,10 @@ export default function App() {
             Cookie notice
           </button>
         )}
+        <button className="text-link" onClick={() => openModelTimeline()}>
+          How the model was built
+          <ArrowUpRight size={13} />
+        </button>
         <button className="text-link" onClick={() => openArchitecture()}>
           System architecture
           <ArrowUpRight size={13} />
@@ -1523,7 +1587,15 @@ function StageRow({
   );
 }
 
-function Dossier({ run, onReview }: { run: Run; onReview: () => void }) {
+function Dossier({
+  run,
+  onReview,
+  onModelHistory,
+}: {
+  run: Run;
+  onReview: () => void;
+  onModelHistory: () => void;
+}) {
   const { snapshot, projection, score, rules, allocation, agent } =
     run.artifacts;
   const probability = score?.calibrated_probability;
@@ -1687,6 +1759,11 @@ function Dossier({ run, onReview }: { run: Run; onReview: () => void }) {
                   establish causes or prove an intervention will work.
                 </p>
               </div>
+              <button type="button" className="text-link model-history-link" onClick={onModelHistory}>
+                <History size={14} aria-hidden="true" />
+                How this model was built
+                <ArrowRight size={13} aria-hidden="true" />
+              </button>
               <Technical
                 value={score}
                 label="Score, explanations, and model identity"
