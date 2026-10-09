@@ -81,12 +81,12 @@ Most portfolio projects show a single model and a final accuracy number. This pr
 
 | Generation | Method | What happened | Decision |
 | :--- | :--- | :--- | :---: |
-| **v1** | Single-batch generator, logistic + XGBoost | Billing frequency confounded with time; no pre-cutoff risk mechanism; AUC ≈ 0.53 | `pipeline_engineering_only` |
-| **v2** | Multi-cohort, proportional hazards, frailty | Automated preflight caught ingestion-time leakage before model fitting | `stop` |
-| **v3** | Event-first dual-time, 20-seed acceptance | Signal recovery collapsed: median AUC 0.519 vs. target ≥ 0.65 (0/20 seeds passed) | `redesign` |
-| **v4** | Doubled coefficients, halved frailty | Monthly hazard exploded past actuarial ceiling (0.25–0.45 vs. limit < 0.20) | `redesign` |
-| **v5** | 320-cell feasibility surface, 17 diagnostics | **0 of 320 cells** satisfy simultaneous AUC ≥ 0.70 and hazard < 0.20 — *mathematically infeasible* | `stop_infeasible_design` |
-| **v6** | **Bounded sigmoid hazard link** | Broke the Proportional Hazards Trilemma; 20/20 seeds pass; median AUC 0.7031 | ✅ `proceed` |
+| **v1** | Single issuance window, logistic + XGBoost | Billing frequency confounded with time; no pre-cutoff risk mechanism; validation AUC 0.53–0.56 on 27 records | `pipeline_engineering_only` |
+| **v2** | Multi-cohort, competing hazards, frailty | Automated readiness audit caught ingestion-time leakage before the acceptance run fitted any model | `stop` |
+| **v3** | Event-first dual-time, 20-seed acceptance | Signal recovery failed: median AUC 0.519 vs. required ≥ 0.68; 0/20 seeds reached 0.65 | `redesign` |
+| **v4** | Doubled coefficients, frailty σ 0.35 → 0.20 | Observable-oracle AUC rose only to 0.567; peak monthly hazard 0.218 vs. limit < 0.20 | `redesign` |
+| **v5** | 320-cell feasibility surface, 17 diagnostics | **0 of 320 cells** met AUC ≥ 0.70 and AP lift ≥ 0.10 with hazard < 0.20 (best AUC 0.593) — *infeasible design* | `stop_infeasible_design` |
+| **v6** | **Bounded sigmoid hazard link** | Median AUC 0.7031; 20/20 seeds ≥ 0.65; hazard ≤ 0.15. `proceed` under Protocol 3.1.0 after [ADR 0013](docs/adr/0013-amend-v6-statistical-acceptance-protocol.md) revised four secondary checks | ✅ `proceed` |
 
 > The full iteration history with root-cause analysis is in the [Iteration Ledger](docs/experiments/iteration-ledger.md). Historical R2-08 issue #53 anchored the v3 redesign contract, and R2-11 recorded the v3 statistical acceptance stop; release evaluation holdouts remained strictly `not_materialized` throughout development.
 
